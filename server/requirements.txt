@@ -11,7 +11,6 @@ constantly==23.10.4
 cryptography==46.0.5
 daphne==4.2.1
 Django==6.0.3
-django-channels==0.7.0
 hyperlink==21.0.0
 idna==3.11
 Incremental==24.11.0
