@@ -18,7 +18,6 @@ from django.urls import path
 from game import views
 
 urlpatterns = [
-    path('', views.dbozic, name='index'),
+    path('', views.DbozicView.as_view(), name='dbozic'),
     path('appreciate/', views.async_appreciation, name='async_appreciation'),
-    path('reason/', views.dbozic_charm, name='dbozic_charm'),
 ]
