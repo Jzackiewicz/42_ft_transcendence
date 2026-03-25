@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'channels',
+	'rest_framework',
+	'drf_spectacular',
     'game',
 ]
 
@@ -120,3 +122,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'QUIZSCENDENCE API',
+    'DESCRIPTION': 'Endpoints documentation',
+    'VERSION': '0.1',
+    'SERVE_INCLUDE_SCHEMA': False,
+}
