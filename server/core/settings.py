@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'channels',
 	'rest_framework',
 	'drf_spectacular',
-    'game',
+    'account',
 ]
 
 MIDDLEWARE = [
