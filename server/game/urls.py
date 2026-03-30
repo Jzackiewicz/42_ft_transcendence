@@ -16,9 +16,13 @@ Including another URLconf
 """
 from django.urls import path
 from game import views
+from .views import QuestionListView, UserListView, UserDetailsView
 
 urlpatterns = [
     path('', views.dbozic, name='index'),
     path('appreciate/', views.async_appreciation, name='async_appreciation'),
     path('reason/', views.dbozic_charm, name='dbozic_charm'),
+    path('questions/', QuestionListView.as_view(), name='question-list'),
+    path('users/', UserListView.as_view(), name='user-list'),
+    path('users/<int:pk>/', UserDetailsView.as_view(), name='user-detail'),
 ]
