@@ -15,9 +15,8 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.urls import path
-from game import views
+from game import apis
 
 urlpatterns = [
-    path('', views.DbozicView.as_view(), name='dbozic'),
-    path('appreciate/', views.async_appreciation, name='async_appreciation'),
+    path('', apis.ExampleApi.as_view(), name='dbozic'),
 ]
