@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Damian appreciation room</title>
+</head>
+<body>
+    Send love for Damian<br>
+    <input id="appreciation" type="text" size="100"><br>
+    <input id="appreciation-submit" type="button" value="Enter">
+    
+    <h3>Server Responses:</h3>
+    <div id="chat-log" style="border: 1px solid black; min-height: 100px; padding: 10px;"></div>
+
+    <script>
+        // Connect to the WebSocket endpoint defined in routing.py
+        const chatSocket = new WebSocket(
+            'ws://' + window.location.host + '/ws/test/'
+        );
+
+        // Listen for messages from the server
+        chatSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            const chatLog = document.querySelector('#chat-log');
+            chatLog.innerHTML += '<div>' + data.message + '</div>';
+        };
+
+        chatSocket.onclose = function(e) {
+            console.error('Chat socket closed unexpectedly');
+        };
+
+        // Handle enter key press
+        document.querySelector('#appreciation').focus();
+        document.querySelector('#appreciation').onkeyup = function(e) {
+            if (e.key === 'Enter') {
+                document.querySelector('#appreciation-submit').click();
+            }
+        };
+
+        // Handle button click -> Send message via WebSocket instead of redirecting
+        document.querySelector('#appreciation-submit').onclick = function(e) {
+            const messageInputDom = document.querySelector('#appreciation');
+            const message = messageInputDom.value;
+            
+            chatSocket.send(JSON.stringify({
+                'message': message
+            }));
+            
+            messageInputDom.value = '';
+        };
+    </script>
+</body>
+</html>
