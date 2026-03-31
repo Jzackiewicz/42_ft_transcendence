@@ -15,10 +15,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.urls import path
+from account import apis
 from game import views
 from .views import QuestionListView, UserListView, UserDetailsView
 
 urlpatterns = [
+    path('', apis.ExampleApi.as_view(), name='dbozic'),
     path('', views.dbozic, name='index'),
     path('appreciate/', views.async_appreciation, name='async_appreciation'),
     path('reason/', views.dbozic_charm, name='dbozic_charm'),
