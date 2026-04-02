@@ -42,6 +42,7 @@ INSTALLED_APPS = [
 	'rest_framework',
 	'drf_spectacular',
     'account',
+	'social',
 ]
 
 MIDDLEWARE = [
@@ -71,9 +72,9 @@ TEMPLATES = [
     },
 ]
 
-ASGI_APPLICATION = 'core.asgi.application'
 
 WSGI_APPLICATION = 'core.wsgi.application'
+ASGI_APPLICATION = 'core.asgi.application'
 
 
 # Database
