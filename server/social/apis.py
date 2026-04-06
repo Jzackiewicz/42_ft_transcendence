@@ -15,14 +15,15 @@ It should not contain any business logic or direct database access; instead, it 
 class ChatHistoryApi(APIView):
 	
 	@extend_schema(
-		responses={200: GetChatHistoryOutputSerializer},
+		parameters=[GetChatHistoryInputSerializer],
+		responses={200: GetChatHistoryOutputSerializer(many=True)},
 		description="GET endpoint to retrieve chatroom history."
 	)
-	def get(self, request):
+	def get(self, request, room_name: str):
 		input_serializer = GetChatHistoryInputSerializer(data=request.query_params)
 		input_serializer.is_valid(raise_exception=True)
 		
-		data = get_chat_history_data(**input_serializer.validated_data)
+		chat_history_batch = get_chat_history_data(room_name=room_name,**input_serializer.validated_data)
 		
-		output_serializer = GetChatHistoryOutputSerializer(data)
+		output_serializer = GetChatHistoryOutputSerializer(chat_history_batch, many=True)
 		return Response(output_serializer.data, status=status.HTTP_200_OK)

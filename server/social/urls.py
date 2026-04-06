@@ -15,8 +15,8 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.urls import path
-from account import apis
+from social import apis
 
 urlpatterns = [
-	
+    path('chat/<str:room_name>/history/', apis.ChatHistoryApi.as_view(), name='chat_history'),
 ]
