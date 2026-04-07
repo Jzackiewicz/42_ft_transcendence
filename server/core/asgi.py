@@ -20,9 +20,9 @@ import social.routing
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
 
-#TODO: add authentication middleware for WebSocket (JWT token)
+# TODO: add authentication middleware for WebSocket (JWT token)
 application = ProtocolTypeRouter({
     "http": django_asgi_app,
-	"websocket": AllowedHostsOriginValidator(
-		URLRouter(social.routing.websocket_urlpatterns)),
+    "websocket": AllowedHostsOriginValidator(
+        URLRouter(social.routing.websocket_urlpatterns)),
 })
