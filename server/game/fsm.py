@@ -25,6 +25,3 @@ class GameStateMachine(StateMachine):
 
 	def last_player_remaining(self):
 		return self.players_count <= 1
-
-if __name__ == "__main__":
-	fsm = GameStateMachine()
