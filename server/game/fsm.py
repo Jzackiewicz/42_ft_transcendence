@@ -1,27 +1,51 @@
 from statemachine import StateMachine, State
+from dataclasses import dataclass
+import random
+
+
+@dataclass
+class Player:
+	id: int
+	name: str
+	lives: int = 3
+	points: int = 0
+
+@dataclass
+class Question:
+	id: int
+	text: str
+	correct_answer: str
+
+@dataclass
+class GameSession:
+	players: dict[int, Player]
+	session_questions_ids: list[int]
+	current_status: str = "Lobby"
+	current_player_id: int | None = None
+	current_question_id: int | None = None
 
 
 class GameStateMachine(StateMachine):
 	lobby = State("Lobby", initial=True)
 	player_nomination = State("Player Nomination")
-	collecting_answers = State("Collecting Answers")
-	answer_evaluation = State("Answers Evaluation")
+	player_answering = State("Player Answering")
+	answer_evaluation = State("Answer Evaluation")
 	game_over = State("Game Over", final=True)
 
 	start_game = lobby.to(player_nomination)
-	player_nominated = player_nomination.to(collecting_answers)
-	non_target_player_answered = collecting_answers.to(collecting_answers)
-	target_player_answered = collecting_answers.to(answer_evaluation)
-	time_expired = collecting_answers.to(answer_evaluation)
-	next_round = answer_evaluation.to(player_nomination, cond="more_than_one_player_remaining")
-	finish_game = answer_evaluation.to(game_over, cond="last_player_remaining")
+	player_nominated = player_nomination.to(player_answering)
+	nomination_timeout = player_nomination.to(player_answering)
+	target_player_answered = player_answering.to(answer_evaluation)
+	time_expired = player_answering.to(answer_evaluation)
+	next_round = answer_evaluation.to(player_nomination)
+	finish_game = answer_evaluation.to(game_over, cond="game_over_condition")
 
-	def __init__(self, players_count: int = 2):
-		self.players_count = players_count
-		super().__init__()
+	def on_start_game(self):
+		self.model.current_player_id = random.choice(self.model.players).id
+	
+	def on_exit_player_nomination(self):
+		print("Exiting Player Nomination state")
 
-	def more_than_one_player_remaining(self):
-		return self.players_count > 1
 
-	def last_player_remaining(self):
-		return self.players_count <= 1
+	def game_over_condition(self):
+		return self.players_count <= 1 #or self.left_questions_count == 0
