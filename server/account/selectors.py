@@ -6,16 +6,6 @@ from django.shortcuts import get_object_or_404
 
 from .models import UserProfile
 
-def get_example_data(*, param: str) -> dict:
-    if param:
-        message = f"Got parameter for GET request: {param}"
-    else:
-        message = "Provided no parameter for GET request."
-    return {
-        "message": message,
-        "datetime_called": datetime.now().isoformat(),
-    }
-
 # ---------------------------------------------------------------------------
 # User selectors
 # ---------------------------------------------------------------------------

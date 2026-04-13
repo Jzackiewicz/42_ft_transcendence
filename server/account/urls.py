@@ -3,9 +3,6 @@ from django.urls import path
 from account import apis
 
 urlpatterns = [
-    # Example endpoint
-    path('example/', apis.ExampleApi.as_view(), name='account-example'),
-
     # User endpoints
     path('users/register/', apis.UserRegisterApi.as_view(), name='user-register'),
     path('users/', apis.UserListApi.as_view(), name='user-list'),
