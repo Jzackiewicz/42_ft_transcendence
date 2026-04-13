@@ -6,7 +6,7 @@ For making our lives easier
 ### Installing & running
 	You need to have python 3.11+ installed
 
-To run the server:
+To run the server for the first time (***it will remove your current database***):
 ```bash
 chmod +x dev.sh
 ./dev.sh
@@ -38,15 +38,21 @@ It means our code structure looks like this:
 
 ### Endpoints
 
-- `http://127.0.0.1:8000/api/docs/` - HTTP endpoints documentation (+ manual testing)
-- `docs/WEBSOCKET_EVENTS.md` - websocket endpoints documentation
 
 
-		To test websocket endpoints manually you need to use wscat or install Postman
+| Page | URL |
+|---|---|
+| Admin panel | http://127.0.0.1:8000/admin/ |
+| API docs (Swagger) | http://127.0.0.1:8000/api/docs/ |
+| Questions API | http://127.0.0.1:8000/game/questions/ |
+| Users API | http://127.0.0.1:8000/account/users/ |
+| WebSocket endpoints docs | `docs/WEBSOCKET_EVENTS.md` |
 
 - To run automatic tests run the following command: 
 	```bash
 	python3 manage.py test
 	```
+- To test websocket endpoints manually you need to use wscat or install Postman
+
 ## Frontend
 ¯\\_( ͡° ͜ʖ ͡°)_/¯
