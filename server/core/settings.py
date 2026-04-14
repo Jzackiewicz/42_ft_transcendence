@@ -21,13 +21,27 @@ load_dotenv(BASE_DIR / ".env")
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
+def get_secret(env_name, default=None):
+    file_path = os.getenv(f"{env_name}_FILE")
+    if file_path and os.path.exists(file_path):
+        try:
+            with open(file_path, "r") as f:
+                return f.read().strip()
+        except OSError:
+            pass
+    return os.getenv(env_name, default)
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = get_secret('DJANGO_SECRET_KEY', os.getenv('SECRET_KEY', 'django-insecure-default'))
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+
+# CSRF settings for production/Docker environment
+CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'https://localhost,https://127.0.0.1').split(',')
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 
 # Application definition
@@ -88,10 +102,10 @@ if USE_POSTGRES:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
-            "NAME": os.getenv("DB_NAME"),
-            "USER": os.getenv("DB_USER"),
-            "PASSWORD": os.getenv("DB_PASSWORD"),
-            "HOST": os.getenv("DB_HOST", "127.0.0.1"),
+            "NAME": os.getenv("DB_NAME", "quizdb"),
+            "USER": os.getenv("DB_USER", "quizuser"),
+            "PASSWORD": get_secret("DB_PASSWORD"),
+            "HOST": os.getenv("DB_HOST", "db"),
             "PORT": os.getenv("DB_PORT", "5432"),
         }
     }
@@ -139,6 +153,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'static'
 
 # Media files (user-uploaded content, e.g. avatars)
 MEDIA_URL = '/media/'
