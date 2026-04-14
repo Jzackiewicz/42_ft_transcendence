@@ -4,7 +4,7 @@ env/
 ENV/
 
 # secrets
-./devops/secrets/
+devops/secrets/*
 
 # Python cache / bytecode
 __pycache__/
