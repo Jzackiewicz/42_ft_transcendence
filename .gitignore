@@ -3,6 +3,9 @@ venv/
 env/
 ENV/
 
+# secrets
+./devops/secrets/
+
 # Python cache / bytecode
 __pycache__/
 *.py[cod]
