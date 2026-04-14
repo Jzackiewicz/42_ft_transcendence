@@ -41,10 +41,15 @@ The project relies on a strict frontend-backend separation with a strong emphasi
 * **Question Pool:** Questions are fetched from a pre-populated PostgreSQL database containing 200 questions along with their canonical answers.
 * **UI/UX Design:** Minimalist and clean. Focused on high readability and ease of implementation over complex animations.
 
-### Game Rules / Elimination [PENDING DECISION]
-The team must decide between two game modes before implementing the final game loop:
-* **Option A (Classic TV Show):** Three distinct rounds. Players have a set number of "lives/chances". A wrong answer loses a life. Losing all lives means elimination. Players nominate each other to answer.
-* **Option B (Points-Based Sprint):** A single, continuous round. Every player answers every question simultaneously (or in quick succession). No lives/eliminations. The player with the most points after a set number of questions wins.
+### Game Rules / Elimination
+
+* **Lives** Players start with a set number of lives (default 3).
+* **Win Condition:** The game continues until only one player remains alive with at least 1 life.
+* **Nomination system:** First question is answered by randomly chosen player. After correct answer he gets the right to choose different participant to answer the next question.
+* **Turn Resolution & Evaluation:**
+  * **Correct Answer:** The player retains their life and earns the right to nominate the next player.
+  * **Wrong Answer / Timeout:** The player loses one life. The system automatically selects a random surviving player for the next turn.
+* **Time Limits:** Both answering a question and nominating the next player are constrained by timeouts. Failure to act within the timeframe results in an automatic penalty (loss of life or system-forced random nomination).
 
 ### The AI Judge Mechanic
 1. Player types their answer.
