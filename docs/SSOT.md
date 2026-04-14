@@ -44,7 +44,7 @@ The project relies on a strict frontend-backend separation with a strong emphasi
 ### Game Rules / Elimination
 
 * **Lives** Players start with a set number of lives (default 3).
-* **Win Condition:** The game continues until only one player remains alive with at least 1 life.
+* **Win Condition:** The game continues until only one player remains alive with at least 1 life or if the questions for the session are exhausted. The winner is the last player standing or an alive player with the most points gained.
 * **Nomination system:** First question is answered by randomly chosen player. After correct answer he gets the right to choose different participant to answer the next question.
 * **Turn Resolution & Evaluation:**
   * **Correct Answer:** The player retains their life and earns the right to nominate the next player.
