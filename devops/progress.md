@@ -42,7 +42,7 @@
   - `make re`: fclean and rebuild.
   - `make createsuperuser`: Easy admin creation for Django.
   > [!IMPORTANT]
-  > added action confirmation before full wipe with clean/fclean and re for data persitance reasons
+  > added action confirmation before full wipe with clean/fclean and re for data persistence reasons
 - **Documentation**: Added comprehensive links to official docs (Docker, Nginx, Django, Node) in all infrastructure files for maintainability (as it is easy to forget all the configs)
 
 ## Troubleshooting & Key Fixes
