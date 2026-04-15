@@ -1,0 +1,91 @@
+# Compose Reference: https://docs.docker.com/compose/compose-file/
+# Secrets Management: https://docs.docker.com/compose/use-secrets/
+# Networking Guide: https://docs.docker.com/compose/networking/
+
+services:
+  db:
+    image: postgres:15.6-alpine3.19
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-quizdb}
+      - POSTGRES_USER=${POSTGRES_USER:-quizuser}
+      - POSTGRES_PASSWORD_FILE=/run/secrets/db_password
+    secrets:
+      - db_password
+    networks:
+      - backend
+    restart: always
+
+  redis:
+    image: redis:7.2.4-alpine3.19
+    networks:
+      - backend
+    restart: always
+
+  api:
+    build:
+      context: ..
+      dockerfile: devops/django/Dockerfile
+    volumes:
+      - media_data:/app/media
+      - static_data:/app/static
+    env_file:
+      - ./secrets/common.env
+    environment:
+      - DB_PASSWORD_FILE=/run/secrets/db_password
+      - DJANGO_SECRET_KEY_FILE=/run/secrets/django_secret_key
+      - LLM_API_KEY_FILE=/run/secrets/llm_api_key
+    secrets:
+      - db_password
+      - django_secret_key
+      - llm_api_key
+    depends_on:
+      - db
+      - redis
+    networks:
+      - backend
+    restart: always
+
+  web:
+    build:
+      context: ..
+      dockerfile: devops/react/Dockerfile
+    networks:
+      - frontend
+    restart: always
+
+  proxy:
+    build:
+      context: ..
+      dockerfile: devops/nginx/Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - static_data:/app/static:ro
+      - media_data:/app/media:ro
+    depends_on:
+      - api
+      - web
+    networks:
+      - frontend
+      - backend
+    restart: always
+
+networks:
+  frontend:
+  backend:
+
+volumes:
+  postgres_data:
+  static_data:
+  media_data:
+
+secrets:
+  db_password:
+    file: ./secrets/db_password.txt
+  django_secret_key:
+    file: ./secrets/django_secret_key.txt
+  llm_api_key:
+    file: ./secrets/llm_api_key.txt
