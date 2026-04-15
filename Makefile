@@ -21,8 +21,6 @@ down:
 # Restart the stack
 restart: down up
 
-clean: check_clean
-
 check_clean:
 	@echo -n "Are you sure? [y/N] " && read ans && [ $${ans:-N} = y ]
 
