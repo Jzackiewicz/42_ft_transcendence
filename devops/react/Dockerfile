@@ -30,7 +30,7 @@ FROM nginx:1.25.5-alpine3.19
 COPY --from=build /app/dist /usr/share/nginx/html
 
 # Default NGINX port
-# EXPOSE 80
-EXPOSE 443
+EXPOSE 80
+# EXPOSE 443
 
 CMD ["nginx", "-g", "daemon off;"]
