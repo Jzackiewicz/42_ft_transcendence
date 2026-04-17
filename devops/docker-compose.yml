@@ -60,8 +60,8 @@ services:
       context: ..
       dockerfile: devops/nginx/Dockerfile
     ports:
-      - "80:80"
-      - "443:443"
+      - "8080:80"
+      - "8443:443"
     volumes:
       - static_data:/app/static:ro
       - media_data:/app/media:ro

@@ -53,7 +53,9 @@
   - Implemented `get_secret()` helper in `settings.py` to bridge Docker secrets and environment variables.
   - Configured `STATIC_ROOT` to fix `ImproperlyConfigured` error during container startup.
   - Added `CSRF_TRUSTED_ORIGINS` and `SECURE_PROXY_SSL_HEADER` to fix **Forbidden (403)** error when logging into admin panel.
-- **Nginx Routing**: Added missing proxy rules for `/account/` and `/game/` to fix **404 Not Found** errors on backend endpoints.
+- **Nginx Routing**:
+  - Added missing proxy rules for `/account/` and `/game/` to fix **404 Not Found** errors on backend endpoints.
+  - changed port mapping from `80` to `8080` and from `443` to `8443`
 
 ## Testing Endpoints
 
