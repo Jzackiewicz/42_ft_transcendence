@@ -4,6 +4,16 @@ from rest_framework.views import APIView
 from drf_spectacular.utils import extend_schema
 from django.contrib.auth import authenticate, login, logout
 
+"""
+This module contains API endpoints (controllers/views).
+Each view is responsible only for:
+  - Parsing and validating the incoming request
+  - Delegating to the appropriate selector (reads) or service (writes)
+  - Returning a serialized response
+
+No business logic or direct ORM access belongs here.
+"""
+
 from .selectors import (
     user_get_by_id,
     user_list,
@@ -29,21 +39,13 @@ from .services import (
     profile_remove_friend,
 )
 
-"""
-This module contains API endpoints (controllers/views).
-Each view is responsible only for:
-  - Parsing and validating the incoming request
-  - Delegating to the appropriate selector (reads) or service (writes)
-  - Returning a serialized response
-
-No business logic or direct ORM access belongs here.
-"""
-
 # ---------------------------------------------------------------------------
 # User endpoints
 # ---------------------------------------------------------------------------
 
 class UserRegisterApi(APIView):
+
+    permission_classes = []
 
     @extend_schema(
         request=UserRegisterInputSerializer,
