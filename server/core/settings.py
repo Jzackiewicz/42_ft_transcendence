@@ -147,8 +147,17 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # Custom user model — must be set before the first migration is run
 AUTH_USER_MODEL = 'account.User'
 
+# Security / Session / CSRF 
+CSRF_COOKIE_HTTPONLY = False # allow JS to read CSRF cookie
+
 REST_FRAMEWORK = {
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema', # for swagger
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication', # use django sessions to identify users
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated', # by default all users must be authenticated
+    ],
 }
 
 SPECTACULAR_SETTINGS = {

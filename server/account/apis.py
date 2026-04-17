@@ -2,9 +2,9 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from drf_spectacular.utils import extend_schema
+from django.contrib.auth import authenticate, login, logout
 
 from .selectors import (
-    get_example_data,
     user_get_by_id,
     user_list,
     profile_get_by_user_id,
@@ -12,19 +12,15 @@ from .selectors import (
     profile_list_friends,
 )
 from .serializers import (
-    GetExampleInputSerializer,
-    GetExampleOutputSerializer,
-    PostExampleInputSerializer,
-    PostExampleOutputSerializer,
     UserRegisterInputSerializer,
     UserOutputSerializer,
     UserUpdateInputSerializer,
     UserProfileOutputSerializer,
     UserProfileAvatarInputSerializer,
     UserProfileFriendOutputSerializer,
+    UserLoginInputSerializer
 )
 from .services import (
-    create_example_record,
     user_create,
     user_update_basic_info,
     profile_update_avatar,
@@ -42,37 +38,6 @@ Each view is responsible only for:
 
 No business logic or direct ORM access belongs here.
 """
-
-class ExampleApi(APIView):
-
-    @extend_schema(
-        parameters=[GetExampleInputSerializer],
-        responses={200: GetExampleOutputSerializer},
-        description="Example GET endpoint to retrieve data.",
-    )
-    def get(self, request):
-        input_serializer = GetExampleInputSerializer(data=request.query_params)
-        input_serializer.is_valid(raise_exception=True)
-
-        data = get_example_data(**input_serializer.validated_data)
-
-        output_serializer = GetExampleOutputSerializer(data)
-        return Response(output_serializer.data, status=status.HTTP_200_OK)
-
-    @extend_schema(
-        request=PostExampleInputSerializer,
-        responses={201: PostExampleOutputSerializer},
-        description="Example POST endpoint to create a new record.",
-    )
-    def post(self, request):
-        input_serializer = PostExampleInputSerializer(data=request.data)
-        input_serializer.is_valid(raise_exception=True)
-
-        result = create_example_record(**input_serializer.validated_data)
-
-        output_serializer = PostExampleOutputSerializer(result)
-        return Response(output_serializer.data, status=status.HTTP_201_CREATED)
-
 
 # ---------------------------------------------------------------------------
 # User endpoints
@@ -224,4 +189,42 @@ class UserProfileFriendDetailApi(APIView):
         profile = profile_get_by_user_id(user_id=user_id)
         friend_profile = profile_get_by_user_id(user_id=friend_user_id)
         profile_remove_friend(profile=profile, friend_profile=friend_profile)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+# ---------------------------------------------------------------------------
+# User Login/Logout endpoints
+# ---------------------------------------------------------------------------
+
+class UserLoginAPI(APIView):
+    permission_classes = [] #user isnt authenticated yet, so its available for everyone
+
+    @extend_schema(
+        request=UserLoginInputSerializer,
+        responses={200: UserOutputSerializer},
+        description="Login",
+    )
+    def post(self, request):
+        # validate incoming data
+        input_serializer = UserLoginInputSerializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+
+        # verify credentials, return None if wrong
+        user = authenticate(request, 
+                            username=input_serializer.validated_data["username"], 
+                            password=input_serializer.validated_data["password"])
+        
+        if user is None:
+            return Response(
+                {"detail": "Invalid credentials."},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+        
+        # mark user as logged in & remember for future requests
+        login(request, user)
+
+        return Response(UserOutputSerializer(user).data, status=status.HTTP_200_OK)
+    
+class UserLogoutAPI(APIView):
+    def post(self, request):
+        logout(request)
         return Response(status=status.HTTP_204_NO_CONTENT)
