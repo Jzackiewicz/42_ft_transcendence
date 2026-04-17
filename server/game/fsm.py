@@ -1,67 +1,104 @@
 from statemachine import StateMachine, State
-from dataclasses import dataclass
-
-
-@dataclass
-class Player:
-	id: int
-	name: str
-	lives: int = 3
-	points: int = 0
-
-@dataclass
-class Question:
-	id: int
-	text: str
-	correct_answer: str
-
-@dataclass
-class GameSession:
-	players: dict[int, Player]
-	session_questions_ids: list[int]
-	current_status: str = "Lobby"
-	current_player_id: int | None = None
-	current_question_id: int | None = None
-	question_asked_count: int = 0
-
-	def __post_init__(self):
-		self.fsm = GameStateMachine(model=self, state_field="current_status")
-
 
 class GameStateMachine(StateMachine):
 	lobby = State("Lobby", initial=True)
+
+	opening_phase_answering = State("Opening Answering")
+	opening_phase_evaluation = State("Opening Evaluation")
+
 	player_nomination = State("Player Nomination")
-	player_answering = State("Player Answering")
-	answer_evaluation = State("Answer Evaluation")
+	nominated_answering = State("Nominated Answering")
+	nomination_evaluation = State("Nomination Evaluation")
+
 	game_over = State("Game Over", final=True)
 
-	start_game = lobby.to(player_nomination)
+	# --- Transitions (Events) ---
+	start_game = lobby.to(opening_phase_answering)
 
-	player_nominated = player_nomination.to(player_answering)
-	nomination_timeout = player_nomination.to(player_answering)
-
-	target_player_answered = player_answering.to(answer_evaluation)
-	answer_timeout = player_answering.to(answer_evaluation)
-
-	next_round = answer_evaluation.to(player_nomination)
-	finish_game = answer_evaluation.to(game_over, cond="game_over_condition")
-
-	def on_start_game(self, first_player_id: int, question_id: int):
-		self.current_player_id = first_player_id
-		self.current_question_id = question_id
-		self.question_asked_count += 1
-		print(f"Starting game, first player is: {self.current_player_id}, first question is: {self.current_question_id}")
-
-	def on_player_nominated(self, player_id: int, question_id: int):
-		self.current_player_id = player_id
-		self.current_question_id = question_id
-		print(f"Player {player_id} is nominated, question is: {question_id}")
-
-	def on_exit_player_nomination(self):
-		print("Exiting Player Nomination state")
-
+	answer_opening = opening_phase_answering.to(opening_phase_evaluation)
 	
-	# Conditions
+	evaluate_opening = (
+		opening_phase_evaluation.to(game_over, cond="is_game_over") |
+		opening_phase_evaluation.to(player_nomination, cond="is_correct") |
+		opening_phase_evaluation.to(opening_phase_answering, on="on_opening_wrong")
+	)
+
+	nominate_player = player_nomination.to(nominated_answering)
+	
+	answer_nominated = nominated_answering.to(nomination_evaluation)
+
+	evaluate_nomination = (
+		nomination_evaluation.to(game_over, cond="is_game_over") |
+		nomination_evaluation.to(player_nomination, cond="is_nominator_alive") |
+		nomination_evaluation.to(player_nomination, on="on_nominator_eliminated") 
+	)
+
+	# --- Guards ---
+	def is_correct(self):
+		return self.model.player_answer_correct is True
+
 	def is_game_over(self):
-		alive_players = [p for p in self.players.values() if p.lives > 0]
-		return len(alive_players) <= 1 or self.question_asked_count >= len(self.session_questions_ids)
+		alive_players = sum(1 for p in self.model.players.values() if p.lives > 0)
+		questions_exhausted = self.model.question_asked_count >= len(self.model.session_questions_ids)
+		return alive_players <= 1 or questions_exhausted
+	
+	def is_nominator_alive(self):
+		if self.model.nominator_id is None:
+			return False
+		return self.model.players[self.model.nominator_id].lives > 0
+
+	# --- Helper Callbacks ---
+	def _assign_next_question(self):
+		if self.model.question_asked_count < len(self.model.session_questions_ids):
+			self.model.current_question_id = self.model.session_questions_ids[self.model.question_asked_count]
+			self.model.question_asked_count += 1
+
+	def _get_next_alive_player_id(self, current_id: int) -> int:
+		if not any(p.lives > 0 for p in self.model.players.values()):
+			return current_id
+		max_id = max(self.model.players.keys())
+		next_id = current_id + 1
+		while True:
+			if next_id > max_id:
+				next_id = 1
+			if self.model.players[next_id].lives > 0:
+				return next_id
+			next_id += 1
+
+	# --- Callbacks ---
+	def on_start_game(self, starting_player_id: int = 1):
+		self.model.current_player_id = starting_player_id
+		self._assign_next_question()
+
+	def on_answer_opening(self, answer: str | None, is_correct: bool):
+		self.model.player_answer = answer
+		self.model.player_answer_correct = is_correct
+		if is_correct:
+			self.model.players[self.model.current_player_id].points += 10
+			self.model.nominator_id = self.model.current_player_id
+		else:
+			self.model.players[self.model.current_player_id].lives -= 1
+
+	def on_opening_wrong(self):
+		self.model.current_player_id = self._get_next_alive_player_id(self.model.current_player_id)
+		self._assign_next_question()
+
+	def on_nominate_player(self, target_player_id: int):
+		self.model.current_player_id = target_player_id
+		self._assign_next_question()
+
+	def on_answer_nominated(self, answer: str | None, is_correct: bool):
+		self.model.player_answer = answer
+		self.model.player_answer_correct = is_correct
+		if is_correct:
+			if self.model.current_player_id == self.model.nominator_id:
+				self.model.players[self.model.current_player_id].points += 20
+			else:
+				self.model.players[self.model.current_player_id].points += 10
+			self.model.nominator_id = self.model.current_player_id
+		else:
+			self.model.players[self.model.current_player_id].lives -= 1
+
+	def on_nominator_eliminated(self):
+		self.model.nominator_id = self._get_next_alive_player_id(self.model.current_player_id)
+		self.model.current_player_id = None
