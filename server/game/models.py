@@ -31,3 +31,12 @@ class SessionPlayer(models.Model):
 	name = models.CharField(max_length=100)
 	lives = models.IntegerField(default=3)
 	points = models.IntegerField(default=0)
+
+class Question(models.Model):
+	pass
+
+class SessionQuestion(models.Model):
+	pass
+
+class AnswerAttempt(models.Model):
+	pass
