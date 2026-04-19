@@ -23,38 +23,22 @@ from dataclasses import dataclass
 
 class GameStateMachine(StateMachine):
 	lobby = State("Lobby", value="Lobby", initial=True)
-
-	opening_phase_answering = State("Opening Answering", value="Opening Answering")
-	opening_phase_evaluation = State("Opening Evaluation", value="Opening Evaluation")
-
-	player_nomination = State("Player Nomination", value="Player Nomination")
-	nominated_answering = State("Nominated Answering", value="Nominated Answering")
-	nomination_evaluation = State("Nomination Evaluation", value="Nomination Evaluation")
-
+	answering = State("Answering", value="Answering")
+	evaluation = State("Evaluation", value="Evaluation")
+	nomination = State("Nomination", value="Nomination")
 	game_over = State("Game Over", value="Game Over", final=True)
-
-	# --- Transitions ---
-	start_game = lobby.to(opening_phase_answering)
-
-	answer_opening = opening_phase_answering.to(opening_phase_evaluation)
 	
-	evaluate_opening = (
-		opening_phase_evaluation.to(game_over, cond="is_game_over") |
-		opening_phase_evaluation.to(player_nomination, cond="is_correct") |
-		opening_phase_evaluation.to(opening_phase_answering, on="on_opening_wrong")
+	# Transitions
+	start_game = lobby.to(answering)
+	submit_answer = answering.to(evaluation)
+	resolve_answer = (
+		evaluation.to(game_over, cond="is_game_over") |
+		evaluation.to(nomination, cond="should_go_to_nomination") |
+		evaluation.to(answering, on="on_no_nominator_fallback")
 	)
+	nominate_player = nomination.to(answering)
 
-	nominate_player = player_nomination.to(nominated_answering)
-	
-	answer_nominated = nominated_answering.to(nomination_evaluation)
-
-	evaluate_nomination = (
-		nomination_evaluation.to(game_over, cond="is_game_over") |
-		nomination_evaluation.to(player_nomination, cond="is_nominator_alive") |
-		nomination_evaluation.to(player_nomination, on="on_nominator_eliminated") 
-	)
-
-	# --- Guards ---
+	# Guards
 	def is_correct(self):
 		return self.model.player_answer_correct is True
 
@@ -62,14 +46,19 @@ class GameStateMachine(StateMachine):
 		alive_players = self.model.session_players.filter(lives__gt=0).count()
 		questions_exhausted = self.model.question_asked_count >= len(self.model.session_questions_ids)
 		return alive_players <= 1 or questions_exhausted
-	
-	def is_nominator_alive(self):
+
+	def has_alive_nominator(self):
 		if self.model.nominator_id is None:
 			return False
 		nominator = self.model.session_players.filter(player_id=self.model.nominator_id).first()
 		return nominator is not None and nominator.lives > 0
 
-	# --- Helper Callbacks ---
+	def should_go_to_nomination(self):
+		if self.is_correct():
+			return True
+		return self.has_alive_nominator()
+
+	# Helper Callbacks
 	def _assign_next_question(self):
 		if self.model.question_asked_count < len(self.model.session_questions_ids):
 			self.model.current_question_id = self.model.session_questions_ids[self.model.question_asked_count]
@@ -86,35 +75,18 @@ class GameStateMachine(StateMachine):
 				return player_id
 		return alive_ids[0]
 
-	# --- Callbacks ---
+	# Callbacks
 	def on_start_game(self, starting_player_id: int = 1):
 		self.model.current_player_id = starting_player_id
+		self.model.nominator_id = None
+		self.model.player_answer = None
+		self.model.player_answer_correct = None
 		self._assign_next_question()
-
-	def on_answer_opening(self, answer: str | None, is_correct: bool):
+	
+	def on_submit_answer(self, answer: str | None, is_correct: bool):
 		self.model.player_answer = answer
 		self.model.player_answer_correct = is_correct
 
-		player = self.model.session_players.get(player_id=self.model.current_player_id)
-		if is_correct:
-			player.points += 10
-			self.model.nominator_id = self.model.current_player_id
-		else:
-			player.lives -= 1
-		player.save()
-
-	def on_opening_wrong(self):
-		self.model.current_player_id = self._get_next_alive_player_id(self.model.current_player_id)
-		self._assign_next_question()
-
-	def on_nominate_player(self, target_player_id: int):
-		self.model.current_player_id = target_player_id
-		self._assign_next_question()
-
-	def on_answer_nominated(self, answer: str | None, is_correct: bool):
-		self.model.player_answer = answer
-		self.model.player_answer_correct = is_correct
-		
 		player = self.model.session_players.get(player_id=self.model.current_player_id)
 		if is_correct:
 			if self.model.current_player_id == self.model.nominator_id:
@@ -124,9 +96,13 @@ class GameStateMachine(StateMachine):
 			self.model.nominator_id = self.model.current_player_id
 		else:
 			player.lives -= 1
+
 		player.save()
 
-	def on_nominator_eliminated(self):
-		next_alive_player_id = self._get_next_alive_player_id(self.model.current_player_id)
-		self.model.nominator_id = next_alive_player_id
-		self.model.current_player_id = next_alive_player_id
+	def on_no_nominator_fallback(self):
+		self.model.current_player_id = self._get_next_alive_player_id(self.model.current_player_id)
+		self._assign_next_question()
+
+	def on_nominate_player(self, target_player_id: int):
+		self.model.current_player_id = target_player_id
+		self._assign_next_question()
