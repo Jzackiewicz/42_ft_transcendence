@@ -1,16 +1,16 @@
+from game.models import AnswerAttempt, SessionQuestion
 from statemachine import StateMachine, State
 
 
 class GameStateMachine(StateMachine):
-	lobby = State("Lobby", value="Lobby", initial=True)
-	answering = State("Answering", value="Answering")
-	evaluation = State("Evaluation", value="Evaluation")
-	nomination = State("Nomination", value="Nomination")
-	game_over = State("Game Over", value="Game Over", final=True)
+	lobby = State("Lobby", value="lobby", initial=True)
+	answering = State("Answering", value="answering")
+	evaluation = State("Evaluation", value="evaluation")
+	nomination = State("Nomination", value="nomination")
+	game_over = State("Game Over", value="game_over", final=True)
 
 	# Transitions
 	start_game = lobby.to(answering)
-
 	submit_answer = answering.to(evaluation)
 
 	mark_correct = (
@@ -28,95 +28,112 @@ class GameStateMachine(StateMachine):
 
 	# Guards
 	def has_alive_last_correct_player(self):
-		if self.model.last_correct_player_id is None:
-			return False
-		player = self.model.session_players.filter(
-			player_id=self.model.last_correct_player_id
-		).first()
-		return player is not None and player.lives > 0
+		return (
+			self.model.last_correct_player is not None
+			and self.model.last_correct_player.lives > 0
+		)
 
 	def is_game_over(self):
 		alive_players = self.model.session_players.filter(lives__gt=0).count()
 		questions_exhausted = (
-			self.model.question_asked_count >= len(self.model.session_questions_ids)
+			self.model.question_asked_count >= self.model.session_questions.count()
 		)
 		return alive_players <= 1 or questions_exhausted
 
-	# Helper methods
+	# Helpers
 	def _assign_next_question(self):
-		if self.model.question_asked_count < len(self.model.session_questions_ids):
-			self.model.current_question_id = self.model.session_questions_ids[
-				self.model.question_asked_count
-			]
+		next_question = self.model.session_questions.filter(
+			order_index=self.model.question_asked_count
+		).first()
+
+		if next_question is not None:
+			self.model.current_question = next_question
 			self.model.question_asked_count += 1
 		else:
-			self.model.current_question_id = None
+			self.model.current_question = None
 
-	def _get_next_alive_player_id(self, current_id: int) -> int:
-		alive_ids = list(
-			self.model.session_players
-			.filter(lives__gt=0)
-			.values_list("player_id", flat=True)
+	def _get_next_alive_player(self, current_player):
+		alive_players = list(
+			self.model.session_players.filter(lives__gt=0).order_by("seat_number")
 		)
 
-		if not alive_ids:
-			return current_id
+		if not alive_players:
+			return current_player
 
-		alive_ids.sort()
+		for player in alive_players:
+			if player.seat_number > current_player.seat_number:
+				return player
 
-		for player_id in alive_ids:
-			if player_id > current_id:
-				return player_id
-		return alive_ids[0]
+		return alive_players[0]
 
 	def _get_current_player(self):
-		return self.model.session_players.get(player_id=self.model.current_player_id)
+		return self.model.current_player
+
+	def _get_current_attempt(self):
+		return self.model.answer_attempts.order_by("-id").first()
 
 	# Callbacks
-	def on_start_game(self, starting_player_id: int = 1):
-		self.model.current_player_id = starting_player_id
-		self.model.last_correct_player_id = None
-		self.model.last_nominated_player_id = None
-		self.model.player_answer = None
-		self.model.player_answer_correct = None
-		self.model.player_answer_is_timeout = False
+	def on_start_game(self, starting_player_id: int):
+		starting_player = self.model.session_players.get(id=starting_player_id)
+
+		self.model.current_player = starting_player
+		self.model.last_correct_player = None
+		self.model.last_nominated_player = None
 		self._assign_next_question()
 
 	def on_submit_answer(self, answer: str | None, is_timeout: bool = False):
-		self.model.player_answer = answer
-		self.model.player_answer_correct = None
-		self.model.player_answer_is_timeout = is_timeout
+		AnswerAttempt.objects.create(
+			session=self.model,
+			player=self.model.current_player,
+			session_question=self.model.current_question,
+			answer_text=answer,
+			is_timeout=is_timeout,
+			is_correct=None,
+			evaluation_status=AnswerAttempt.EvaluationStatus.PENDING,
+			answer_time_ms=0,
+		)
 
 	def on_mark_correct(self):
 		player = self._get_current_player()
+		attempt = self._get_current_attempt()
 
-		if self.model.current_player_id == self.model.last_nominated_player_id:
+		if self.model.last_nominated_player_id == player.id:
 			player.points += 20
 		else:
 			player.points += 10
 
-		self.model.player_answer_correct = True
-		self.model.last_correct_player_id = self.model.current_player_id
-
+		player.answered_count += 1
 		player.save()
+
+		attempt.is_correct = True
+		attempt.evaluation_status = AnswerAttempt.EvaluationStatus.EVALUATED
+		attempt.save()
+
+		self.model.last_correct_player = player
 
 	def on_mark_wrong(self):
 		player = self._get_current_player()
+		attempt = self._get_current_attempt()
 
-		player.lives -= 1
-		self.model.player_answer_correct = False
-
+		if player.lives > 0:
+			player.lives -= 1
+		player.answered_count += 1
 		player.save()
 
+		attempt.is_correct = False
+		attempt.evaluation_status = AnswerAttempt.EvaluationStatus.EVALUATED
+		attempt.save()
+
 	def on_no_last_correct_player_fallback(self):
-		self.model.current_player_id = self._get_next_alive_player_id(self.model.current_player_id)
+		next_player = self._get_next_alive_player(self.model.current_player)
+		self.model.current_player = next_player
 		self._assign_next_question()
 
 	def on_nominate_player(self, target_player_id: int):
-		target = self.model.session_players.get(player_id=target_player_id)
+		target = self.model.session_players.get(id=target_player_id)
 		if target.lives <= 0:
 			raise ValueError("Cannot nominate a dead player")
 
-		self.model.last_nominated_player_id = target_player_id
-		self.model.current_player_id = target_player_id
+		self.model.last_nominated_player = target
+		self.model.current_player = target
 		self._assign_next_question()
