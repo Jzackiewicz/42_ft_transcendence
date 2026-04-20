@@ -2,6 +2,12 @@ from django.test import TestCase
 from game.models import GameSession, SessionPlayer, Question, SessionQuestion
 
 
+'''
+These tests cover ONLY the FSM logic, considering following the right path after each action.
+They do NOT test cases where higher-layer services logic would be used, since there are no functions in services.py yet.
+TBA
+'''
+
 class FSMTestCase(TestCase):
 	def setUp(self):
 		self.session = GameSession.objects.create()

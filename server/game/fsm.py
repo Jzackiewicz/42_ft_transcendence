@@ -1,4 +1,3 @@
-from game.models import AnswerAttempt, SessionQuestion
 from statemachine import StateMachine, State
 
 
@@ -82,6 +81,9 @@ class GameStateMachine(StateMachine):
 		self._assign_next_question()
 
 	def on_submit_answer(self, answer: str | None, is_timeout: bool = False):
+		# Temporary solution for testing: this will be moved to services.py
+		from game.models import AnswerAttempt
+		
 		AnswerAttempt.objects.create(
 			session=self.model,
 			player=self.model.current_player,
@@ -94,8 +96,10 @@ class GameStateMachine(StateMachine):
 		)
 
 	def on_mark_correct(self):
-		player = self._get_current_player()
+		# To avoid circular import
+		from game.models import AnswerAttempt
 		attempt = self._get_current_attempt()
+		player = attempt.player
 
 		if self.model.last_nominated_player_id == player.id:
 			player.points += 20
@@ -112,14 +116,15 @@ class GameStateMachine(StateMachine):
 		self.model.last_correct_player = player
 
 	def on_mark_wrong(self):
-		player = self._get_current_player()
+		# To avoid circular import
+		from game.models import AnswerAttempt
 		attempt = self._get_current_attempt()
+		player = attempt.player
 
 		if player.lives > 0:
 			player.lives -= 1
 		player.answered_count += 1
 		player.save()
-
 		attempt.is_correct = False
 		attempt.evaluation_status = AnswerAttempt.EvaluationStatus.EVALUATED
 		attempt.save()

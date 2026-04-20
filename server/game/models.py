@@ -3,6 +3,7 @@ import uuid
 from django.conf import settings
 from django.db import models
 from statemachine.mixins import MachineMixin
+import game.fsm
 
 
 class GameSession(MachineMixin, models.Model):
