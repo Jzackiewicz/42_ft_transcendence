@@ -1,9 +1,3 @@
-from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from drf_spectacular.utils import extend_schema
-from django.contrib.auth import authenticate, login, logout
-
 """
 This module contains API endpoints (controllers/views).
 Each view is responsible only for:
@@ -13,6 +7,12 @@ Each view is responsible only for:
 
 No business logic or direct ORM access belongs here.
 """
+
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from drf_spectacular.utils import extend_schema
+from django.contrib.auth import authenticate, login, logout
 
 from .selectors import (
     user_get_by_id,
@@ -197,7 +197,7 @@ class UserProfileFriendDetailApi(APIView):
 # User Login/Logout endpoints
 # ---------------------------------------------------------------------------
 
-class UserLoginAPI(APIView):
+class UserLoginApi(APIView):
     permission_classes = [] #user isnt authenticated yet, so its available for everyone
 
     @extend_schema(
@@ -225,8 +225,9 @@ class UserLoginAPI(APIView):
         login(request, user)
 
         return Response(UserOutputSerializer(user).data, status=status.HTTP_200_OK)
-    
-class UserLogoutAPI(APIView):
+
+
+class UserLogoutApi(APIView):
     def post(self, request):
         logout(request)
         return Response(status=status.HTTP_204_NO_CONTENT)
