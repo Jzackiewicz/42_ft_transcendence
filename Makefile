@@ -2,7 +2,7 @@
 
 NAME = transcendence
 
-DOCKER_COMPOSE = docker-compose
+DOCKER_COMPOSE = docker compose
 DOCKER_COMPOSE_FILE = ./devops/docker-compose.yml
 
 # Default target
