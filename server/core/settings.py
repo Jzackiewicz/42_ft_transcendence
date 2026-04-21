@@ -24,12 +24,14 @@ load_dotenv(BASE_DIR / ".env")
 
 def get_secret(env_name, default=None):
     file_path = os.getenv(f"{env_name}_FILE")
-    if file_path and os.path.exists(file_path):
+    if file_path:
         try:
             with open(file_path, "r") as f:
                 return f.read().strip()
-        except OSError:
-            pass
+        except OSError as exc:
+            raise RuntimeError(
+                f"Failed to read secret file for {env_name} from {file_path!r}"
+            ) from exc
     return os.getenv(env_name, default)
 
 # SECURITY WARNING: don't run with debug turned on in production!
