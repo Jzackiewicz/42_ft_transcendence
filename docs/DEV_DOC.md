@@ -41,22 +41,7 @@ It means our code structure looks like this:
 
 Base game loop is constructed as a finite state machine (FSM) visualized as a graph below:
 
-```mermaid
-stateDiagram-v2
-    [*] --> Lobby
-
-    Lobby --> Answering : start_game
-    Answering --> Evaluation : submit_answer
-
-    Evaluation --> GameOver : mark_correct [is_game_over]
-    Evaluation --> Nomination : mark_correct
-
-    Evaluation --> GameOver : mark_wrong [is_game_over]
-    Evaluation --> Nomination : mark_wrong [has_alive_last_correct_player]
-    Evaluation --> Answering : mark_wrong
-
-    Nomination --> Answering : nominate_player
-```
+![FSM_diagram](game_state_machine.png)
 ,where:
 
 - `Lobby` – waiting for players and game start
