@@ -22,6 +22,7 @@ load_dotenv(BASE_DIR / ".env")
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
+
 def get_secret(env_name, default=None):
     file_path = os.getenv(f"{env_name}_FILE")
     if file_path and os.path.exists(file_path):
@@ -32,11 +33,17 @@ def get_secret(env_name, default=None):
             pass
     return os.getenv(env_name, default)
 
+
+def get_list_settings(env_name, default=""):
+    value = os.getenv(env_name, default)
+    return [item.strip() for item in value.split(",") if item.strip()]
+
+
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
+DEBUG = os.getenv("DEBUG", "False") == "True"
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = get_secret('DJANGO_SECRET_KEY', os.getenv('SECRET_KEY'))
+SECRET_KEY = get_secret("DJANGO_SECRET_KEY", os.getenv("SECRET_KEY"))
 if not SECRET_KEY:
     if DEBUG:
         SECRET_KEY = get_random_secret_key()
@@ -46,60 +53,62 @@ if not SECRET_KEY:
             "or DJANGO_SECRET_KEY_FILE when DEBUG is False."
         )
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = get_list_settings("ALLOWED_HOSTS", "localhost,127.0.0.1")
 
 # CSRF settings for production/Docker environment
-CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'https://localhost,https://127.0.0.1').split(',')
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+CSRF_TRUSTED_ORIGINS = get_list_settings(
+    "CSRF_TRUSTED_ORIGINS", "https://localhost,https://127.0.0.1"
+)
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    'daphne',
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'channels',
-    'rest_framework',
-    'drf_spectacular',
-    'account',
-    'game',
+    "daphne",
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "channels",
+    "rest_framework",
+    "drf_spectacular",
+    "account",
+    "game",
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = 'core.urls'
+ROOT_URLCONF = "core.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
 ]
 
-ASGI_APPLICATION = 'core.asgi.application'
+ASGI_APPLICATION = "core.asgi.application"
 
-WSGI_APPLICATION = 'core.wsgi.application'
+WSGI_APPLICATION = "core.wsgi.application"
 
 
 # Database
@@ -132,16 +141,16 @@ else:
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
@@ -149,9 +158,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "UTC"
 
 USE_I18N = True
 
@@ -161,23 +170,23 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR / 'static'
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "static"
 
 # Media files (user-uploaded content, e.g. avatars)
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
 
 # Custom user model — must be set before the first migration is run
-AUTH_USER_MODEL = 'account.User'
+AUTH_USER_MODEL = "account.User"
 
 REST_FRAMEWORK = {
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'QUIZSCENDENCE API',
-    'DESCRIPTION': 'Endpoints documentation',
-    'VERSION': '0.1',
-    'SERVE_INCLUDE_SCHEMA': False,
+    "TITLE": "QUIZSCENDENCE API",
+    "DESCRIPTION": "Endpoints documentation",
+    "VERSION": "0.1",
+    "SERVE_INCLUDE_SCHEMA": False,
 }
