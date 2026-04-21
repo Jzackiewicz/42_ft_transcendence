@@ -174,6 +174,7 @@ class UserProfileFriendListApi(APIView):
 class UserProfileFriendDetailApi(APIView):
 
     @extend_schema(
+        request=None,
         responses={204: None},
         description="Add a user as a friend.",
     )
@@ -184,6 +185,7 @@ class UserProfileFriendDetailApi(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @extend_schema(
+        request=None,
         responses={204: None},
         description="Remove a user from friends.",
     )
@@ -228,6 +230,11 @@ class UserLoginApi(APIView):
 
 
 class UserLogoutApi(APIView):
+    @extend_schema(
+        request=None,
+        responses={204: None},
+        description="Log the current user out and clear the session.",
+    )
     def post(self, request):
         logout(request)
         return Response(status=status.HTTP_204_NO_CONTENT)

@@ -56,5 +56,10 @@ class WebSocketAuthenticationTests(TransactionTestCase):
         )
         
         connected, _ = await communicator.connect()
+        self.assertTrue(connected)
         
-        self.assertFalse(connected, "Unauthenticated connection accepted.")
+        close_message = await communicator.receive_output(timeout=1)
+        self.assertEqual(close_message["type"], "websocket.close")
+        self.assertEqual(close_message.get("code"), 4001)
+
+        await communicator.disconnect()
