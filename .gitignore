@@ -3,6 +3,9 @@ venv/
 env/
 ENV/
 
+.envrc
+.direnv
+
 # secrets
 devops/secrets/*
 
