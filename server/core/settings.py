@@ -27,7 +27,17 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# In dev (DEBUG=True) we accept any  host header
+# In prod we require the list to be set in ALLOWED_HOSTS in env. 
+# If its not set in prod, request fails.
+if DEBUG:
+    ALLOWED_HOSTS = ['*']
+else:
+    ALLOWED_HOSTS = [
+        host.strip()
+        for host in os.getenv('ALLOWED_HOSTS', '').split(',')
+        if host.strip()
+    ]
 
 
 # Application definition
@@ -147,8 +157,23 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # Custom user model — must be set before the first migration is run
 AUTH_USER_MODEL = 'account.User'
 
+# Security / Session / CSRF
+# CSRF_COOKIE_HTTPONLY must stay False: the React SPA reads this cookie and
+# echoes it back as the X-CSRFToken header — that's how Django's double-submit
+# CSRF check works for JS clients. Making it HttpOnly would break every
+# authenticated POST/PATCH/DELETE from the frontend. The CSRF token is not a
+# credential, so HttpOnly would not add security either.
+# This matches Django's own default; kept explicit so reviewers don't flip it.
+CSRF_COOKIE_HTTPONLY = False
+
 REST_FRAMEWORK = {
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema', # for swagger
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication', # use django sessions to identify users
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated', # by default all users must be authenticated
+    ],
 }
 
 SPECTACULAR_SETTINGS = {

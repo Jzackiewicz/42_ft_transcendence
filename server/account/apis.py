@@ -1,38 +1,3 @@
-from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from drf_spectacular.utils import extend_schema
-
-from .selectors import (
-    get_example_data,
-    user_get_by_id,
-    user_list,
-    profile_get_by_user_id,
-    profile_list,
-    profile_list_friends,
-)
-from .serializers import (
-    GetExampleInputSerializer,
-    GetExampleOutputSerializer,
-    PostExampleInputSerializer,
-    PostExampleOutputSerializer,
-    UserRegisterInputSerializer,
-    UserOutputSerializer,
-    UserUpdateInputSerializer,
-    UserProfileOutputSerializer,
-    UserProfileAvatarInputSerializer,
-    UserProfileFriendOutputSerializer,
-)
-from .services import (
-    create_example_record,
-    user_create,
-    user_update_basic_info,
-    profile_update_avatar,
-    profile_clear_avatar,
-    profile_add_friend,
-    profile_remove_friend,
-)
-
 """
 This module contains API endpoints (controllers/views).
 Each view is responsible only for:
@@ -43,42 +8,44 @@ Each view is responsible only for:
 No business logic or direct ORM access belongs here.
 """
 
-class ExampleApi(APIView):
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from drf_spectacular.utils import extend_schema
+from django.contrib.auth import authenticate, login, logout
 
-    @extend_schema(
-        parameters=[GetExampleInputSerializer],
-        responses={200: GetExampleOutputSerializer},
-        description="Example GET endpoint to retrieve data.",
-    )
-    def get(self, request):
-        input_serializer = GetExampleInputSerializer(data=request.query_params)
-        input_serializer.is_valid(raise_exception=True)
-
-        data = get_example_data(**input_serializer.validated_data)
-
-        output_serializer = GetExampleOutputSerializer(data)
-        return Response(output_serializer.data, status=status.HTTP_200_OK)
-
-    @extend_schema(
-        request=PostExampleInputSerializer,
-        responses={201: PostExampleOutputSerializer},
-        description="Example POST endpoint to create a new record.",
-    )
-    def post(self, request):
-        input_serializer = PostExampleInputSerializer(data=request.data)
-        input_serializer.is_valid(raise_exception=True)
-
-        result = create_example_record(**input_serializer.validated_data)
-
-        output_serializer = PostExampleOutputSerializer(result)
-        return Response(output_serializer.data, status=status.HTTP_201_CREATED)
-
+from .selectors import (
+    user_get_by_id,
+    user_list,
+    profile_get_by_user_id,
+    profile_list,
+    profile_list_friends,
+)
+from .serializers import (
+    UserRegisterInputSerializer,
+    UserOutputSerializer,
+    UserUpdateInputSerializer,
+    UserProfileOutputSerializer,
+    UserProfileAvatarInputSerializer,
+    UserProfileFriendOutputSerializer,
+    UserLoginInputSerializer
+)
+from .services import (
+    user_create,
+    user_update_basic_info,
+    profile_update_avatar,
+    profile_clear_avatar,
+    profile_add_friend,
+    profile_remove_friend,
+)
 
 # ---------------------------------------------------------------------------
 # User endpoints
 # ---------------------------------------------------------------------------
 
 class UserRegisterApi(APIView):
+
+    permission_classes = []
 
     @extend_schema(
         request=UserRegisterInputSerializer,
@@ -207,6 +174,7 @@ class UserProfileFriendListApi(APIView):
 class UserProfileFriendDetailApi(APIView):
 
     @extend_schema(
+        request=None,
         responses={204: None},
         description="Add a user as a friend.",
     )
@@ -217,6 +185,7 @@ class UserProfileFriendDetailApi(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @extend_schema(
+        request=None,
         responses={204: None},
         description="Remove a user from friends.",
     )
@@ -224,4 +193,48 @@ class UserProfileFriendDetailApi(APIView):
         profile = profile_get_by_user_id(user_id=user_id)
         friend_profile = profile_get_by_user_id(user_id=friend_user_id)
         profile_remove_friend(profile=profile, friend_profile=friend_profile)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+# ---------------------------------------------------------------------------
+# User Login/Logout endpoints
+# ---------------------------------------------------------------------------
+
+class UserLoginApi(APIView):
+    permission_classes = [] #user isnt authenticated yet, so its available for everyone
+
+    @extend_schema(
+        request=UserLoginInputSerializer,
+        responses={200: UserOutputSerializer},
+        description="Login",
+    )
+    def post(self, request):
+        # validate incoming data
+        input_serializer = UserLoginInputSerializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+
+        # verify credentials, return None if wrong
+        user = authenticate(request, 
+                            username=input_serializer.validated_data["username"], 
+                            password=input_serializer.validated_data["password"])
+        
+        if user is None:
+            return Response(
+                {"detail": "Invalid credentials."},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+        
+        # mark user as logged in & remember for future requests
+        login(request, user)
+
+        return Response(UserOutputSerializer(user).data, status=status.HTTP_200_OK)
+
+
+class UserLogoutApi(APIView):
+    @extend_schema(
+        request=None,
+        responses={204: None},
+        description="Log the current user out and clear the session.",
+    )
+    def post(self, request):
+        logout(request)
         return Response(status=status.HTTP_204_NO_CONTENT)
