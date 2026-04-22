@@ -11,18 +11,17 @@ import os
 
 from django.core.asgi import get_asgi_application
 from channels.routing import ProtocolTypeRouter, URLRouter
+from channels.auth import AuthMiddlewareStack
 from channels.security.websocket import AllowedHostsOriginValidator
 
-django_asgi_app = get_asgi_application()
-
 # importing `routing` after calling `get_asgi_application` because it needs to load the settings first
-import social.routing
+django_asgi_app = get_asgi_application()
+import game.routing
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
 
-# TODO: add authentication middleware for WebSocket (JWT token)
+# TODO: add support for social module
 application = ProtocolTypeRouter({
     "http": django_asgi_app,
-    "websocket": AllowedHostsOriginValidator(
-        URLRouter(social.routing.websocket_urlpatterns)),
+    "websocket": AllowedHostsOriginValidator(AuthMiddlewareStack(URLRouter(game.routing.websocket_urlpatterns)))
 })

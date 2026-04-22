@@ -63,3 +63,11 @@ class UserProfileFriendOutputSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
         fields = ['id', 'user', 'avatar', 'is_online']
+
+# ---------------------------------------------------------------------------
+# Login serializer
+# ---------------------------------------------------------------------------
+
+class UserLoginInputSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField(write_only=True) #never appear in output

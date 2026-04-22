@@ -1,7 +1,18 @@
+"""
+This module contains API endpoints (controllers/views).
+Each view is responsible only for:
+  - Parsing and validating the incoming request
+  - Delegating to the appropriate selector (reads) or service (writes)
+  - Returning a serialized response
+
+No business logic or direct ORM access belongs here.
+"""
+
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from drf_spectacular.utils import extend_schema
+from django.contrib.auth import authenticate, login, logout
 
 from .selectors import (
     user_get_by_id,
@@ -17,6 +28,7 @@ from .serializers import (
     UserProfileOutputSerializer,
     UserProfileAvatarInputSerializer,
     UserProfileFriendOutputSerializer,
+    UserLoginInputSerializer
 )
 from .services import (
     user_create,
@@ -27,21 +39,13 @@ from .services import (
     profile_remove_friend,
 )
 
-"""
-This module contains API endpoints (controllers/views).
-Each view is responsible only for:
-  - Parsing and validating the incoming request
-  - Delegating to the appropriate selector (reads) or service (writes)
-  - Returning a serialized response
-
-No business logic or direct ORM access belongs here.
-"""
-
 # ---------------------------------------------------------------------------
 # User endpoints
 # ---------------------------------------------------------------------------
 
 class UserRegisterApi(APIView):
+
+    permission_classes = []
 
     @extend_schema(
         request=UserRegisterInputSerializer,
@@ -170,6 +174,7 @@ class UserProfileFriendListApi(APIView):
 class UserProfileFriendDetailApi(APIView):
 
     @extend_schema(
+        request=None,
         responses={204: None},
         description="Add a user as a friend.",
     )
@@ -180,6 +185,7 @@ class UserProfileFriendDetailApi(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @extend_schema(
+        request=None,
         responses={204: None},
         description="Remove a user from friends.",
     )
@@ -187,4 +193,48 @@ class UserProfileFriendDetailApi(APIView):
         profile = profile_get_by_user_id(user_id=user_id)
         friend_profile = profile_get_by_user_id(user_id=friend_user_id)
         profile_remove_friend(profile=profile, friend_profile=friend_profile)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+# ---------------------------------------------------------------------------
+# User Login/Logout endpoints
+# ---------------------------------------------------------------------------
+
+class UserLoginApi(APIView):
+    permission_classes = [] #user isnt authenticated yet, so its available for everyone
+
+    @extend_schema(
+        request=UserLoginInputSerializer,
+        responses={200: UserOutputSerializer},
+        description="Login",
+    )
+    def post(self, request):
+        # validate incoming data
+        input_serializer = UserLoginInputSerializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+
+        # verify credentials, return None if wrong
+        user = authenticate(request, 
+                            username=input_serializer.validated_data["username"], 
+                            password=input_serializer.validated_data["password"])
+        
+        if user is None:
+            return Response(
+                {"detail": "Invalid credentials."},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+        
+        # mark user as logged in & remember for future requests
+        login(request, user)
+
+        return Response(UserOutputSerializer(user).data, status=status.HTTP_200_OK)
+
+
+class UserLogoutApi(APIView):
+    @extend_schema(
+        request=None,
+        responses={204: None},
+        description="Log the current user out and clear the session.",
+    )
+    def post(self, request):
+        logout(request)
         return Response(status=status.HTTP_204_NO_CONTENT)
