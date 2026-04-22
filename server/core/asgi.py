@@ -17,11 +17,17 @@ from channels.security.websocket import AllowedHostsOriginValidator
 # importing `routing` after calling `get_asgi_application` because it needs to load the settings first
 django_asgi_app = get_asgi_application()
 import game.routing
+import social.routing
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
 
-# TODO: add support for social module
 application = ProtocolTypeRouter({
     "http": django_asgi_app,
-    "websocket": AllowedHostsOriginValidator(AuthMiddlewareStack(URLRouter(game.routing.websocket_urlpatterns)))
+    "websocket": AllowedHostsOriginValidator(
+        AuthMiddlewareStack(
+            URLRouter(
+                game.routing.websocket_urlpatterns + social.routing.websocket_urlpatterns
+            )
+        )
+    )
 })
