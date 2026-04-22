@@ -60,7 +60,12 @@ class ChatTests(TestCase):
 
 class ChatHistoryAPITests(TestCase):
 	def setUp(self):
+		from django.contrib.auth import get_user_model
+		User = get_user_model()
+		self.user = User.objects.create_user(username='testuser', password='password')
+		
 		self.client = APIClient()
+		self.client.force_authenticate(user=self.user)
 		self.room_name = "test_lobby"
 		
 		ChatMessage.objects.create(
