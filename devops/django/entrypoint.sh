@@ -2,7 +2,7 @@
 
 # Shell scripting basics: https://linuxconfig.org/bash-scripting-tutorial-for-beginners
 # Wait-for-DB pattern: https://docs.docker.com/compose/startup-order/
-# Django Deployment: https://docs.djangoproject.com/en/5.0/howto/deployment/
+# Django Deployment: https://docs.djangoproject.com/en/6.0/howto/deployment/
 
 set -e
 
