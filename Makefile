@@ -24,7 +24,7 @@ down:
 restart: down up
 
 check_clean:
-	@echo -n "Are you sure? [y/N] " && read ans && [ $${ans:-N} = y ]
+	@echo -n "Are you sure? This will delete all the data in this directory containers [y/N] " && read ans && [ $${ans:-N} = y ]
 
 # Stop the stack and remove all volumes (WARNING: deletes DB data)
 clean: check_clean
@@ -87,11 +87,14 @@ ps:
 	@echo "\n--- Dev Stack ---"
 	DB_PORT=5433 REDIS_PORT=6380 $(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) ps
 
-# Prune unused docker objects
-fclean: clean
+check_fclean:
+	@echo -n "Are you sure? This will remove all the docker objects on the system (including other directories) [y/N] " && read ans && [ $${ans:-N} = y ]
+
+# WARNING: Will prune all the docker objects on the system
+fclean: check_fclean clean
 	@echo "Deep cleaning docker system..."
 	docker system prune -a --volumes -f
 
-re: fclean up
+re: clean up
 
-.PHONY: all up down restart re clean check_clean logs ps fclean migrate dev-deps dev-migrate dev-down dev-clean dev-runserver dev-test dev-createsuperuser
+.PHONY: all up down restart re clean check_clean check_fclean logs ps fclean migrate dev-deps dev-migrate dev-down dev-clean dev-runserver dev-test dev-createsuperuser
