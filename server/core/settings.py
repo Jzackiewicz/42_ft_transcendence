@@ -77,6 +77,7 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "account",
     "game",
+    "social",
 ]
 
 MIDDLEWARE = [
@@ -106,9 +107,9 @@ TEMPLATES = [
     },
 ]
 
+WSGI_APPLICATION = "core.wsgi.application"
 ASGI_APPLICATION = "core.asgi.application"
 
-WSGI_APPLICATION = "core.wsgi.application"
 
 
 # Database
@@ -154,7 +155,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
@@ -165,7 +165,6 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
@@ -204,4 +203,13 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "Endpoints documentation",
     "VERSION": "0.1",
     "SERVE_INCLUDE_SCHEMA": False,
+}
+
+# # This is for `channel_layer.group_send()` in consumers.py.
+# # For now we handle only one process, so we handle it in RAM
+# # TODO: use redis later on
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
 }
