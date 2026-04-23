@@ -30,6 +30,19 @@ FROM nginx:1.25.5-alpine3.19
 # Copy built assets from build stage
 COPY --from=build /app/dist /usr/share/nginx/html
 
+# Configure NGINX to serve the SPA and fall back to index.html for deep links
+RUN printf '%s\n' \
+    'server {' \
+    '    listen 80;' \
+    '    server_name _;' \
+    '    root /usr/share/nginx/html;' \
+    '    index index.html;' \
+    '' \
+    '    location / {' \
+    '        try_files $uri $uri/ /index.html;' \
+    '    }' \
+    '}' > /etc/nginx/conf.d/default.conf
+
 # Default NGINX port
 EXPOSE 80
 # EXPOSE 443
