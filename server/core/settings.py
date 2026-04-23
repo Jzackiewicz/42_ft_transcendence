@@ -59,11 +59,7 @@ USE_X_FORWARDED_PORT = True
 if DEBUG:
     ALLOWED_HOSTS = ["*"]
 else:
-    ALLOWED_HOSTS = [
-        host.strip()
-        for host in os.getenv('ALLOWED_HOSTS', '').split(',')
-        if host.strip()
-    ]
+    ALLOWED_HOSTS = get_list_settings("ALLOWED_HOSTS")
 
 
 # Application definition
