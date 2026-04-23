@@ -6,9 +6,6 @@ ENV/
 .envrc
 .direnv
 
-# secrets
-devops/secrets/*
-
 # Python cache / bytecode
 __pycache__/
 *.py[cod]
