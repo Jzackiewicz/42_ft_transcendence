@@ -43,8 +43,12 @@ if not SECRET_KEY:
 
 
 # CSRF settings for production/Docker environment
+_default_origins = "https://localhost:8443,https://127.0.0.1:8443"
+if DEBUG:
+    _default_origins += ",http://localhost:8000,http://127.0.0.1:8000"
+
 CSRF_TRUSTED_ORIGINS = get_list_settings(
-    "CSRF_TRUSTED_ORIGINS", "https://localhost:8443,https://127.0.0.1:8443"
+    "CSRF_TRUSTED_ORIGINS", _default_origins
 )
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 USE_X_FORWARDED_PORT = True

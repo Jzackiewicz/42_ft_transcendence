@@ -38,9 +38,51 @@ createsuperuser:
 	@echo "Creating Django superuser..."
 	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) exec api python manage.py createsuperuser
 
+# Run migrations in production stack
+migrate:
+	@echo "Running migrations (Production)..."
+	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) exec api python manage.py migrate
+
+# Start only DB and Redis for local dev
+dev-deps:
+	@echo "Starting DB and Redis (Dev)..."
+	DB_PORT=5433 REDIS_PORT=6380 $(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p dev-transcendence up -d db redis
+
+# Run migrations locally
+dev-migrate: dev-deps
+	@echo "Running migrations locally (Dev)..."
+	cd server && DB_HOST=127.0.0.1 DB_PORT=5433 REDIS_HOST=127.0.0.1 REDIS_PORT=6380 python3 manage.py migrate
+
+# Stop only DB and Redis
+dev-down:
+	@echo "Stopping DB and Redis (Dev)..."
+	DB_PORT=5433 REDIS_PORT=6380 $(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p dev-transcendence stop db redis
+
+# Stop and wipe dev volumes (Isolated from production)
+dev-clean: check_clean
+	@echo "Cleaning dev stack..."
+	DB_PORT=5433 REDIS_PORT=6380 $(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p dev-transcendence down -v
+
+# Run Django locally
+dev-runserver: dev-deps
+	@echo "Running Django locally..."
+	cd server && DB_HOST=127.0.0.1 DB_PORT=5433 REDIS_HOST=127.0.0.1 REDIS_PORT=6380 python3 manage.py runserver
+
+# Run tests locally
+dev-test: dev-deps
+	@echo "Running tests locally..."
+	cd server && DB_HOST=127.0.0.1 DB_PORT=5433 REDIS_HOST=127.0.0.1 REDIS_PORT=6380 python3 manage.py test
+
+# Create superuser locally
+dev-createsuperuser: dev-deps
+	@echo "Creating superuser locally..."
+	cd server && DB_HOST=127.0.0.1 DB_PORT=5433 REDIS_HOST=127.0.0.1 REDIS_PORT=6380 python3 manage.py createsuperuser
+
 # Check container status
 ps:
 	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) ps
+	@echo "--- Dev Stack ---"
+	DB_PORT=5433 REDIS_PORT=6380 $(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p dev-transcendence ps
 
 # Prune unused docker objects
 fclean: clean
@@ -49,4 +91,4 @@ fclean: clean
 
 re: fclean up
 
-.PHONY: all up down restart re clean check_clean logs ps fclean
+.PHONY: all up down restart re clean check_clean logs ps fclean migrate dev-deps dev-migrate dev-down dev-clean dev-runserver dev-test dev-createsuperuser

@@ -9,12 +9,16 @@ services:
       - postgres_data:/var/lib/postgresql/data
     env_file:
       - ../.env
+    ports:
+      - "${DB_PORT:-5432}:5432"
     networks:
       - backend
     restart: always
 
   redis:
     image: redis:7.2.4-alpine3.19
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
     networks:
       - backend
     restart: always
