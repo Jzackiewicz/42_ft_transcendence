@@ -6,7 +6,7 @@
 
 - **Frontend**: Created `client/` directory with a dummy React + Vite + TypeScript setup.
 - **Backend**: Verified `server/` readiness and integrated it with the container environment.
-- **Secrets**: Initialized `devops/secrets/` with mandatory `.txt` files for sensitive data, moving away from plain `.env` for production-grade security.
+- **Configuration**: Migrated from individual Docker secret files to a unified `.env` at the root for easier local development and management.
 
 ### 2. Containerization (Dockerfiles)
 
@@ -26,7 +26,7 @@
 
 - **Services**: `db` (Postgres 15), `redis` (v7), `api`, `web`, `proxy`.
 - **Networking**: Isolated `frontend` and `backend` bridges.
-- **Secrets**: Native Docker secrets mounted at `/run/secrets/` for `DB_PASSWORD`, `DJANGO_SECRET_KEY`, and `LLM_API_KEY`.
+- **Environment**: Unified `.env` file loaded via `env_file` directive for all relevant services.
 - **Volumes**: Persistent storage for Postgres data, Django media (avatars), and shared static files.
 
 ### 4. Automation & Documentation
