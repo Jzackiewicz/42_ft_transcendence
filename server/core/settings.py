@@ -17,23 +17,10 @@ from django.core.management.utils import get_random_secret_key
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-load_dotenv(BASE_DIR / ".env")
+load_dotenv(BASE_DIR.parent / ".env")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
-
-
-def get_secret(env_name, default=None):
-    file_path = os.getenv(f"{env_name}_FILE")
-    if file_path:
-        try:
-            with open(file_path, "r") as f:
-                return f.read().strip()
-        except OSError as exc:
-            raise RuntimeError(
-                f"Failed to read secret file for {env_name} from {file_path!r}"
-            ) from exc
-    return os.getenv(env_name, default)
 
 
 def get_list_settings(env_name, default=""):
@@ -45,14 +32,13 @@ def get_list_settings(env_name, default=""):
 DEBUG = os.getenv("DEBUG", "False") == "True"
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = get_secret("DJANGO_SECRET_KEY", os.getenv("SECRET_KEY"))
+SECRET_KEY = os.getenv("SECRET_KEY", os.getenv("DJANGO_SECRET_KEY"))
 if not SECRET_KEY:
     if DEBUG:
         SECRET_KEY = get_random_secret_key()
     else:
         raise RuntimeError(
-            "Missing Django secret key. Set DJANGO_SECRET_KEY, SECRET_KEY, "
-            "or DJANGO_SECRET_KEY_FILE when DEBUG is False."
+            "Missing Django secret key. Set SECRET_KEY or DJANGO_SECRET_KEY in .env when DEBUG is False."
         )
 
 ALLOWED_HOSTS = get_list_settings("ALLOWED_HOSTS", "localhost,127.0.0.1")
@@ -124,7 +110,7 @@ if USE_POSTGRES:
             "ENGINE": "django.db.backends.postgresql",
             "NAME": os.getenv("DB_NAME", "quizdb"),
             "USER": os.getenv("DB_USER", "quizuser"),
-            "PASSWORD": get_secret("DB_PASSWORD"),
+            "PASSWORD": os.getenv("DB_PASSWORD"),
             "HOST": os.getenv("DB_HOST", "db"),
             "PORT": os.getenv("DB_PORT", "5432"),
         }
