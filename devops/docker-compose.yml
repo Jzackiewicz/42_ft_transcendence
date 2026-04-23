@@ -1,5 +1,5 @@
+# Quizscendence Orchestration
 # Compose Reference: https://docs.docker.com/compose/compose-file/
-# Secrets Management: https://docs.docker.com/compose/use-secrets/
 # Networking Guide: https://docs.docker.com/compose/networking/
 
 services:
@@ -7,12 +7,8 @@ services:
     image: postgres:15.6-alpine3.19
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_DB=${POSTGRES_DB:-quizdb}
-      - POSTGRES_USER=${POSTGRES_USER:-quizuser}
-      - POSTGRES_PASSWORD_FILE=/run/secrets/db_password
-    secrets:
-      - db_password
+    env_file:
+      - ../.env
     networks:
       - backend
     restart: always
@@ -31,15 +27,7 @@ services:
       - media_data:/app/media
       - static_data:/app/static
     env_file:
-      - ./secrets/common.env
-    environment:
-      - DB_PASSWORD_FILE=/run/secrets/db_password
-      - DJANGO_SECRET_KEY_FILE=/run/secrets/django_secret_key
-      - LLM_API_KEY_FILE=/run/secrets/llm_api_key
-    secrets:
-      - db_password
-      - django_secret_key
-      - llm_api_key
+      - ../.env
     depends_on:
       - db
       - redis
@@ -81,11 +69,3 @@ volumes:
   postgres_data:
   static_data:
   media_data:
-
-secrets:
-  db_password:
-    file: ./secrets/db_password.txt
-  django_secret_key:
-    file: ./secrets/django_secret_key.txt
-  llm_api_key:
-    file: ./secrets/llm_api_key.txt
