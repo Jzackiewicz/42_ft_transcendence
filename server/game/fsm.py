@@ -25,10 +25,13 @@ class GameStateMachine(StateMachine):
 
 	# Guards
 	def has_alive_last_correct_player(self):
-		return (
-			self.model.last_correct_player is not None
-			and self.model.last_correct_player.lives > 0
-		)
+		if self.model.last_correct_player_id is None:
+			return False
+
+		return self.model.session_players.filter(
+			id=self.model.last_correct_player_id,
+			lives__gt=0,
+		).exists()
 
 	def is_game_over(self):
 		alive_players = self.model.session_players.filter(lives__gt=0).count()
@@ -62,17 +65,6 @@ class GameStateMachine(StateMachine):
 				return player
 
 		return alive_players[0]
-
-	def _get_current_player(self):
-		return self.model.current_player
-
-	def _get_pending_attempt(self):
-		return (
-			self.model.answer_attempts
-			.filter(evaluation_status="pending")
-			.order_by("-id")
-			.first()
-		)
 	
 	# Callbacks
 	def on_start_game(self, starting_player_id: int):
@@ -83,31 +75,8 @@ class GameStateMachine(StateMachine):
 		self.model.last_nominated_player = None
 		self._assign_next_question()
 
-	def on_submit_answer(self, answer: str | None, is_timeout: bool = False):
-		# Temporary solution for testing: this will be moved to services.py
-		if self.model.current_player is None:
-			raise ValueError("Cannot submit answer without current player")
-
-		if self.model.current_question is None:
-			raise ValueError("Cannot submit answer without current question")
-		
-		from game.models import AnswerAttempt
-		
-		AnswerAttempt.objects.create(
-			session=self.model,
-			player=self.model.current_player,
-			session_question=self.model.current_question,
-			answer_text=answer,
-			is_timeout=is_timeout,
-			is_correct=None,
-			evaluation_status=AnswerAttempt.EvaluationStatus.PENDING,
-			answer_time_ms=0,
-		)
-
 	def on_mark_correct(self):
-		# To avoid circular import
-		from game.models import AnswerAttempt
-		attempt = self._get_pending_attempt()
+		attempt = self.model.current_attempt
 		if attempt is None:
 			raise ValueError("No pending attempt to mark as correct")
 
@@ -120,17 +89,10 @@ class GameStateMachine(StateMachine):
 
 		player.answered_count += 1
 		player.save()
-
-		attempt.is_correct = True
-		attempt.evaluation_status = AnswerAttempt.EvaluationStatus.EVALUATED
-		attempt.save()
-
 		self.model.last_correct_player = player
 
 	def on_mark_wrong(self):
-		# To avoid circular import
-		from game.models import AnswerAttempt
-		attempt = self._get_pending_attempt()
+		attempt = self.model.current_attempt
 		if attempt is None:
 			raise ValueError("No pending attempt to mark as correct")
 
@@ -140,9 +102,6 @@ class GameStateMachine(StateMachine):
 			player.lives -= 1
 		player.answered_count += 1
 		player.save()
-		attempt.is_correct = False
-		attempt.evaluation_status = AnswerAttempt.EvaluationStatus.EVALUATED
-		attempt.save()
 
 	def on_no_last_correct_player_fallback(self):
 		next_player = self._get_next_alive_player(self.model.current_player)

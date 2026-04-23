@@ -59,6 +59,14 @@ class GameSession(MachineMixin, models.Model):
 		related_name="+",
 	)
 
+	current_attempt = models.ForeignKey(
+		"AnswerAttempt",
+		null=True,
+		blank=True,
+		on_delete=models.SET_NULL,
+		related_name="+",
+	)
+
 	winner = models.ForeignKey(
 		"SessionPlayer",
 		null=True,
@@ -79,6 +87,10 @@ class GameSession(MachineMixin, models.Model):
 	created_at = models.DateTimeField(auto_now_add=True)
 	started_at = models.DateTimeField(null=True, blank=True)
 	ended_at = models.DateTimeField(null=True, blank=True)
+
+
+	answer_time_limit_ms = models.PositiveIntegerField(default=20000)
+	# starting_lives = models.PositiveIntegerField(default=3)
 
 	state_machine_name = "game.fsm.GameStateMachine"
 	state_machine_attr = "fsm"
@@ -218,6 +230,7 @@ class AnswerAttempt(models.Model):
 	answer_time_ms = models.PositiveIntegerField(default=0)
 
 	created_at = models.DateTimeField(auto_now_add=True)
+	started_at = models.DateTimeField(null=True, blank=True)
 	evaluated_at = models.DateTimeField(null=True, blank=True)
 
 	class Meta:
