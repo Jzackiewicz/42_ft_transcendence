@@ -36,6 +36,7 @@ db.sqlite3
 *.sqlite3
 media/
 staticfiles/
+static/
 
 # Environment / secrets
 .env
