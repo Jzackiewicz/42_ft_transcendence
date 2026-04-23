@@ -1,7 +1,7 @@
 # Dockerfile Reference: https://docs.docker.com/engine/reference/builder/
 # Python Base Image: https://hub.docker.com/_/python
-# Django Deployment Guide: https://docs.djangoproject.com/en/5.0/howto/deployment/
-# Daphne ASGI Server: https://docs.djangoproject.com/en/5.0/howto/deployment/asgi/daphne/
+# Django Deployment Guide: https://docs.djangoproject.com/en/6.0/howto/deployment/
+# Daphne ASGI Server: https://docs.djangoproject.com/en/6.0/howto/deployment/asgi/daphne/
 
 FROM python:3.13.1-slim
 
