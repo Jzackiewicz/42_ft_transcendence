@@ -3,9 +3,9 @@ from django.urls import path
 from account import apis
 
 urlpatterns = [
-    # Example endpoint
-    path('example/', apis.ExampleApi.as_view(), name='account-example'),
-
+    # login/logout endpoints
+    path('users/login/', apis.UserLoginApi.as_view(), name='user-login'),
+    path('users/logout/', apis.UserLogoutApi.as_view(), name='user-logout'),
     # User endpoints
     path('users/register/', apis.UserRegisterApi.as_view(), name='user-register'),
     path('users/', apis.UserListApi.as_view(), name='user-list'),
