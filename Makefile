@@ -4,19 +4,21 @@ NAME = transcendence
 
 DOCKER_COMPOSE = docker compose
 DOCKER_COMPOSE_FILE = ./devops/docker-compose.yml
+PROD_PROJECT = prod-transcendence
+DEV_PROJECT = dev-transcendence
 
 # Default target
 all: up
 
 # Build and start the stack in detached mode
 up:
-	@echo "Starting the stack..."
-	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) up -d --build
+	@echo "Starting the stack (Production)..."
+	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(PROD_PROJECT) up -d --build
 
 # Stop the stack
 down:
-	@echo "Stopping the stack..."
-	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) down
+	@echo "Stopping the stack (Production)..."
+	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(PROD_PROJECT) down
 
 # Restart the stack
 restart: down up
@@ -26,27 +28,27 @@ check_clean:
 
 # Stop the stack and remove all volumes (WARNING: deletes DB data)
 clean: check_clean
-	@echo "Cleaning the stack (removing volumes)..."
-	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) down -v
+	@echo "Cleaning the stack (Production)..."
+	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(PROD_PROJECT) down -v
 
 # Show logs
 logs:
-	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) logs -f
+	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(PROD_PROJECT) logs -f
 
 # Create Django Superuser (for admin panel)
 createsuperuser:
-	@echo "Creating Django superuser..."
-	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) exec api python manage.py createsuperuser
+	@echo "Creating Django superuser (Production)..."
+	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(PROD_PROJECT) exec api python manage.py createsuperuser
 
 # Run migrations in production stack
 migrate:
 	@echo "Running migrations (Production)..."
-	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) exec api python manage.py migrate
+	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(PROD_PROJECT) exec api python manage.py migrate
 
 # Start only DB and Redis for local dev
 dev-deps:
 	@echo "Starting DB and Redis (Dev)..."
-	DB_PORT=5433 REDIS_PORT=6380 $(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p dev-transcendence up -d db redis
+	DB_PORT=5433 REDIS_PORT=6380 $(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) up -d db redis
 
 # Run migrations locally
 dev-migrate: dev-deps
@@ -56,12 +58,12 @@ dev-migrate: dev-deps
 # Stop only DB and Redis
 dev-down:
 	@echo "Stopping DB and Redis (Dev)..."
-	DB_PORT=5433 REDIS_PORT=6380 $(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p dev-transcendence stop db redis
+	DB_PORT=5433 REDIS_PORT=6380 $(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) stop db redis
 
 # Stop and wipe dev volumes (Isolated from production)
 dev-clean: check_clean
 	@echo "Cleaning dev stack..."
-	DB_PORT=5433 REDIS_PORT=6380 $(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p dev-transcendence down -v
+	DB_PORT=5433 REDIS_PORT=6380 $(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) down -v
 
 # Run Django locally
 dev-runserver: dev-deps
@@ -80,9 +82,10 @@ dev-createsuperuser: dev-deps
 
 # Check container status
 ps:
-	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) ps
-	@echo "--- Dev Stack ---"
-	DB_PORT=5433 REDIS_PORT=6380 $(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p dev-transcendence ps
+	@echo "--- Production Stack ---"
+	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(PROD_PROJECT) ps
+	@echo "\n--- Dev Stack ---"
+	DB_PORT=5433 REDIS_PORT=6380 $(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) ps
 
 # Prune unused docker objects
 fclean: clean

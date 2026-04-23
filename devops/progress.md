@@ -29,7 +29,19 @@
 - **Environment**: Unified `.env` file loaded via `env_file` directive for all relevant services.
 - **Volumes**: Persistent storage for Postgres data, Django media (avatars), and shared static files.
 
-### 4. Automation & Documentation
+### 4. Local Development Environment
+
+- **Isolation**: Implemented dedicated development stack using Docker project name `dev-transcendence` to isolate volumes and containers from production.
+- **Port Management**: Configured variable-based host port mapping to avoid collisions. Dev stack uses `5433` (DB) and `6380` (Redis).
+- **Makefile Automation**:
+  - `make dev-deps`: Start isolated DB and Redis.
+  - `make dev-migrate`: Run Django migrations against dev DB.
+  - `make dev-runserver`: Start Django locally with dev environment overrides.
+  - `make dev-test`: Execute tests against isolated dev stack.
+  - `make dev-createsuperuser`: Manage local admin accounts.
+  - `make dev-down` / `make dev-clean`: Stop or wipe dev environment without affecting production data.
+
+### 5. Automation & Documentation
 
 - **Makefile Commands**:
   - `make up`: Build and start stack detached.
