@@ -44,9 +44,10 @@ if not SECRET_KEY:
 
 # CSRF settings for production/Docker environment
 CSRF_TRUSTED_ORIGINS = get_list_settings(
-    "CSRF_TRUSTED_ORIGINS", "https://localhost,https://127.0.0.1"
+    "CSRF_TRUSTED_ORIGINS", "https://localhost:8443,https://127.0.0.1:8443"
 )
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+USE_X_FORWARDED_PORT = True
 
 # In dev (DEBUG=True) we accept any  host header
 # In prod we require the list to be set in ALLOWED_HOSTS in env.
