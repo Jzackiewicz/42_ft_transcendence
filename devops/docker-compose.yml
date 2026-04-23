@@ -1,0 +1,75 @@
+# Quizscendence Orchestration
+# Compose Reference: https://docs.docker.com/compose/compose-file/
+# Networking Guide: https://docs.docker.com/compose/networking/
+
+services:
+  db:
+    image: postgres:15.6-alpine3.19
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    env_file:
+      - ../.env
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    networks:
+      - backend
+    restart: always
+
+  redis:
+    image: redis:7.2.4-alpine3.19
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    networks:
+      - backend
+    restart: always
+
+  api:
+    build:
+      context: ..
+      dockerfile: devops/django/Dockerfile
+    volumes:
+      - media_data:/app/media
+      - static_data:/app/static
+    env_file:
+      - ../.env
+    depends_on:
+      - db
+      - redis
+    networks:
+      - backend
+    restart: always
+
+  web:
+    build:
+      context: ..
+      dockerfile: devops/react/Dockerfile
+    networks:
+      - frontend
+    restart: always
+
+  proxy:
+    build:
+      context: ..
+      dockerfile: devops/nginx/Dockerfile
+    ports:
+      - "8080:80"
+      - "8443:443"
+    volumes:
+      - static_data:/app/static:ro
+      - media_data:/app/media:ro
+    depends_on:
+      - api
+      - web
+    networks:
+      - frontend
+      - backend
+    restart: always
+
+networks:
+  frontend:
+  backend:
+
+volumes:
+  postgres_data:
+  static_data:
+  media_data:

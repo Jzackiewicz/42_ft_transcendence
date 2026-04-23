@@ -3,6 +3,9 @@ venv/
 env/
 ENV/
 
+.envrc
+.direnv
+
 # Python cache / bytecode
 __pycache__/
 *.py[cod]
@@ -33,6 +36,7 @@ db.sqlite3
 *.sqlite3
 media/
 staticfiles/
+static/
 
 # Environment / secrets
 .env
@@ -51,4 +55,5 @@ logs/
 # OS files
 .DS_Store
 Thumbs.db
+
 cookies.txt
