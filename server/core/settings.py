@@ -49,10 +49,10 @@ CSRF_TRUSTED_ORIGINS = get_list_settings(
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 # In dev (DEBUG=True) we accept any  host header
-# In prod we require the list to be set in ALLOWED_HOSTS in env. 
+# In prod we require the list to be set in ALLOWED_HOSTS in env.
 # If its not set in prod, request fails.
 if DEBUG:
-    ALLOWED_HOSTS = ['*']
+    ALLOWED_HOSTS = ["*"]
 else:
     ALLOWED_HOSTS = get_list_settings("ALLOWED_HOSTS")
 
@@ -185,12 +185,12 @@ AUTH_USER_MODEL = "account.User"
 CSRF_COOKIE_HTTPONLY = False
 
 REST_FRAMEWORK = {
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema', # for swagger
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication', # use django sessions to identify users
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",  # for swagger
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.SessionAuthentication",  # use django sessions to identify users
     ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated', # by default all users must be authenticated
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",  # by default all users must be authenticated
     ],
 }
 
