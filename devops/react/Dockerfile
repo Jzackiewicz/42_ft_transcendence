@@ -11,6 +11,7 @@ WORKDIR /app
 COPY client/package*.json ./
 
 # Install dependencies
+# TODO: Later change to npm ci when packagelock.json exists (frontend is started)
 RUN npm install
 
 # Copy source
