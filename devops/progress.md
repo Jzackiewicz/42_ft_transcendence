@@ -50,7 +50,6 @@
 - **Build Context**: Adjusted `docker-compose.yml` to use `context: ..` so Dockerfiles in `devops/` can access source code in root subdirectories.
 - **Secret Formatting**: Fixed `OperationalError` by removing comments from `.txt` secret files (Postgres/Django read raw file content).
 - **Django Settings**:
-  - Implemented `get_secret()` helper in `settings.py` to bridge Docker secrets and environment variables.
   - Configured `STATIC_ROOT` to fix `ImproperlyConfigured` error during container startup.
   - Added `CSRF_TRUSTED_ORIGINS` and `SECURE_PROXY_SSL_HEADER` to fix **Forbidden (403)** error when logging into admin panel.
 - **Nginx Routing**:
