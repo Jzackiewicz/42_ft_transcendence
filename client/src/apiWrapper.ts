@@ -1,4 +1,5 @@
-const BASE = ''//import.meta.env.VITE_API_URL
+const BASE = '' // for now leave empty
+// const BASE = import.meta.env.VITE_API_URL
 
 function getCsrfToken(): string {
   const cookie = document.cookie.split('; ').find(row => row.startsWith('csrftoken='))
@@ -60,4 +61,14 @@ export async function getUser(userId: number) {
         throw new Error(JSON.stringify(err))
     }
     return res.json()
+}
+
+// ws: — plain WebSocket (like http://)
+// wss: — secure WebSocket (like https://)
+export function connectGameSocket(): WebSocket {
+  return new WebSocket(`ws://localhost:5173/ws/game/`)
+}
+
+export function connectChatSocket(roomName: string): WebSocket {
+  return new WebSocket(`ws://localhost:5173/ws/chat/${roomName}/`)
 }
