@@ -69,6 +69,10 @@ dev-clean: check_clean
 	@echo "Cleaning dev stack..."
 	DB_PORT=5433 REDIS_PORT=6380 $(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) down -v
 
+# Show logs for dev stack
+dev-logs:
+	DB_PORT=5433 REDIS_PORT=6380 $(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) logs -f
+
 # Run Django locally
 dev-runserver: dev-up
 	@echo "Running Django locally..."
@@ -101,4 +105,4 @@ fclean: check_fclean clean
 
 re: clean up
 
-.PHONY: all up down restart re clean check_clean check_fclean logs ps fclean migrate dev-up dev-migrate dev-down dev-clean dev-runserver dev-test dev-createsuperuser dev-shell
+.PHONY: all up down restart re clean check_clean check_fclean logs dev-logs ps fclean migrate dev-up dev-migrate dev-down dev-clean dev-runserver dev-test dev-createsuperuser dev-shell
