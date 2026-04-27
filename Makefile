@@ -46,12 +46,12 @@ migrate:
 	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(PROD_PROJECT) exec api python manage.py migrate
 
 # Start only DB and Redis for local dev
-dev-deps:
+dev-up:
 	@echo "Starting DB and Redis (Dev)..."
 	DB_PORT=5433 REDIS_PORT=6380 $(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) up -d db redis
 
 # Run migrations locally
-dev-migrate: dev-deps
+dev-migrate: dev-up
 	@echo "Running migrations locally (Dev)..."
 	cd server && DB_HOST=127.0.0.1 DB_PORT=5433 REDIS_HOST=127.0.0.1 REDIS_PORT=6380 python3 manage.py migrate
 
@@ -66,17 +66,17 @@ dev-clean: check_clean
 	DB_PORT=5433 REDIS_PORT=6380 $(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) down -v
 
 # Run Django locally
-dev-runserver: dev-deps
+dev-runserver: dev-up
 	@echo "Running Django locally..."
 	cd server && DB_HOST=127.0.0.1 DB_PORT=5433 REDIS_HOST=127.0.0.1 REDIS_PORT=6380 python3 manage.py runserver
 
 # Run tests locally
-dev-test: dev-deps
+dev-test: dev-up
 	@echo "Running tests locally..."
 	cd server && DB_HOST=127.0.0.1 DB_PORT=5433 REDIS_HOST=127.0.0.1 REDIS_PORT=6380 python3 manage.py test
 
 # Create superuser locally
-dev-createsuperuser: dev-deps
+dev-createsuperuser: dev-up
 	@echo "Creating superuser locally..."
 	cd server && DB_HOST=127.0.0.1 DB_PORT=5433 REDIS_HOST=127.0.0.1 REDIS_PORT=6380 python3 manage.py createsuperuser
 
@@ -97,4 +97,4 @@ fclean: check_fclean clean
 
 re: clean up
 
-.PHONY: all up down restart re clean check_clean check_fclean logs ps fclean migrate dev-deps dev-migrate dev-down dev-clean dev-runserver dev-test dev-createsuperuser
+.PHONY: all up down restart re clean check_clean check_fclean logs ps fclean migrate dev-up dev-migrate dev-down dev-clean dev-runserver dev-test dev-createsuperuser
