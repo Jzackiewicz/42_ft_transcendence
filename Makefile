@@ -50,6 +50,10 @@ dev-up:
 	@echo "Starting DB and Redis (Dev)..."
 	DB_PORT=5433 REDIS_PORT=6380 $(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) up -d db redis
 
+dev-shell: dev-up
+	@echo "Opening Django shell locally..."
+	cd server && DB_HOST=127.0.0.1 DB_PORT=5433 REDIS_HOST=127.0.0.1 REDIS_PORT=6380 python3 manage.py shell
+
 # Run migrations locally
 dev-migrate: dev-up
 	@echo "Running migrations locally (Dev)..."
@@ -97,4 +101,4 @@ fclean: check_fclean clean
 
 re: clean up
 
-.PHONY: all up down restart re clean check_clean check_fclean logs ps fclean migrate dev-up dev-migrate dev-down dev-clean dev-runserver dev-test dev-createsuperuser
+.PHONY: all up down restart re clean check_clean check_fclean logs ps fclean migrate dev-up dev-migrate dev-down dev-clean dev-runserver dev-test dev-createsuperuser dev-shell
