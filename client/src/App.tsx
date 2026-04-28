@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { login, logout, register, getUser, initCsrf, connectGameSocket } from './apiWrapper'
+import { useState, useEffect, useRef } from 'react'
+import { login, logout, register, getUser, initCsrf, connectGameSocket, connectChatSocket } from './apiWrapper'
 
 enum ApiFeatureName {
   Register = 'register',
@@ -7,17 +7,24 @@ enum ApiFeatureName {
   GetUserById = 'getUserById',
   ConnectGameSocket = 'connectGameSocket',
   Logout = 'logout',
+  ChatSocket = 'chatSocket'
 }
 
 function App() {
+
   const [featureName, setFeatureName] = useState('')
   //       ^value       ^setter          ^initial value
 
-  const [result, setResult] = useState('')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [userId, setUserId] = useState('')
   const [email, setEmail] = useState('')
+  const [result, setResult] = useState('')
+
+  const [chatMessage, setChatMessage] = useState('')
+  const [roomName, setRoomName] = useState('')
+  const [chatLog, setchatLog] = useState<string[]>([])
+  const socketRef = useRef<WebSocket | null>(null)
 
   // Init CSRF cookie for Django once on page load,
   //  required for all POST requests
@@ -26,6 +33,14 @@ function App() {
   // useEffect runs code after the component renders 
   // The [] at the end means run only once — when the component first appears on the page
   useEffect(() => { initCsrf() }, [])
+
+  function handleSendMessage(message: string) {
+    if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+      socketRef.current.send(JSON.stringify({message: message}))
+    } else {
+      setResult('message test isnt ready yet')
+    }
+  }
 
   async function handleAction(actionName: string) {
     console.log(`Action run: ${actionName}`)
@@ -54,6 +69,19 @@ function App() {
         const logoutRes = await logout()
         setResult(JSON.stringify(logoutRes, null, 2))
         break
+      case ApiFeatureName.ChatSocket:
+        if (socketRef.current) {
+          socketRef.current.close()
+        }
+        socketRef.current = connectChatSocket(roomName)
+        socketRef.current.onopen = () => console.log('Chat socket opened')
+        socketRef.current.onmessage = (msg) => {
+          console.log('message received:', msg.data)
+          setchatLog(prev => [...prev, msg.data])
+        }
+        socketRef.current.onerror = (err) => console.error('Chat socket error:', err)
+        // setResult('messsage sent is ' + chatLog)
+        break
       default:
         setResult('Please select an action and fill in the required fields.')
         break
@@ -69,6 +97,7 @@ function App() {
         <option value={ApiFeatureName.GetUserById}>Get user by id</option>
         <option value={ApiFeatureName.ConnectGameSocket}>Try Game Socket</option>
         <option value={ApiFeatureName.Logout}>Logout</option>
+        <option value={ApiFeatureName.ChatSocket}>Try Chat Socket</option>
       </select>
       {(featureName === ApiFeatureName.Register || featureName === ApiFeatureName.Login) && (
         <div>
@@ -82,6 +111,17 @@ function App() {
       {featureName === ApiFeatureName.GetUserById && (
         <div>
           <input placeholder="user id" onChange={e => setUserId(e.target.value)} />
+        </div>
+      )}
+
+      {featureName === ApiFeatureName.ChatSocket && (
+        <div>
+          <input placeholder="room name" onChange={e => setRoomName(e.target.value)} />
+          <input placeholder="your message" onChange={e => setChatMessage(e.target.value)} />
+          <button onClick= {() => handleSendMessage(chatMessage)}> Send Message </button>
+          <ul> 
+            {chatLog.map((msg, index) => <li key={index}>{msg}</li>)}
+          </ul>
         </div>
       )}
 
