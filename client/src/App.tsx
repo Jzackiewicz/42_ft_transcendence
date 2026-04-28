@@ -1,9 +1,16 @@
 import { useState, useEffect } from 'react'
-import { login, register, getUser, initCsrf } from './apiWrapper'
+import { login, logout, register, getUser, initCsrf, connectGameSocket } from './apiWrapper'
 
+enum ApiFeatureName {
+  Register = 'register',
+  Login = 'login',
+  GetUserById = 'getUserById',
+  ConnectGameSocket = 'connectGameSocket',
+  Logout = 'logout',
+}
 
 function App() {
-  const [actionName, setActionName] = useState('')
+  const [featureName, setFeatureName] = useState('')
   //       ^value       ^setter          ^initial value
 
   const [result, setResult] = useState('')
@@ -24,17 +31,28 @@ function App() {
     console.log(`Action run: ${actionName}`)
 
     switch (actionName) {
-      case 'register':
+      case ApiFeatureName.Register:
         const regRes = await register(username, email, password)
         setResult(JSON.stringify(regRes, null, 2))
         break
-      case 'login':
+      case ApiFeatureName.Login:
         const logRes = await login(username, email, password)
         setResult(JSON.stringify(logRes, null, 2))
         break
-      case 'getUserById':
+      case ApiFeatureName.GetUserById:
         const user = await getUser(Number(userId))
         setResult(JSON.stringify(user, null, 2))
+        break
+      case ApiFeatureName.ConnectGameSocket:
+        const gameSocket = connectGameSocket()
+        gameSocket.onopen = () => console.log('Game socket opened')
+        gameSocket.onmessage = (msg) => console.log('Game socket message:', msg.data)
+        gameSocket.onerror = (err) => console.error('Game socket error:', err)
+        setResult(JSON.stringify(gameSocket, null, 2))
+        break
+      case ApiFeatureName.Logout:
+        const logoutRes = await logout()
+        setResult(JSON.stringify(logoutRes, null, 2))
         break
       default:
         setResult('Please select an action and fill in the required fields.')
@@ -45,13 +63,14 @@ function App() {
   return (
     <div className="App">
       <h1>Quizscendence</h1>
-      <select onChange={e => setActionName(e.target.value)}>
-        <option value="">-- select action --</option>
-        <option value="register">Register</option>
-        <option value="login">Login</option>
-        <option value="getUserById">Get user by id</option>
+      <select onChange={e => setFeatureName(e.target.value)}>
+        <option value={ApiFeatureName.Register}>Register</option>
+        <option value={ApiFeatureName.Login}>Login</option>
+        <option value={ApiFeatureName.GetUserById}>Get user by id</option>
+        <option value={ApiFeatureName.ConnectGameSocket}>Try Game Socket</option>
+        <option value={ApiFeatureName.Logout}>Logout</option>
       </select>
-      {(actionName === 'login' || actionName === 'register') && (
+      {(featureName === ApiFeatureName.Register || featureName === ApiFeatureName.Login) && (
         <div>
           <input placeholder="username" onChange={e => setUsername(e.target.value)} />
           <input placeholder="password" type="password" onChange={e => setPassword(e.target.value)} />
@@ -59,14 +78,16 @@ function App() {
         </div>
       )}
 
-      {actionName === 'getUserById' && (
+
+      {featureName === ApiFeatureName.GetUserById && (
         <div>
           <input placeholder="user id" onChange={e => setUserId(e.target.value)} />
         </div>
       )}
 
+
       {/* we use:  () => func() - to make func work onlcick */}
-      <button onClick={() => handleAction(actionName)}>Run</button>
+      <button onClick={() => handleAction(featureName)}>Run</button>
       <pre>{result}</pre>
     </div>
 

@@ -20,6 +20,12 @@ export default defineConfig({
         secure: false,
         changeOrigin: true,
       },
+      '/ws': {
+        target: 'wss://localhost:8443',
+        ws: true,
+        secure: false,
+        changeOrigin: true,
+      },
     }
 
   }
