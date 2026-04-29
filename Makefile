@@ -45,8 +45,17 @@ migrate:
 	@echo "Running migrations (Production)..."
 	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(PROD_PROJECT) exec api python manage.py migrate
 
+# Create and setup virtual environment
+dev-venv:
+	@if [ ! -d ".venv" ]; then \
+		echo "Creating virtual environment..."; \
+		python3 -m venv .venv; \
+	fi
+	@echo "Installing/Updating requirements..."
+	@. .venv/bin/activate && pip install --upgrade pip && pip install -r server/requirements.txt
+
 # Start only DB and Redis for local dev
-dev-up:
+dev-up: dev-venv
 	@echo "Starting DB and Redis (Dev)..."
 	DB_PORT=5433 REDIS_PORT=6380 $(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) up -d db redis
 
@@ -105,4 +114,4 @@ fclean: check_fclean clean
 
 re: clean up
 
-.PHONY: all up down restart re clean check_clean check_fclean logs dev-logs ps fclean migrate dev-up dev-migrate dev-down dev-clean dev-runserver dev-test dev-createsuperuser dev-shell
+.PHONY: all up down restart re clean check_clean check_fclean logs dev-logs ps fclean migrate dev-up dev-migrate dev-down dev-clean dev-runserver dev-test dev-createsuperuser dev-shell dev-venv
