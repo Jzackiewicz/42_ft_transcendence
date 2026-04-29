@@ -102,6 +102,19 @@ class GameSession(MachineMixin, models.Model):
 	def __str__(self) -> str:
 		return f"GameSession<{self.id}> status={self.current_status}"
 
+	def has_last_correct_player_alive(self) -> bool:
+		if self.last_correct_player_id is None:
+			return False
+
+		return self.session_players.filter(
+			id=self.last_correct_player_id,
+			lives__gt=0,
+		).exists()
+	
+	def is_game_over(self) -> bool:
+		alive_players = self.session_players.filter(lives__gt=0).count()
+		questions_exhausted = self.question_asked_count >= self.session_questions.count()
+		return alive_players <= 1 or questions_exhausted
 
 class SessionPlayer(models.Model):
 	class PlayerType(models.TextChoices):
@@ -157,9 +170,9 @@ class SessionPlayer(models.Model):
 class Question(models.Model):
 	question_text = models.TextField()
 	correct_answer = models.TextField()
-
+	category = models.CharField(default='any', max_length=100)
 	def __str__(self) -> str:
-		return f"Question<{self.id}>"
+		return f"Question<{self.id}> category={self.category}"
 
 
 class SessionQuestion(models.Model):
