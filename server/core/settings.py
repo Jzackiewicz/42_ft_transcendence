@@ -202,9 +202,6 @@ SPECTACULAR_SETTINGS = {
     "SERVE_INCLUDE_SCHEMA": False,
 }
 
-# # This is for `channel_layer.group_send()` in consumers.py.
-# # For now we handle only one process, so we handle it in RAM
-# # TODO: use redis later on
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",

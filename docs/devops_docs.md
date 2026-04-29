@@ -34,7 +34,7 @@
 - **Isolation**: Implemented dedicated development stack using Docker project name `dev-transcendence` to isolate volumes and containers from production.
 - **Port Management**: Configured variable-based host port mapping to avoid collisions. Dev stack uses `5433` (DB) and `6380` (Redis).
 - **Makefile Automation**:
-  - `make dev-deps`: Start isolated DB and Redis.
+  - `make dev-up`: Start isolated DB and Redis.
   - `make dev-migrate`: Run Django migrations against dev DB.
   - `make dev-runserver`: Start Django locally with dev environment overrides.
   - `make dev-test`: Execute tests against isolated dev stack.
