@@ -1,4 +1,4 @@
-# Project Progress: Issue #13 - Docker Infrastructure
+# Docker Infrastructure
 
 ## Accomplishments
 
@@ -34,7 +34,7 @@
 - **Isolation**: Implemented dedicated development stack using Docker project name `dev-transcendence` to isolate volumes and containers from production.
 - **Port Management**: Configured variable-based host port mapping to avoid collisions. Dev stack uses `5433` (DB) and `6380` (Redis).
 - **Makefile Automation**:
-  - `make dev-deps`: Start isolated DB and Redis.
+  - `make dev-up`: Start isolated DB and Redis.
   - `make dev-migrate`: Run Django migrations against dev DB.
   - `make dev-runserver`: Start Django locally with dev environment overrides.
   - `make dev-test`: Execute tests against isolated dev stack.
@@ -59,13 +59,10 @@
 
 ## Troubleshooting & Key Fixes
 
-- **Build Context**: Adjusted `docker-compose.yml` to use `context: ..` so Dockerfiles in `devops/` can access source code in root subdirectories.
-- **Secret Formatting**: Fixed `OperationalError` by removing comments from `.txt` secret files (Postgres/Django read raw file content).
 - **Django Settings**:
   - Configured `STATIC_ROOT` to fix `ImproperlyConfigured` error during container startup.
   - Added `CSRF_TRUSTED_ORIGINS` and `SECURE_PROXY_SSL_HEADER` to fix **Forbidden (403)** error when logging into admin panel.
 - **Nginx Routing**:
-  - Added missing proxy rules for `/account/` and `/game/` to fix **404 Not Found** errors on backend endpoints.
   - changed port mapping from `80` to `8080` and from `443` to `8443`
 
 ## Testing Endpoints
