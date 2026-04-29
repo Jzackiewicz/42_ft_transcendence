@@ -57,7 +57,7 @@ dev-venv:
 # Start only DB and Redis for local dev
 dev-up: dev-venv
 	@echo "Starting DB and Redis (Dev)..."
-	DB_PORT=5433 REDIS_PORT=6380 $(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) up -d db redis
+	DB_EXPOSED_PORT=5433 REDIS_EXPOSED_PORT=6380 $(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) up -d db redis
 
 dev-shell: dev-up
 	@echo "Opening Django shell locally..."
@@ -71,16 +71,16 @@ dev-migrate: dev-up
 # Stop only DB and Redis
 dev-down:
 	@echo "Stopping DB and Redis (Dev)..."
-	DB_PORT=5433 REDIS_PORT=6380 $(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) stop db redis
+	DB_EXPOSED_PORT=5433 REDIS_EXPOSED_PORT=6380 $(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) stop db redis
 
 # Stop and wipe dev volumes (Isolated from production)
 dev-clean: check_clean
 	@echo "Cleaning dev stack..."
-	DB_PORT=5433 REDIS_PORT=6380 $(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) down -v
+	DB_EXPOSED_PORT=5433 REDIS_EXPOSED_PORT=6380 $(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) down -v
 
 # Show logs for dev stack
 dev-logs:
-	DB_PORT=5433 REDIS_PORT=6380 $(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) logs -f
+	DB_EXPOSED_PORT=5433 REDIS_EXPOSED_PORT=6380 $(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) logs -f
 
 # Run Django locally
 dev-runserver: dev-up
@@ -102,7 +102,7 @@ ps:
 	@echo "--- Production Stack ---"
 	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(PROD_PROJECT) ps
 	@echo "\n--- Dev Stack ---"
-	DB_PORT=5433 REDIS_PORT=6380 $(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) ps
+	DB_EXPOSED_PORT=5433 REDIS_EXPOSED_PORT=6380 $(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) ps
 
 check_fclean:
 	@echo -n "Are you sure? This will remove all the docker objects on the system (including other directories) [y/N] " && read ans && [ $${ans:-N} = y ]
