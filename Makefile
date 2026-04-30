@@ -68,8 +68,7 @@ dev-venv:
 		python3 -m venv .venv; \
 	fi
 	@echo "Installing/Updating requirements..."
-	@source .venv/bin/activate
-	@pip install --upgrade pip && pip install -r server/requirements.txt
+	@. .venv/bin/activate && pip install --upgrade pip && pip install -r server/requirements.txt
 
 # Start only DB and Redis for local dev
 dev-up: dev-venv
