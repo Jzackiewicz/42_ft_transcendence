@@ -12,7 +12,7 @@ from game.models import (
     SessionPlayer,
     SessionQuestion,
 )
-from game.services import GameService
+from game.services.game_service import GameService
 
 
 class GameServiceTests(TestCase):
