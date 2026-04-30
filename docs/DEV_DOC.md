@@ -41,7 +41,7 @@ It means our code structure looks like this:
 
 Base game loop is constructed as a finite state machine (FSM) visualized as a graph below:
 
-![FSM_diagram](game_state_machine.png)
+![FSM_diagram](game_state_machine.svg)
 ,where:
 
 - `Lobby` – waiting for players and game start
@@ -52,90 +52,14 @@ Base game loop is constructed as a finite state machine (FSM) visualized as a gr
 
 
 #### Game Data model (ORM)
-```mermaid
-erDiagram
-
-    GameSession {
-        int id
-        uuid session_uuid
-        string current_status
-        int current_player_id
-        int last_correct_player_id
-        int last_nominated_player_id
-        int current_question_id
-        int winner_id
-        string end_reason
-        int question_asked_count
-        datetime created_at
-        datetime started_at
-        datetime ended_at
-    }
-
-    SessionPlayer {
-        int id
-        int session_id
-        int user_id
-        string player_type
-        string display_name
-        int seat_number
-        int lives
-        int points
-        int answered_count
-        int total_answer_time_ms
-    }
-
-    User {
-        int id
-    }
-
-    Question {
-        int id
-        string question_text
-        string correct_answer
-    }
-
-    SessionQuestion {
-        int id
-        int session_id
-        int question_id
-        int order_index
-    }
-
-    AnswerAttempt {
-        int id
-        int session_id
-        int player_id
-        int session_question_id
-        string answer_text
-        bool is_timeout
-        bool is_correct
-        string evaluation_status
-        int answer_time_ms
-        datetime created_at
-        datetime evaluated_at
-    }
-
-    GameSession ||--o{ SessionPlayer : has_players
-    GameSession ||--o{ SessionQuestion : has_questions
-    GameSession ||--o{ AnswerAttempt : has_attempts
-
-    User o|--o{ SessionPlayer : participates_as_human
-
-    Question ||--o{ SessionQuestion : used_in_session
-
-    SessionPlayer ||--o{ AnswerAttempt : makes
-    SessionQuestion ||--o{ AnswerAttempt : answered_in
-
-    SessionPlayer o|--o{ GameSession : current_player
-    SessionPlayer o|--o{ GameSession : last_correct_player
-    SessionPlayer o|--o{ GameSession : last_nominated_player
-    SessionPlayer o|--o{ GameSession : winner
-
-    SessionQuestion o|--o{ GameSession : current_question
-```
+![EntityRelationDiagram](game_erd.svg)
 *Where `User` entity is a placeholder for actual entity of registered user (TBA)*.
 
-
+*Diagrams generated with*
+```bash
+python -m statemachine.contrib.diagram game.fsm.GameStateMachine game_fsm.png
+python manage.py graph_models game --pydot -g -o game_erd.svg   
+```
 ### Endpoints
 
 - `http://127.0.0.1:8000/api/docs/` - HTTP endpoints documentation (+ manual testing)
