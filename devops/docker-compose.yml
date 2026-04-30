@@ -51,6 +51,8 @@ services:
     build:
       context: ..
       dockerfile: devops/nginx/Dockerfile
+    env_file:
+      - ../.env
     ports:
       - "${HTTP_EXPOSED_PORT:-8080}:80"
       - "${HTTPS_EXPOSED_PORT:-8443}:443"
