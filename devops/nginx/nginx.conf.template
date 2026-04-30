@@ -25,6 +25,8 @@ server {
     # Redirect HTTP to HTTPS on the same port
     error_page 497 https://$http_host$request_uri;
 
+    absolute_redirect off;
+
     # Frontend (React container)
     location / {
         proxy_pass http://web:80; 
