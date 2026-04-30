@@ -22,6 +22,9 @@ server {
     ssl_certificate /etc/nginx/ssl/nginx.crt;
     ssl_certificate_key /etc/nginx/ssl/nginx.key;
 
+    # Redirect HTTP to HTTPS on the same port
+    error_page 497 https://$http_host$request_uri;
+
     # Frontend (React container)
     location / {
         proxy_pass http://web:80; 
