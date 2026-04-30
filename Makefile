@@ -70,6 +70,8 @@ dev-venv:
 	@echo "Installing/Updating requirements..."
 	@. .venv/bin/activate && pip install --upgrade pip && pip install -r server/requirements.txt
 
+VENV_PYTHON = ../.venv/bin/python3
+
 # Start only DB and Redis for local dev
 dev-up: dev-venv
 	@echo "Starting DB and Redis (Dev)..."
@@ -77,12 +79,12 @@ dev-up: dev-venv
 
 dev-shell: dev-up
 	@echo "Opening Django shell locally..."
-	cd server && DB_HOST=127.0.0.1 DB_PORT=$(DEV_DB_EXPOSED_PORT) REDIS_HOST=127.0.0.1 REDIS_PORT=$(DEV_REDIS_EXPOSED_PORT) python3 manage.py shell
+	cd server && DB_HOST=127.0.0.1 DB_PORT=$(DEV_DB_EXPOSED_PORT) REDIS_HOST=127.0.0.1 REDIS_PORT=$(DEV_REDIS_EXPOSED_PORT) $(VENV_PYTHON) manage.py shell
 
 # Run migrations locally
 dev-migrate: dev-up
 	@echo "Running migrations locally (Dev)..."
-	cd server && DB_HOST=127.0.0.1 DB_PORT=$(DEV_DB_EXPOSED_PORT) REDIS_HOST=127.0.0.1 REDIS_PORT=$(DEV_REDIS_EXPOSED_PORT) python3 manage.py migrate
+	cd server && DB_HOST=127.0.0.1 DB_PORT=$(DEV_DB_EXPOSED_PORT) REDIS_HOST=127.0.0.1 REDIS_PORT=$(DEV_REDIS_EXPOSED_PORT) $(VENV_PYTHON) manage.py migrate
 
 # Stop only DB and Redis
 dev-down:
@@ -101,17 +103,17 @@ dev-logs:
 # Run Django locally
 dev-runserver: dev-up
 	@echo "Running Django locally..."
-	cd server && DB_HOST=127.0.0.1 DB_PORT=$(DEV_DB_EXPOSED_PORT) REDIS_HOST=127.0.0.1 REDIS_PORT=$(DEV_REDIS_EXPOSED_PORT) python3 manage.py runserver
+	cd server && DB_HOST=127.0.0.1 DB_PORT=$(DEV_DB_EXPOSED_PORT) REDIS_HOST=127.0.0.1 REDIS_PORT=$(DEV_REDIS_EXPOSED_PORT) $(VENV_PYTHON) manage.py runserver
 
 # Run tests locally
 dev-test: dev-up
 	@echo "Running tests locally..."
-	cd server && DB_HOST=127.0.0.1 DB_PORT=$(DEV_DB_EXPOSED_PORT) REDIS_HOST=127.0.0.1 REDIS_PORT=$(DEV_REDIS_EXPOSED_PORT) python3 manage.py test
+	cd server && DB_HOST=127.0.0.1 DB_PORT=$(DEV_DB_EXPOSED_PORT) REDIS_HOST=127.0.0.1 REDIS_PORT=$(DEV_REDIS_EXPOSED_PORT) $(VENV_PYTHON) manage.py test
 
 # Create superuser locally
 dev-createsuperuser: dev-up
 	@echo "Creating superuser locally..."
-	cd server && DB_HOST=127.0.0.1 DB_PORT=$(DEV_DB_EXPOSED_PORT) REDIS_HOST=127.0.0.1 REDIS_PORT=$(DEV_REDIS_EXPOSED_PORT) python3 manage.py createsuperuser
+	cd server && DB_HOST=127.0.0.1 DB_PORT=$(DEV_DB_EXPOSED_PORT) REDIS_HOST=127.0.0.1 REDIS_PORT=$(DEV_REDIS_EXPOSED_PORT) $(VENV_PYTHON) manage.py createsuperuser
 
 # Check container status
 ps:
