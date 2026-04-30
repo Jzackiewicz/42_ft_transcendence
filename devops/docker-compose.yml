@@ -13,6 +13,11 @@ services:
       - "${DB_EXPOSED_PORT:-5432}:5432"
     networks:
       - backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     restart: always
 
   redis:
@@ -21,6 +26,11 @@ services:
       - "${REDIS_EXPOSED_PORT:-6379}:6379"
     networks:
       - backend
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     restart: always
 
   api:
@@ -33,8 +43,10 @@ services:
     env_file:
       - ../.env
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     networks:
       - backend
     restart: always
