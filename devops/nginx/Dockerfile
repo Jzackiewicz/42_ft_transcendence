@@ -10,8 +10,8 @@ RUN apk add --no-cache openssl
 # Remove default configuration
 RUN rm /etc/nginx/conf.d/default.conf
 
-# Copy custom configuration
-COPY devops/nginx/nginx.conf /etc/nginx/conf.d/
+# Copy custom configuration template
+COPY devops/nginx/nginx.conf.template /etc/nginx/templates/nginx.conf.template
 
 # Generate self-signed SSL certificate (for development/defense)
 RUN mkdir -p /etc/nginx/ssl && \
@@ -22,4 +22,6 @@ RUN mkdir -p /etc/nginx/ssl && \
 # Expose ports
 EXPOSE 80 443
 
+# envsubst is built-in in nginx official docker image entrypoint for .template files in /etc/nginx/templates/
+# See: https://hub.docker.com/_/nginx "Using environment variables in nginx configuration"
 CMD ["nginx", "-g", "daemon off;"]

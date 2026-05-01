@@ -43,7 +43,8 @@ if not SECRET_KEY:
 
 
 # CSRF settings for production/Docker environment
-_default_origins = "https://localhost:8443,https://127.0.0.1:8443"
+_https_port = os.getenv("HTTPS_EXPOSED_PORT", "8443")
+_default_origins = f"https://localhost:{_https_port},https://127.0.0.1:{_https_port}"
 if DEBUG:
     _default_origins += ",http://localhost:8000,http://127.0.0.1:8000"
 
