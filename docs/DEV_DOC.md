@@ -8,12 +8,25 @@ For making our lives easier
 
 You need to have python 3.11+ installed.
 
+> [!IMPORTANT]
+> First: create .env based on .env.example
+
 To run the server for the first time (sets up isolated dev database):
 
 ```bash
 make dev-up       # Start DB and Redis
 make dev-migrate  # Run migrations
 make dev-runserver # Start Django
+```
+
+To run production setup:
+
+> [!IMPORTANT]
+> If the default setup does not work it might be because default port is blocked
+> on campus workstation, read the error and change the port in .env in neccesary
+
+```bash
+make up
 ```
 
 ### Codebase
