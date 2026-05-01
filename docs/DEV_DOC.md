@@ -16,25 +16,27 @@ chmod +x dev.sh
 Server is split into sections:
 
 - ***main project***
-	- **core/** - main project directory, settings, routings etc.
+	- **core/** - main project directory, settings, routings, ASGI/WSGI configuration etc.
 
 - ***applications***
-	- **account/** - stuff related to setting up an account, logging, registering, authentication etc. *(HTTP requests mostly)*
-	- **social/** - chat, friends system *(HTTP + websockets)*
-	- **game/** - game logic *(ws mostly)*
+	- **account/** - setting up an account, logging, registering, authentication etc.
+	- **social/** - chat, friends system
+	- **game/** - game domain logic
 
 
->The sections range might change later in the developement (I hope not though)
+>The sections range might change later in the development (I hope not though)
 
 ### Service layer pattern
 We're using [this styleguide](https://github.com/HackSoftware/Django-Styleguide) meaning mostly splitting business logic from interface (sending requests).
 
 It means our code structure looks like this:
-- `selectors.py` (for reading endpoints) and `services.py` (for creating/editing/deleting endpoints) - storing HTTP endpoints logic
-- `apis.py` (for HTTP) and `consumers.py` (for ws) - handling interface
-- `serializers.py` - validation schemes
-- `models.py` - database tables structure (for ORM)
-- `urls.py` (HTTP) and `routing.py` (ws) - url routing 
+- `selectors.py` - read/query logic, used for fetching and preparing data.
+- `services.py` - business logic and state-changing use-cases.
+- `apis.py` - HTTP interface layer.
+- `consumers.py` - WebSocket interface layer.
+- `serializers.py` - input/output validation and serialization.
+- `models.py` - database schema and ORM relations.
+- `urls.py` / `routing.py` - HTTP and WebSocket routing.
 
 ### Game section
 #### Game logic
@@ -42,18 +44,27 @@ It means our code structure looks like this:
 Base game loop is constructed as a finite state machine (FSM) visualized as a graph below:
 
 ![FSM_diagram](game_state_machine.svg)
-,where:
 
-- `Lobby` – waiting for players and game start
-- `Answering` – current player answers a question
-- `Evaluation` – answer is evaluated (correct / wrong / timeout)
-- `Nomination` – last correct player selects next player
-- `GameOver` – game finished
+States:
 
+- `Lobby` - waiting for players and game start.
+- `Answering` - current player answers a question.
+- `Evaluation` - answer is evaluated as correct, wrong or timeout.
+- `Nomination` - last correct player selects the next player.
+- `GameOver` - game is finished.
+
+#### Game loop rules
+Whole game loop is fully backend-driven, frontend only sends player actions and renders the snapshots returned by the backend.
+
+Current architecture:
+- `fsm.py` - declared states and trasition with no business logic
+- `services/` - business logic including game rules, calling FSM transitions, calling ORM data models
+- `selectors.py` - game state snapshots ***(TBA)***
+- `consumers.py` - Websocket interface layer ***(TBA)***
 
 #### Game Data model (ORM)
 ![EntityRelationDiagram](game_erd.svg)
-*Where `User` entity is a placeholder for actual entity of registered user (TBA)*.
+*Where `User` entity is a placeholder for actual entity of registered user `AUTH_USER_MODEL`*.
 
 *Diagrams generated with*
 ```bash
@@ -70,7 +81,7 @@ python manage.py graph_models game --pydot -g -o game_erd.svg
 
 - To run automatic tests run the following command: 
 	```bash
-	python3 manage.py test
+	make dev-test
 	```
 ## Frontend
 ¯\\_( ͡° ͜ʖ ͡°)_/¯
