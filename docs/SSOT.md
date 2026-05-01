@@ -14,15 +14,16 @@ Game supports additional features like optional question generation with AI and 
 This project is developed as part of the `ft_transcendence` module at School 42.
 
 ## 2. Architecture & Tech Stack
+
 The project relies on a strict frontend-backend separation with a strong emphasis on real-time bidirectional communication.
 
 * **Frontend:** React.js (Single Page Application).
 * **Backend:** Django (Python).
-    * *Django REST Framework (DRF)* - Handles standard HTTP requests (auth, profiles).
-    * *Django Channels* - Handles WebSockets (core game engine).
+  * *Django REST Framework (DRF)* - Handles standard HTTP requests (auth, profiles).
+  * *Django Channels* - Handles WebSockets (core game engine).
 * **Databases:**
-    * *PostgreSQL* - Primary relational DB (users, stats, match history, question pool).
-    * *Redis* - In-Memory DB / Message Broker (WebSocket layer, fast game state).
+  * *PostgreSQL* - Primary relational DB (users, stats, match history, question pool).
+  * *Redis* - In-Memory DB / Message Broker (WebSocket layer, fast game state).
 * **AI Integration:** external LLM calls for generating questions, simulating bots moves.
 * **DevOps:** Docker (docker-compose, Dockerfiles), Makefile - fully containerized environment.
 

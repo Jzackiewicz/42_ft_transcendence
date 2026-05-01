@@ -1,6 +1,8 @@
 from django.test import TestCase
 from channels.testing import WebsocketCommunicator
 from social.routing import websocket_urlpatterns
+from channels.auth import AuthMiddlewareStack
+from channels.security.websocket import AllowedHostsOriginValidator
 from channels.routing import URLRouter
 from social.models import ChatMessage
 from rest_framework.test import APIClient
@@ -9,7 +11,8 @@ from rest_framework.test import APIClient
 class ChatTests(TestCase):
 	async def test_chat_consumer(self):
 		""""Correct use of the endpoint"""
-		application = URLRouter(websocket_urlpatterns)
+		application = AllowedHostsOriginValidator(
+        AuthMiddlewareStack(URLRouter(websocket_urlpatterns)))
 		communicator = WebsocketCommunicator(application, "/ws/chat/test_room/")
 
 		connected, subprotocol = await communicator.connect()
@@ -25,7 +28,8 @@ class ChatTests(TestCase):
 
 	async def test_chat_consumer_invalid_input(self):
 		"""Incorrect use of the endpoint - missing 'message' key"""
-		application = URLRouter(websocket_urlpatterns)
+		application = AllowedHostsOriginValidator(
+        AuthMiddlewareStack(URLRouter(websocket_urlpatterns)))
 		communicator = WebsocketCommunicator(application, "/ws/chat/test_room/")
 		
 		await communicator.connect()
@@ -42,7 +46,8 @@ class ChatTests(TestCase):
 			
 	async def test_chat_consumer_message_too_long(self):
 		"""Testing limit of 500 characters in message"""
-		application = URLRouter(websocket_urlpatterns)
+		application = AllowedHostsOriginValidator(
+        AuthMiddlewareStack(URLRouter(websocket_urlpatterns)))
 		communicator = WebsocketCommunicator(application, "/ws/chat/test_room/")
 		await communicator.connect()
 
@@ -60,7 +65,12 @@ class ChatTests(TestCase):
 
 class ChatHistoryAPITests(TestCase):
 	def setUp(self):
+		from django.contrib.auth import get_user_model
+		User = get_user_model()
+		self.user = User.objects.create_user(username='testuser', password='password')
+		
 		self.client = APIClient()
+		self.client.force_authenticate(user=self.user)
 		self.room_name = "test_lobby"
 		
 		ChatMessage.objects.create(

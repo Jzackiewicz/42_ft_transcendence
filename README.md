@@ -6,7 +6,7 @@
 
 ## Instructions
 
-### Prerequisits
+### Prerequisites
 
 ## Resources
 
