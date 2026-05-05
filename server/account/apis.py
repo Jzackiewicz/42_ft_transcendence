@@ -11,6 +11,7 @@ No business logic or direct ORM access belongs here.
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 from drf_spectacular.utils import extend_schema
 from django.contrib.auth import authenticate, login, logout
 
@@ -28,7 +29,7 @@ from .serializers import (
     UserProfileOutputSerializer,
     UserProfileAvatarInputSerializer,
     UserProfileFriendOutputSerializer,
-    UserLoginInputSerializer
+    UserLoginInputSerializer,
 )
 from .services import (
     user_create,
@@ -43,8 +44,27 @@ from .services import (
 # User endpoints
 # ---------------------------------------------------------------------------
 
-class UserRegisterApi(APIView):
 
+class UserMeApi(APIView):
+    permission_classes = [
+        IsAuthenticated,
+    ]
+
+    @extend_schema(
+        responses={
+            200: UserOutputSerializer,
+            401: {"type": "object", "properties": {"detail": {"type": "string"}}},
+            403: {"type": "object", "properties": {"detail": {"type": "string"}}},
+        },
+        description="Retrieve the authenticated user's information.",
+    )
+    def get(self, request):
+        user = request.user
+        output_serializer = UserOutputSerializer(user)
+        return Response(output_serializer.data)
+
+
+class UserRegisterApi(APIView):
     permission_classes = []
 
     @extend_schema(
@@ -63,7 +83,6 @@ class UserRegisterApi(APIView):
 
 
 class UserListApi(APIView):
-
     @extend_schema(
         responses={200: UserOutputSerializer(many=True)},
         description="List all users.",
