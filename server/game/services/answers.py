@@ -36,10 +36,10 @@ def apply_wrong_answer_effects(attempt: AnswerAttempt) -> None:
 	player.save()
 
 
-def	evaluate_current_attempt(session: GameSession) -> None:
+def evaluate_current_attempt(session: GameSession) -> None:
 	attempt = session.current_attempt
 	if attempt is None:
-		raise ValueError("No attempt to apply verdict for")
+		raise ValueError("No current attempt to evaluate")
 	
 	attempt.is_correct = check_answer_correctness(attempt=attempt)
 	attempt.evaluation_status = AnswerAttempt.EvaluationStatus.EVALUATED
