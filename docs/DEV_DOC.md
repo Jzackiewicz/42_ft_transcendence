@@ -23,7 +23,7 @@ To run production setup:
 
 > [!IMPORTANT]
 > If the default setup does not work it might be because default port is blocked
-> on campus workstation, read the error and change the port in .env in neccesary
+> on campus workstation, read the error and change the port in .env in necessary
 
 ```bash
 make up
