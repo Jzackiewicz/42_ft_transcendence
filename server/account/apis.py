@@ -94,7 +94,6 @@ class UserListApi(APIView):
 
 
 class UserDetailApi(APIView):
-
     @extend_schema(
         responses={200: UserOutputSerializer},
         description="Retrieve a user by ID.",
@@ -125,8 +124,27 @@ class UserDetailApi(APIView):
 # UserProfile endpoints
 # ---------------------------------------------------------------------------
 
-class UserProfileListApi(APIView):
 
+class UserProfileMeApi(APIView):
+    permission_classes = [
+        IsAuthenticated,
+    ]
+
+    @extend_schema(
+        responses={
+            200: UserProfileOutputSerializer,
+            401: {"type": "object", "properties": {"detail": {"type": "string"}}},
+            403: {"type": "object", "properties": {"detail": {"type": "string"}}},
+        },
+        description="Retrieve the authenticated user's profile information.",
+    )
+    def get(self, request):
+        user = request.user
+        output_serializer = UserProfileOutputSerializer(user.profile)
+        return Response(output_serializer.data)
+
+
+class UserProfileListApi(APIView):
     @extend_schema(
         responses={200: UserProfileOutputSerializer(many=True)},
         description="List all user profiles.",
@@ -138,7 +156,6 @@ class UserProfileListApi(APIView):
 
 
 class UserProfileDetailApi(APIView):
-
     @extend_schema(
         responses={200: UserProfileOutputSerializer},
         description="Retrieve the profile for a given user ID.",
@@ -150,7 +167,6 @@ class UserProfileDetailApi(APIView):
 
 
 class UserProfileAvatarApi(APIView):
-
     @extend_schema(
         request=UserProfileAvatarInputSerializer,
         responses={200: UserProfileOutputSerializer},
@@ -162,7 +178,9 @@ class UserProfileAvatarApi(APIView):
         input_serializer = UserProfileAvatarInputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
 
-        profile = profile_update_avatar(profile=profile, **input_serializer.validated_data)
+        profile = profile_update_avatar(
+            profile=profile, **input_serializer.validated_data
+        )
 
         output_serializer = UserProfileOutputSerializer(profile)
         return Response(output_serializer.data, status=status.HTTP_200_OK)
@@ -178,7 +196,6 @@ class UserProfileAvatarApi(APIView):
 
 
 class UserProfileFriendListApi(APIView):
-
     @extend_schema(
         responses={200: UserProfileFriendOutputSerializer(many=True)},
         description="List friends of a user profile.",
@@ -191,7 +208,6 @@ class UserProfileFriendListApi(APIView):
 
 
 class UserProfileFriendDetailApi(APIView):
-
     @extend_schema(
         request=None,
         responses={204: None},
@@ -214,12 +230,14 @@ class UserProfileFriendDetailApi(APIView):
         profile_remove_friend(profile=profile, friend_profile=friend_profile)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
 # ---------------------------------------------------------------------------
 # User Login/Logout endpoints
 # ---------------------------------------------------------------------------
 
+
 class UserLoginApi(APIView):
-    permission_classes = [] #user isnt authenticated yet, so its available for everyone
+    permission_classes = []  # user isnt authenticated yet, so its available for everyone
 
     @extend_schema(
         request=UserLoginInputSerializer,
@@ -232,16 +250,18 @@ class UserLoginApi(APIView):
         input_serializer.is_valid(raise_exception=True)
 
         # verify credentials, return None if wrong
-        user = authenticate(request, 
-                            username=input_serializer.validated_data["username"], 
-                            password=input_serializer.validated_data["password"])
-        
+        user = authenticate(
+            request,
+            username=input_serializer.validated_data["username"],
+            password=input_serializer.validated_data["password"],
+        )
+
         if user is None:
             return Response(
                 {"detail": "Invalid credentials."},
                 status=status.HTTP_401_UNAUTHORIZED,
             )
-        
+
         # mark user as logged in & remember for future requests
         login(request, user)
 
