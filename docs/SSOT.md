@@ -1,8 +1,17 @@
 # Project Single Source of Truth: Quizscendence
 
 ## 1. Project Vision (Elevator Pitch)
+Quizscendence is a real-time multiplayer browser quiz game inspired by the Polish TV game show "1 z 10" ("1 out of 10").
 
-Quizscendence is a real-time multiplayer browser game, inspired by the classic Polish TV game show "1 z 10" (1 out of 10).  This project is developed as part of the `ft_transcendence` module at School 42. The core innovation is the use of a Large Language Model (LLM) acting as an AI Judge, which evaluates the correctness of players' text-based answers in real-time.
+The game is played by exactly 5 players in a shared lobby. Players answer text-based questions, lose lives after wrong answers or timeouts, gain points for correct answers, and nominate other players after answering correctly.
+
+The backend is the source of truth for the whole game flow. The frontend only sends player actions and renders the state returned by the backend.
+
+Answer correctness is currently based on canonical answers stored in the database.
+
+Game supports additional features like optional question generation with AI and AI-controlled bot players.
+
+This project is developed as part of the `ft_transcendence` module at School 42.
 
 ## 2. Architecture & Tech Stack
 
@@ -15,51 +24,152 @@ The project relies on a strict frontend-backend separation with a strong emphasi
 * **Databases:**
   * *PostgreSQL* - Primary relational DB (users, stats, match history, question pool).
   * *Redis* - In-Memory DB / Message Broker (WebSocket layer, fast game state).
-* **AI Integration:** LLM Interface (e.g., OpenAI / Gemini API) used purely as the validation engine.
+* **AI Integration:** external LLM calls for generating questions, simulating bots moves.
 * **DevOps:** Docker (docker-compose, Dockerfiles), Makefile - fully containerized environment.
 
 ## 3. Project Scope
 
-### Phase 1: Absolute MVP (Critical for Defense)
+### User Management
 
-* **User Module:** Registration, login (Django Session Middleware, session data written to db), profile management (avatar, win/loss stats).
-* **Social Module:** Friends system (add/remove), online status tracking.
-* **Lobby & Matchmaking:** Ability to create/join game rooms.
-* **Game Engine (WebSockets):** * Broadcasting questions to players.
-  * Receiving text-based answers.
-  * Forwarding answers to the AI Judge for evaluation.
-  * Broadcasting the verdict and updating turn/score state.
+- User registration.
+- Login/logout.
+- Secure authentication.
+- Profile management.
+- Avatar support.
+- Basic user statistics.
 
-### Phase 2: Nice-to-Have (Time Permitting)
+### Social Features
 
-* Progressive Web App (PWA) for mobile support.
-* Full Public API (external access to stats).
-* AI Opponent (bots filling empty slots in a room).
-* Voice Integration (answering via microphone instead of keyboard).
-* ML Recommendations.
-* Spectator mode.
+- Friends system.
+- Online status.
+- Basic chat or user interaction features.
 
-## 4. Game Mechanics & Flow
+### Lobby
 
-* **Room Size:** Flexible. A game can start with anywhere from **2 to 10 players**.
-* **Question Pool:** Questions are fetched from a pre-populated PostgreSQL database containing 200 questions along with their canonical answers.
-* **UI/UX Design:** Minimalist and clean. Focused on high readability and ease of implementation over complex animations.
+- Create or join a game lobby.
+- Each lobby must contain exactly 5 players.
+- A game cannot start with fewer or more than 5 players.
+- A player slot may be occupied by a human player or an AI bot.
+- Lobby settings define the game configuration before the game starts.
 
-### Game Rules / Elimination [PENDING DECISION]
+### Game Flow
 
-The team must decide between two game modes before implementing the final game loop:
+- Real-time multiplayer quiz game.
+- Backend-driven finite state machine.
+- Text-based answers.
+- Answer timeout support.
+- Lives, points, nomination and fallback rules.
+- Game-over resolution and winner selection.
+- WebSocket-based state updates.
 
-* **Option A (Classic TV Show):** Three distinct rounds. Players have a set number of "lives/chances". A wrong answer loses a life. Losing all lives means elimination. Players nominate each other to answer.
-* **Option B (Points-Based Sprint):** A single, continuous round. Every player answers every question simultaneously (or in quick succession). No lives/eliminations. The player with the most points after a set number of questions wins.
+### Questions
 
-### The AI Judge Mechanic
+- Questions are stored in the database.
+- Each question has:
+  - question text,
+  - canonical correct answer,
+  - category.
+- Session questions are assigned to a specific game session with deterministic order.
+- AI may optionally generate additional questions before the game starts.
 
-1. Player types their answer.
-2. Server locks the game state for others.
-3. Server securely sends a prompt to the LLM: *"The question is X. The correct database answer is Y. The player said Z. Is this acceptable? Answer TRUE or FALSE."*
-4. The server receives the boolean verdict and applies game logic (deducts life or awards points).
+### AI Bots
 
-## 5. Data Flow
+- Bot players may fill player slots.
+- Bots must use the same game flow as human players.
+- Bot actions must go through the same backend game action path as human actions.
+- Bots must not directly modify game state.
 
-* **HTTP/REST:** Used **only** outside of the active game (login, fetching match history, updating account settings, browsing the lobby).
-* **WebSockets:** Used from the moment players enter the game room. Responsible for live events such as: `new_question`, `player_answered`, `ai_verdict`, `turn_changed`, `game_over`.
+### DevOps
+
+- Dockerized project.
+- Single-command startup.
+- `.env` for local secrets.
+- `.env.example` for required environment variables.
+- No credentials committed to Git.
+
+## 4. Game Rules & Flow
+
+### Lobby Size
+
+- A game lobby must contain exactly 5 players.
+- A player slot may be occupied by either a human player or an AI bot.
+- Bot players may be used to fill empty slots.
+
+### Starting the Game
+
+- The game starts from the `Lobby` state.
+- The first answering player is selected randomly from alive players.
+- The backend assigns the first question.
+- After the game starts, the session enters the `Answering` state.
+- Entering `Answering` creates an active `AnswerAttempt`.
+
+### Lives
+
+- Each player starts with a configured number of lives.
+- Default value: 3 lives.
+- Wrong answer removes 1 life.
+- Timeout removes 1 life.
+- A player with 0 lives is eliminated.
+- Eliminated players cannot be nominated or answer questions.
+
+### Answering
+
+- Only `current_player` can submit an answer.
+- Each answering turn has:
+  - `current_player`,
+  - `current_question`,
+  - `current_attempt`.
+- The backend stores the submitted answer.
+- If the answer timeout is exceeded ***(To be changed later)***:
+  - the attempt is marked as timeout,
+  - submitted answer text is ignored,
+  - the answer is treated as wrong.
+
+### Answer Evaluation
+
+- Answer correctness is decided by the backend.
+- Current implementation uses canonical answer matching ***(To be changed later)***:
+
+```text
+normalized(player_answer) == normalized(question.correct_answer)
+```
+
+### Scoring
+
+- Correct answer gives **10 points**.
+- Correct answer by the **nominated player** gives **20 points**.
+- Wrong answer gives **0 points**.
+- Timeout gives **0 points**.
+- Each evaluated attempt increments `answered_count`.
+- Answer time is accumulated in `total_answer_time_ms`.
+
+### Nomination
+
+- A player who answers correctly becomes `last_correct_player`.
+- `last_correct_player` receives the right to nominate the next answering player.
+- Only `last_correct_player` can nominate.
+- The nominated player becomes `current_player`.
+- A dead player cannot be nominated.
+
+### Wrong Answer and Nomination Rights
+
+- Wrong answer or timeout does **not** clear `last_correct_player`.
+- Nomination rights stay with `last_correct_player` as long as they are alive.
+- If a nominated player answers incorrectly, the previous `last_correct_player` can nominate again.
+- Nomination rights change only when:
+  - another player answers correctly, or
+  - the current `last_correct_player` is no longer alive.
+
+### Game Over
+
+The game ends when:
+
+- only one player is alive
+or
+- all session questions have been used.
+
+	- If all questions are exhausted, the winner is selected by tie-breakers:
+		1. points DESC
+		2. answered_count DESC
+		3. total_answer_time_ms ASC
+		4. seat_number ASC
