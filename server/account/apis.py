@@ -59,9 +59,28 @@ class UserMeApi(APIView):
         description="Retrieve the authenticated user's information.",
     )
     def get(self, request):
-        user = request.user
-        output_serializer = UserOutputSerializer(user)
+        output_serializer = UserOutputSerializer(request.user)
         return Response(output_serializer.data)
+
+    @extend_schema(
+        request=UserUpdateInputSerializer,
+        responses={
+            200: UserOutputSerializer,
+            401: {"type": "object", "properties": {"detail": {"type": "string"}}},
+            403: {"type": "object", "properties": {"detail": {"type": "string"}}},
+        },
+        description="Update username or email for the authenticated user.",
+    )
+    def patch(self, request):
+        input_serializer = UserUpdateInputSerializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+
+        user = user_update_basic_info(
+            user=request.user, **input_serializer.validated_data
+        )
+
+        output_serializer = UserOutputSerializer(user)
+        return Response(output_serializer.data, status=status.HTTP_200_OK)
 
 
 class UserRegisterApi(APIView):
