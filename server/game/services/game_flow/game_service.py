@@ -24,8 +24,9 @@ from .lifecycle import (
 	submit_answer_attempt,
 	assign_next_question,
 	cancel_game,
-	handle_surrender_in_answering,
-	handle_surrender_in_nomination
+	handle_disconnect_in_lobby,
+	handle_disconnect_in_answering,
+	handle_disconnect_in_nomination
 )
 
 from .answers import (
@@ -83,6 +84,23 @@ class GameService:
 			self.session.save()
 			self._start_answering_turn()
 
+	def _handle_active_game_disconnect(self, actor: SessionPlayer) -> None:
+		actor.lives = 0
+		actor.save(update_fields=['lives'])
+
+		if self.session.is_game_over():
+			cancel_game(self.session)
+			return
+
+		if self.session.current_status == GameSession.Status.ANSWERING:
+			handle_disconnect_in_answering(self.session, actor)
+			if self.session.current_status == GameSession.Status.EVALUATION:
+				apply_answer_verdict(self.session)
+				self._advance_after_evaluation()
+		elif self.session.current_status == GameSession.Status.NOMINATION:
+			if handle_disconnect_in_nomination(self.session, actor):
+				self._start_answering_turn()
+
 	def start_game_session(self):
 		require_status(self.session, GameSession.Status.LOBBY)
 		require_minimum_players(self.session)
@@ -133,17 +151,12 @@ class GameService:
 		apply_answer_verdict(self.session)
 		self._advance_after_evaluation()
 
-	def surrender_player(self, actor: SessionPlayer | None) -> None:
-		require_action_actor(actor, "surrender")
-		actor.lives = 0
-		actor.save(update_fields=['lives'])
-
-		if self.session.is_game_over():
-			cancel_game(self.session)
+	def	disconnect_player(self, actor: SessionPlayer | None) -> None:
+		require_action_actor(actor, "disconnect")
+		
+		if self.session.current_status == GameSession.Status.LOBBY:
+			handle_disconnect_in_lobby(self.session, actor)
+		elif self.session.current_status == GameSession.Status.GAME_OVER:
 			return
-
-		if self.session.current_status == GameSession.Status.ANSWERING:
-			handle_surrender_in_answering(self.session, actor)
-		elif self.session.current_status == GameSession.Status.NOMINATION:
-			if handle_surrender_in_nomination(self.session, actor):
-				self._start_answering_turn()
+		else:
+			self._handle_active_game_disconnect(actor)

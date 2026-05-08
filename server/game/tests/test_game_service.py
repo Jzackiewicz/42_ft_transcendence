@@ -304,21 +304,17 @@ class GameServiceTests(TestCase):
 				target_player_id=self.p3.id,
 			)
 
-	def test_game_over_when_only_one_player_alive_sets_winner_and_end_reason(self):
-		self.p2.lives = 0
-		self.p2.save()
-		self.p3.lives = 0
-		self.p3.save()
-
-		self.session.current_status = GameSession.Status.GAME_OVER
-		self.session.current_player = self.p1
-		self.session.current_question = self.sq1
+	def test_disconnect_that_leaves_one_player_ends_game(self):
 		self.session.current_status = GameSession.Status.ANSWERING
 		self.session.current_player = self.p2
 		self.session.save()
+		GameService(self.session)._start_answering_turn()
 
-		set_end_game_stats(self.session)
-		GameService(self.session).surrender_player(actor=self.p2)
+		self.p3.lives = 0
+		self.p3.save()
+
+		# p2 disconnects, leaving only p1 alive
+		GameService(self.session).disconnect_player(actor=self.p2)
 		self.session.refresh_from_db()
 
 		self.assertEqual(self.session.winner_id, self.p1.id)
@@ -567,3 +563,87 @@ class GameServiceTests(TestCase):
 				actor=self.p1,
 				target_player_id=self.p2.id,
 			)
+
+	def test_disconnect_in_lobby_shifts_host_to_oldest_player(self):
+		self.session.current_status = GameSession.Status.LOBBY
+		self.session.host_player = self.p1
+		self.session.save()
+
+		GameService(self.session).disconnect_player(self.p1)
+		self.session.refresh_from_db()
+
+		# p1 is deleted, host is shifted to p2 (lower ID than p3)
+		self.assertFalse(SessionPlayer.objects.filter(id=self.p1.id).exists())
+		self.assertEqual(self.session.host_player_id, self.p2.id)
+
+	def test_disconnect_in_lobby_deletes_session_if_last_player(self):
+		self.session.current_status = GameSession.Status.LOBBY
+		self.session.host_player = self.p1
+		self.session.save()
+		
+		self.p2.delete()
+		self.p3.delete()
+
+		GameService(self.session).disconnect_player(self.p1)
+		self.assertFalse(GameSession.objects.filter(id=self.session.id).exists())
+
+	def test_disconnect_in_answering_by_current_player_advances_turn(self):
+		self.session.current_status = GameSession.Status.ANSWERING
+		self.session.current_player = self.p1
+		self.session.save()
+		GameService(self.session)._start_answering_turn()
+		self.session.refresh_from_db()
+
+		old_attempt_id = self.session.current_attempt_id
+
+		GameService(self.session).disconnect_player(self.p1)
+		self.session.refresh_from_db()
+		self.p1.refresh_from_db()
+
+		self.assertEqual(self.p1.lives, 0)
+		self.assertEqual(self.session.current_status, GameSession.Status.ANSWERING)
+		self.assertEqual(self.session.current_player_id, self.p2.id)
+		self.assertNotEqual(self.session.current_attempt_id, old_attempt_id)
+
+	def test_disconnect_in_nomination_auto_nominates_and_advances(self):
+		self.session.current_status = GameSession.Status.NOMINATION
+		self.session.last_correct_player = self.p1
+		self.session.current_player = self.p1
+		self.session.save()
+
+		GameService(self.session).disconnect_player(self.p1)
+		self.session.refresh_from_db()
+		self.p1.refresh_from_db()
+
+		self.assertEqual(self.p1.lives, 0)
+		self.assertEqual(self.session.current_status, GameSession.Status.ANSWERING)
+		self.assertIn(self.session.current_player_id, [self.p2.id, self.p3.id])
+		self.assertIsNotNone(self.session.current_attempt)
+
+	def test_disconnect_by_observer_does_not_affect_game_state(self):
+		self.session.current_status = GameSession.Status.ANSWERING
+		self.session.current_player = self.p2
+		self.session.save()
+		GameService(self.session)._start_answering_turn()
+		self.session.refresh_from_db()
+		
+		old_attempt_id = self.session.current_attempt_id
+
+		# p1 (not their turn) disconnects
+		GameService(self.session).disconnect_player(self.p1)
+		self.session.refresh_from_db()
+		self.p1.refresh_from_db()
+
+		self.assertEqual(self.p1.lives, 0)
+		self.assertEqual(self.session.current_status, GameSession.Status.ANSWERING)
+		self.assertEqual(self.session.current_player_id, self.p2.id)
+		self.assertEqual(self.session.current_attempt_id, old_attempt_id)
+
+	def test_disconnect_in_game_over_does_nothing(self):
+		self.session.current_status = GameSession.Status.GAME_OVER
+		self.session.save()
+
+		GameService(self.session).disconnect_player(self.p1)
+		self.p1.refresh_from_db()
+		
+		self.assertEqual(self.p1.lives, 3)

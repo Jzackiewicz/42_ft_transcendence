@@ -1,6 +1,7 @@
 import json
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.db import database_sync_to_async
+from django.core.exceptions import ValidationError
 from .services.game_flow.game_action_handler import GameActionHandler, GameActionRequest, GameAction
 from .selectors.lobby_selectors import verify_player_in_session
 from .serializers import SubmitAnswerPayloadSerializer, NominatePlayerPayloadSerializer
@@ -33,6 +34,27 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 				self.room_group_name,
 				self.channel_name
 			)
+			
+		if hasattr(self, 'session_id'):
+			try:
+				request = GameActionRequest(
+					session_id=self.session_id,
+					action=GameAction.DISCONNECT,
+					user=self.scope['user']
+				)
+				handler = GameActionHandler()
+				result = await database_sync_to_async(handler.handle_action)(request)
+
+				await self.channel_layer.group_send(
+					self.room_group_name,
+					{
+						'type': 'game_state_update',
+						'action': result.action,
+						'status': result.status
+					}
+				)
+			except ValidationError:
+				pass
 
 	async def receive_json(self, content):
 		action = content.get('action')
@@ -74,10 +96,10 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 					'status': result.status
 				}
 			)
-		except ValueError as e:
+		except ValidationError as e:
 			await self.send_json({
 				'type': 'error',
-				'message': str(e)
+				'message': e.message if hasattr(e, 'message') else list(e.messages)
 			})
 
 	async def game_state_update(self, event):

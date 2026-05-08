@@ -13,7 +13,7 @@ class GameAction:
 	SUBMIT_ANSWER = "submit_answer"
 	NOMINATE_PLAYER = "nominate_player"
 	EVALUATE_ANSWER = "evaluate_answer"
-	SURRENDER = "surrender"
+	DISCONNECT = "disconnect"
 
 
 @dataclass(frozen=True)
@@ -54,8 +54,8 @@ class GameActionHandler:
 		elif request.action == GameAction.EVALUATE_ANSWER:
 			service.evaluate_player_answer()
 
-		elif request.action == GameAction.SURRENDER:
-			service.surrender_player(actor=actor)
+		elif request.action == GameAction.DISCONNECT:
+			service.disconnect_player(actor=actor)
 
 		else:
 			raise ValidationError(f"Unsupported game action: {request.action}")
@@ -71,7 +71,7 @@ class GameActionHandler:
 	@staticmethod
 	def _get_session(*, session_id: int) -> GameSession:
 		require_session_id(session_id)
-		return GameSession.objects.get(id=session_id)
+		return GameSession.objects.select_for_update().get(id=session_id)
 
 	@staticmethod
 	def _get_actor(*, session: GameSession, user) -> SessionPlayer | None:

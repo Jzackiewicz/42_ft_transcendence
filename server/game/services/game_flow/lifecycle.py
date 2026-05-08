@@ -68,7 +68,20 @@ def cancel_game(session: GameSession) -> None:
 	session.save()
 	set_end_game_stats(session)
 
-def handle_surrender_in_answering(session: GameSession, actor: SessionPlayer) -> None:
+def handle_disconnect_in_lobby(session: GameSession, actor: SessionPlayer) -> None:
+	require_status(session, GameSession.Status.LOBBY)
+	is_host = session.host_player_id == actor.id
+	actor.delete()
+
+	if is_host:
+		next_host = session.session_players.order_by('id').first()
+		if next_host:
+			session.host_player = next_host
+			session.save(update_fields=['host_player'])
+		else:
+			session.delete()
+
+def handle_disconnect_in_answering(session: GameSession, actor: SessionPlayer) -> None:
 	require_status(session, GameSession.Status.ANSWERING)
 	if session.current_player_id == actor.id:
 		attempt = session.current_attempt
@@ -81,12 +94,13 @@ def handle_surrender_in_answering(session: GameSession, actor: SessionPlayer) ->
 			session.fsm.submit_answer()
 			session.save()
 
-def handle_surrender_in_nomination(session: GameSession, actor: SessionPlayer) -> bool:
+def handle_disconnect_in_nomination(session: GameSession, actor: SessionPlayer) -> bool:
 	require_status(session, GameSession.Status.NOMINATION)
 	if session.last_correct_player_id == actor.id:
 		next_player = session.session_players.filter(lives__gt=0).order_by('?').first()
 		if next_player:
 			session.current_player = next_player
+			session.last_nominated_player = next_player
 			session.fsm.nominate_player()
 			session.save()
 			return True
