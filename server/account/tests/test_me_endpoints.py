@@ -37,6 +37,30 @@ class MeTest(APITestCase):
         response = self.client.patch(reverse("user-me"))
         self.assertEqual(response.status_code, 403)
 
+    def test_me_endpoint_delete_success(self):
+        self.client.login(username="testuser", password="testpassword")
+        payload = {"password": "testpassword"}
+        response = self.client.delete(
+            reverse("user-me"), data=payload, content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 204)
+        self.user.refresh_from_db()
+        self.assertFalse(self.user.is_active)
+
+    def test_me_endpoint_delete_invalid_password(self):
+        self.client.login(username="testuser", password="testpassword")
+        payload = {"password": "wrongpassword"}
+        response = self.client.delete(
+            reverse("user-me"), data=payload, content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 401)
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.is_active)
+
+    def test_me_endpoint_delete_unauthenticated(self):
+        response = self.client.delete(reverse("user-me"))
+        self.assertEqual(response.status_code, 403)
+
 
 class UserProfileMeTest(APITestCase):
     def setUp(self) -> None:
