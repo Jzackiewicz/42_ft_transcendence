@@ -30,10 +30,12 @@ from .serializers import (
     UserProfileAvatarInputSerializer,
     UserProfileFriendOutputSerializer,
     UserLoginInputSerializer,
+    UserReauthSerializer,
 )
 from .services import (
     user_create,
     user_update_basic_info,
+    user_soft_delete,
     profile_update_avatar,
     profile_clear_avatar,
     profile_add_friend,
@@ -81,6 +83,32 @@ class UserMeApi(APIView):
 
         output_serializer = UserOutputSerializer(user)
         return Response(output_serializer.data, status=status.HTTP_200_OK)
+
+    @extend_schema(
+        request=UserReauthSerializer,
+        responses={204: None},
+        description="Soft-delete own account. Requires password confirmation.",
+    )
+    def delete(self, request):
+        input_serializer = UserReauthSerializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+
+        user = authenticate(
+            request,
+            username=request.user.username,
+            password=input_serializer.validated_data["password"],
+        )
+
+        if user is None:
+            return Response(
+                {"detail": "Invalid password."},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
+        user_soft_delete(user=request.user)
+        logout(request)
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class UserRegisterApi(APIView):
