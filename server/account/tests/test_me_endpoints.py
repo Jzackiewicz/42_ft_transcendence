@@ -100,3 +100,7 @@ class UserMeExportTest(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["username"], "testuser")
         self.assertEqual(response.data["email"], "test@example.com")
+
+    def test_me_export_endpoint_get_unauthenticated(self):
+        response = self.client.get(reverse("user-me-export"))
+        self.assertEqual(response.status_code, 403)
