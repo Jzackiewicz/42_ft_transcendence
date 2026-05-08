@@ -88,9 +88,23 @@ class IsSelfOrReadOnlyTests(APITestCase):
         self.assertFalse(self.user_b.profile.avatar)
 
     def test_user_a_cannot_delete_user_b_avatar(self):
+        self.user_b.profile.avatar.save(
+            "existing.png",
+            SimpleUploadedFile(
+                "existing.png", _png_bytes(), content_type="image/png"
+            ),
+            save=True,
+        )
+        self.user_b.profile.refresh_from_db()
+        original_avatar_name = self.user_b.profile.avatar.name
+
         url = reverse("profile-avatar", kwargs={"user_id": self.user_b.id})
         response = self.client.delete(url)
+
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.user_b.profile.refresh_from_db()
+        self.assertTrue(self.user_b.profile.avatar)
+        self.assertEqual(self.user_b.profile.avatar.name, original_avatar_name)
 
     # -------------------- UserProfileFriendDetailApi --------------------
 
