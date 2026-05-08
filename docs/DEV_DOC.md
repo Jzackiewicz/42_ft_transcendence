@@ -58,6 +58,14 @@ It means our code structure looks like this:
 - `urls.py` / `routing.py` - HTTP and WebSocket routing.
 
 ### Game section
+
+#### Structure
+The game logic follows a strict layered architecture to separate concerns:
+- **`consumers.py` (Presentation Layer):** Manages WebSocket connections, validates incoming JSON payloads using DRF serializers, and passes standardized requests (DTOs) to the action handler.
+- **`game_action_handler.py` (Application Layer):** Acts as a dispatcher. It translates external context (e.g., User object, session ID) into database models and invokes the appropriate methods on the game service.
+- **`game_service.py` (Domain Layer):** The core business logic facade. It enforces game rules using standalone guards, mutates database state, and handles the lifecycle of the game.
+- **`fsm.py` (State Machine):** A pure Finite State Machine (FSM) defining allowed game states and transitions, keeping the flow rules isolated from data mutations.
+
 #### Game logic
 
 Base game loop is constructed as a finite state machine (FSM) visualized as a graph below:
@@ -79,7 +87,7 @@ Current architecture:
 - `fsm.py` - declared states and trasition with no business logic
 - `services/` - business logic including game rules, calling FSM transitions, calling ORM data models
 - `selectors.py` - game state snapshots ***(TBA)***
-- `consumers.py` - Websocket interface layer ***(TBA)***
+- `consumers.py` - Websocket interface layer
 
 #### Game Data model (ORM)
 ![EntityRelationDiagram](game_erd.svg)
