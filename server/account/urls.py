@@ -8,6 +8,7 @@ urlpatterns = [
     path("users/logout/", apis.UserLogoutApi.as_view(), name="user-logout"),
     # User endpoints
     path("users/me/", apis.UserMeApi.as_view(), name="user-me"),
+    path("users/me/export", apis.UserMeExportApi.as_view(), name="user-me-export"),
     path("users/register/", apis.UserRegisterApi.as_view(), name="user-register"),
     path("users/", apis.UserListApi.as_view(), name="user-list"),
     path("users/<int:user_id>/", apis.UserDetailApi.as_view(), name="user-detail"),

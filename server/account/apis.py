@@ -111,6 +111,25 @@ class UserMeApi(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class UserMeExportApi(APIView):
+    permission_classes = [
+        IsAuthenticated,
+    ]
+
+    @extend_schema(
+        responses={
+            200: UserOutputSerializer,
+            401: {"type": "object", "properties": {"detail": {"type": "string"}}},
+            403: {"type": "object", "properties": {"detail": {"type": "string"}}},
+        },
+        description="Export user data as json object",
+    )
+    # TODO: know if that is enough or if we need to provide more info
+    def get(self, request):
+        output_serializer = UserOutputSerializer(request.user)
+        return Response(output_serializer.data)
+
+
 class UserRegisterApi(APIView):
     permission_classes = []
 
