@@ -3,30 +3,39 @@ from django.utils import timezone
 from game.models import GameSession, SessionPlayer
 
 from .guards import (
-    require_status,
-    require_current_player,
-    require_current_question,
-    require_no_current_attempt,
-    require_actor_is_current_player,
-    require_actor_is_last_correct_player,
-    get_pending_current_attempt,
+	require_status,
+	require_current_player,
+	require_current_question,
+	require_no_current_attempt,
+	require_actor_is_current_player,
+	require_actor_is_last_correct_player,
+	get_pending_current_attempt,
+	require_minimum_players,
+	require_questions_exist,
+	require_starting_player,
+	require_player_alive,
+	require_action_actor,
+	require_target_player_id,
 )
 
 from .lifecycle import (
 	set_end_game_stats,
-    create_answer_attempt,
-    submit_answer_attempt,
-    assign_next_question
+	create_answer_attempt,
+	submit_answer_attempt,
+	assign_next_question,
+	cancel_game,
+	handle_surrender_in_answering,
+	handle_surrender_in_nomination
 )
 
 from .answers import (
-    apply_answer_verdict,
-    evaluate_current_attempt
+	apply_answer_verdict,
+	evaluate_current_attempt
 )
 
 from .player_selection import (
-    get_next_alive_player, 
-    get_random_alive_player
+	get_next_alive_player, 
+	get_random_alive_player
 )
 
 
@@ -65,7 +74,8 @@ class GameService:
 		self.session.save()
 		
 		if self.session.current_status == GameSession.Status.GAME_OVER:
-			self.end_game_session()
+			require_status(self.session, GameSession.Status.GAME_OVER)
+			set_end_game_stats(self.session)
 			return
 
 		if should_fallback:
@@ -75,14 +85,11 @@ class GameService:
 
 	def start_game_session(self):
 		require_status(self.session, GameSession.Status.LOBBY)
-		if self.session.session_players.count() < 2:
-			raise ValueError("Cannot start game with fewer than 2 players")
-		if not self.session.session_questions.exists():
-			raise ValueError("Cannot start game without questions")
+		require_minimum_players(self.session)
+		require_questions_exist(self.session)
 		
 		starting_player = get_random_alive_player(self.session)
-		if starting_player is None:
-			raise ValueError("No alive players to start the game")
+		require_starting_player(starting_player)
 
 		self.session.current_player = starting_player
 		self.session.last_correct_player = None
@@ -93,13 +100,13 @@ class GameService:
 		self.session.save()
 		self._start_answering_turn()
 
-	def nominate_player(self, actor: SessionPlayer, target_player_id: int) -> None:
+	def nominate_player(self, actor: SessionPlayer | None, target_player_id: int | None) -> None:
 		require_status(self.session, GameSession.Status.NOMINATION)
 		require_actor_is_last_correct_player(self.session, actor, "nominate")
-		
+		require_target_player_id(target_player_id)
+
 		target = self.session.session_players.get(id=target_player_id)
-		if target.lives <= 0:
-			raise ValueError("Cannot nominate a dead player")
+		require_player_alive(target, "nominate")
 
 		self.session.last_nominated_player = target
 		self.session.current_player = target
@@ -108,7 +115,7 @@ class GameService:
 		self.session.save()
 		self._start_answering_turn()
 
-	def submit_player_answer(self, actor: SessionPlayer, answer: str | None) -> None:
+	def submit_player_answer(self, actor: SessionPlayer | None, answer: str | None) -> None:
 		require_status(self.session, GameSession.Status.ANSWERING)
 		require_actor_is_current_player(self.session, actor, "submit answer")
 		require_current_player(self.session)
@@ -120,13 +127,23 @@ class GameService:
 		self.session.fsm.submit_answer()
 		self.session.save()
 
-
 	def evaluate_player_answer(self) -> None:
 		require_status(self.session, GameSession.Status.EVALUATION)
 		evaluate_current_attempt(self.session)
 		apply_answer_verdict(self.session)
 		self._advance_after_evaluation()
 
-	def end_game_session(self):
-		require_status(self.session, GameSession.Status.GAME_OVER)
-		set_end_game_stats(self.session)
+	def surrender_player(self, actor: SessionPlayer | None) -> None:
+		require_action_actor(actor, "surrender")
+		actor.lives = 0
+		actor.save(update_fields=['lives'])
+
+		if self.session.is_game_over():
+			cancel_game(self.session)
+			return
+
+		if self.session.current_status == GameSession.Status.ANSWERING:
+			handle_surrender_in_answering(self.session, actor)
+		elif self.session.current_status == GameSession.Status.NOMINATION:
+			if handle_surrender_in_nomination(self.session, actor):
+				self._start_answering_turn()

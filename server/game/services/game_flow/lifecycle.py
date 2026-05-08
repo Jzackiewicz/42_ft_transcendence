@@ -1,5 +1,6 @@
-from game.models import GameSession, AnswerAttempt
+from game.models import GameSession, AnswerAttempt, SessionPlayer
 from django.utils import timezone
+from .guards import require_status
 
 
 def set_end_game_stats(session: GameSession) -> None:
@@ -7,6 +8,9 @@ def set_end_game_stats(session: GameSession) -> None:
 	if len(alive_players) == 1:
 		session.winner = alive_players[0]
 		session.end_reason = GameSession.EndReason.LAST_PLAYER_ALIVE
+	elif len(alive_players) == 0:
+		session.winner = None
+		session.end_reason = GameSession.EndReason.CANCELLED
 	else:
 		session.winner = (
 			session.session_players.order_by(
@@ -58,3 +62,32 @@ def assign_next_question(session: GameSession) -> None:
 		session.question_asked_count += 1
 	else:
 		session.current_question = None
+
+def cancel_game(session: GameSession) -> None:
+	session.fsm.cancel_game()
+	session.save()
+	set_end_game_stats(session)
+
+def handle_surrender_in_answering(session: GameSession, actor: SessionPlayer) -> None:
+	require_status(session, GameSession.Status.ANSWERING)
+	if session.current_player_id == actor.id:
+		attempt = session.current_attempt
+		if attempt and attempt.evaluation_status == AnswerAttempt.EvaluationStatus.PENDING:
+			attempt.evaluation_status = AnswerAttempt.EvaluationStatus.EVALUATED
+			attempt.is_timeout = True
+			attempt.is_correct = False
+			attempt.save(update_fields=['evaluation_status', 'is_timeout', 'is_correct'])
+			
+			session.fsm.submit_answer()
+			session.save()
+
+def handle_surrender_in_nomination(session: GameSession, actor: SessionPlayer) -> bool:
+	require_status(session, GameSession.Status.NOMINATION)
+	if session.last_correct_player_id == actor.id:
+		next_player = session.session_players.filter(lives__gt=0).order_by('?').first()
+		if next_player:
+			session.current_player = next_player
+			session.fsm.nominate_player()
+			session.save()
+			return True
+	return False

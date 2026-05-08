@@ -4,6 +4,7 @@ from datetime import timedelta
 
 from django.test import TestCase
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 
 from game.models import (
 	AnswerAttempt,
@@ -13,6 +14,7 @@ from game.models import (
 	SessionQuestion,
 )
 from game.services.game_flow.game_service import GameService
+from game.services.game_flow.lifecycle import set_end_game_stats
 
 
 class GameServiceTests(TestCase):
@@ -105,7 +107,7 @@ class GameServiceTests(TestCase):
 		self.session.current_status = GameSession.Status.ANSWERING
 		self.session.save()
 
-		with self.assertRaisesMessage(ValueError, "Game session is not in lobby state"):
+		with self.assertRaisesMessage(ValidationError, "Game session is not in lobby state"):
 			GameService(self.session).start_game_session()
 
 	def test_start_game_requires_at_least_two_players(self):
@@ -113,7 +115,7 @@ class GameServiceTests(TestCase):
 		self.p3.delete()
 
 		with self.assertRaisesMessage(
-			ValueError,
+			ValidationError,
 			"Cannot start game with fewer than 2 players",
 		):
 			GameService(self.session).start_game_session()
@@ -122,7 +124,7 @@ class GameServiceTests(TestCase):
 		self.session.session_questions.all().delete()
 
 		with self.assertRaisesMessage(
-			ValueError,
+			ValidationError,
 			"Cannot start game without questions",
 		):
 			GameService(self.session).start_game_session()
@@ -152,7 +154,7 @@ class GameServiceTests(TestCase):
 			id=self.session.current_player_id
 		).first()
 
-		with self.assertRaisesMessage(ValueError, "Only current player can submit answer"):
+		with self.assertRaisesMessage(ValidationError, "Only current player can submit answer"):
 			GameService(self.session).submit_player_answer(actor=actor, answer="4")
 
 	def test_submit_answer_timeout_ignores_answer_text(self):
@@ -282,7 +284,7 @@ class GameServiceTests(TestCase):
 		self.session.current_player = self.p1
 		self.session.save()
 
-		with self.assertRaisesMessage(ValueError, "Only last correct player can nominate"):
+		with self.assertRaisesMessage(ValidationError, "Only last correct player can nominate"):
 			GameService(self.session).nominate_player(
 				actor=self.p2,
 				target_player_id=self.p3.id,
@@ -296,7 +298,7 @@ class GameServiceTests(TestCase):
 		self.p3.save()
 		self.session.save()
 
-		with self.assertRaisesMessage(ValueError, "Cannot nominate a dead player"):
+		with self.assertRaisesMessage(ValidationError, "Cannot nominate a dead player"):
 			GameService(self.session).nominate_player(
 				actor=self.p1,
 				target_player_id=self.p3.id,
@@ -311,9 +313,12 @@ class GameServiceTests(TestCase):
 		self.session.current_status = GameSession.Status.GAME_OVER
 		self.session.current_player = self.p1
 		self.session.current_question = self.sq1
+		self.session.current_status = GameSession.Status.ANSWERING
+		self.session.current_player = self.p2
 		self.session.save()
 
-		GameService(self.session).end_game_session()
+		set_end_game_stats(self.session)
+		GameService(self.session).surrender_player(actor=self.p2)
 		self.session.refresh_from_db()
 
 		self.assertEqual(self.session.winner_id, self.p1.id)
@@ -343,9 +348,19 @@ class GameServiceTests(TestCase):
 
 		self.session.current_status = GameSession.Status.GAME_OVER
 		self.session.question_asked_count = self.session.session_questions.count()
+		self.session.current_status = GameSession.Status.ANSWERING
+		self.session.current_player = self.p3
+		self.session.question_asked_count = self.session.session_questions.count() - 1
 		self.session.save()
 
-		GameService(self.session).end_game_session()
+		set_end_game_stats(self.session)
+		GameService(self.session)._start_answering_turn()
+		self.session.refresh_from_db()
+
+		GameService(self.session).submit_player_answer(actor=self.p3, answer="wrong")
+		self.session.refresh_from_db()
+
+		GameService(self.session).evaluate_player_answer()
 		self.session.refresh_from_db()
 
 		self.assertEqual(self.session.winner_id, self.p2.id)
@@ -372,9 +387,19 @@ class GameServiceTests(TestCase):
 
 		self.session.current_status = GameSession.Status.GAME_OVER
 		self.session.question_asked_count = self.session.session_questions.count()
+		self.session.current_status = GameSession.Status.ANSWERING
+		self.session.current_player = self.p3
+		self.session.question_asked_count = self.session.session_questions.count() - 1
 		self.session.save()
 
-		GameService(self.session).end_game_session()
+		set_end_game_stats(self.session)
+		GameService(self.session)._start_answering_turn()
+		self.session.refresh_from_db()
+
+		GameService(self.session).submit_player_answer(actor=self.p3, answer="wrong")
+		self.session.refresh_from_db()
+
+		GameService(self.session).evaluate_player_answer()
 		self.session.refresh_from_db()
 
 		self.assertEqual(self.session.winner_id, self.p1.id)
@@ -386,7 +411,7 @@ class GameServiceTests(TestCase):
 		self.session.current_attempt = None
 		self.session.save()
 
-		with self.assertRaises(ValueError):
+		with self.assertRaises(ValidationError):
 			GameService(self.session).submit_player_answer(
 				actor=self.p1,
 				answer="4",
@@ -412,7 +437,7 @@ class GameServiceTests(TestCase):
 		self.session.current_attempt = attempt
 		self.session.save()
 
-		with self.assertRaises(ValueError):
+		with self.assertRaises(ValidationError):
 			GameService(self.session).submit_player_answer(
 				actor=self.p1,
 				answer="4",
@@ -423,7 +448,7 @@ class GameServiceTests(TestCase):
 		self.session.current_attempt = None
 		self.session.save()
 
-		with self.assertRaises(ValueError):
+		with self.assertRaises(ValidationError):
 			GameService(self.session).evaluate_player_answer()
 
 	def test_timeout_answer_is_evaluated_as_wrong_and_fallbacks(self):
@@ -537,7 +562,7 @@ class GameServiceTests(TestCase):
 		self.session.current_player = self.p1
 		self.session.save()
 
-		with self.assertRaises(ValueError):
+		with self.assertRaises(ValidationError):
 			GameService(self.session).nominate_player(
 				actor=self.p1,
 				target_player_id=self.p2.id,
