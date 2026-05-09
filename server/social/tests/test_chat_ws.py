@@ -2,7 +2,6 @@ from django.test import TestCase
 from channels.testing import WebsocketCommunicator
 from social.routing import websocket_urlpatterns
 from channels.auth import AuthMiddlewareStack
-from channels.security.websocket import AllowedHostsOriginValidator
 from channels.routing import URLRouter
 from social.models import ChatMessage
 from rest_framework.test import APIClient
@@ -11,8 +10,7 @@ from rest_framework.test import APIClient
 class ChatTests(TestCase):
 	async def test_chat_consumer(self):
 		""""Correct use of the endpoint"""
-		application = AllowedHostsOriginValidator(
-        AuthMiddlewareStack(URLRouter(websocket_urlpatterns)))
+		application = AuthMiddlewareStack(URLRouter(websocket_urlpatterns))
 		communicator = WebsocketCommunicator(application, "/ws/chat/test_room/")
 
 		connected, subprotocol = await communicator.connect()
@@ -28,8 +26,7 @@ class ChatTests(TestCase):
 
 	async def test_chat_consumer_invalid_input(self):
 		"""Incorrect use of the endpoint - missing 'message' key"""
-		application = AllowedHostsOriginValidator(
-        AuthMiddlewareStack(URLRouter(websocket_urlpatterns)))
+		application = AuthMiddlewareStack(URLRouter(websocket_urlpatterns))
 		communicator = WebsocketCommunicator(application, "/ws/chat/test_room/")
 		
 		await communicator.connect()
@@ -46,8 +43,7 @@ class ChatTests(TestCase):
 			
 	async def test_chat_consumer_message_too_long(self):
 		"""Testing limit of 500 characters in message"""
-		application = AllowedHostsOriginValidator(
-        AuthMiddlewareStack(URLRouter(websocket_urlpatterns)))
+		application = AuthMiddlewareStack(URLRouter(websocket_urlpatterns))
 		communicator = WebsocketCommunicator(application, "/ws/chat/test_room/")
 		await communicator.connect()
 
