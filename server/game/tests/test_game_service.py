@@ -134,16 +134,17 @@ class GameServiceTests(TestCase):
 		self.session.refresh_from_db()
 
 		actor = self.session.current_player
+		old_attempt_id = self.session.current_attempt_id
 
 		GameService(self.session).submit_player_answer(actor=actor, answer="4")
 		self.session.refresh_from_db()
 
-		attempt = self.session.current_attempt
-		attempt.refresh_from_db()
+		attempt = AnswerAttempt.objects.get(id=old_attempt_id)
 
-		self.assertEqual(self.session.current_status, GameSession.Status.EVALUATION)
+		self.assertEqual(self.session.current_status, GameSession.Status.NOMINATION)
 		self.assertEqual(attempt.answer_text, "4")
 		self.assertFalse(attempt.is_timeout)
+		self.assertTrue(attempt.is_correct)
 		self.assertGreaterEqual(attempt.answer_time_ms, 0)
 
 	def test_submit_answer_rejects_non_current_player(self):
@@ -157,7 +158,7 @@ class GameServiceTests(TestCase):
 		with self.assertRaisesMessage(ValidationError, "Only current player can submit answer"):
 			GameService(self.session).submit_player_answer(actor=actor, answer="4")
 
-	def test_submit_answer_timeout_ignores_answer_text(self):
+	def test_submit_answer_timeout_ignores_answer_text_and_evaluates_wrong(self):
 		GameService(self.session).start_game_session()
 		self.session.refresh_from_db()
 
@@ -166,17 +167,19 @@ class GameServiceTests(TestCase):
 		attempt.save()
 
 		actor = self.session.current_player
+		old_attempt_id = attempt.id
 
 		GameService(self.session).submit_player_answer(actor=actor, answer="4")
 		self.session.refresh_from_db()
 
-		attempt.refresh_from_db()
+		attempt = AnswerAttempt.objects.get(id=old_attempt_id)
 
-		self.assertEqual(self.session.current_status, GameSession.Status.EVALUATION)
+		self.assertEqual(self.session.current_status, GameSession.Status.ANSWERING)
 		self.assertTrue(attempt.is_timeout)
 		self.assertIsNone(attempt.answer_text)
+		self.assertFalse(attempt.is_correct)
 
-	def test_evaluate_correct_answer_adds_points_and_goes_to_nomination(self):
+	def test_submit_correct_answer_adds_points_and_goes_to_nomination(self):
 		GameService(self.session).start_game_session()
 		self.session.refresh_from_db()
 
@@ -189,8 +192,6 @@ class GameServiceTests(TestCase):
 		)
 		self.session.refresh_from_db()
 
-		GameService(self.session).evaluate_player_answer()
-		self.session.refresh_from_db()
 		actor.refresh_from_db()
 
 		self.assertEqual(self.session.current_status, GameSession.Status.NOMINATION)
@@ -211,7 +212,6 @@ class GameServiceTests(TestCase):
 		GameService(self.session).submit_player_answer(actor=self.p2, answer="4")
 		self.session.refresh_from_db()
 
-		GameService(self.session).evaluate_player_answer()
 		self.p2.refresh_from_db()
 
 		self.assertEqual(self.p2.points, 20)
@@ -229,8 +229,6 @@ class GameServiceTests(TestCase):
 		GameService(self.session).submit_player_answer(actor=self.p1, answer="wrong")
 		self.session.refresh_from_db()
 
-		GameService(self.session).evaluate_player_answer()
-		self.session.refresh_from_db()
 		self.p1.refresh_from_db()
 
 		self.assertEqual(self.session.current_status, GameSession.Status.ANSWERING)
@@ -252,8 +250,6 @@ class GameServiceTests(TestCase):
 		GameService(self.session).submit_player_answer(actor=self.p2, answer="wrong")
 		self.session.refresh_from_db()
 
-		GameService(self.session).evaluate_player_answer()
-		self.session.refresh_from_db()
 		self.p2.refresh_from_db()
 
 		self.assertEqual(self.session.current_status, GameSession.Status.NOMINATION)
@@ -356,9 +352,6 @@ class GameServiceTests(TestCase):
 		GameService(self.session).submit_player_answer(actor=self.p3, answer="wrong")
 		self.session.refresh_from_db()
 
-		GameService(self.session).evaluate_player_answer()
-		self.session.refresh_from_db()
-
 		self.assertEqual(self.session.winner_id, self.p2.id)
 		self.assertEqual(
 			self.session.end_reason,
@@ -393,9 +386,6 @@ class GameServiceTests(TestCase):
 		self.session.refresh_from_db()
 
 		GameService(self.session).submit_player_answer(actor=self.p3, answer="wrong")
-		self.session.refresh_from_db()
-
-		GameService(self.session).evaluate_player_answer()
 		self.session.refresh_from_db()
 
 		self.assertEqual(self.session.winner_id, self.p1.id)
@@ -445,7 +435,7 @@ class GameServiceTests(TestCase):
 		self.session.save()
 
 		with self.assertRaises(ValidationError):
-			GameService(self.session).evaluate_player_answer()
+			GameService(self.session).evaluate_answer()
 
 	def test_timeout_answer_is_evaluated_as_wrong_and_fallbacks(self):
 		self.session.current_status = GameSession.Status.ANSWERING
@@ -467,8 +457,6 @@ class GameServiceTests(TestCase):
 		)
 		self.session.refresh_from_db()
 
-		GameService(self.session).evaluate_player_answer()
-		self.session.refresh_from_db()
 		self.p1.refresh_from_db()
 
 		old_attempt = AnswerAttempt.objects.get(id=old_attempt_id)
@@ -481,6 +469,32 @@ class GameServiceTests(TestCase):
 		self.assertEqual(self.session.current_player_id, self.p2.id)
 		self.assertIsNotNone(self.session.current_attempt)
 		self.assertNotEqual(self.session.current_attempt_id, old_attempt_id)
+		
+	def test_evaluate_timeout_is_processed_correctly_when_no_answer_submitted(self):
+		self.session.current_status = GameSession.Status.ANSWERING
+		self.session.current_player = self.p1
+		self.session.save()
+
+		GameService(self.session)._start_answering_turn()
+		self.session.refresh_from_db()
+		
+		old_attempt_id = self.session.current_attempt_id
+
+		attempt = self.session.current_attempt
+		attempt.started_at = timezone.now() - timedelta(seconds=30)
+		attempt.save()
+
+		GameService(self.session).evaluate_timeout()
+		self.session.refresh_from_db()
+		self.p1.refresh_from_db()
+		
+		old_attempt = AnswerAttempt.objects.get(id=old_attempt_id)
+		
+		self.assertTrue(old_attempt.is_timeout)
+		self.assertFalse(old_attempt.is_correct)
+		self.assertEqual(self.p1.lives, 2)
+		self.assertEqual(self.session.current_status, GameSession.Status.ANSWERING)
+		self.assertEqual(self.session.current_player_id, self.p2.id)
 
 
 	def test_wrong_answer_that_eliminates_player_ends_game_through_evaluation_flow(self):
@@ -503,8 +517,6 @@ class GameServiceTests(TestCase):
 		)
 		self.session.refresh_from_db()
 
-		GameService(self.session).evaluate_player_answer()
-		self.session.refresh_from_db()
 		self.p2.refresh_from_db()
 
 		self.assertEqual(self.p2.lives, 0)
@@ -537,8 +549,6 @@ class GameServiceTests(TestCase):
 		)
 		self.session.refresh_from_db()
 
-		GameService(self.session).evaluate_player_answer()
-		self.session.refresh_from_db()
 		self.p1.refresh_from_db()
 
 		self.assertEqual(self.session.question_asked_count, total_questions)
