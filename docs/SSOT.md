@@ -3,7 +3,7 @@
 ## 1. Project Vision (Elevator Pitch)
 Quizscendence is a real-time multiplayer browser quiz game inspired by the Polish TV game show "1 z 10" ("1 out of 10").
 
-The game is played by exactly 5 players in a shared lobby. Players answer text-based questions, lose lives after wrong answers or timeouts, gain points for correct answers, and nominate other players after answering correctly.
+The game is played by maximum of 5 players in a shared lobby. Players answer text-based questions, lose lives after wrong answers or timeouts, gain points for correct answers, and nominate other players after answering correctly.
 
 The backend is the source of truth for the whole game flow. The frontend only sends player actions and renders the state returned by the backend.
 
@@ -47,8 +47,8 @@ The project relies on a strict frontend-backend separation with a strong emphasi
 ### Lobby
 
 - Create or join a game lobby.
-- Each lobby must contain exactly 5 players.
-- A game cannot start with fewer or more than 5 players.
+- Each lobby must contain a maximum of 5 players.
+- A game requires a minimum of 2 players to start.
 - A player slot may be occupied by a human player or an AI bot.
 - Lobby settings define the game configuration before the game starts.
 
@@ -91,7 +91,7 @@ The project relies on a strict frontend-backend separation with a strong emphasi
 
 ### Lobby Size
 
-- A game lobby must contain exactly 5 players.
+- A game lobby can contain up to 5 players.
 - A player slot may be occupied by either a human player or an AI bot.
 - Bot players may be used to fill empty slots.
 

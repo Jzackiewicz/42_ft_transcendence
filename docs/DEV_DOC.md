@@ -76,7 +76,7 @@ States:
 
 - `Lobby` - waiting for players and game start.
 - `Answering` - current player answers a question.
-- `Evaluation` - answer is evaluated as correct, wrong or timeout.
+- `Evaluation` - answer is evaluated as correct, wrong or timeout. This state is automatically called by the server after Answering state.
 - `Nomination` - last correct player selects the next player.
 - `GameOver` - game is finished.
 
