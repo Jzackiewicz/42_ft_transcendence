@@ -1,5 +1,5 @@
 from django.core.exceptions import ValidationError
-from game.models import GameSession, SessionPlayer, AnswerAttempt
+from game.models import GameSession, SessionPlayer, AnswerAttempt, Question
 
 
 def require_status(session: GameSession, expected_status: str) -> None:
@@ -15,6 +15,14 @@ def require_minimum_players(session: GameSession) -> None:
 def require_questions_exist(session: GameSession) -> None:
 	if not session.session_questions.exists():
 		raise ValidationError("Cannot start game without questions")
+
+
+def require_enough_questions_in_db(amount: int) -> None:
+	available = Question.objects.count()
+	if available == 0:
+		raise ValidationError("Cannot start game without questions in the database.")
+	if available < amount:
+		raise ValidationError(f"Not enough questions. Required: {amount}, available: {available}.")
 
 
 def require_starting_player(player: SessionPlayer | None) -> None:

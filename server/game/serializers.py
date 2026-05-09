@@ -47,11 +47,15 @@ class SessionQuestionSnapshotSerializer(serializers.ModelSerializer):
 class GameStateSnapshotSerializer(serializers.ModelSerializer):
     players = PlayerSnapshotSerializer(source='session_players', many=True)
     current_question = SessionQuestionSnapshotSerializer()
+    total_questions_count = serializers.SerializerMethodField()
 
     class Meta:
         model = GameSession
         fields = [
             'session_uuid', 'current_status', 'current_player', 'last_correct_player',
             'last_nominated_player', 'players', 'current_question', 'answer_time_limit_ms',
-            'winner', 'end_reason', 'question_asked_count'
+            'winner', 'end_reason', 'question_asked_count', 'total_questions_count'
         ]
+
+    def get_total_questions_count(self, obj: GameSession) -> int:
+        return obj.session_questions.count()

@@ -1,6 +1,6 @@
-from game.models import GameSession, AnswerAttempt, SessionPlayer
+from game.models import GameSession, AnswerAttempt, SessionPlayer, Question, SessionQuestion
 from django.utils import timezone
-from .guards import require_status
+from .guards import require_status, require_enough_questions_in_db
 from django.core.exceptions import ValidationError
 
 
@@ -24,6 +24,20 @@ def set_end_game_stats(session: GameSession) -> None:
 	session.current_question = None
 	session.current_attempt = None
 	session.save()
+
+def assign_random_questions_to_session(session: GameSession, amount: int = 10) -> None:
+	if session.session_questions.exists():
+		return
+
+	require_enough_questions_in_db(amount)
+
+	questions = list(Question.objects.order_by('?')[:amount])
+
+	session_questions = [
+		SessionQuestion(session=session, question=q, order_index=i)
+		for i, q in enumerate(questions)
+	]
+	SessionQuestion.objects.bulk_create(session_questions)
 
 def create_answer_attempt(session: GameSession) -> AnswerAttempt:
 	return AnswerAttempt.objects.create(
