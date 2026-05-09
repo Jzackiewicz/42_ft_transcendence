@@ -86,7 +86,7 @@ Whole game loop is fully backend-driven, frontend only sends player actions and 
 Current architecture:
 - `fsm.py` - declared states and trasition with no business logic
 - `services/` - business logic including game rules, calling FSM transitions, calling ORM data models
-- `selectors.py` - game state snapshots ***(TBA)***
+- `selectors.py` - game state snapshots
 - `consumers.py` - Websocket interface layer
 
 #### Game Data model (ORM)

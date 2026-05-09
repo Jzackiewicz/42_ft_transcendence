@@ -4,6 +4,7 @@ from channels.db import database_sync_to_async
 from django.core.exceptions import ValidationError
 from .services.game_flow.game_action_handler import GameActionHandler, GameActionRequest, GameAction
 from .selectors.lobby_selectors import verify_player_in_session
+from .selectors.game_flow_selectors import get_game_snapshot
 from .serializers import SubmitAnswerPayloadSerializer, NominatePlayerPayloadSerializer
 from .models import GameSession
 
@@ -45,12 +46,13 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 				handler = GameActionHandler()
 				result = await database_sync_to_async(handler.handle_action)(request)
 
+				snapshot = await database_sync_to_async(get_game_snapshot)(self.session_id)
 				await self.channel_layer.group_send(
 					self.room_group_name,
 					{
 						'type': 'game_state_update',
 						'action': result.action,
-						'status': result.status
+						'snapshot': snapshot
 					}
 				)
 			except ValidationError:
@@ -88,12 +90,13 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 			handler = GameActionHandler()
 			result = await database_sync_to_async(handler.handle_action)(request)
 
+			snapshot = await database_sync_to_async(get_game_snapshot)(self.session_id)
 			await self.channel_layer.group_send(
 				self.room_group_name,
 				{
 					'type': 'game_state_update',
 					'action': result.action,
-					'status': result.status
+					'snapshot': snapshot
 				}
 			)
 		except ValidationError as e:
@@ -106,8 +109,11 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 		await self.send_json({
 			'type': 'game_state_update',
 			'action': event['action'],
-			'status': event['status']
-		})		if current_status == GameSession.Status.ANSWERING:
+			'snapshot': event['snapshot']
+		})
+
+		current_status = event['snapshot'].get('current_status')
+		if current_status == GameSession.Status.ANSWERING:
 			if hasattr(self, 'timeout_task') and not self.timeout_task.done():
 				self.timeout_task.cancel()
 			self.timeout_task = asyncio.create_task(self._force_timeout())
@@ -125,5 +131,15 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 		try:
 			handler = GameActionHandler()
 			result = await database_sync_to_async(handler.handle_timeout)(self.session_id)
+
+			snapshot = await database_sync_to_async(get_game_snapshot)(self.session_id)
+			await self.channel_layer.group_send(
+				self.room_group_name,
+				{
+					'type': 'game_state_update',
+					'action': result.action,
+					'snapshot': snapshot
+				}
+			)
 		except ValidationError:
 			pass
