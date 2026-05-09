@@ -12,7 +12,6 @@ class GameAction:
 	START_GAME = "start_game"
 	SUBMIT_ANSWER = "submit_answer"
 	NOMINATE_PLAYER = "nominate_player"
-	EVALUATE_ANSWER = "evaluate_answer"
 	DISCONNECT = "disconnect"
 
 
@@ -51,9 +50,6 @@ class GameActionHandler:
 				target_player_id=request.payload.get("target_player_id"),
 			)
 
-		elif request.action == GameAction.EVALUATE_ANSWER:
-			service.evaluate_player_answer()
-
 		elif request.action == GameAction.DISCONNECT:
 			service.disconnect_player(actor=actor)
 
@@ -68,6 +64,18 @@ class GameActionHandler:
 			action=request.action,
 		)
 	
+	@transaction.atomic
+	def handle_timeout(self, session_id: int) -> GameActionResult:
+		session = self._get_session(session_id=session_id)
+		service = GameService(session)
+		service.evaluate_timeout()
+		session.refresh_from_db()
+		return GameActionResult(
+			session_id=session.id,
+			status=session.current_status,
+			action="evaluate_timeout",
+		)
+
 	@staticmethod
 	def _get_session(*, session_id: int) -> GameSession:
 		require_session_id(session_id)

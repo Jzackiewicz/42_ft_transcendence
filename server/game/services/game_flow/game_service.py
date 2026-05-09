@@ -26,7 +26,8 @@ from .lifecycle import (
 	cancel_game,
 	handle_disconnect_in_lobby,
 	handle_disconnect_in_answering,
-	handle_disconnect_in_nomination
+	handle_disconnect_in_nomination,
+	handle_evaluate_timeout
 )
 
 from .answers import (
@@ -97,6 +98,9 @@ class GameService:
 			if self.session.current_status == GameSession.Status.EVALUATION:
 				apply_answer_verdict(self.session)
 				self._advance_after_evaluation()
+		elif self.session.current_status == GameSession.Status.EVALUATION:
+			apply_answer_verdict(self.session)
+			self._advance_after_evaluation()
 		elif self.session.current_status == GameSession.Status.NOMINATION:
 			if handle_disconnect_in_nomination(self.session, actor):
 				self._start_answering_turn()
@@ -144,8 +148,17 @@ class GameService:
 
 		self.session.fsm.submit_answer()
 		self.session.save()
+		self.evaluate_answer()
 
-	def evaluate_player_answer(self) -> None:
+	def evaluate_timeout(self) -> None:
+		require_status(self.session, GameSession.Status.ANSWERING)
+		attempt = get_pending_current_attempt(self.session)
+		handle_evaluate_timeout(self.session, attempt)
+		self.session.fsm.submit_answer()
+		self.session.save()
+		self.evaluate_answer()
+
+	def evaluate_answer(self) -> None:
 		require_status(self.session, GameSession.Status.EVALUATION)
 		evaluate_current_attempt(self.session)
 		apply_answer_verdict(self.session)

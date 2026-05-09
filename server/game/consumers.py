@@ -1,11 +1,11 @@
-import json
+import asyncio
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.db import database_sync_to_async
 from django.core.exceptions import ValidationError
 from .services.game_flow.game_action_handler import GameActionHandler, GameActionRequest, GameAction
 from .selectors.lobby_selectors import verify_player_in_session
 from .serializers import SubmitAnswerPayloadSerializer, NominatePlayerPayloadSerializer
-
+from .models import GameSession
 
 class GameConsumer(AsyncJsonWebsocketConsumer):
 	async def connect(self):
@@ -107,4 +107,23 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 			'type': 'game_state_update',
 			'action': event['action'],
 			'status': event['status']
-		})
+		})		if current_status == GameSession.Status.ANSWERING:
+			if hasattr(self, 'timeout_task') and not self.timeout_task.done():
+				self.timeout_task.cancel()
+			self.timeout_task = asyncio.create_task(self._force_timeout())
+		else:
+			if hasattr(self, 'timeout_task') and not self.timeout_task.done():
+				self.timeout_task.cancel()
+
+	async def _force_timeout(self):
+		limit_ms = await database_sync_to_async(
+			lambda sid: GameSession.objects.get(id=sid).answer_time_limit_ms
+		)(self.session_id)
+		
+		await asyncio.sleep((limit_ms / 1000.0) + 0.5)
+		
+		try:
+			handler = GameActionHandler()
+			result = await database_sync_to_async(handler.handle_timeout)(self.session_id)
+		except ValidationError:
+			pass

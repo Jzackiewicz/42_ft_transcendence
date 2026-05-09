@@ -1,6 +1,7 @@
 from game.models import GameSession, AnswerAttempt, SessionPlayer
 from django.utils import timezone
 from .guards import require_status
+from django.core.exceptions import ValidationError
 
 
 def set_end_game_stats(session: GameSession) -> None:
@@ -50,6 +51,13 @@ def submit_answer_attempt(session: GameSession, attempt: AnswerAttempt, answer_t
 	else:
 		attempt.answer_text = answer_text
 	attempt.save()
+
+def handle_evaluate_timeout(session: GameSession, attempt: AnswerAttempt) -> None:
+	elapsed = timezone.now() - attempt.started_at
+	answer_time_ms = max(int(elapsed.total_seconds() * 1000), 0)
+	if answer_time_ms < session.answer_time_limit_ms:
+		raise ValidationError("Timeout has not elapsed yet")
+	submit_answer_attempt(session, attempt, None)
 
 
 def assign_next_question(session: GameSession) -> None:
