@@ -6,11 +6,13 @@ cbor2==5.9.0
 certifi==2026.2.25
 cffi==2.0.0
 channels==4.3.2
+channels-redis==4.3.0
 charset-normalizer==3.4.6
 constantly==23.10.4
 cryptography==46.0.5
 daphne==4.2.1
 Django==6.0.3
+django-extensions==4.1
 Pillow==11.2.1
 djangorestframework==3.17.1
 drf-spectacular==0.29.0
@@ -29,7 +31,10 @@ py-ubjson==0.16.1
 pyasn1==0.6.3
 pyasn1_modules==0.4.2
 pycparser==3.0
+pydot==4.0.1
 pyOpenSSL==26.0.0
+pyparsing==3.3.2
+python-statemachine==3.0.0
 PyYAML==6.0.3
 referencing==0.37.0
 python-dotenv==1.2.2

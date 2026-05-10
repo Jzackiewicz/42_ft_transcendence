@@ -43,13 +43,12 @@ if not SECRET_KEY:
 
 
 # CSRF settings for production/Docker environment
-_default_origins = "https://localhost:8443,https://127.0.0.1:8443"
+_https_port = os.getenv("HTTPS_EXPOSED_PORT", "8443")
+_default_origins = f"https://localhost:{_https_port},https://127.0.0.1:{_https_port}"
 if DEBUG:
     _default_origins += ",http://localhost:8000,http://127.0.0.1:8000"
 
-CSRF_TRUSTED_ORIGINS = get_list_settings(
-    "CSRF_TRUSTED_ORIGINS", _default_origins
-)
+CSRF_TRUSTED_ORIGINS = get_list_settings("CSRF_TRUSTED_ORIGINS", _default_origins)
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 USE_X_FORWARDED_PORT = True
 
@@ -72,6 +71,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django_extensions",
     "channels",
     "rest_framework",
     "drf_spectacular",
@@ -109,7 +109,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "core.wsgi.application"
 ASGI_APPLICATION = "core.asgi.application"
-
 
 
 # Database
@@ -205,11 +204,17 @@ SPECTACULAR_SETTINGS = {
     "SERVE_INCLUDE_SCHEMA": False,
 }
 
-# # This is for `channel_layer.group_send()` in consumers.py.
-# # For now we handle only one process, so we handle it in RAM
-# # TODO: use redis later on
+REDIS_URL = os.getenv("REDIS_URL")
+if not REDIS_URL:
+    REDIS_HOST = os.getenv("REDIS_HOST", "redis")
+    REDIS_PORT = os.getenv("REDIS_PORT", "6379")
+    REDIS_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}/0"
+
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer"
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [REDIS_URL]
+        },
     }
 }

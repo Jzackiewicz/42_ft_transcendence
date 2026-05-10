@@ -10,17 +10,27 @@ services:
     env_file:
       - ../.env
     ports:
-      - "${DB_PORT:-5432}:5432"
+      - "${DB_EXPOSED_PORT:-5432}:5432"
     networks:
       - backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     restart: always
 
   redis:
     image: redis:7.2.4-alpine3.19
     ports:
-      - "${REDIS_PORT:-6379}:6379"
+      - "${REDIS_EXPOSED_PORT:-6379}:6379"
     networks:
       - backend
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     restart: always
 
   api:
@@ -33,8 +43,10 @@ services:
     env_file:
       - ../.env
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     networks:
       - backend
     restart: always
@@ -51,9 +63,11 @@ services:
     build:
       context: ..
       dockerfile: devops/nginx/Dockerfile
+    env_file:
+      - ../.env
     ports:
-      - "8080:80"
-      - "8443:443"
+      - "${HTTP_EXPOSED_PORT:-8080}:80"
+      - "${HTTPS_EXPOSED_PORT:-8443}:443"
     volumes:
       - static_data:/app/static:ro
       - media_data:/app/media:ro
