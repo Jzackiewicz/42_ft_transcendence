@@ -28,6 +28,16 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 			self.channel_name
 		)
 		await self.accept()
+		
+		snapshot = await database_sync_to_async(get_game_snapshot)(self.session_id)
+		await self.channel_layer.group_send(
+			self.room_group_name,
+			{
+				'type': 'game_state_update',
+				'action': 'player_connected',
+				'snapshot': snapshot
+			}
+		)
 
 	async def disconnect(self, close_code):
 		if hasattr(self, 'room_group_name'):
