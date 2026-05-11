@@ -14,6 +14,7 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from drf_spectacular.utils import extend_schema
 from django.contrib.auth import authenticate, login, logout
+from .permissions import IsSelfOrReadOnly
 
 from .selectors import (
     user_get_by_id,
@@ -160,6 +161,7 @@ class UserListApi(APIView):
 
 
 class UserDetailApi(APIView):
+    permission_classes = [IsSelfOrReadOnly]
     @extend_schema(
         responses={200: UserOutputSerializer},
         description="Retrieve a user by ID.",
@@ -233,6 +235,7 @@ class UserProfileDetailApi(APIView):
 
 
 class UserProfileAvatarApi(APIView):
+    permission_classes = [IsSelfOrReadOnly]
     @extend_schema(
         request=UserProfileAvatarInputSerializer,
         responses={200: UserProfileOutputSerializer},
@@ -274,6 +277,7 @@ class UserProfileFriendListApi(APIView):
 
 
 class UserProfileFriendDetailApi(APIView):
+    permission_classes = [IsSelfOrReadOnly]
     @extend_schema(
         request=None,
         responses={204: None},
