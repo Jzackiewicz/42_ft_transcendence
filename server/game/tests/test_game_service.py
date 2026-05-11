@@ -674,3 +674,54 @@ class GameServiceTests(TestCase):
 		self.p1.refresh_from_db()
 		
 		self.assertEqual(self.p1.lives, 3)
+	def test_wrong_answer_fallbacks_and_skips_dead_player_in_queue(self):
+		self.p2.lives = 0
+		self.p2.save()
+
+		self.session.current_status = GameSession.Status.ANSWERING
+		self.session.current_player = self.p1
+		self.session.save()
+
+		GameService(self.session)._start_answering_turn()
+		self.session.refresh_from_db()
+
+		GameService(self.session).submit_player_answer(actor=self.p1, answer="wrong")
+		self.session.refresh_from_db()
+
+		self.assertEqual(self.session.current_status, GameSession.Status.ANSWERING)
+		self.assertEqual(self.session.current_player_id, self.p3.id)
+
+	def test_evaluate_correct_answer_ignores_case_and_trailing_whitespaces(self):
+		self.q1.correct_answer = "Paris"
+		self.q1.save()
+		
+		self.session.current_status = GameSession.Status.ANSWERING
+		self.session.current_player = self.p1
+		self.session.save()
+
+		GameService(self.session)._start_answering_turn()
+		self.session.refresh_from_db()
+
+		GameService(self.session).submit_player_answer(actor=self.p1, answer="  pArIs ")
+		self.session.refresh_from_db()
+
+		self.assertEqual(self.session.current_status, GameSession.Status.NOMINATION)
+		self.assertEqual(self.session.last_correct_player_id, self.p1.id)
+
+	def test_last_correct_player_loses_status_if_dead_after_evaluation(self):
+		self.session.current_status = GameSession.Status.ANSWERING
+		self.session.current_player = self.p2
+		self.session.last_correct_player = self.p1
+		self.session.save()
+		
+		self.p1.lives = 0
+		self.p1.save()
+
+		GameService(self.session)._start_answering_turn()
+		self.session.refresh_from_db()
+
+		GameService(self.session).submit_player_answer(actor=self.p2, answer="wrong")
+		self.session.refresh_from_db()
+
+		self.assertEqual(self.session.current_status, GameSession.Status.ANSWERING)
+		self.assertEqual(self.session.current_player_id, self.p3.id)
