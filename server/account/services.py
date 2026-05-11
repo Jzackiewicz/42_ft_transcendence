@@ -43,6 +43,10 @@ def user_update_basic_info(
     return user
 
 
+# TODO: add another fields to delete is neccesary
+# First/Last Name if provided
+# Also delete the profile avatar form storage
+# set unusable password and so on
 def user_soft_delete(*, user: User) -> User:
     user.username = f"deleted_{user.id}"
     user.email = f"deleted_{user.id}@deleted.com"
