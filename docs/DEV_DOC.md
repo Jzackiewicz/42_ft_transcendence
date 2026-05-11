@@ -23,7 +23,7 @@ To run production setup:
 
 > [!IMPORTANT]
 > If the default setup does not work it might be because default port is blocked
-> on campus workstation, read the error and change the port in .env in neccesary
+> on campus workstation, read the error and change the port in .env in necessary
 
 ```bash
 make up
@@ -84,7 +84,7 @@ States:
 Whole game loop is fully backend-driven, frontend only sends player actions and renders the snapshots returned by the backend.
 
 Current architecture:
-- `fsm.py` - declared states and trasition with no business logic
+- `fsm.py` - declared states and transition with no business logic
 - `services/` - business logic including game rules, calling FSM transitions, calling ORM data models
 - `selectors.py` - game state snapshots
 - `consumers.py` - Websocket interface layer

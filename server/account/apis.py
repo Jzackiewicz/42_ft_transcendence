@@ -11,8 +11,10 @@ No business logic or direct ORM access belongs here.
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 from drf_spectacular.utils import extend_schema
 from django.contrib.auth import authenticate, login, logout
+from .permissions import IsSelfOrReadOnly
 
 from .selectors import (
     user_get_by_id,
@@ -28,11 +30,13 @@ from .serializers import (
     UserProfileOutputSerializer,
     UserProfileAvatarInputSerializer,
     UserProfileFriendOutputSerializer,
-    UserLoginInputSerializer
+    UserLoginInputSerializer,
+    UserReauthSerializer,
 )
 from .services import (
     user_create,
     user_update_basic_info,
+    user_soft_delete,
     profile_update_avatar,
     profile_clear_avatar,
     profile_add_friend,
@@ -43,8 +47,101 @@ from .services import (
 # User endpoints
 # ---------------------------------------------------------------------------
 
-class UserRegisterApi(APIView):
 
+class UserMeApi(APIView):
+    permission_classes = [
+        IsAuthenticated,
+    ]
+
+    @extend_schema(
+        responses={
+            200: UserOutputSerializer,
+            403: {"type": "object", "properties": {"detail": {"type": "string"}}},
+        },
+        description="Retrieve the authenticated user's information.",
+    )
+    def get(self, request):
+        output_serializer = UserOutputSerializer(request.user)
+        return Response(output_serializer.data)
+
+    @extend_schema(
+        request=UserUpdateInputSerializer,
+        responses={
+            200: UserOutputSerializer,
+            400: {"type": "object", "properties": {"detail": {"type": "string"}}},
+            401: {"type": "object", "properties": {"detail": {"type": "string"}}},
+            403: {"type": "object", "properties": {"detail": {"type": "string"}}},
+        },
+        description="Update username or email for the authenticated user.",
+    )
+    def patch(self, request):
+        input_serializer = UserUpdateInputSerializer(
+            data=request.data, context={"request": request}
+        )
+        input_serializer.is_valid(raise_exception=True)
+
+        user = user_update_basic_info(
+            user=request.user, **input_serializer.validated_data
+        )
+
+        output_serializer = UserOutputSerializer(user)
+        return Response(output_serializer.data, status=status.HTTP_200_OK)
+
+    @extend_schema(
+        request=UserReauthSerializer,
+        responses={
+            204: None,
+            400: {
+                "type": "object",
+                "additionalProperties": True,
+                "description": "Missing or invalid password payload.",
+            },
+            401: {"type": "object", "properties": {"detail": {"type": "string"}}},
+            403: {"type": "object", "properties": {"detail": {"type": "string"}}},
+        },
+        description="Soft-delete own account. Requires password confirmation.",
+    )
+    def delete(self, request):
+        input_serializer = UserReauthSerializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+
+        user = authenticate(
+            request,
+            username=request.user.username,
+            password=input_serializer.validated_data["password"],
+        )
+
+        if user is None:
+            return Response(
+                {"detail": "Invalid password."},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
+        user_soft_delete(user=request.user)
+        logout(request)
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class UserMeExportApi(APIView):
+    permission_classes = [
+        IsAuthenticated,
+    ]
+
+    @extend_schema(
+        responses={
+            200: UserOutputSerializer,
+            403: {"type": "object", "properties": {"detail": {"type": "string"}}},
+        },
+        description="Export user data as json object",
+    )
+    # TODO: know if that is enough or if we need to provide more info
+    def get(self, request):
+        output_serializer = UserOutputSerializer(request.user)
+        return Response(output_serializer.data)
+
+
+class UserRegisterApi(APIView):
     permission_classes = []
 
     @extend_schema(
@@ -63,7 +160,6 @@ class UserRegisterApi(APIView):
 
 
 class UserListApi(APIView):
-
     @extend_schema(
         responses={200: UserOutputSerializer(many=True)},
         description="List all users.",
@@ -75,6 +171,7 @@ class UserListApi(APIView):
 
 
 class UserDetailApi(APIView):
+    permission_classes = [IsSelfOrReadOnly]
 
     @extend_schema(
         responses={200: UserOutputSerializer},
@@ -93,7 +190,9 @@ class UserDetailApi(APIView):
     def patch(self, request, user_id: int):
         user = user_get_by_id(user_id=user_id)
 
-        input_serializer = UserUpdateInputSerializer(data=request.data)
+        input_serializer = UserUpdateInputSerializer(
+            data=request.data, context={"request": request, "user": user}
+        )
         input_serializer.is_valid(raise_exception=True)
 
         user = user_update_basic_info(user=user, **input_serializer.validated_data)
@@ -106,8 +205,26 @@ class UserDetailApi(APIView):
 # UserProfile endpoints
 # ---------------------------------------------------------------------------
 
-class UserProfileListApi(APIView):
 
+class UserProfileMeApi(APIView):
+    permission_classes = [
+        IsAuthenticated,
+    ]
+
+    @extend_schema(
+        responses={
+            200: UserProfileOutputSerializer,
+            403: {"type": "object", "properties": {"detail": {"type": "string"}}},
+        },
+        description="Retrieve the authenticated user's profile information.",
+    )
+    def get(self, request):
+        profile = profile_get_by_user_id(user_id=request.user.id)
+        output_serializer = UserProfileOutputSerializer(profile)
+        return Response(output_serializer.data)
+
+
+class UserProfileListApi(APIView):
     @extend_schema(
         responses={200: UserProfileOutputSerializer(many=True)},
         description="List all user profiles.",
@@ -119,7 +236,6 @@ class UserProfileListApi(APIView):
 
 
 class UserProfileDetailApi(APIView):
-
     @extend_schema(
         responses={200: UserProfileOutputSerializer},
         description="Retrieve the profile for a given user ID.",
@@ -131,6 +247,7 @@ class UserProfileDetailApi(APIView):
 
 
 class UserProfileAvatarApi(APIView):
+    permission_classes = [IsSelfOrReadOnly]
 
     @extend_schema(
         request=UserProfileAvatarInputSerializer,
@@ -143,7 +260,9 @@ class UserProfileAvatarApi(APIView):
         input_serializer = UserProfileAvatarInputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
 
-        profile = profile_update_avatar(profile=profile, **input_serializer.validated_data)
+        profile = profile_update_avatar(
+            profile=profile, **input_serializer.validated_data
+        )
 
         output_serializer = UserProfileOutputSerializer(profile)
         return Response(output_serializer.data, status=status.HTTP_200_OK)
@@ -159,7 +278,6 @@ class UserProfileAvatarApi(APIView):
 
 
 class UserProfileFriendListApi(APIView):
-
     @extend_schema(
         responses={200: UserProfileFriendOutputSerializer(many=True)},
         description="List friends of a user profile.",
@@ -172,6 +290,7 @@ class UserProfileFriendListApi(APIView):
 
 
 class UserProfileFriendDetailApi(APIView):
+    permission_classes = [IsSelfOrReadOnly]
 
     @extend_schema(
         request=None,
@@ -195,12 +314,14 @@ class UserProfileFriendDetailApi(APIView):
         profile_remove_friend(profile=profile, friend_profile=friend_profile)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
 # ---------------------------------------------------------------------------
 # User Login/Logout endpoints
 # ---------------------------------------------------------------------------
 
+
 class UserLoginApi(APIView):
-    permission_classes = [] #user isnt authenticated yet, so its available for everyone
+    permission_classes = []  # user isnt authenticated yet, so its available for everyone
 
     @extend_schema(
         request=UserLoginInputSerializer,
@@ -213,16 +334,18 @@ class UserLoginApi(APIView):
         input_serializer.is_valid(raise_exception=True)
 
         # verify credentials, return None if wrong
-        user = authenticate(request, 
-                            username=input_serializer.validated_data["username"], 
-                            password=input_serializer.validated_data["password"])
-        
+        user = authenticate(
+            request,
+            username=input_serializer.validated_data["username"],
+            password=input_serializer.validated_data["password"],
+        )
+
         if user is None:
             return Response(
                 {"detail": "Invalid credentials."},
                 status=status.HTTP_401_UNAUTHORIZED,
             )
-        
+
         # mark user as logged in & remember for future requests
         login(request, user)
 
