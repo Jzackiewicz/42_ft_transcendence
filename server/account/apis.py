@@ -56,7 +56,6 @@ class UserMeApi(APIView):
     @extend_schema(
         responses={
             200: UserOutputSerializer,
-            401: {"type": "object", "properties": {"detail": {"type": "string"}}},
             403: {"type": "object", "properties": {"detail": {"type": "string"}}},
         },
         description="Retrieve the authenticated user's information.",
@@ -123,7 +122,6 @@ class UserMeExportApi(APIView):
     @extend_schema(
         responses={
             200: UserOutputSerializer,
-            401: {"type": "object", "properties": {"detail": {"type": "string"}}},
             403: {"type": "object", "properties": {"detail": {"type": "string"}}},
         },
         description="Export user data as json object",
@@ -205,7 +203,6 @@ class UserProfileMeApi(APIView):
     @extend_schema(
         responses={
             200: UserProfileOutputSerializer,
-            401: {"type": "object", "properties": {"detail": {"type": "string"}}},
             403: {"type": "object", "properties": {"detail": {"type": "string"}}},
         },
         description="Retrieve the authenticated user's profile information.",
