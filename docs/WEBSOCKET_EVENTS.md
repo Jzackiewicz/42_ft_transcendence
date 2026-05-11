@@ -11,7 +11,7 @@ This endpoint allows clients to connect to a specific chat room to send and rece
 ### Connection
 To connect to a chat room, establish a WebSocket connection to the endpoint with the desired `room_name`.
 ```
-ws://127.0.0.1:8000/ws/chat/<room_name>/
+wss://localhost:8443/ws/chat/<room_name>/
 ```
 
 ### Sending Messages (Client to Server)
