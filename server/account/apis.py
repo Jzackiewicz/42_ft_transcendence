@@ -89,7 +89,16 @@ class UserMeApi(APIView):
 
     @extend_schema(
         request=UserReauthSerializer,
-        responses={204: None},
+        responses={
+            204: None,
+            400: {
+                "type": "object",
+                "additionalProperties": True,
+                "description": "Missing or invalid password payload.",
+            },
+            401: {"type": "object", "properties": {"detail": {"type": "string"}}},
+            403: {"type": "object", "properties": {"detail": {"type": "string"}}},
+        },
         description="Soft-delete own account. Requires password confirmation.",
     )
     def delete(self, request):
