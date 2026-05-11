@@ -82,6 +82,9 @@ class GameServiceTests(TestCase):
 			order_index=3,
 		)
 
+		self.session.host_player = self.p1
+		self.session.save()
+
 	def refresh(self):
 		self.session.refresh_from_db()
 		self.p1.refresh_from_db()
@@ -89,7 +92,7 @@ class GameServiceTests(TestCase):
 		self.p3.refresh_from_db()
 
 	def test_start_game_moves_to_answering_and_creates_attempt(self):
-		GameService(self.session).start_game_session()
+		GameService(self.session).start_game_session(actor=self.p1)
 		self.session.refresh_from_db()
 
 		self.assertEqual(self.session.current_status, GameSession.Status.ANSWERING)
@@ -108,7 +111,7 @@ class GameServiceTests(TestCase):
 		self.session.save()
 
 		with self.assertRaisesMessage(ValidationError, "Game session is not in lobby state"):
-			GameService(self.session).start_game_session()
+			GameService(self.session).start_game_session(actor=self.p1)
 
 	def test_start_game_requires_at_least_two_players(self):
 		self.p2.delete()
@@ -118,7 +121,7 @@ class GameServiceTests(TestCase):
 			ValidationError,
 			"Cannot start game with fewer than 2 players",
 		):
-			GameService(self.session).start_game_session()
+			GameService(self.session).start_game_session(actor=self.p1)
 
 	def test_start_game_requires_questions(self):
 		self.session.session_questions.all().delete()
@@ -128,7 +131,7 @@ class GameServiceTests(TestCase):
 			ValidationError,
 			"Cannot start game without questions in the database.",
 		):
-			GameService(self.session).start_game_session()
+			GameService(self.session).start_game_session(actor=self.p1)
 
 	def test_start_game_fails_if_not_enough_questions(self):
 		self.session.session_questions.all().delete()
@@ -137,10 +140,14 @@ class GameServiceTests(TestCase):
 			ValidationError,
 			"Not enough questions. Required: 10, available: 4.",
 		):
-			GameService(self.session).start_game_session()
+			GameService(self.session).start_game_session(actor=self.p1)
+
+	def test_start_game_rejects_non_host(self):
+		with self.assertRaisesMessage(ValidationError, "Only the host can start the game"):
+			GameService(self.session).start_game_session(actor=self.p2)
 
 	def test_submit_answer_by_current_player_moves_to_evaluation(self):
-		GameService(self.session).start_game_session()
+		GameService(self.session).start_game_session(actor=self.p1)
 		self.session.refresh_from_db()
 
 		actor = self.session.current_player
@@ -158,7 +165,7 @@ class GameServiceTests(TestCase):
 		self.assertGreaterEqual(attempt.answer_time_ms, 0)
 
 	def test_submit_answer_rejects_non_current_player(self):
-		GameService(self.session).start_game_session()
+		GameService(self.session).start_game_session(actor=self.p1)
 		self.session.refresh_from_db()
 
 		actor = self.session.session_players.exclude(
@@ -169,7 +176,7 @@ class GameServiceTests(TestCase):
 			GameService(self.session).submit_player_answer(actor=actor, answer="4")
 
 	def test_submit_answer_timeout_ignores_answer_text_and_evaluates_wrong(self):
-		GameService(self.session).start_game_session()
+		GameService(self.session).start_game_session(actor=self.p1)
 		self.session.refresh_from_db()
 
 		attempt = self.session.current_attempt
@@ -190,7 +197,7 @@ class GameServiceTests(TestCase):
 		self.assertFalse(attempt.is_correct)
 
 	def test_submit_correct_answer_adds_points_and_goes_to_nomination(self):
-		GameService(self.session).start_game_session()
+		GameService(self.session).start_game_session(actor=self.p1)
 		self.session.refresh_from_db()
 
 		actor = self.session.current_player

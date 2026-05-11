@@ -36,7 +36,7 @@ class GameActionHandler:
 
 		service = GameService(session)
 		if request.action == GameAction.START_GAME:
-			service.start_game_session()
+			service.start_game_session(actor=actor)
 
 		elif request.action == GameAction.SUBMIT_ANSWER:
 			service.submit_player_answer(

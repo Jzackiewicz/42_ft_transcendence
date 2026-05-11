@@ -10,6 +10,7 @@ from .guards import (
 	require_actor_is_current_player,
 	require_actor_is_last_correct_player,
 	get_pending_current_attempt,
+	require_actor_is_host,
 	require_minimum_players,
 	require_questions_exist,
 	require_starting_player,
@@ -106,8 +107,9 @@ class GameService:
 			if handle_disconnect_in_nomination(self.session, actor):
 				self._start_answering_turn()
 
-	def start_game_session(self):
+	def start_game_session(self, actor: SessionPlayer | None):
 		require_status(self.session, GameSession.Status.LOBBY)
+		require_actor_is_host(self.session, actor, "start the game")
 		require_minimum_players(self.session)
 		
 		assign_random_questions_to_session(self.session, amount=10)

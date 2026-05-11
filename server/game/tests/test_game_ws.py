@@ -43,6 +43,9 @@ class GameConsumerTests(TransactionTestCase):
 			seat_number=2
 		)
 		
+		self.session.host_player = self.player
+		self.session.save()
+		
 		self.q1 = Question.objects.create(question_text="Test?", correct_answer="yes")
 		SessionQuestion.objects.create(session=self.session, question=self.q1, order_index=0)
 		

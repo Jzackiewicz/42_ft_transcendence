@@ -67,6 +67,11 @@ def require_actor_is_last_correct_player(session: GameSession, actor: SessionPla
 		raise ValidationError(f"Only last correct player can {action}")
 
 
+def require_actor_is_host(session: GameSession, actor: SessionPlayer | None, action: str) -> None:
+	require_action_actor(actor, action)
+	if actor.id != session.host_player_id:
+		raise ValidationError(f"Only the host can {action}")
+
 def get_pending_current_attempt(session: GameSession) -> AnswerAttempt:
 	require_current_attempt(session)
 
