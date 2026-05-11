@@ -43,7 +43,7 @@ class UserUpdateInputSerializer(serializers.Serializer):
     email = serializers.EmailField(required=False)
 
     def validate_username(self, value):
-        user = self.context.get("request").user
+        user = self.context.get("user") or self.context.get("request").user
         if User.objects.filter(username=value).exclude(id=user.id).exists():
             raise serializers.ValidationError(
                 "A user with this username already exists."
@@ -51,7 +51,7 @@ class UserUpdateInputSerializer(serializers.Serializer):
         return value
 
     def validate_email(self, value):
-        user = self.context.get("request").user
+        user = self.context.get("user") or self.context.get("request").user
         if User.objects.filter(email=value).exclude(id=user.id).exists():
             raise serializers.ValidationError("A user with this email already exists.")
         return value

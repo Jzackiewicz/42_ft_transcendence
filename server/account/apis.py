@@ -190,7 +190,9 @@ class UserDetailApi(APIView):
     def patch(self, request, user_id: int):
         user = user_get_by_id(user_id=user_id)
 
-        input_serializer = UserUpdateInputSerializer(data=request.data)
+        input_serializer = UserUpdateInputSerializer(
+            data=request.data, context={"request": request, "user": user}
+        )
         input_serializer.is_valid(raise_exception=True)
 
         user = user_update_basic_info(user=user, **input_serializer.validated_data)
