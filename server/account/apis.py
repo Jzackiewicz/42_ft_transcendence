@@ -69,7 +69,7 @@ class UserMeApi(APIView):
         request=UserUpdateInputSerializer,
         responses={
             200: UserOutputSerializer,
-            401: {"type": "object", "properties": {"detail": {"type": "string"}}},
+            400: {"type": "object", "properties": {"detail": {"type": "string"}}},
             401: {"type": "object", "properties": {"detail": {"type": "string"}}},
             403: {"type": "object", "properties": {"detail": {"type": "string"}}},
         },
