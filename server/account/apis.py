@@ -162,6 +162,7 @@ class UserListApi(APIView):
 
 class UserDetailApi(APIView):
     permission_classes = [IsSelfOrReadOnly]
+
     @extend_schema(
         responses={200: UserOutputSerializer},
         description="Retrieve a user by ID.",
@@ -207,8 +208,8 @@ class UserProfileMeApi(APIView):
         description="Retrieve the authenticated user's profile information.",
     )
     def get(self, request):
-        user = request.user
-        output_serializer = UserProfileOutputSerializer(user.profile)
+        profile = profile_get_by_user_id(user_id=request.user.id)
+        output_serializer = UserProfileOutputSerializer(profile)
         return Response(output_serializer.data)
 
 
@@ -236,6 +237,7 @@ class UserProfileDetailApi(APIView):
 
 class UserProfileAvatarApi(APIView):
     permission_classes = [IsSelfOrReadOnly]
+
     @extend_schema(
         request=UserProfileAvatarInputSerializer,
         responses={200: UserProfileOutputSerializer},
@@ -278,6 +280,7 @@ class UserProfileFriendListApi(APIView):
 
 class UserProfileFriendDetailApi(APIView):
     permission_classes = [IsSelfOrReadOnly]
+
     @extend_schema(
         request=None,
         responses={204: None},
