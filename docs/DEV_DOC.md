@@ -70,7 +70,7 @@ The game logic follows a strict layered architecture to separate concerns:
 
 Base game loop is constructed as a finite state machine (FSM) visualized as a graph below:
 
-![FSM_diagram](game_state_machine.svg)
+![FSM_diagram](game_fsm.svg)
 
 States:
 
@@ -95,8 +95,8 @@ Current architecture:
 
 *Diagrams generated with*
 ```bash
-python -m statemachine.contrib.diagram game.fsm.GameStateMachine game_fsm.png
-python manage.py graph_models game --pydot -g -o game_erd.svg   
+python -m statemachine.contrib.diagram server.game.fsm.GameStateMachine docs/game_fsm.svg
+python server/manage.py graph_models game --pydot -g -o docs/game_erd.svg   
 ```
 ### Endpoints
 
