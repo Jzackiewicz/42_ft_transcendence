@@ -37,6 +37,18 @@ class MeTest(APITestCase):
         response = self.client.patch(reverse("user-me"))
         self.assertEqual(response.status_code, 403)
 
+    def test_me_endpoint_patch_duplicate_username(self):
+        User.objects.create_user(
+            username="otheruser", password="otherpassword", email="other@example.com"
+        )
+        self.client.login(username="testuser", password="testpassword")
+        payload = {"username": "otheruser"}
+        response = self.client.patch(
+            reverse("user-me"), data=payload, content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("username", response.data)
+
     def test_me_endpoint_patch_duplicate_email(self):
         User.objects.create_user(
             username="otheruser", password="otherpassword", email="other@example.com"
