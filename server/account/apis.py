@@ -70,12 +70,15 @@ class UserMeApi(APIView):
         responses={
             200: UserOutputSerializer,
             401: {"type": "object", "properties": {"detail": {"type": "string"}}},
+            401: {"type": "object", "properties": {"detail": {"type": "string"}}},
             403: {"type": "object", "properties": {"detail": {"type": "string"}}},
         },
         description="Update username or email for the authenticated user.",
     )
     def patch(self, request):
-        input_serializer = UserUpdateInputSerializer(data=request.data)
+        input_serializer = UserUpdateInputSerializer(
+            data=request.data, context={"request": request}
+        )
         input_serializer.is_valid(raise_exception=True)
 
         user = user_update_basic_info(
