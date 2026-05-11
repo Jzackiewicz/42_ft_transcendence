@@ -221,3 +221,37 @@ class GameConsumerTests(TransactionTestCase):
 		self.assertEqual(disconnect_response["action"], GameAction.DISCONNECT)
 		
 		await comm2.disconnect()
+
+	async def test_fast_answer_cancels_timeout_task(self):
+		self.session.answer_time_limit_ms = 200
+		await database_sync_to_async(self.session.save)()
+
+		headers = [(b'cookie', f'sessionid={self.cookie}'.encode('ascii'))]
+		communicator = WebsocketCommunicator(
+			self.application, 
+			f"/ws/game/{self.session.session_uuid}/",
+			headers=headers
+		)
+		connected, _ = await communicator.connect()
+		self.assertTrue(connected)
+
+		await communicator.send_json_to({"action": GameAction.START_GAME})
+		await communicator.receive_json_from()
+		
+		# Immediate wrong answer
+		await communicator.send_json_to({
+			"action": GameAction.SUBMIT_ANSWER,
+			"payload": {"answer_text": "wrong"}
+		})
+
+		import asyncio
+		await asyncio.sleep(0.6)
+
+		evaluate_timeout_seen = False
+		while not communicator.output_queue.empty():
+			msg = await communicator.receive_json_from()
+			if msg.get('action') == 'evaluate_timeout':
+				evaluate_timeout_seen = True
+				break
+
+		self.assertFalse(evaluate_timeout_seen, 'Received evaluate_timeout event despite answering early! Task not cancelled.')
