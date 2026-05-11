@@ -54,6 +54,7 @@ class UserMeApi(APIView):
     ]
 
     @extend_schema(
+        request=None,
         responses={
             200: UserOutputSerializer,
             403: {"type": "object", "properties": {"detail": {"type": "string"}}},
@@ -129,6 +130,7 @@ class UserMeExportApi(APIView):
     ]
 
     @extend_schema(
+        request=None,
         responses={
             200: UserOutputSerializer,
             403: {"type": "object", "properties": {"detail": {"type": "string"}}},
@@ -161,6 +163,7 @@ class UserRegisterApi(APIView):
 
 class UserListApi(APIView):
     @extend_schema(
+        request=None,
         responses={200: UserOutputSerializer(many=True)},
         description="List all users.",
     )
@@ -174,6 +177,7 @@ class UserDetailApi(APIView):
     permission_classes = [IsSelfOrReadOnly]
 
     @extend_schema(
+        request=None,
         responses={200: UserOutputSerializer},
         description="Retrieve a user by ID.",
     )
@@ -212,6 +216,7 @@ class UserProfileMeApi(APIView):
     ]
 
     @extend_schema(
+        request=None,
         responses={
             200: UserProfileOutputSerializer,
             403: {"type": "object", "properties": {"detail": {"type": "string"}}},
@@ -226,6 +231,7 @@ class UserProfileMeApi(APIView):
 
 class UserProfileListApi(APIView):
     @extend_schema(
+        request=None,
         responses={200: UserProfileOutputSerializer(many=True)},
         description="List all user profiles.",
     )
@@ -237,6 +243,7 @@ class UserProfileListApi(APIView):
 
 class UserProfileDetailApi(APIView):
     @extend_schema(
+        request=None,
         responses={200: UserProfileOutputSerializer},
         description="Retrieve the profile for a given user ID.",
     )
@@ -268,6 +275,7 @@ class UserProfileAvatarApi(APIView):
         return Response(output_serializer.data, status=status.HTTP_200_OK)
 
     @extend_schema(
+        request=None,
         responses={204: None},
         description="Remove the avatar from a user profile.",
     )
@@ -279,6 +287,7 @@ class UserProfileAvatarApi(APIView):
 
 class UserProfileFriendListApi(APIView):
     @extend_schema(
+        request=None,
         responses={200: UserProfileFriendOutputSerializer(many=True)},
         description="List friends of a user profile.",
     )
