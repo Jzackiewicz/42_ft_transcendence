@@ -88,6 +88,9 @@ class GameService:
 			self._start_answering_turn()
 
 	def _handle_active_game_disconnect(self, actor: SessionPlayer) -> None:
+		if self.session.current_status == GameSession.Status.ANSWERING:
+			handle_disconnect_in_answering(self.session, actor)
+
 		actor.lives = 0
 		actor.save(update_fields=['lives'])
 
@@ -95,12 +98,7 @@ class GameService:
 			cancel_game(self.session)
 			return
 
-		if self.session.current_status == GameSession.Status.ANSWERING:
-			handle_disconnect_in_answering(self.session, actor)
-			if self.session.current_status == GameSession.Status.EVALUATION:
-				apply_answer_verdict(self.session)
-				self._advance_after_evaluation()
-		elif self.session.current_status == GameSession.Status.EVALUATION:
+		if self.session.current_status == GameSession.Status.EVALUATION:
 			apply_answer_verdict(self.session)
 			self._advance_after_evaluation()
 		elif self.session.current_status == GameSession.Status.NOMINATION:
