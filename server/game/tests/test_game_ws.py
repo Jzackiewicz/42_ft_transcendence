@@ -72,6 +72,11 @@ class GameConsumerTests(TransactionTestCase):
 		)
 		connected, _ = await communicator.connect()
 		self.assertTrue(connected)
+		
+		response = await communicator.receive_json_from()
+		self.assertEqual(response["type"], "game_state_update")
+		self.assertEqual(response["action"], "player_connected")
+		self.assertIn("snapshot", response)
 		await communicator.disconnect()
 
 	async def test_connect_unauthenticated(self):
@@ -101,6 +106,7 @@ class GameConsumerTests(TransactionTestCase):
 		)
 		connected, _ = await communicator.connect()
 		self.assertTrue(connected)
+		await communicator.receive_json_from()
 		await communicator.send_json_to({"payload": {}})
 		response = await communicator.receive_json_from()
 		self.assertIn("error", response)
@@ -116,6 +122,7 @@ class GameConsumerTests(TransactionTestCase):
 		)
 		connected, _ = await communicator.connect()
 		self.assertTrue(connected)
+		await communicator.receive_json_from()
 		
 		# Brakuje target_player_id wymaganego przez NominatePlayerPayloadSerializer
 		await communicator.send_json_to({
@@ -128,6 +135,27 @@ class GameConsumerTests(TransactionTestCase):
 		self.assertIn("target_player_id", response["error"])
 		await communicator.disconnect()
 
+	async def test_submit_answer_rejects_answer_text_payload_field(self):
+		headers = [(b'cookie', f'sessionid={self.cookie}'.encode('ascii'))]
+		communicator = WebsocketCommunicator(
+			self.application,
+			f"/ws/game/{self.session.session_uuid}/",
+			headers=headers
+		)
+		connected, _ = await communicator.connect()
+		self.assertTrue(connected)
+		await communicator.receive_json_from()
+
+		await communicator.send_json_to({
+			"action": GameAction.SUBMIT_ANSWER,
+			"payload": {"answer_text": "wrong"}
+		})
+		response = await communicator.receive_json_from()
+
+		self.assertIn("error", response)
+		self.assertIn("answer_text", response["error"])
+		await communicator.disconnect()
+
 	async def test_action_domain_validation_error_returns_error_message(self):
 		headers = [(b'cookie', f'sessionid={self.cookie}'.encode('ascii'))]
 		communicator = WebsocketCommunicator(
@@ -136,6 +164,7 @@ class GameConsumerTests(TransactionTestCase):
 			headers=headers
 		)
 		await communicator.connect()
+		await communicator.receive_json_from()
 		
 		# Sesja jest w LOBBY, więc submit_answer rzuci błędem z guardów domeny
 		await communicator.send_json_to({
@@ -156,6 +185,7 @@ class GameConsumerTests(TransactionTestCase):
 			headers=headers
 		)
 		await communicator.connect()
+		await communicator.receive_json_from()
 		
 		await communicator.send_json_to({
 			"action": GameAction.START_GAME, 
@@ -168,6 +198,9 @@ class GameConsumerTests(TransactionTestCase):
 		self.assertEqual(response["action"], GameAction.START_GAME)
 		self.assertIn("snapshot", response)
 		self.assertEqual(response["snapshot"]["current_status"], GameSession.Status.ANSWERING)
+		self.assertIsNotNone(response["snapshot"]["current_attempt"])
+		self.assertIsNotNone(response["snapshot"]["current_attempt_started_at"])
+		self.assertIsNotNone(response["snapshot"]["turn_deadline_at"])
 		await communicator.disconnect()
 
 	async def test_answering_state_triggers_automatic_timeout_broadcast(self):
@@ -181,6 +214,7 @@ class GameConsumerTests(TransactionTestCase):
 			headers=headers
 		)
 		await communicator.connect()
+		await communicator.receive_json_from()
 		
 		await communicator.send_json_to({
 			"action": GameAction.START_GAME, 
@@ -203,12 +237,15 @@ class GameConsumerTests(TransactionTestCase):
 			self.application, f"/ws/game/{self.session.session_uuid}/", headers=headers1
 		)
 		await comm1.connect()
+		await comm1.receive_json_from()
 		
 		headers2 = [(b'cookie', f'sessionid={self.cookie2}'.encode('ascii'))]
 		comm2 = WebsocketCommunicator(
 			self.application, f"/ws/game/{self.session.session_uuid}/", headers=headers2
 		)
 		await comm2.connect()
+		await comm1.receive_json_from()
+		await comm2.receive_json_from()
 
 		await comm1.send_json_to({"action": GameAction.START_GAME, "payload": {}})
 		await comm1.receive_json_from()
@@ -226,32 +263,50 @@ class GameConsumerTests(TransactionTestCase):
 		self.session.answer_time_limit_ms = 200
 		await database_sync_to_async(self.session.save)()
 
-		headers = [(b'cookie', f'sessionid={self.cookie}'.encode('ascii'))]
-		communicator = WebsocketCommunicator(
+		headers1 = [(b'cookie', f'sessionid={self.cookie}'.encode('ascii'))]
+		comm1 = WebsocketCommunicator(
 			self.application, 
 			f"/ws/game/{self.session.session_uuid}/",
-			headers=headers
+			headers=headers1
 		)
-		connected, _ = await communicator.connect()
+		connected, _ = await comm1.connect()
 		self.assertTrue(connected)
+		await comm1.receive_json_from()
 
-		await communicator.send_json_to({"action": GameAction.START_GAME})
-		await communicator.receive_json_from()
+		headers2 = [(b'cookie', f'sessionid={self.cookie2}'.encode('ascii'))]
+		comm2 = WebsocketCommunicator(
+			self.application,
+			f"/ws/game/{self.session.session_uuid}/",
+			headers=headers2
+		)
+		connected, _ = await comm2.connect()
+		self.assertTrue(connected)
+		await comm1.receive_json_from()
+		await comm2.receive_json_from()
+
+		await comm1.send_json_to({"action": GameAction.START_GAME})
+		start_response = await comm1.receive_json_from()
+		await comm2.receive_json_from()
+		current_player_id = start_response["snapshot"]["current_player"]
+		current_communicator = comm1 if current_player_id == self.player.id else comm2
 		
-		# Immediate wrong answer
-		await communicator.send_json_to({
+		# Immediate correct answer moves the game out of ANSWERING.
+		await current_communicator.send_json_to({
 			"action": GameAction.SUBMIT_ANSWER,
-			"payload": {"answer_text": "wrong"}
+			"payload": {"answer": "yes"}
 		})
 
 		import asyncio
 		await asyncio.sleep(0.6)
 
 		evaluate_timeout_seen = False
-		while not communicator.output_queue.empty():
-			msg = await communicator.receive_json_from()
-			if msg.get('action') == 'evaluate_timeout':
-				evaluate_timeout_seen = True
-				break
+		for communicator in (comm1, comm2):
+			while not communicator.output_queue.empty():
+				msg = await communicator.receive_json_from()
+				if msg.get('action') == 'evaluate_timeout':
+					evaluate_timeout_seen = True
+					break
 
 		self.assertFalse(evaluate_timeout_seen, 'Received evaluate_timeout event despite answering early! Task not cancelled.')
+		await comm1.disconnect()
+		await comm2.disconnect()
