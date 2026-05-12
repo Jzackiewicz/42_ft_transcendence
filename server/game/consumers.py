@@ -1,4 +1,5 @@
 import asyncio
+from datetime import datetime
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.db import database_sync_to_async
 from django.core.exceptions import ValidationError
@@ -116,29 +117,62 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 			})
 
 	async def game_state_update(self, event):
+		snapshot = event['snapshot']
 		await self.send_json({
 			'type': 'game_state_update',
 			'action': event['action'],
-			'snapshot': event['snapshot']
+			'snapshot': snapshot
 		})
 
-		current_status = event['snapshot'].get('current_status')
+		current_status = snapshot.get('current_status')
 		if current_status == GameSession.Status.ANSWERING:
-			if hasattr(self, 'timeout_task') and not self.timeout_task.done():
-				self.timeout_task.cancel()
-			self.timeout_task = asyncio.create_task(self._force_timeout())
+			self._schedule_timeout(snapshot)
 		else:
-			if hasattr(self, 'timeout_task') and not self.timeout_task.done():
-				self.timeout_task.cancel()
+			self._cancel_timeout()
 
-	async def _force_timeout(self):
-		limit_ms = await database_sync_to_async(
-			lambda sid: GameSession.objects.get(id=sid).answer_time_limit_ms
-		)(self.session_id)
-		
-		await asyncio.sleep((limit_ms / 1000.0) + 0.5)
+	def _schedule_timeout(self, snapshot):
+		attempt_id = snapshot.get('current_attempt')
+		deadline_at = snapshot.get('turn_deadline_at')
+
+		if not attempt_id or not deadline_at:
+			self._cancel_timeout()
+			return
+
+		current_attempt_id = getattr(self, 'timeout_attempt_id', None)
+		timeout_task = getattr(self, 'timeout_task', None)
+		if current_attempt_id == attempt_id and timeout_task and not timeout_task.done():
+			return
+
+		self._cancel_timeout()
+		self.timeout_attempt_id = attempt_id
+		self.timeout_task = asyncio.create_task(
+			self._force_timeout(attempt_id, deadline_at)
+		)
+
+	def _cancel_timeout(self):
+		timeout_task = getattr(self, 'timeout_task', None)
+		if timeout_task and not timeout_task.done():
+			timeout_task.cancel()
+		self.timeout_attempt_id = None
+
+	async def _force_timeout(self, attempt_id, deadline_at):
+		deadline = datetime.fromisoformat(deadline_at)
+		now = datetime.now(deadline.tzinfo) if deadline.tzinfo else datetime.now()
+		sleep_seconds = max((deadline - now).total_seconds(), 0)
+
+		await asyncio.sleep(sleep_seconds + 0.05)
 		
 		try:
+			is_current_attempt = await database_sync_to_async(
+				lambda sid, aid: GameSession.objects.filter(
+					id=sid,
+					current_attempt_id=aid,
+					current_status=GameSession.Status.ANSWERING,
+				).exists()
+			)(self.session_id, attempt_id)
+			if not is_current_attempt:
+				return
+
 			handler = GameActionHandler()
 			result = await database_sync_to_async(handler.handle_timeout)(self.session_id)
 
