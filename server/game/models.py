@@ -166,6 +166,11 @@ class SessionPlayer(models.Model):
 				fields=["session", "seat_number"],
 				name="unique_seat_number_per_session",
 			),
+			models.UniqueConstraint(
+				fields=["session", "user"],
+				condition=models.Q(user__isnull=False),
+				name="unique_human_user_per_session",
+			),
 		]
 
 	def __str__(self) -> str:
