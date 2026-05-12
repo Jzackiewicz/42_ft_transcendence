@@ -31,6 +31,8 @@ def join_room(*, session_uuid: str, user) -> SessionPlayer:
     session = get_room_by_uuid(session_uuid=session_uuid)
     
     with transaction.atomic():
+        session = GameSession.objects.select_for_update().get(id=session.id)
+
         check_can_join_room(session=session, user=user)
             
         existing_player = session.session_players.filter(user=user).first()
