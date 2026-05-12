@@ -1,5 +1,4 @@
 from django.utils import timezone
-
 from game.models import GameSession, SessionPlayer
 
 from .guards import (
@@ -17,6 +16,7 @@ from .guards import (
 	require_player_alive,
 	require_action_actor,
 	require_target_player_id,
+	require_player_in_session,
 )
 
 from .lifecycle import (
@@ -130,7 +130,8 @@ class GameService:
 		require_actor_is_last_correct_player(self.session, actor, "nominate")
 		require_target_player_id(target_player_id)
 
-		target = self.session.session_players.get(id=target_player_id)
+		target = self.session.session_players.filter(id=target_player_id).first()
+		require_player_in_session(target, self.session)
 		require_player_alive(target, "nominate")
 
 		self.session.last_nominated_player = target

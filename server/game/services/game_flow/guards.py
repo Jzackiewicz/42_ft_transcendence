@@ -107,3 +107,9 @@ def require_target_player_id(target_player_id: int | None) -> None:
 def require_session_id(session_id: int | None) -> None:
 	if session_id is None:
 		raise ValidationError("session_id is required")
+
+
+def require_player_in_session(player: SessionPlayer | None, session: GameSession) -> None:
+	if player is None or player.session_id != session.id:
+		raise ValidationError("Player does not belong to this session")
+		
