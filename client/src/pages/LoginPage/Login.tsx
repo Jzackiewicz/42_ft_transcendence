@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import LoginView from './LoginView.tsx'
 import RegistrationView from'./RegistrationView.tsx'
-import Button from  '../../components/Button'
+import BlinkingSpaceBGDiv from '../../components/BlinkingSpaceBGDiv.tsx'
 import './Login.css'
 
 
@@ -11,7 +11,12 @@ function LoginPage() {
         <div className="login-page">
             <div className="main-container">
                 <div className="empty-container">
-                    <h1>QUIZDENSE</h1>
+                    <BlinkingSpaceBGDiv/>
+                    <div className="empty-container-content">         {/* groups title + subtitle */}
+                        <h1 className="page-title">QUIZSENDENCE</h1>
+                        <h1 className="page-title gradient">GAME SHOW</h1>
+                        <p className="page-subtitle">Real-time multiplayer trivia. Compete live, nominate your rivals, and climb to the top of the leaderboard. Every question is a spotlight moment.</p>
+                    </div>
                 </div>
 
                 <div className="auth-container">
