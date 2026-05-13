@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Quizsendence — Enter the Stage</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+:root {
+  --bg:      #05050f;
+  --bg2:     #08081c;
+  --bg3:     #0d0d24;
+  --panel:   rgba(255,255,255,0.035);
+  --pb:      rgba(255,255,255,0.08);
+  --cyan:    #00e5ff;
+  --magenta: #e040fb;
+  --gold:    #ffc400;
+  --green:   #00e676;
+  --red:     #ff1744;
+  --text:    #eeeef8;
+  --dim:     rgba(238,238,248,0.45);
+  --fd:      'Rajdhani', sans-serif;
+  --fb:      'Space Grotesk', sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body, #root { height: 100%; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--fb);
+  overflow: hidden;
+}
+body::after {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.05) 2px, rgba(0,0,0,0.05) 4px);
+  pointer-events: none;
+}
+#space-canvas {
+  position: fixed; inset: 0; z-index: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+}
+#root { position: relative; z-index: 1; display: flex; flex-direction: column; }
+
+/* ── TRANSITIONS ── */
+.screen { position: absolute; inset: 0; display: flex; flex-direction: column; }
+.fade-enter { animation: fadeIn 0.4s ease-out; }
+.fade-exit  { animation: fadeOut 0.35s ease-in forwards; }
+@keyframes fadeIn  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+
+/* ── COMMON ── */
+.glass {
+  background: var(--panel);
+  border: 1px solid var(--pb);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: 14px;
+}
+.label {
+  font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--dim); font-weight: 600;
+}
+
+/* ── NAV ── */
+.topnav {
+  height: 54px; flex-shrink: 0;
+  display: flex; align-items: center; padding: 0 32px; gap: 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  background: rgba(5,5,15,0.9);
+  position: relative; z-index: 10;
+}
+.nav-logo {
+  font-family: var(--fd); font-size: 20px; font-weight: 700; letter-spacing: 1px;
+}
+.nav-logo span { color: var(--cyan); }
+.nav-space { flex: 1; }
+.nav-btn {
+  padding: 7px 18px; border-radius: 8px; border: 1px solid var(--pb);
+  background: transparent; color: var(--dim); font-family: var(--fb);
+  font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s;
+}
+.nav-btn:hover { color: #fff; border-color: rgba(255,255,255,0.2); }
+.nav-btn.primary {
+  background: var(--cyan); color: #000; border-color: transparent;
+  font-weight: 700;
+}
+.nav-btn.primary:hover { box-shadow: 0 0 20px rgba(0,229,255,0.4); }
+.nav-avatar-btn {
+  width: 34px; height: 34px; border-radius: 50%; cursor: pointer;
+  border: 2px solid rgba(0,229,255,0.4);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--fd); font-size: 14px; font-weight: 700; color: #000;
+  background: linear-gradient(135deg, var(--cyan), #0088aa);
+  transition: box-shadow 0.2s;
+}
+.nav-avatar-btn:hover { box-shadow: 0 0 16px rgba(0,229,255,0.5); }
+
+/* ══════════════════════════════════════════════════
+   LANDING SCREEN
+══════════════════════════════════════════════════ */
+.landing {
+  flex: 1; display: grid;
+  grid-template-columns: 1fr 420px;
+  gap: 0; overflow: hidden;
+}
+
+/* Hero */
+.hero {
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 48px 56px; gap: 32px; position: relative; overflow: hidden;
+}
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 11px; font-weight: 700; letter-spacing: 2.5px;
+  text-transform: uppercase; color: var(--cyan);
+  border: 1px solid rgba(0,229,255,0.25);
+  background: rgba(0,229,255,0.06);
+  border-radius: 20px; padding: 5px 14px;
+  width: fit-content;
+}
+.hero-eyebrow .dot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--cyan);
+  animation: pulse 1.4s ease-in-out infinite;
+  box-shadow: 0 0 6px var(--cyan);
+}
+@keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+@keyframes qFloat    { 0%,100%{transform:translateY(0) rotate(-5deg);opacity:0.6} 50%{transform:translateY(-12px) rotate(5deg);opacity:1} }
+@keyframes chipDrift { 0%,100%{transform:translateY(0) translateX(0)} 33%{transform:translateY(-7px) translateX(4px)} 66%{transform:translateY(4px) translateX(-3px)} }
+
+.hero-title {
+  font-family: var(--fd); font-weight: 700; line-height: 0.9;
+  letter-spacing: -1px;
+}
+.hero-title .line1 { font-size: 72px; color: #fff; display: block; }
+.hero-title .line2 {
+  font-size: 72px; display: block;
+  background: linear-gradient(135deg, var(--cyan) 0%, var(--magenta) 60%, var(--gold) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.hero-sub {
+  font-size: 16px; color: var(--dim); line-height: 1.6; max-width: 480px;
+  font-weight: 400;
+}
+
+/* Stats row */
+.hero-stats {
+  display: flex; gap: 28px;
+}
+.hero-stat { display: flex; flex-direction: column; gap: 3px; }
+.hero-stat-val {
+  font-family: var(--fd); font-size: 28px; font-weight: 700; color: var(--gold);
+  line-height: 1;
+}
+.hero-stat-lbl { font-size: 11px; color: var(--dim); letter-spacing: 0.5px; }
+
+/* Feature chips */
+.hero-features { display: flex; gap: 10px; flex-wrap: wrap; }
+.feature-chip {
+  display: flex; align-items: center; gap: 7px;
+  padding: 8px 14px; border-radius: 8px;
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+  font-size: 12px; color: var(--dim); font-weight: 500;
+}
+.feature-chip .fc-icon { font-size: 14px; }
+
+/* Floating player cards (decorative) */
+.floating-cards {
+  position: absolute; right: -20px; top: 50%; transform: translateY(-50%);
+  display: flex; flex-direction: column; gap: 10px; opacity: 0.45;
+  pointer-events: none;
+}
+.fc-card {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-radius: 10px;
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);
+  width: 180px;
+}
+.fc-av {
+  width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--fd); font-size: 12px; font-weight: 700; color: #000;
+}
+.fc-name { font-size: 12px; font-weight: 600; }
+.fc-pts { font-family: var(--fd); font-size: 13px; font-weight: 700; color: var(--gold); margin-left: auto; }
+
+/* Auth panel */
+.auth-panel {
+  border-left: 1px solid rgba(255,255,255,0.08);
+  background: rgba(4,4,18,0.82);
+  backdrop-filter: blur(20px);
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 40px 40px;
+  gap: 28px;
+}
+.auth-title {
+  font-family: var(--fd); font-size: 26px; font-weight: 700; letter-spacing: 0.5px;
+}
+.auth-tabs {
+  display: flex; gap: 0; border-radius: 10px; overflow: hidden;
+  border: 1px solid var(--pb);
+  background: rgba(255,255,255,0.03);
+}
+.auth-tab {
+  flex: 1; padding: 10px 0; text-align: center;
+  font-family: var(--fd); font-size: 15px; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; cursor: pointer; transition: all 0.2s;
+  border: none; background: transparent; color: var(--dim);
+}
+.auth-tab.active {
+  background: rgba(0,229,255,0.12); color: var(--cyan);
+  box-shadow: inset 0 -2px 0 var(--cyan);
+}
+.auth-form { display: flex; flex-direction: column; gap: 14px; }
+
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field-label { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--dim); font-weight: 600; }
+.field-input {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--pb);
+  border-radius: 8px; padding: 12px 14px;
+  color: #fff; font-family: var(--fb); font-size: 14px;
+  outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+  width: 100%;
+}
+.field-input:focus {
+  border-color: var(--cyan);
+  box-shadow: 0 0 0 3px rgba(0,229,255,0.1);
+}
+.field-input::placeholder { color: rgba(238,238,248,0.25); }
+
+.auth-row { display: flex; align-items: center; justify-content: space-between; }
+.check-row { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--dim); cursor: pointer; }
+.check-box {
+  width: 16px; height: 16px; border-radius: 4px;
+  border: 1px solid var(--pb); background: rgba(255,255,255,0.05);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; cursor: pointer;
+}
+.check-box.checked { background: var(--cyan); border-color: var(--cyan); }
+.forgot { font-size: 12px; color: rgba(0,229,255,0.6); cursor: pointer; text-decoration: none; }
+.forgot:hover { color: var(--cyan); }
+
+.auth-submit {
+  background: linear-gradient(135deg, var(--cyan), var(--magenta));
+  border: none; border-radius: 10px; padding: 14px;
+  font-family: var(--fd); font-size: 18px; font-weight: 700; letter-spacing: 1.5px;
+  color: #000; cursor: pointer; text-transform: uppercase; width: 100%;
+  transition: all 0.2s;
+  box-shadow: 0 0 30px rgba(0,229,255,0.2);
+}
+.auth-submit:hover { transform: translateY(-1px); box-shadow: 0 0 50px rgba(0,229,255,0.4); }
+.auth-submit:active { transform: translateY(0); }
+
+.auth-divider {
+  display: flex; align-items: center; gap: 12px;
+  font-size: 11px; color: rgba(255,255,255,0.2); letter-spacing: 1px;
+}
+.auth-divider::before, .auth-divider::after {
+  content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.08);
+}
+
+.social-btns { display: flex; gap: 10px; }
+.social-btn {
+  flex: 1; padding: 10px; border-radius: 8px;
+  border: 1px solid var(--pb); background: rgba(255,255,255,0.04);
+  color: var(--dim); font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s; display: flex;
+  align-items: center; justify-content: center; gap: 7px;
+  font-family: var(--fb);
+}
+.social-btn:hover { background: rgba(255,255,255,0.08); color: #fff; }
+
+.auth-footer { text-align: center; font-size: 12px; color: var(--dim); }
+.auth-footer span { color: var(--cyan); cursor: pointer; }
+.auth-footer span:hover { text-decoration: underline; }
+
+/* ══════════════════════════════════════════════════
+   ACCOUNT SCREEN
+══════════════════════════════════════════════════ */
+.account-screen {
+  flex: 1; overflow-y: auto; padding: 28px 40px 60px;
+}
+.account-screen::-webkit-scrollbar { width: 5px; }
+.account-screen::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+
+.account-header {
+  display: flex; align-items: center; gap: 20px;
+  padding: 22px 28px; border-radius: 14px;
+  background: var(--panel); border: 1px solid var(--pb);
+  margin-bottom: 24px; position: relative; overflow: hidden;
+}
+.account-header::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--cyan), var(--magenta), transparent);
+}
+.account-av-wrap { position: relative; }
+.account-avatar {
+  width: 72px; height: 72px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--fd); font-size: 26px; font-weight: 700; color: #000;
+  border: 3px solid rgba(0,229,255,0.4);
+  box-shadow: 0 0 24px rgba(0,229,255,0.3);
+  flex-shrink: 0; overflow: hidden;
+}
+.account-info { flex: 1; }
+.account-name { font-family: var(--fd); font-size: 26px; font-weight: 700; }
+.account-email { font-size: 13px; color: var(--dim); margin-top: 3px; }
+.account-badges { display: flex; gap: 8px; margin-top: 8px; }
+.badge {
+  padding: 3px 10px; border-radius: 12px; font-size: 10px; font-weight: 700;
+  letter-spacing: 1px; text-transform: uppercase;
+}
+.badge.rank { background: rgba(255,196,0,0.12); border: 1px solid rgba(255,196,0,0.3); color: var(--gold); }
+.badge.human { background: rgba(0,229,255,0.1); border: 1px solid rgba(0,229,255,0.25); color: var(--cyan); }
+.badge.joined { background: rgba(255,255,255,0.05); border: 1px solid var(--pb); color: var(--dim); }
+
+.account-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+.account-grid .full { grid-column: 1 / -1; }
+
+.section-card {
+  background: var(--panel); border: 1px solid var(--pb);
+  border-radius: 14px; padding: 24px 26px;
+  display: flex; flex-direction: column; gap: 18px;
+}
+.section-title {
+  font-family: var(--fd); font-size: 16px; font-weight: 700; letter-spacing: 0.5px;
+  display: flex; align-items: center; gap: 8px;
+}
+.section-title .s-icon { font-size: 16px; }
+
+/* Avatar picker */
+.avatar-grid {
+  display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px;
+}
+.av-option {
+  aspect-ratio: 1; border-radius: 50%; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--fd); font-size: 16px; font-weight: 700; color: #000;
+  border: 2px solid transparent; transition: all 0.2s;
+  position: relative;
+}
+.av-option:hover { transform: scale(1.08); }
+.av-option.selected {
+  border-color: var(--cyan);
+  box-shadow: 0 0 16px rgba(0,229,255,0.5);
+  transform: scale(1.08);
+}
+.av-option.selected::after {
+  content: '✓'; position: absolute; bottom: -2px; right: -2px;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--cyan); color: #000;
+  font-size: 9px; font-weight: 900;
+  display: flex; align-items: center; justify-content: center;
+  line-height: 16px; text-align: center;
+}
+
+.upload-zone {
+  border: 1px dashed rgba(0,229,255,0.3);
+  border-radius: 10px; padding: 16px;
+  display: flex; align-items: center; gap: 14px;
+  cursor: pointer; transition: all 0.2s;
+  background: rgba(0,229,255,0.03);
+}
+.upload-zone:hover {
+  border-color: var(--cyan);
+  background: rgba(0,229,255,0.07);
+}
+.upload-icon { font-size: 22px; }
+.upload-text { font-size: 13px; color: var(--dim); }
+.upload-text strong { color: var(--cyan); font-weight: 600; }
+
+/* Stats grid */
+.stats-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+}
+.stat-box {
+  background: rgba(255,255,255,0.03); border: 1px solid var(--pb);
+  border-radius: 10px; padding: 14px 16px;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.stat-box-val {
+  font-family: var(--fd); font-size: 26px; font-weight: 700; line-height: 1;
+}
+.stat-box-lbl { font-size: 11px; color: var(--dim); letter-spacing: 0.5px; }
+
+/* Notifications */
+.notif-list { display: flex; flex-direction: column; gap: 0; }
+.notif-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 13px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.notif-row:last-child { border-bottom: none; }
+.notif-info { flex: 1; }
+.notif-name { font-size: 14px; font-weight: 500; }
+.notif-desc { font-size: 12px; color: var(--dim); margin-top: 2px; }
+
+/* Toggle */
+.toggle { position: relative; width: 40px; height: 22px; flex-shrink: 0; cursor: pointer; }
+.toggle input { opacity: 0; width: 0; height: 0; }
+.toggle-track {
+  position: absolute; inset: 0; border-radius: 11px;
+  background: rgba(255,255,255,0.1); border: 1px solid var(--pb);
+  transition: all 0.25s;
+}
+.toggle.on .toggle-track {
+  background: rgba(0,229,255,0.25); border-color: rgba(0,229,255,0.5);
+}
+.toggle-thumb {
+  position: absolute; width: 16px; height: 16px; border-radius: 50%;
+  top: 2px; left: 2px; transition: all 0.25s;
+  background: var(--dim);
+}
+.toggle.on .toggle-thumb {
+  left: 20px; background: var(--cyan);
+  box-shadow: 0 0 8px rgba(0,229,255,0.6);
+}
+
+/* Save button */
+.save-btn {
+  background: linear-gradient(135deg, var(--cyan), var(--magenta));
+  border: none; border-radius: 10px; padding: 13px 32px;
+  font-family: var(--fd); font-size: 16px; font-weight: 700; letter-spacing: 1px;
+  color: #000; cursor: pointer; text-transform: uppercase;
+  transition: all 0.2s; align-self: flex-end;
+  box-shadow: 0 0 20px rgba(0,229,255,0.15);
+}
+.save-btn:hover { transform: translateY(-1px); box-shadow: 0 0 35px rgba(0,229,255,0.35); }
+
+.cancel-btn {
+  background: transparent; border: 1px solid var(--pb); border-radius: 10px;
+  padding: 13px 24px; font-family: var(--fd); font-size: 16px; font-weight: 600;
+  color: var(--dim); cursor: pointer; transition: all 0.2s;
+}
+.cancel-btn:hover { color: #fff; border-color: rgba(255,255,255,0.2); }
+
+.btn-row { display: flex; gap: 10px; justify-content: flex-end; }
+
+/* Win rate bar */
+.win-bar { height: 6px; border-radius: 3px; background: rgba(255,255,255,0.08); overflow: hidden; }
+.win-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--cyan), var(--magenta)); }
+
+/* Password strength */
+.pw-strength { display: flex; gap: 4px; margin-top: 6px; }
+.pw-bar { flex: 1; height: 3px; border-radius: 2px; background: rgba(255,255,255,0.08); transition: background 0.3s; }
+.pw-bar.weak { background: var(--red); }
+.pw-bar.ok   { background: var(--gold); }
+.pw-bar.good { background: var(--green); }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+
+
+
+const { useState, useRef } = React;
+
+// ── Mock user data ──────────────────────────────────────────────
+const MOCK_USER = {
+  name: 'Marek',
+  email: 'marek@example.com',
+  avatarIndex: 2,
+  joined: 'Jan 2025',
+  rank: 'Gold III',
+  stats: {
+    gamesPlayed: 47,
+    wins: 19,
+    avgScore: 210,
+    correctRate: 74,
+    totalAnswered: 312,
+    bestStreak: 8
+  },
+  notifications: {
+    gameInvites: true,
+    results: true,
+    weeklyReport: false,
+    achievements: true,
+    marketing: false
+  }
+};
+
+const AVATAR_PRESETS = [
+{ grad: 'linear-gradient(135deg,#00e5ff,#0088aa)', initials: 'MK' },
+{ grad: 'linear-gradient(135deg,#e040fb,#880088)', initials: 'VX' },
+{ grad: 'linear-gradient(135deg,#ffc400,#e65100)', initials: 'JL' },
+{ grad: 'linear-gradient(135deg,#00e676,#00695c)', initials: 'RO' },
+{ grad: 'linear-gradient(135deg,#ff1744,#880e4f)', initials: 'AX' },
+{ grad: 'linear-gradient(135deg,#7c4dff,#311b92)', initials: 'SY' },
+{ grad: 'linear-gradient(135deg,#ff6d00,#bf360c)', initials: 'KZ' },
+{ grad: 'linear-gradient(135deg,#00bcd4,#006064)', initials: 'NP' },
+{ grad: 'linear-gradient(135deg,#ec407a,#880e4f)', initials: 'IV' },
+{ grad: 'linear-gradient(135deg,#66bb6a,#1b5e20)', initials: 'DM' },
+{ grad: 'linear-gradient(135deg,#ffa726,#e65100)', initials: 'BH' },
+{ grad: 'linear-gradient(135deg,#42a5f5,#0d47a1)', initials: 'CW' }];
+
+
+// ── Toggle ──────────────────────────────────────────────────────
+function Toggle({ on, onChange }) {
+  return (
+    <div className={`toggle ${on ? 'on' : ''}`} onClick={() => onChange(!on)}>
+      <div className="toggle-track"></div>
+      <div className="toggle-thumb"></div>
+    </div>);
+
+}
+
+// ── Nav ─────────────────────────────────────────────────────────
+function Nav({ screen, setScreen, loggedIn, user }) {
+  return (
+    <nav className="topnav">
+      <div className="nav-logo" style={{ cursor: 'pointer' }} onClick={() => setScreen('landing')}>
+        <span>QUIZ</span>SENDENCE
+      </div>
+      <div className="nav-space" />
+      {loggedIn ?
+      <>
+          <a href="Transcendence TV.html" style={{ textDecoration: 'none' }}>
+            <button className="nav-btn primary">▶ Play Now</button>
+          </a>
+          <div className="nav-avatar-btn" onClick={() => setScreen('account')} title="Account">
+            {AVATAR_PRESETS[user.avatarIndex].initials.slice(0, 1)}
+          </div>
+        </> :
+
+      null
+      }
+    </nav>);
+
+}
+
+// ── Space Background (full screen) ───────────────────────────────
+function SpaceBackground() {
+  const canvasRef = React.useRef();
+
+  React.useEffect(() => {
+    const canvas = canvasRef.current;
+    let W, H, raf;
+    const stars = [];
+    const shoots = [];
+    const planets = [];
+    let shootTimer = 0;
+
+    function init() {
+      W = canvas.width = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+
+      stars.length = 0;
+      for (let i = 0; i < 320; i++) {
+        stars.push({
+          x: Math.random() * W, y: Math.random() * H,
+          r: Math.random() * 1.8 + 0.3,
+          alpha: Math.random() * 0.5 + 0.3,
+          speed: Math.random() * 0.012 + 0.003,
+          phase: Math.random() * Math.PI * 2
+        });
+      }
+
+      planets.length = 0;
+      const cx = W * 0.32,cy = H * 0.7;
+      // Sun — distinct violet/white color
+      planets.push({ cx, cy, r: 20, isSun: true });
+      // 5 players — unique colors + shapes
+      planets.push({ cx, cy, orbitR: 52, orbitSpeed: 0.009, angle: 0.4, r: 7, color: '#00e5ff', glow: 'rgba(0,229,255,0.55)', shape: 'circle', label: 'P1' });
+      planets.push({ cx, cy, orbitR: 88, orbitSpeed: 0.006, angle: 2.1, r: 9, color: '#e040fb', glow: 'rgba(224,64,251,0.5)', shape: 'ring', label: 'P2' });
+      planets.push({ cx, cy, orbitR: 126, orbitSpeed: 0.004, angle: 4.2, r: 7, color: '#ffc400', glow: 'rgba(255,196,0,0.5)', shape: 'hex', label: 'P3' });
+      planets.push({ cx, cy, orbitR: 164, orbitSpeed: 0.0028, angle: 1.0, r: 10, color: '#00e676', glow: 'rgba(0,230,118,0.5)', shape: 'diamond', label: 'P4' });
+      planets.push({ cx, cy, orbitR: 202, orbitSpeed: 0.002, angle: 3.5, r: 6, color: '#ff6d00', glow: 'rgba(255,109,0,0.5)', shape: 'star', label: 'P5' });
+    }
+
+    function spawnShoot() {
+      shoots.push({
+        x: Math.random() * W * 0.8,
+        y: Math.random() * H * 0.5,
+        len: Math.random() * 80 + 50,
+        speed: Math.random() * 7 + 5,
+        alpha: 1,
+        angle: Math.PI / 4 + (Math.random() - 0.5) * 0.4
+      });
+    }
+
+    function draw(t) {
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, W, H);
+
+      // Deep space bg
+      const bg = ctx.createRadialGradient(W * 0.5, H * 0.5, 0, W * 0.5, H * 0.5, Math.max(W, H) * 0.8);
+      bg.addColorStop(0, '#060616');bg.addColorStop(1, '#020208');
+      ctx.fillStyle = bg;ctx.fillRect(0, 0, W, H);
+
+      // Nebula blobs
+      [
+      [W * 0.15, H * 0.3, 200, 'rgba(0,60,140,0.09)'],
+      [W * 0.75, H * 0.65, 180, 'rgba(90,0,130,0.08)'],
+      [W * 0.5, H * 0.2, 150, 'rgba(0,50,90,0.06)'],
+      [W * 0.3, H * 0.75, 160, 'rgba(0,80,60,0.06)']].
+      forEach(([nx, ny, nr, nc]) => {
+        const ng = ctx.createRadialGradient(nx, ny, 0, nx, ny, nr);
+        ng.addColorStop(0, nc);ng.addColorStop(1, 'transparent');
+        ctx.fillStyle = ng;ctx.beginPath();
+        ctx.ellipse(nx, ny, nr * 1.6, nr, 0.5, 0, Math.PI * 2);ctx.fill();
+      });
+
+      // Stars
+      stars.forEach((s) => {
+        s.alpha = 0.2 + 0.8 * (0.5 + 0.5 * Math.sin(t * s.speed + s.phase));
+        ctx.beginPath();ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,255,255,${s.alpha})`;ctx.fill();
+        // bright stars get a cross sparkle
+        if (s.r > 1.3 && s.alpha > 0.8) {
+          ctx.strokeStyle = `rgba(255,255,255,${s.alpha * 0.4})`;
+          ctx.lineWidth = 0.5;
+          const sp = s.r * 3;
+          ctx.beginPath();ctx.moveTo(s.x - sp, s.y);ctx.lineTo(s.x + sp, s.y);ctx.stroke();
+          ctx.beginPath();ctx.moveTo(s.x, s.y - sp);ctx.lineTo(s.x, s.y + sp);ctx.stroke();
+        }
+      });
+
+      // Shooting stars
+      shootTimer++;
+      if (shootTimer > 120 + Math.random() * 100) {spawnShoot();shootTimer = 0;}
+      for (let i = shoots.length - 1; i >= 0; i--) {
+        const s = shoots[i];
+        s.x += Math.cos(s.angle) * s.speed;s.y += Math.sin(s.angle) * s.speed;
+        s.alpha -= 0.018;
+        if (s.alpha <= 0) {shoots.splice(i, 1);continue;}
+        const grd = ctx.createLinearGradient(s.x, s.y, s.x - Math.cos(s.angle) * s.len, s.y - Math.sin(s.angle) * s.len);
+        grd.addColorStop(0, `rgba(255,255,255,${s.alpha})`);grd.addColorStop(1, 'transparent');
+        ctx.beginPath();ctx.moveTo(s.x, s.y);
+        ctx.lineTo(s.x - Math.cos(s.angle) * s.len, s.y - Math.sin(s.angle) * s.len);
+        ctx.strokeStyle = grd;ctx.lineWidth = 1.5;ctx.stroke();
+      }
+
+      // Orbit rings
+      planets.slice(1).forEach((p) => {
+        ctx.beginPath();ctx.arc(p.cx, p.cy, p.orbitR, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(255,255,255,0.05)';ctx.lineWidth = 1;ctx.stroke();
+      });
+
+      // Sun — warm white-orange star
+      const sun = planets[0];
+      const pulse = 1 + 0.04 * Math.sin(t * 0.02);
+      const sg = ctx.createRadialGradient(sun.cx, sun.cy, 0, sun.cx, sun.cy, sun.r * 4.5 * pulse);
+      sg.addColorStop(0, '#ffffff');
+      sg.addColorStop(0.15, '#fff0cc');
+      sg.addColorStop(0.4, 'rgba(255,160,40,0.3)');
+      sg.addColorStop(1, 'transparent');
+      ctx.beginPath();ctx.arc(sun.cx, sun.cy, sun.r * 4.5 * pulse, 0, Math.PI * 2);
+      ctx.fillStyle = sg;ctx.fill();
+      ctx.beginPath();ctx.arc(sun.cx, sun.cy, sun.r, 0, Math.PI * 2);
+      const sunCore = ctx.createRadialGradient(sun.cx, sun.cy, 0, sun.cx, sun.cy, sun.r);
+      sunCore.addColorStop(0, '#ffffff');sunCore.addColorStop(0.4, '#ffe8a0');sunCore.addColorStop(1, '#ffcc66');
+      ctx.fillStyle = sunCore;ctx.fill();
+
+      // Planets — spherical with surface detail
+      // Helper: hex color to lighter/darker
+      function hexToRgb(hex) {
+        const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+        return [r,g,b];
+      }
+      function rgbLighten(hex,f){ const [r,g,b]=hexToRgb(hex); return `rgb(${Math.min(255,r+f*255|0)},${Math.min(255,g+f*255|0)},${Math.min(255,b+f*255|0)})`; }
+      function rgbDarken(hex,f){ const [r,g,b]=hexToRgb(hex); return `rgb(${r*(1-f)|0},${g*(1-f)|0},${b*(1-f)|0})`; }
+
+      planets.slice(1).forEach(p => {
+        p.angle += p.orbitSpeed;
+        const px = p.cx + Math.cos(p.angle)*p.orbitR;
+        const py = p.cy + Math.sin(p.angle)*p.orbitR;
+
+        // glow halo
+        const pg = ctx.createRadialGradient(px,py,0,px,py,p.r*4);
+        pg.addColorStop(0,p.glow); pg.addColorStop(1,'transparent');
+        ctx.beginPath(); ctx.arc(px,py,p.r*4,0,Math.PI*2); ctx.fillStyle=pg; ctx.fill();
+
+        // ring behind planet (drawn first)
+        if (p.shape==='ring') {
+          ctx.save(); ctx.translate(px,py); ctx.rotate(0.5);
+          ctx.beginPath(); ctx.ellipse(0,0,p.r*2.5,p.r*0.52,0,Math.PI,Math.PI*2);
+          ctx.strokeStyle=p.color+'77'; ctx.lineWidth=2.5; ctx.stroke();
+          ctx.beginPath(); ctx.ellipse(0,0,p.r*1.95,p.r*0.38,0,Math.PI,Math.PI*2);
+          ctx.strokeStyle=p.color+'44'; ctx.lineWidth=1.2; ctx.stroke();
+          ctx.restore();
+        }
+
+        // sphere body — 3D radial gradient
+        const hl = ctx.createRadialGradient(px-p.r*0.38,py-p.r*0.38,p.r*0.05, px,py,p.r);
+        hl.addColorStop(0, rgbLighten(p.color,0.65));
+        hl.addColorStop(0.4, p.color);
+        hl.addColorStop(1, rgbDarken(p.color,0.6));
+        ctx.beginPath(); ctx.arc(px,py,p.r,0,Math.PI*2);
+        ctx.fillStyle=hl; ctx.fill();
+
+        // surface bands for gas giants (larger planets)
+        if (p.r >= 8) {
+          ctx.save(); ctx.beginPath(); ctx.arc(px,py,p.r,0,Math.PI*2); ctx.clip();
+          const rot = p.angle * 0.04;
+          [[0.3,0.14],[-0.28,0.1],[0.52,0.09]].forEach(([off,w])=>{
+            ctx.beginPath(); ctx.ellipse(px, py+off*p.r, p.r, p.r*w, rot, 0, Math.PI*2);
+            ctx.fillStyle = rgbDarken(p.color,0.3)+'55'; ctx.fill();
+          });
+          ctx.restore();
+        }
+
+        // atmosphere edge
+        ctx.beginPath(); ctx.arc(px,py,p.r,0,Math.PI*2);
+        ctx.strokeStyle=rgbLighten(p.color,0.3)+'55'; ctx.lineWidth=1.5; ctx.stroke();
+
+        // ring front (over planet)
+        if (p.shape==='ring') {
+          ctx.save(); ctx.translate(px,py); ctx.rotate(0.5);
+          ctx.beginPath(); ctx.ellipse(0,0,p.r*2.5,p.r*0.52,0,0,Math.PI);
+          ctx.strokeStyle=p.color+'77'; ctx.lineWidth=2.5; ctx.stroke();
+          ctx.beginPath(); ctx.ellipse(0,0,p.r*1.95,p.r*0.38,0,0,Math.PI);
+          ctx.strokeStyle=p.color+'44'; ctx.lineWidth=1.2; ctx.stroke();
+          ctx.restore();
+        }
+      });
+
+      raf = requestAnimationFrame(draw);
+    }
+
+    init();
+    window.addEventListener('resize', init);
+    raf = requestAnimationFrame(draw);
+    return () => {cancelAnimationFrame(raf);window.removeEventListener('resize', init);};
+  }, []);
+
+  return <canvas ref={canvasRef} id="space-canvas" />;
+}
+
+// ── Landing Screen ──────────────────────────────────────────────
+function LandingScreen({ onLogin, onRegister }) {
+  const [tab, setTab] = useState('login');
+  const [remember, setRemember] = useState(false);
+  const [pw, setPw] = useState('');
+
+  function pwStrength(p) {
+    if (!p) return 0;
+    if (p.length < 6) return 1;
+    if (p.length < 10) return 2;
+    return 3;
+  }
+  const str = pwStrength(pw);
+
+  return (
+    <div className="landing fade-enter screen">
+      {/* Hero */}
+      <div className="hero" style={{ textAlign: "left", justifyContent: "flex-start", alignItems: "stretch", gap: "2px", paddingTop: 100 }}>
+
+        <h1 className="hero-title">
+          <span className="line1" style={{ padding: "0px" }}><span style={{ color: 'var(--cyan)' }}>QUIZ</span>SENDENCE</span>
+          <span className="line2" style={{ padding: "0px 0px 32px" }}>GAME SHOW</span>
+        </h1>
+        <p className="hero-sub">
+          Real-time multiplayer trivia. Compete live, nominate your rivals, and climb to the top of the leaderboard. Every question is a spotlight moment.
+        </p>
+
+
+
+      </div>
+
+      {/* Auth panel */}
+      <div className="auth-panel">
+        <div>
+          <div className="auth-title">{tab === 'login' ? 'Welcome back' : 'Join the Show'}</div>
+          <div style={{ fontSize: 13, color: 'var(--dim)', marginTop: 5 }}>
+            {tab === 'login' ? 'Sign in to your account' : 'Create your free account'}
+          </div>
+        </div>
+
+        <div className="auth-tabs">
+          <button className={`auth-tab ${tab === 'login' ? 'active' : ''}`} onClick={() => setTab('login')}>Sign In</button>
+          <button className={`auth-tab ${tab === 'register' ? 'active' : ''}`} onClick={() => setTab('register')}>Register</button>
+        </div>
+
+        {tab === 'login' ?
+        <div className="auth-form">
+            <div className="field">
+              <div className="field-label">Email</div>
+              <input className="field-input" type="email" placeholder="you@example.com" defaultValue="marek@example.com" />
+            </div>
+            <div className="field">
+              <div className="field-label">Password</div>
+              <input className="field-input" type="password" placeholder="••••••••" defaultValue="password" />
+            </div>
+            <div className="auth-row" style={{ textAlign: "left" }}>
+              <div />
+              <a className="forgot" href="#">Forgot password?</a>
+            </div>
+            <button className="auth-submit" onClick={onLogin}>Sign In →</button>
+            <div style={{textAlign:'center',fontSize:11,color:'var(--dim)',marginTop:4}}>
+              By signing in you agree to our <a href="#" style={{color:'rgba(0,229,255,0.6)',textDecoration:'none'}} onMouseOver={e=>e.target.style.color='#00e5ff'} onMouseOut={e=>e.target.style.color='rgba(0,229,255,0.6)'}>Privacy Policy</a> and <a href="#" style={{color:'rgba(0,229,255,0.6)',textDecoration:'none'}} onMouseOver={e=>e.target.style.color='#00e5ff'} onMouseOut={e=>e.target.style.color='rgba(0,229,255,0.6)'}>Terms of Service</a>
+            </div>
+          </div> :
+
+        <div className="auth-form">
+            <div className="field">
+              <div className="field-label">Display Name</div>
+              <input className="field-input" type="text" placeholder="YourGamertag" />
+            </div>
+            <div className="field">
+              <div className="field-label">Email</div>
+              <input className="field-input" type="email" placeholder="you@example.com" />
+            </div>
+            <div className="field">
+              <div className="field-label">Password</div>
+              <input className="field-input" type="password" placeholder="Min. 8 characters"
+            value={pw} onChange={(e) => setPw(e.target.value)} />
+              <div className="pw-strength">
+                {[1, 2, 3].map((i) =>
+              <div key={i} className={`pw-bar ${str >= i ? str === 1 ? 'weak' : str === 2 ? 'ok' : 'good' : ''}`} />
+              )}
+              </div>
+              <div style={{ fontSize: 11, color: 'var(--dim)', marginTop: 3 }}>
+                {str === 0 ? 'Enter a password' : str === 1 ? 'Too weak' : str === 2 ? 'Getting there' : '✓ Strong password'}
+              </div>
+            </div>
+            <div className="field">
+              <div className="field-label">Confirm Password</div>
+              <input className="field-input" type="password" placeholder="••••••••" />
+            </div>
+            <button className="auth-submit" onClick={onRegister}>Create Account →</button>
+            <div style={{textAlign:'center',fontSize:11,color:'var(--dim)',marginTop:4}}>
+              By registering you agree to our <a href="#" style={{color:'rgba(0,229,255,0.6)',textDecoration:'none'}} onMouseOver={e=>e.target.style.color='#00e5ff'} onMouseOut={e=>e.target.style.color='rgba(0,229,255,0.6)'}>Privacy Policy</a> and <a href="#" style={{color:'rgba(0,229,255,0.6)',textDecoration:'none'}} onMouseOver={e=>e.target.style.color='#00e5ff'} onMouseOut={e=>e.target.style.color='rgba(0,229,255,0.6)'}>Terms of Service</a>
+            </div>
+          </div>
+        }
+
+        <div className="auth-divider">or continue with</div>
+        <div className="social-btns">
+          <button className="social-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" /><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" /><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" /><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" /></svg>
+            Google
+          </button>
+        </div>
+
+
+      </div>
+    </div>);
+
+}
+
+// ── Account Screen ──────────────────────────────────────────────
+function AccountScreen({ user, setUser, onPlay }) {
+  const [name, setName] = useState(user.name);
+  const [email, setEmail] = useState(user.email);
+  const [avatarIdx, setAvatarIdx] = useState(user.avatarIndex);
+  const [newPw, setNewPw] = useState('');
+  const [confirmPw, setConfirmPw] = useState('');
+  const [notifs, setNotifs] = useState({ ...user.notifications });
+  const [saved, setSaved] = useState(false);
+  const fileRef = useRef();
+
+  const preset = AVATAR_PRESETS[avatarIdx];
+  const winRate = Math.round(user.stats.wins / user.stats.gamesPlayed * 100);
+
+  function handleSave() {
+    setUser((u) => ({ ...u, name, email, avatarIndex: avatarIdx, notifications: notifs }));
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2200);
+  }
+
+  function toggleNotif(key) {
+    setNotifs((n) => ({ ...n, [key]: !n[key] }));
+  }
+
+  return (
+    <div className="account-screen fade-enter">
+      {/* Header */}
+      <div className="account-header">
+        <div className="account-av-wrap">
+          <div className="account-avatar" style={{ background: preset.grad }}>
+            {preset.initials.slice(0, 2)}
+          </div>
+        </div>
+        <div className="account-info">
+          <div className="account-name">{name}</div>
+          <div className="account-email">{email}</div>
+          <div className="account-badges">
+            <span className="badge rank">🏆 {user.rank}</span>
+            <span className="badge human">Human</span>
+            <span className="badge joined">Joined {user.joined}</span>
+          </div>
+        </div>
+        <button className="nav-btn primary" style={{ marginLeft: 'auto' }} onClick={onPlay}>
+          ▶ Play Now
+        </button>
+      </div>
+
+      {/* Grid */}
+      <div className="account-grid">
+
+        {/* Avatar */}
+        <div className="section-card">
+          <div className="section-title"><span className="s-icon">🎭</span> Avatar</div>
+          <div>
+            <div className="label" style={{ marginBottom: 10 }}>Choose Preset</div>
+            <div className="avatar-grid">
+              {AVATAR_PRESETS.map((av, i) =>
+              <div key={i}
+              className={`av-option ${avatarIdx === i ? 'selected' : ''}`}
+              style={{ background: av.grad }}
+              onClick={() => setAvatarIdx(i)}>
+                
+                  {av.initials.slice(0, 1)}
+                </div>
+              )}
+            </div>
+          </div>
+          <div>
+            <div className="label" style={{ marginBottom: 8 }}>Or Upload Photo</div>
+            <div className="upload-zone" onClick={() => fileRef.current?.click()}>
+              <div className="upload-icon">📸</div>
+              <div className="upload-text">
+                <strong>Click to upload</strong> or drag & drop<br />
+                <span style={{ fontSize: 11 }}>PNG, JPG up to 2MB</span>
+              </div>
+            </div>
+            <input ref={fileRef} type="file" accept="image/*" style={{ display: 'none' }} />
+          </div>
+        </div>
+
+        {/* Stats */}
+        <div className="section-card">
+          <div className="section-title"><span className="s-icon">📊</span> Statistics</div>
+          <div className="stats-grid">
+            <div className="stat-box">
+              <div className="stat-box-val" style={{ color: 'var(--cyan)' }}>{user.stats.gamesPlayed}</div>
+              <div className="stat-box-lbl">Games Played</div>
+            </div>
+            <div className="stat-box">
+              <div className="stat-box-val" style={{ color: 'var(--gold)' }}>{user.stats.wins}</div>
+              <div className="stat-box-lbl">Wins</div>
+            </div>
+            <div className="stat-box">
+              <div className="stat-box-val" style={{ color: 'var(--green)' }}>{winRate}%</div>
+              <div className="stat-box-lbl">Win Rate</div>
+            </div>
+            <div className="stat-box">
+              <div className="stat-box-val" style={{ color: 'var(--magenta)' }}>{user.stats.avgScore}</div>
+              <div className="stat-box-lbl">Avg Score</div>
+            </div>
+            <div className="stat-box">
+              <div className="stat-box-val" style={{ color: 'var(--cyan)' }}>{user.stats.correctRate}%</div>
+              <div className="stat-box-lbl">Correct Rate</div>
+            </div>
+            <div className="stat-box">
+              <div className="stat-box-val" style={{ color: 'var(--gold)' }}>{user.stats.bestStreak}</div>
+              <div className="stat-box-lbl">Best Streak</div>
+            </div>
+          </div>
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+              <span style={{ fontSize: 12, color: 'var(--dim)' }}>Win rate</span>
+              <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--green)' }}>{winRate}%</span>
+            </div>
+            <div className="win-bar"><div className="win-fill" style={{ width: `${winRate}%` }} /></div>
+          </div>
+          <div style={{ fontSize: 12, color: 'var(--dim)', textAlign: 'center', paddingTop: 4 }}>
+            {user.stats.totalAnswered} questions answered in total
+          </div>
+        </div>
+
+        {/* Profile */}
+        <div className="section-card">
+          <div className="section-title"><span className="s-icon">✏️</span> Profile Details</div>
+          <div className="field">
+            <div className="field-label">Display Name</div>
+            <input className="field-input" type="text" value={name} onChange={(e) => setName(e.target.value)} />
+          </div>
+          <div className="field">
+            <div className="field-label">Email Address</div>
+            <input className="field-input" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+          </div>
+          <div style={{ height: 1, background: 'rgba(255,255,255,0.06)' }} />
+          <div className="label" style={{ letterSpacing: '1.5px' }}>Change Password</div>
+          <div className="field">
+            <div className="field-label">New Password</div>
+            <input className="field-input" type="password" placeholder="Min. 8 characters"
+            value={newPw} onChange={(e) => setNewPw(e.target.value)} />
+            {newPw &&
+            <div className="pw-strength">
+                {[1, 2, 3].map((i) => {
+                const s = newPw.length < 6 ? 1 : newPw.length < 10 ? 2 : 3;
+                return <div key={i} className={`pw-bar ${s >= i ? s === 1 ? 'weak' : s === 2 ? 'ok' : 'good' : ''}`} />;
+              })}
+              </div>
+            }
+          </div>
+          <div className="field">
+            <div className="field-label">Confirm Password</div>
+            <input className="field-input" type="password" placeholder="Repeat new password"
+            value={confirmPw} onChange={(e) => setConfirmPw(e.target.value)}
+            style={{ borderColor: confirmPw && confirmPw !== newPw ? 'var(--red)' : '' }} />
+            {confirmPw && confirmPw !== newPw &&
+            <div style={{ fontSize: 11, color: 'var(--red)', marginTop: 3 }}>Passwords don't match</div>
+            }
+          </div>
+        </div>
+
+        {/* Notifications */}
+        <div className="section-card">
+          <div className="section-title"><span className="s-icon">🔔</span> Notifications</div>
+          <div className="notif-list">
+            {[
+            { key: 'gameInvites', name: 'Game Invites', desc: 'When friends invite you to a game' },
+            { key: 'results', name: 'Match Results', desc: 'Post-game summary and rankings' },
+            { key: 'weeklyReport', name: 'Weekly Report', desc: 'Your weekly performance summary' },
+            { key: 'achievements', name: 'Achievements', desc: 'Unlocks and milestone alerts' },
+            { key: 'marketing', name: 'News & Updates', desc: 'Product updates and announcements' }].
+            map(({ key, name: n, desc }) =>
+            <div key={key} className="notif-row">
+                <div className="notif-info">
+                  <div className="notif-name">{n}</div>
+                  <div className="notif-desc">{desc}</div>
+                </div>
+                <Toggle on={notifs[key]} onChange={() => toggleNotif(key)} />
+              </div>
+            )}
+          </div>
+        </div>
+
+      </div>
+
+      {/* Save bar */}
+      <div style={{ marginTop: 22, display: 'flex', justifyContent: 'flex-end', gap: 10, alignItems: 'center' }}>
+        {saved &&
+        <div style={{ fontSize: 13, color: 'var(--green)', fontWeight: 600, animation: 'fadeIn 0.3s ease-out' }}>
+            ✓ Changes saved
+          </div>
+        }
+        <button className="cancel-btn">Discard</button>
+        <button className="save-btn" onClick={handleSave}>Save Changes</button>
+      </div>
+    </div>);
+
+}
+
+// ── App ─────────────────────────────────────────────────────────
+function App() {
+  const [screen, setScreen] = useState('landing');
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [user, setUser] = useState(MOCK_USER);
+
+  function handleLogin() {
+    setLoggedIn(true);
+    setScreen('account');
+  }
+  function handleRegister() {
+    setLoggedIn(true);
+    setScreen('account');
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+      <SpaceBackground />
+      <Nav
+        screen={screen}
+        setScreen={(s) => {if (s === 'account' && !loggedIn) {setScreen('landing');} else setScreen(s);}}
+        loggedIn={loggedIn}
+        user={user} />
+      
+      <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
+        {screen === 'landing' &&
+        <LandingScreen onLogin={handleLogin} onRegister={handleRegister} />
+        }
+        {screen === 'account' &&
+        <AccountScreen user={user} setUser={setUser} onPlay={() => window.open('Transcendence TV.html', '_blank')} />
+        }
+      </div>
+    </div>);
+
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
