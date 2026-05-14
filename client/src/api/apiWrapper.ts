@@ -24,13 +24,15 @@ export async function register(username: string, email: string, password: string
     return res.json()
 }
 
-export async function login(username: string, email:string, password: string) {
+export async function login(username: string, password: string) {
+    console.log("Sending login request:", { username, password })
     const res = await fetch(`${BASE}/account/users/login/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCsrfToken() },
         credentials: 'include',
-        body: JSON.stringify({ username, email, password })
+        body: JSON.stringify({ username, password })
     })
+    console.log("Login response:", res)
     if (!res.ok) { 
         const err = await res.json()
         throw new Error(JSON.stringify(err))

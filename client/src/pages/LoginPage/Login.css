@@ -1,3 +1,4 @@
+/* ── DESIGN TOKENS ─────────────────────────────────────────────── */
 :root {
   --bg:      #05050f;
   --bg2:     #08081c;
@@ -14,11 +15,13 @@
   --red:     #ff1744;
   --text:    #eeeef8;
   --dim:     rgba(238,238,248,0.45);
+  --placeholder: rgba(238,238,248,0.25);
   --border:  rgba(255,255,255,0.08);
 
   --fd:      'Rajdhani', sans-serif;
   --fb:      'Space Grotesk', sans-serif;
 
+  --gradient-deg: 135deg;
   --auth-container-height: 600px;
   --spacing-xs: 4px;
   --spacing-sm: 6px;
@@ -35,15 +38,23 @@
   --font-lg: 15px;
   --font-xl: 18px;
   --font-2xl: 26px;
-  --gradient-deg: 135deg;
 }
 
+/* ── GLOBAL ─────────────────────────────────────────────────────── */
+body {
+    background-color: var(--bg);
+    color: var(--text);
+    margin: 0;
+}
+
+/* ── LAYOUT ─────────────────────────────────────────────────────── */
 .main-container {
     display: flex;
     height: 100vh;
     width: 100%;
 }
 
+/* ── Empty Container (left side titles) ────────────────────────────────────── */
 .empty-container {
     flex: 1;
     display: flex;
@@ -83,6 +94,7 @@
     margin: 0;
 }
 
+/* ── STAR BACKGROUND ────────────────────────────────────────────── */
 .blinking-space-bg {
     position: fixed;
     inset: 0;
@@ -104,10 +116,10 @@
     85%      { opacity: 0.2; }
 }
 
-
+/* AUTH PANEL (right side) ────────────────────────────────────── */
 .auth-container {
-    position: relative;  /* ← now z-index works */
-    z-index: 1;   
+    position: relative;
+    z-index: 1;
     background: var(--bg);
     width: 420px;
     border-left: 1px solid var(--border);
@@ -126,6 +138,20 @@
     overflow-y: auto;
 }
 
+.auth-title {
+    font-family: var(--fd);
+    font-size: var(--font-2xl);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.auth-subtitle {
+    font-size: var(--font-sm);
+    color: var(--dim);
+    margin-top: 5px;
+}
+
+/* AUTH TABS ──────────────────────────────────────────────────── */
 .auth-tabs {
     display: flex;
     gap: 0;
@@ -157,29 +183,11 @@
     box-shadow: inset 0 -2px 0 var(--cyan);
 }
 
-body {
-    background-color: var(--bg);
-    color: var(--text);
-    margin: 0;
-}
-
+/* FORM FIELDS ────────────────────────────────────────────────── */
 .login-view, .registration-view {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-xl);
-}
-
-.auth-title {
-    font-family: var(--fd);
-    font-size: var(--font-2xl);
-    font-weight: 700;
-    letter-spacing: 0.5px;
-}
-
-.auth-subtitle {
-    font-size: var(--font-sm);
-    color: var(--dim);
-    margin-top: 5px;
 }
 
 .field {
@@ -191,7 +199,7 @@ body {
 .field-label {
     font-size: var(--font-xs);
     letter-spacing: 1.5px;
-    text-transform: uppercase;
+    text-transform: capitalize;
     color: var(--dim);
     font-weight: 600;
 }
@@ -213,7 +221,11 @@ body {
     box-shadow: 0 0 0 3px var(--tr-cyan);
 }
 
+.field-input::placeholder {
+    color: var(--placeholder);
+}
 
+/* SUBMIT BUTTON ──────────────────────────────────────────────── */
 .auth-submit {
     background: linear-gradient(var(--gradient-deg), var(--cyan), var(--magenta));
     border: none;

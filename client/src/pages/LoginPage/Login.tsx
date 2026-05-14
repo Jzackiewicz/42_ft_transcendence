@@ -1,12 +1,20 @@
-import { useState } from 'react'
-import LoginView from './LoginView.tsx'
-import RegistrationView from'./RegistrationView.tsx'
+import { useState, useEffect } from 'react'
+import LoginView from './SubViewsLoginPage/LoginView/LoginView.tsx'
+import RegistrationView from'./SubViewsLoginPage/RegistrationView/RegistrationView.tsx'
 import BlinkingSpaceBGDiv from '../../components/BlinkingSpaceBGDiv.tsx'
+import { initCsrf } from '../../api/apiWrapper'
 import './Login.css'
 
 
 function LoginPage() {
     const [logginToggleState, setLoginTougle] = useState(true)
+
+    useEffect(() => { 
+        console.log("Initializing CSRF...")
+        initCsrf()
+            .then(() => console.log("CSRF initialized"))
+            .catch(err => console.error("CSRF failed:", err))
+    }, [])
     return (
         <div className="login-page">
             <div className="main-container">
@@ -34,7 +42,7 @@ function LoginPage() {
                             <button className={logginToggleState ? 'auth-tab active' : 'auth-tab'} onClick={() => setLoginTougle(true)}>Sign In</button>
                             <button className={logginToggleState ? 'auth-tab' : 'auth-tab active'} onClick={() => setLoginTougle(false)}>Register</button>
                         </div>
-                        {logginToggleState ? <LoginView /> : <RegistrationView/>}
+                        {logginToggleState ? <LoginView/> : <RegistrationView/>}
                     </div>
                 </div>
 
