@@ -1,13 +1,12 @@
 import {useState} from 'react'
 import {useUser} from '../../../../context/UserContext'
 import {login} from '../../../../api/apiWrapper'
-import { useNavigate } from 'react-router-dom'
+// import { useNavigate } from 'react-router-dom'
 
-export function useLoginView() {
+export function useLoginView(onSuccess: () => void) {
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
 
-    const navigate = useNavigate()
     const {setUser} = useUser()
 
     const handleLogin = async () => {
@@ -16,7 +15,7 @@ export function useLoginView() {
             const result = await login(username, password)
             console.log("Login success:", result)
             setUser(result)
-            navigate('/home')
+            onSuccess()
         } catch (error) {
             console.error("Login failed:", error)
         }

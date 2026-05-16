@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 
 import HomePage from './pages/HomePage/HomePage.tsx'
-import AuthPage from './pages/LoginPage/AuthPage.tsx'
+import AuthPage from './pages/AuthPage/AuthPage.tsx'
 
 import {useUser , UserProvider} from './context/UserContext.tsx'
 

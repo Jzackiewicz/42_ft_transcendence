@@ -1,9 +1,13 @@
-import { useState } from 'react'
 import { useLoginView } from './useLoginView'
 import InputField from '../../../../components/InputField'
 
-function LoginView() {
-    const { username, setUsername, password, setPassword, handleLogin } = useLoginView()
+interface LoginViewProps {
+    onSuccess: () => void
+}
+
+function LoginView({ onSuccess }: LoginViewProps) {
+
+    const { username, setUsername, password, setPassword, handleLogin } = useLoginView(onSuccess)
 
     return (
         <div className="login-view">

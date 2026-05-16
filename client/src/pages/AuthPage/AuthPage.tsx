@@ -1,19 +1,14 @@
-import { useState, useEffect } from 'react'
-import LoginView from './SubViewsLoginPage/LoginView/LoginView.tsx'
-import RegistrationView from'./SubViewsLoginPage/RegistrationView/RegistrationView.tsx'
+import LoginView from './SubviewsAuthPage/LoginView/LoginView'
+import RegistrationView from './SubviewsAuthPage/RegistrationView/RegistrationView'
 import BlinkingSpaceBGDiv from '../../components/BlinkingSpaceBGDiv.tsx'
-import { initCSRF } from '../../api/apiWrapper.ts'
 import './AuthPage.css'
 
+import { useAuthPage, useLoginNavigation } from './useAuthPage'
 
 function LoginPage() {
-    const [isLoginTab, setIsLoginTab] = useState(true)
+    const { isLoginTabActive, setIsLoginTabActive } = useAuthPage()
+    const { onLoginSuccess } = useLoginNavigation()
 
-    useEffect(() => { 
-        console.log("Initializing CSRF...")
-        initCSRF()
-            .catch(err => console.error("CSRF failed:", err))
-    }, [])
     return (
         <div className="login-page">
             <div className="main-container">
@@ -30,18 +25,18 @@ function LoginPage() {
                     <div className="auth-content">
                         <div className="auth-title-container">
                             <div className="auth-title">
-                                {isLoginTab ? 'Welcome back' : 'Join the Show'}
+                                {isLoginTabActive ? 'Welcome back' : 'Join the Show'}
                             </div>
                             <div className="auth-subtitle">
-                                {isLoginTab ? 'Sign in to your account' : 'Create your free account'}
+                                {isLoginTabActive ? 'Sign in to your account' : 'Create your free account'}
                             </div>
                         </div>
 
                         <div className="auth-tabs">
-                            <button className={isLoginTab ? 'auth-tab active' : 'auth-tab'} onClick={() => setIsLoginTab(true)}>Sign In</button>
-                            <button className={isLoginTab ? 'auth-tab' : 'auth-tab active'} onClick={() => setIsLoginTab(false)}>Register</button>
+                            <button className={isLoginTabActive ? 'auth-tab active' : 'auth-tab'} onClick={() => setIsLoginTabActive(true)}>Sign In</button>
+                            <button className={isLoginTabActive ? 'auth-tab' : 'auth-tab active'} onClick={() => setIsLoginTabActive(false)}>Register</button>
                         </div>
-                        {isLoginTab ? <LoginView/> : <RegistrationView/>}
+                        {isLoginTabActive ? <LoginView onSuccess={onLoginSuccess} /> : <RegistrationView/>}
                     </div>
                 </div>
 
