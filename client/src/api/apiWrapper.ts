@@ -1,19 +1,24 @@
 const BASE = '' // for now leave empty
 // const BASE = import.meta.env.VITE_API_URL
 
-function getCsrfToken(): string {
+function getCSRFToken(): string {
   const cookie = document.cookie.split('; ').find(row => row.startsWith('csrftoken='))
   return cookie ? cookie.split('=')[1] : ''
 }
 
-export async function initCsrf() {
-  await fetch(`${BASE}/account/users/`, { credentials: 'include' })
+export async function initCSRF() {
+    if (!getCSRFToken()) {
+        await fetch(`${BASE}/account/users/login`, { credentials: 'include' })
+        console.log("CSRF initialized")
+        return
+    }
+    console.log("CSRF has been successfully read")
 }
 
 export async function register(username: string, email: string, password: string) {
     const res = await fetch(`${BASE}/account/users/register/`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCsrfToken() },
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCSRFToken() },
         credentials: 'include',
         body: JSON.stringify({ username, email, password })
     })
@@ -28,14 +33,14 @@ export async function login(username: string, password: string) {
     console.log("Sending login request:", { username, password })
     const res = await fetch(`${BASE}/account/users/login/`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCsrfToken() },
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCSRFToken() },
         credentials: 'include',
         body: JSON.stringify({ username, password })
     })
     console.log("Login response:", res)
-    if (!res.ok) { 
-        const err = await res.json()
-        throw new Error(JSON.stringify(err))
+    if (!res.ok) {
+        const text = await res.text()
+        throw new Error(text || `HTTP error ${res.status}`)
     }
     return res.json()
 }
@@ -44,7 +49,7 @@ export async function login(username: string, password: string) {
 export async function logout() {
     const res = await fetch(`${BASE}/account/users/logout/`, {
         method: 'POST',
-        headers: { 'X-CSRFToken': getCsrfToken() },
+        headers: { 'X-CSRFToken': getCSRFToken() },
         credentials: 'include',
     })
     if (!res.ok) {

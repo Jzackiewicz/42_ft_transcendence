@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react'
 import LoginView from './SubViewsLoginPage/LoginView/LoginView.tsx'
 import RegistrationView from'./SubViewsLoginPage/RegistrationView/RegistrationView.tsx'
 import BlinkingSpaceBGDiv from '../../components/BlinkingSpaceBGDiv.tsx'
-import { initCsrf } from '../../api/apiWrapper'
-import './Login.css'
+import { initCSRF } from '../../api/apiWrapper.ts'
+import './AuthPage.css'
 
 
 function LoginPage() {
@@ -11,8 +11,7 @@ function LoginPage() {
 
     useEffect(() => { 
         console.log("Initializing CSRF...")
-        initCsrf()
-            .then(() => console.log("CSRF initialized"))
+        initCSRF()
             .catch(err => console.error("CSRF failed:", err))
     }, [])
     return (
