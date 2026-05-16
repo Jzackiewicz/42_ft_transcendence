@@ -4,9 +4,6 @@ import InputField from '../../../../components/InputField'
 
 function RegistrationView() {
     const { username, setUsername, email, setEmail, password, setPassword, handleRegister } = useRegistrationView()
-    // const [displayName, setDisplayName] = useState("")
-    // const [email, setEmail] = useState("")
-    // const [password, setPassword] = useState("")
     const [confirmPassword, setConfirmPassword] = useState("")
 
     return (

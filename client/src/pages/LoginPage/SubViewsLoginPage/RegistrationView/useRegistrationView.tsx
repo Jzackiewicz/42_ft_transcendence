@@ -7,7 +7,7 @@ export function useRegistrationView() {
     const [password, setPassword] = useState("")
     
     const handleRegister = async () => {
-        console.log("Login attempt with:", { username, password })
+        console.log("Registration attempt with:", { username, email })
         try {
             await register(username, email, password)
         } catch (error) {

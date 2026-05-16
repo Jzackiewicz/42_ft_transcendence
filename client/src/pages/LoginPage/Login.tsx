@@ -7,7 +7,7 @@ import './Login.css'
 
 
 function LoginPage() {
-    const [logginToggleState, setLoginTougle] = useState(true)
+    const [isLoginTab, setIsLoginTab] = useState(true)
 
     useEffect(() => { 
         console.log("Initializing CSRF...")
@@ -31,18 +31,18 @@ function LoginPage() {
                     <div className="auth-content">
                         <div className="auth-title-container">
                             <div className="auth-title">
-                                {logginToggleState ? 'Welcome back' : 'Join the Show'}
+                                {isLoginTab ? 'Welcome back' : 'Join the Show'}
                             </div>
                             <div className="auth-subtitle">
-                                {logginToggleState ? 'Sign in to your account' : 'Create your free account'}
+                                {isLoginTab ? 'Sign in to your account' : 'Create your free account'}
                             </div>
                         </div>
 
                         <div className="auth-tabs">
-                            <button className={logginToggleState ? 'auth-tab active' : 'auth-tab'} onClick={() => setLoginTougle(true)}>Sign In</button>
-                            <button className={logginToggleState ? 'auth-tab' : 'auth-tab active'} onClick={() => setLoginTougle(false)}>Register</button>
+                            <button className={isLoginTab ? 'auth-tab active' : 'auth-tab'} onClick={() => setIsLoginTab(true)}>Sign In</button>
+                            <button className={isLoginTab ? 'auth-tab' : 'auth-tab active'} onClick={() => setIsLoginTab(false)}>Register</button>
                         </div>
-                        {logginToggleState ? <LoginView/> : <RegistrationView/>}
+                        {isLoginTab ? <LoginView/> : <RegistrationView/>}
                     </div>
                 </div>
 
