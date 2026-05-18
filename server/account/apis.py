@@ -15,6 +15,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from drf_spectacular.utils import extend_schema
+from drf_spectacular.types import OpenApiTypes
 from django.contrib.auth import authenticate, login, logout
 from .permissions import IsSelfOrReadOnly
 
@@ -63,7 +64,7 @@ class CSRFTokenApi(APIView):
     @extend_schema(
         request=None,
         responses={
-            200: "CSRF cookie set successfully.",
+            200: OpenApiTypes.OBJECT,
         },
         description="Set a CSRF cookie for user session.",
     )
