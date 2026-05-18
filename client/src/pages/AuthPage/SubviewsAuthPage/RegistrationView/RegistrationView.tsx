@@ -12,12 +12,13 @@ function RegistrationView({onSuccess}: RegistrationProps) {
 
     return (
         <div className="registration-view">
-            <h2>Register</h2>
-            <InputField title= "Display Name" type="text" placeholder="Enter your nickname" value={username} onChange={(value) => setUsername(value)} />
-            <InputField title="Email" type="email" placeholder="your_email@gmail.com" value={email} onChange={(value) => setEmail(value)} />
-            <InputField title="Password" type="password" placeholder="Create a password" value={password} onChange={(value) => setPassword(value)} />
-            <InputField title="Confirm Password" type="password" placeholder="Confirm your password" value={confirmPassword} onChange={(value) => setConfirmPassword(value)} />
-            <button className="auth-submit" onClick={handleRegister}> Register </button>
+            <form onSubmit={(e) => {e.preventDefault(); handleRegister()}}> 
+                <InputField title= "Display Name" type="text" placeholder="Enter your nickname" value={username} onChange={(value) => setUsername(value)} />
+                <InputField title="Email" type="email" placeholder="your_email@gmail.com" value={email} onChange={(value) => setEmail(value)} />
+                <InputField title="Password" type="password" placeholder="Create a password" value={password} onChange={(value) => setPassword(value)} />
+                <InputField title="Confirm Password" type="password" placeholder="Confirm your password" value={confirmPassword} onChange={(value) => setConfirmPassword(value)} />
+                <button type="submit" className="auth-submit"> Register </button>
+            </form>
         </div>
     )
 }
