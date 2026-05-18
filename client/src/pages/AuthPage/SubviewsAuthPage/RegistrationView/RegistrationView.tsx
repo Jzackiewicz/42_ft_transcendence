@@ -2,8 +2,12 @@ import { useState } from 'react'
 import { useRegistrationView } from './useRegistrationView'
 import InputField from '../../../../components/InputField'
 
-function RegistrationView() {
-    const { username, setUsername, email, setEmail, password, setPassword, handleRegister } = useRegistrationView()
+interface RegistrationProps {
+    onSuccess: () => void
+}
+
+function RegistrationView({onSuccess}: RegistrationProps) {
+    const { username, setUsername, email, setEmail, password, setPassword, handleRegister } = useRegistrationView(onSuccess)
     const [confirmPassword, setConfirmPassword] = useState("")
 
     return (
