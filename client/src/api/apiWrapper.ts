@@ -61,6 +61,16 @@ export async function getUser(userId: number) {
     return res.json()
 }
 
+export async function getMe() {
+    const res = await fetch(`${BASE}/account/users/me/`, {
+        credentials: 'include'
+    })
+    if (!res.ok) {
+        return null
+    }
+    return res.json()
+}
+
 // ws: — plain WebSocket (like http://)
 // wss: — secure WebSocket (like https://)
 export function connectGameSocket(): WebSocket {

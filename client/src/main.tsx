@@ -10,10 +10,8 @@ import {useUser , UserProvider} from './context/UserContext.tsx'
 //Prevents navigating without authentication (if user is on https:site/login, disable navigating just by changing the route to the https:site/home)
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
     const { user } = useUser()
-    if (!user) {
-      return <Navigate to="/login" />
-      // console.log("User attempted to access pages without authentication.")
-    }
+    if (user === undefined) return null
+    if (!user) return <Navigate to="/login" />
     return children
 }
 
