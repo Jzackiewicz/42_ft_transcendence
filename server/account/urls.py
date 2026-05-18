@@ -3,6 +3,8 @@ from django.urls import path
 from account import apis
 
 urlpatterns = [
+    # CSRF token endpoint
+    path("api/csrf/", apis.CSRFTokenApi.as_view(), name="api-csrf"),
     # login/logout endpoints
     path("users/login/", apis.UserLoginApi.as_view(), name="user-login"),
     path("users/logout/", apis.UserLogoutApi.as_view(), name="user-logout"),

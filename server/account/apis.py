@@ -8,10 +8,12 @@ Each view is responsible only for:
 No business logic or direct ORM access belongs here.
 """
 
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import ensure_csrf_cookie
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from drf_spectacular.utils import extend_schema
 from django.contrib.auth import authenticate, login, logout
 from .permissions import IsSelfOrReadOnly
@@ -42,6 +44,35 @@ from .services import (
     profile_add_friend,
     profile_remove_friend,
 )
+
+
+# ---------------------------------------------------------------------------
+# CSRF token endpoint
+# ---------------------------------------------------------------------------
+
+
+# NOTE: Frontend MUST hit this endpoint via a GET request when it boots up
+class CSRFTokenApi(APIView):
+    """
+    An APIView dedicated to forcing Django to drop
+    the 'csrftoken' cookie into the browser.
+    """
+
+    permission_classes = [AllowAny]
+
+    @extend_schema(
+        request=None,
+        responses={
+            200: "CSRF cookie set successfully.",
+        },
+        description="Set a CSRF cookie for user session.",
+    )
+    @method_decorator(ensure_csrf_cookie)
+    def get(self, request):
+        return Response(
+            {"detail": "CSRF cookie set successfully."}, status=status.HTTP_200_OK
+        )
+
 
 # ---------------------------------------------------------------------------
 # User endpoints
