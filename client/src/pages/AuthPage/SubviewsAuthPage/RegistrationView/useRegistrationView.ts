@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import {useUser} from '../../../../context/UserContext'
+import { useUser } from '../../../../context/UserContext'
 import { register, login } from '../../../../api/apiWrapper'
 
 
