@@ -17,7 +17,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from drf_spectacular.utils import extend_schema
 from drf_spectacular.types import OpenApiTypes
 from django.contrib.auth import authenticate, login, logout
-from .permissions import IsSelfOrReadOnly
+from .permissions import IsSelfOrReadOnly, IsAnonymous
 
 from .selectors import (
     user_get_by_id,
@@ -176,11 +176,14 @@ class UserMeExportApi(APIView):
 
 
 class UserRegisterApi(APIView):
-    permission_classes = []
+    permission_classes = [IsAnonymous]
 
     @extend_schema(
         request=UserRegisterInputSerializer,
-        responses={201: UserOutputSerializer},
+        responses={
+            201: UserOutputSerializer,
+            403: {"type": "object", "properties": {"detail": {"type": "string"}}},
+        },
         description="Register a new user account.",
     )
     def post(self, request):
@@ -362,11 +365,14 @@ class UserProfileFriendDetailApi(APIView):
 
 
 class UserLoginApi(APIView):
-    permission_classes = []  # user isnt authenticated yet, so its available for everyone
+    permission_classes = [IsAnonymous]
 
     @extend_schema(
         request=UserLoginInputSerializer,
-        responses={200: UserOutputSerializer},
+        responses={
+            200: UserOutputSerializer,
+            403: {"type": "object", "properties": {"detail": {"type": "string"}}},
+        },
         description="Login",
     )
     def post(self, request):
