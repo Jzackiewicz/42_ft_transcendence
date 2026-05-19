@@ -400,9 +400,14 @@ class UserLoginApi(APIView):
 
 
 class UserLogoutApi(APIView):
+    permission_classes = [IsAuthenticated]
+
     @extend_schema(
         request=None,
-        responses={204: None},
+        responses={
+            204: None,
+            403: {"type": "object", "properties": {"detail": {"type": "string"}}},
+        },
         description="Log the current user out and clear the session.",
     )
     def post(self, request):
