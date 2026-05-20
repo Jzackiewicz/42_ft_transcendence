@@ -1,13 +1,14 @@
-import LoginView from './SubviewsAuthPage/LoginView/LoginView'
+import LoginView from './SubviewsAuthPage/LoginView/LoginView.tsx'
 import RegistrationView from './SubviewsAuthPage/RegistrationView/RegistrationView'
 import BlinkingSpaceBGDiv from '../../components/BlinkingSpaceBGDiv.tsx'
 import './AuthPage.css'
 
-import { useAuthPage, useLoginNavigation } from './useAuthPage'
+import { useAuthPage, useLoginNavigation, useRegistrationNavigation } from './useAuthPage'
 
 function LoginPage() {
     const { isLoginTabActive, setIsLoginTabActive } = useAuthPage()
     const { onLoginSuccess } = useLoginNavigation()
+    const { onRegistrationSuccess } = useRegistrationNavigation()
 
     return (
         <div className="login-page">
@@ -36,7 +37,7 @@ function LoginPage() {
                             <button className={isLoginTabActive ? 'auth-tab active' : 'auth-tab'} onClick={() => setIsLoginTabActive(true)}>Sign In</button>
                             <button className={isLoginTabActive ? 'auth-tab' : 'auth-tab active'} onClick={() => setIsLoginTabActive(false)}>Register</button>
                         </div>
-                        {isLoginTabActive ? <LoginView onSuccess={onLoginSuccess} /> : <RegistrationView/>}
+                        {isLoginTabActive ? <LoginView onSuccess={onLoginSuccess} /> : <RegistrationView onSuccess={onRegistrationSuccess}/>}
                     </div>
                 </div>
 

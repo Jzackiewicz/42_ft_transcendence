@@ -7,13 +7,15 @@ interface LoginViewProps {
 
 function LoginView({ onSuccess }: LoginViewProps) {
 
-    const { username, setUsername, password, setPassword, handleLogin } = useLoginView(onSuccess)
+    const { username, setUsername, password, setPassword, handleLogin, errors } = useLoginView(onSuccess)
 
     return (
         <div className="login-view">
-            <InputField title="Username" type="text" placeholder="Enter your username" value={username} onChange={setUsername} />
-            <InputField title="Password" type="password" placeholder="Enter your password" value={password} onChange={setPassword} />
-            <button className="auth-submit" onClick={handleLogin}>Sign In ⟶</button>
+            <form onSubmit={(e) => {e.preventDefault(); handleLogin()}}> 
+                <InputField title="Username" type="text" placeholder="Enter your username" value={username} onChange={setUsername} error={errors.usernameErr} />
+                <InputField title="Password" type="password" placeholder="Enter your password" value={password} onChange={setPassword} error={errors.passwordErr}/>
+                <button type="submit" className="auth-submit">Sign In ⟶</button>
+            </form>
         </div>
     )
 }

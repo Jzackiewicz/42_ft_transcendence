@@ -6,15 +6,6 @@ function getCSRFToken(): string {
   return cookie ? cookie.split('=')[1] : ''
 }
 
-export async function initCSRF() {
-    if (!getCSRFToken()) {
-        await fetch(`${BASE}/account/users/login`, { credentials: 'include' })
-        console.log("CSRF initialized")
-        return
-    }
-    console.log("CSRF has been successfully read")
-}
-
 export async function register(username: string, email: string, password: string) {
     const res = await fetch(`${BASE}/account/users/register/`, {
         method: 'POST',
@@ -66,6 +57,16 @@ export async function getUser(userId: number) {
     if (!res.ok) {
         const err = await res.json()
         throw new Error(JSON.stringify(err))
+    }
+    return res.json()
+}
+
+export async function getMe() {
+    const res = await fetch(`${BASE}/account/users/me/`, {
+        credentials: 'include'
+    })
+    if (!res.ok) {
+        return null
     }
     return res.json()
 }

@@ -1,4 +1,5 @@
-import { createContext, useContext, useState } from "react"
+import { createContext, useContext, useState, useEffect } from "react"
+import {getMe} from "../api/apiWrapper"
 
 interface User {
     id: number
@@ -7,16 +8,21 @@ interface User {
 }
 
 interface UserContextType {
-    user: User | null
+    user: User | null | undefined //user 
     setUser: (user: User | null) => void
 }
 
 const UserContext = createContext<UserContextType | null>(null)
 
-
-//Singletone - the real userData holder
 export function UserProvider({ children }: { children: React.ReactNode }) {
-    const [user, setUser] = useState<User | null>(null)
+    const [user, setUser] = useState<User | null | undefined>(undefined)
+
+    useEffect(() => {
+        getMe().then(data => {
+            setUser(data ?? null)
+        })
+    }, [])
+
     return (
         <UserContext.Provider value={{ user, setUser }}>
             {children}

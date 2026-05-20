@@ -1,5 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Space+Grotesk:wght@400;600&display=swap');
+
 /* ── DESIGN TOKENS ─────────────────────────────────────────────── */
 :root {
+  --fd: 'Rajdhani', sans-serif;
+  --fb: 'Space Grotesk', sans-serif;
   --bg:      #05050f;
   --bg2:     #08081c;
   --bg3:     #0d0d24;
@@ -17,9 +21,6 @@
   --dim:     rgba(238,238,248,0.45);
   --placeholder: rgba(238,238,248,0.25);
   --border:  rgba(255,255,255,0.08);
-
-  --fd:      'Rajdhani', sans-serif;
-  --fb:      'Space Grotesk', sans-serif;
 
   --gradient-deg: 135deg;
   --auth-container-height: 600px;
@@ -44,6 +45,7 @@
 body {
     background-color: var(--bg);
     color: var(--text);
+    font-family: var(--fb);
     margin: 0;
 }
 
@@ -116,7 +118,7 @@ body {
     85%      { opacity: 0.2; }
 }
 
-/* AUTH PANEL (right side) ────────────────────────────────────── */
+/* ── AUTH PANEL (right side) ────────────────────────────────────── */
 .auth-container {
     position: relative;
     z-index: 1;
@@ -151,7 +153,7 @@ body {
     margin-top: 5px;
 }
 
-/* AUTH TABS ──────────────────────────────────────────────────── */
+/* ── AUTH TABS ──────────────────────────────────────────────────── */
 .auth-tabs {
     display: flex;
     gap: 0;
@@ -184,10 +186,10 @@ body {
 }
 
 /* FORM FIELDS ────────────────────────────────────────────────── */
-.login-view, .registration-view {
+.login-view form, .registration-view form {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-xl);
+    gap: 24px;
 }
 
 .field {
