@@ -2,8 +2,9 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 
-import HomePage from './pages/HomePage/HomePage.tsx'
-import AuthPage from './pages/AuthPage/AuthPage.tsx'
+import { HomePage } from './pages/HomePage/HomePage.tsx'
+import { AuthPage } from './pages/AuthPage/AuthPage.tsx'
+import { GamePage } from './pages/GamePage/GamePage.tsx'
 
 import {useUser , UserProvider} from './context/UserContext.tsx'
 
@@ -25,6 +26,11 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             <Route path="/home" element={
               <ProtectedRoute>
                 <HomePage />
+              </ProtectedRoute>
+            } />
+            <Route path="/lobby" element={
+              <ProtectedRoute>
+                <GamePage />
               </ProtectedRoute>
             } />
         </Routes>
