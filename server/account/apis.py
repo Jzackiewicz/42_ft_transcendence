@@ -93,6 +93,7 @@ class UserMeApi(APIView):
         },
         description="Retrieve the authenticated user's information.",
     )
+    @method_decorator(ensure_csrf_cookie)
     def get(self, request):
         output_serializer = UserOutputSerializer(request.user)
         return Response(output_serializer.data)
