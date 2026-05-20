@@ -12,3 +12,9 @@ export function useLoginNavigation() {
     const navigate = useNavigate()
     return { onLoginSuccess: () => navigate('/home') }
 }
+
+export function useRegistrationNavigation() {
+    const navigate = useNavigate()
+    return { onRegistrationSuccess: () => navigate('/home')}
+}
+
