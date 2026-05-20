@@ -1,6 +1,6 @@
 import {useState} from 'react'
 import {useUser} from '../../../../context/UserContext'
-import {login} from '../../../../api/apiWrapper'
+import { login } from '../../../../api/authWrapper'
 // import { useNavigate } from 'react-router-dom'
 
 interface LoginErrors {
