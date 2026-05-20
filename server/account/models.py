@@ -26,7 +26,6 @@ class UserProfile(models.Model):
     )
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
     is_online = models.BooleanField(default=False)
-    friends = models.ManyToManyField('self', blank=True) # django created a hidden table for it
 
     class Meta:
         verbose_name = 'User Profile'

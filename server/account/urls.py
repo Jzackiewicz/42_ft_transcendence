@@ -27,14 +27,4 @@ urlpatterns = [
         apis.UserProfileAvatarApi.as_view(),
         name="profile-avatar",
     ),
-    path(
-        "profiles/<int:user_id>/friends/",
-        apis.UserProfileFriendListApi.as_view(),
-        name="profile-friend-list",
-    ),
-    path(
-        "profiles/<int:user_id>/friends/<int:friend_user_id>/",
-        apis.UserProfileFriendDetailApi.as_view(),
-        name="profile-friend-detail",
-    ),
 ]

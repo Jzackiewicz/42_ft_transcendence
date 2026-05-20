@@ -74,16 +74,6 @@ class UserProfileAvatarInputSerializer(serializers.Serializer):
     avatar = serializers.ImageField()
 
 
-class UserProfileFriendOutputSerializer(serializers.ModelSerializer):
-    """Lightweight representation used when listing a profile's friends."""
-
-    user = UserOutputSerializer(read_only=True)
-
-    class Meta:
-        model = UserProfile
-        fields = ["id", "user", "avatar", "is_online"]
-
-
 # ---------------------------------------------------------------------------
 # Login serializer
 # ---------------------------------------------------------------------------
