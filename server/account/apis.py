@@ -8,13 +8,16 @@ Each view is responsible only for:
 No business logic or direct ORM access belongs here.
 """
 
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import ensure_csrf_cookie
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from drf_spectacular.utils import extend_schema
+from drf_spectacular.types import OpenApiTypes
 from django.contrib.auth import authenticate, login, logout
-from .permissions import IsSelfOrReadOnly
+from .permissions import IsSelfOrReadOnly, IsAnonymous
 
 from .selectors import (
     user_get_by_id,
@@ -43,6 +46,35 @@ from .services import (
     profile_remove_friend,
 )
 
+
+# ---------------------------------------------------------------------------
+# CSRF token endpoint
+# ---------------------------------------------------------------------------
+
+
+# NOTE: Frontend MUST hit this endpoint via a GET request when it boots up
+class CSRFTokenApi(APIView):
+    """
+    An APIView dedicated to forcing Django to drop
+    the 'csrftoken' cookie into the browser.
+    """
+
+    permission_classes = [AllowAny]
+
+    @extend_schema(
+        request=None,
+        responses={
+            200: OpenApiTypes.OBJECT,
+        },
+        description="Set a CSRF cookie for user session.",
+    )
+    @method_decorator(ensure_csrf_cookie)
+    def get(self, request):
+        return Response(
+            {"detail": "CSRF cookie set successfully."}, status=status.HTTP_200_OK
+        )
+
+
 # ---------------------------------------------------------------------------
 # User endpoints
 # ---------------------------------------------------------------------------
@@ -54,12 +86,14 @@ class UserMeApi(APIView):
     ]
 
     @extend_schema(
+        request=None,
         responses={
             200: UserOutputSerializer,
             403: {"type": "object", "properties": {"detail": {"type": "string"}}},
         },
         description="Retrieve the authenticated user's information.",
     )
+    @method_decorator(ensure_csrf_cookie)
     def get(self, request):
         output_serializer = UserOutputSerializer(request.user)
         return Response(output_serializer.data)
@@ -129,6 +163,7 @@ class UserMeExportApi(APIView):
     ]
 
     @extend_schema(
+        request=None,
         responses={
             200: UserOutputSerializer,
             403: {"type": "object", "properties": {"detail": {"type": "string"}}},
@@ -142,11 +177,14 @@ class UserMeExportApi(APIView):
 
 
 class UserRegisterApi(APIView):
-    permission_classes = []
+    permission_classes = [IsAnonymous]
 
     @extend_schema(
         request=UserRegisterInputSerializer,
-        responses={201: UserOutputSerializer},
+        responses={
+            201: UserOutputSerializer,
+            403: {"type": "object", "properties": {"detail": {"type": "string"}}},
+        },
         description="Register a new user account.",
     )
     def post(self, request):
@@ -161,6 +199,7 @@ class UserRegisterApi(APIView):
 
 class UserListApi(APIView):
     @extend_schema(
+        request=None,
         responses={200: UserOutputSerializer(many=True)},
         description="List all users.",
     )
@@ -174,6 +213,7 @@ class UserDetailApi(APIView):
     permission_classes = [IsSelfOrReadOnly]
 
     @extend_schema(
+        request=None,
         responses={200: UserOutputSerializer},
         description="Retrieve a user by ID.",
     )
@@ -212,6 +252,7 @@ class UserProfileMeApi(APIView):
     ]
 
     @extend_schema(
+        request=None,
         responses={
             200: UserProfileOutputSerializer,
             403: {"type": "object", "properties": {"detail": {"type": "string"}}},
@@ -226,6 +267,7 @@ class UserProfileMeApi(APIView):
 
 class UserProfileListApi(APIView):
     @extend_schema(
+        request=None,
         responses={200: UserProfileOutputSerializer(many=True)},
         description="List all user profiles.",
     )
@@ -237,6 +279,7 @@ class UserProfileListApi(APIView):
 
 class UserProfileDetailApi(APIView):
     @extend_schema(
+        request=None,
         responses={200: UserProfileOutputSerializer},
         description="Retrieve the profile for a given user ID.",
     )
@@ -268,6 +311,7 @@ class UserProfileAvatarApi(APIView):
         return Response(output_serializer.data, status=status.HTTP_200_OK)
 
     @extend_schema(
+        request=None,
         responses={204: None},
         description="Remove the avatar from a user profile.",
     )
@@ -279,6 +323,7 @@ class UserProfileAvatarApi(APIView):
 
 class UserProfileFriendListApi(APIView):
     @extend_schema(
+        request=None,
         responses={200: UserProfileFriendOutputSerializer(many=True)},
         description="List friends of a user profile.",
     )
@@ -321,11 +366,14 @@ class UserProfileFriendDetailApi(APIView):
 
 
 class UserLoginApi(APIView):
-    permission_classes = []  # user isnt authenticated yet, so its available for everyone
+    permission_classes = [IsAnonymous]
 
     @extend_schema(
         request=UserLoginInputSerializer,
-        responses={200: UserOutputSerializer},
+        responses={
+            200: UserOutputSerializer,
+            403: {"type": "object", "properties": {"detail": {"type": "string"}}},
+        },
         description="Login",
     )
     def post(self, request):
@@ -353,9 +401,14 @@ class UserLoginApi(APIView):
 
 
 class UserLogoutApi(APIView):
+    permission_classes = [IsAuthenticated]
+
     @extend_schema(
         request=None,
-        responses={204: None},
+        responses={
+            204: None,
+            403: {"type": "object", "properties": {"detail": {"type": "string"}}},
+        },
         description="Log the current user out and clear the session.",
     )
     def post(self, request):
