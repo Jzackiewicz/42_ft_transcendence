@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useRegistrationView } from './useRegistrationView'
 import InputField from '../../../../components/InputField'
 
@@ -16,6 +15,7 @@ function RegistrationView({onSuccess}: RegistrationProps) {
                 <InputField title="Email" type="email" placeholder="your_email@gmail.com" value={email} onChange={(value) => setEmail(value)} error={errors.mailIsEmptyErr} />
                 <InputField title="Password" type="password" placeholder="Create a password" value={password} onChange={(value) => setPassword(value)} error={errors.passIsEmptyErr || errors.passWeakErr} />
                 <InputField title="Confirm Password" type="password" placeholder="Confirm your password" value={confPassword} onChange={(value) => setConfPassword(value)} error={errors.confirmPassIsEmptyErr || errors.passDoesntMatchErr} />
+                {errors.generalErr && <span className="form-error">{errors.generalErr}</span>}
                 <button type="submit" className="auth-submit"> Register </button>
             </form>
         </div>

@@ -21,17 +21,15 @@ export async function register(username: string, email: string, password: string
 }
 
 export async function login(username: string, password: string) {
-    console.log("Sending login request:", { username, password })
     const res = await fetch(`${BASE}/account/users/login/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCSRFToken() },
         credentials: 'include',
         body: JSON.stringify({ username, password })
     })
-    console.log("Login response:", res)
     if (!res.ok) {
-        const text = await res.text()
-        throw new Error(text || `HTTP error ${res.status}`)
+        const data = await res.json().catch(() => null)
+        throw new Error(data?.detail ?? `HTTP error ${res.status}`)
     }
     return res.json()
 }

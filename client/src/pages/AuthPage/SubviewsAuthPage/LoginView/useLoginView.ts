@@ -29,21 +29,21 @@ export function useLoginView(onSuccess: () => void) {
 
 
     const handleLogin = async () => {
-        console.log("Login attempt with:", { username, password })
         const errs = preValidateLoginParams(username, password)
-        // console.log(errs)
-        if (errs.usernameErr || errs.passwordErr) { 
+        if (errs.usernameErr || errs.passwordErr) {
             setErrors(errs)
-            return 
+            return
         }
 
+        setErrors({})
         try {
             const result = await login(username, password)
-            console.log("Login success:", result)
             setUser(result)
             onSuccess()
         } catch (error) {
-            console.error("login Err", error)
+            if (error instanceof Error) {
+                setErrors({ generalErr: error.message })
+            }
         }
     }
 

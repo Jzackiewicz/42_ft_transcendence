@@ -227,6 +227,17 @@ body {
     color: var(--placeholder);
 }
 
+.inputfield-warning {
+    font-size: var(--font-xs);
+    color: var(--red);
+}
+
+.form-error {
+    font-size: var(--font-sm);
+    color: var(--red);
+    text-align: center;
+}
+
 /* SUBMIT BUTTON ──────────────────────────────────────────────── */
 .auth-submit {
     background: linear-gradient(var(--gradient-deg), var(--cyan), var(--magenta));
