@@ -25,8 +25,9 @@ class GameActionRequest:
 @dataclass(frozen=True)
 class GameActionResult:
 	session_id: int
-	status: str
+	status: str | None
 	action: str
+	session_deleted: bool = False
 
 class GameActionHandler:
 	@transaction.atomic
@@ -56,12 +57,16 @@ class GameActionHandler:
 		else:
 			raise ValidationError(f"Unsupported game action: {request.action}")
 
-		session.refresh_from_db()
+		is_deleted = not bool(session.pk)
+
+		if not is_deleted:
+			session.refresh_from_db()
 
 		return GameActionResult(
-			session_id=session.id,
-			status=session.current_status,
+			session_id=request.session_id,
+			status=None if is_deleted else session.current_status,
 			action=request.action,
+			session_deleted=is_deleted,
 		)
 	
 	@transaction.atomic
