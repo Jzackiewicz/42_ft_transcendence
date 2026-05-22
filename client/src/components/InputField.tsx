@@ -16,7 +16,7 @@ function InputField({ title, value, type, placeholder, error, onChange }: InputF
                     value={value}
                     placeholder={placeholder}
                     onChange={e => onChange(e.target.value)} />
-            {error && <span>{error}</span>}
+            {error && <span className="inputfield-warning">{error}</span>}
         </div>
     )
 }
