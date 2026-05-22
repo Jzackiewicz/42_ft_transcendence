@@ -103,3 +103,65 @@ class TestRoomDestroyApi(APITestCase):
 
 		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 		self.assertEqual(GameSession.objects.count(), 1)
+
+	def test_join_room_already_joined_returns_existing_player(self):
+		SessionPlayer.objects.create(
+			session=self.session,
+			user=self.player,
+			display_name="Player",
+			seat_number=2
+		)
+		url = reverse('room-join', kwargs={'session_uuid': self.session.session_uuid})
+		self.client.force_authenticate(user=self.player)
+		response = self.client.post(url)
+
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(self.session.session_players.filter(user=self.player).count(), 1)
+
+	def test_join_full_room(self):
+		self.session.max_players = 1
+		self.session.save()
+
+		url = reverse('room-join', kwargs={'session_uuid': self.session.session_uuid})
+		self.client.force_authenticate(user=self.player)
+		response = self.client.post(url)
+
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+	def test_join_room_unauthenticated(self):
+		url = reverse('room-join', kwargs={'session_uuid': self.session.session_uuid})
+		response = self.client.post(url)
+
+		self.assertIn(
+			response.status_code,
+			[status.HTTP_400_BAD_REQUEST, status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN]
+		)
+
+	def test_destroy_room_unauthenticated(self):
+		url = reverse('room-destroy', kwargs={'session_uuid': self.session.session_uuid})
+		response = self.client.delete(url)
+
+		self.assertIn(
+			response.status_code,
+			[status.HTTP_400_BAD_REQUEST, status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN]
+		)
+		self.assertEqual(GameSession.objects.count(), 1)
+
+	def test_destroy_non_existent_room(self):
+		fake_uuid = uuid.uuid4()
+		url = reverse('room-destroy', kwargs={'session_uuid': fake_uuid})
+		self.client.force_authenticate(user=self.host)
+		response = self.client.delete(url)
+
+		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+	def test_destroy_started_room(self):
+		self.session.current_status = GameSession.Status.ANSWERING
+		self.session.save()
+
+		url = reverse('room-destroy', kwargs={'session_uuid': self.session.session_uuid})
+		self.client.force_authenticate(user=self.host)
+		response = self.client.delete(url)
+
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+		self.assertEqual(GameSession.objects.count(), 1)
