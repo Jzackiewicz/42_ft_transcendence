@@ -124,7 +124,6 @@ class GameConsumerTests(TransactionTestCase):
 		self.assertTrue(connected)
 		await communicator.receive_json_from()
 		
-		# Brakuje target_player_id wymaganego przez NominatePlayerPayloadSerializer
 		await communicator.send_json_to({
 			"action": GameAction.NOMINATE_PLAYER, 
 			"payload": {}
@@ -166,7 +165,6 @@ class GameConsumerTests(TransactionTestCase):
 		await communicator.connect()
 		await communicator.receive_json_from()
 		
-		# Sesja jest w LOBBY, więc submit_answer rzuci błędem z guardów domeny
 		await communicator.send_json_to({
 			"action": GameAction.SUBMIT_ANSWER, 
 			"payload": {"answer": "yes"}
@@ -290,7 +288,6 @@ class GameConsumerTests(TransactionTestCase):
 		current_player_id = start_response["snapshot"]["current_player"]
 		current_communicator = comm1 if current_player_id == self.player.id else comm2
 		
-		# Immediate correct answer moves the game out of ANSWERING.
 		await current_communicator.send_json_to({
 			"action": GameAction.SUBMIT_ANSWER,
 			"payload": {"answer": "yes"}
