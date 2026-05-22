@@ -13,7 +13,7 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 	async def connect(self):
 		self.session_uuid = self.scope['url_route']['kwargs']['session_uuid']
 		
-		self.session_id = await database_sync_to_async(verify_player_in_session)(
+		self.session_id, self.session_player_id = await database_sync_to_async(verify_player_in_session)(
 			session_uuid=self.session_uuid, 
 			user=self.scope['user']
 		)
@@ -124,6 +124,7 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 		await self.send_json({
 			'type': 'game_state_update',
 			'action': event['action'],
+			'your_player_id': self.session_player_id,
 			'snapshot': snapshot
 		})
 

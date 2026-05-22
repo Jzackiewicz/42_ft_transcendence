@@ -1,5 +1,3 @@
-# game/tests/test_game_service.py
-
 from datetime import timedelta
 
 from django.test import TestCase

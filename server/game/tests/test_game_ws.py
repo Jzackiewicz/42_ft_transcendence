@@ -124,7 +124,6 @@ class GameConsumerTests(TransactionTestCase):
 		self.assertTrue(connected)
 		await communicator.receive_json_from()
 		
-		# Missing target_player_id in payload
 		await communicator.send_json_to({
 			"action": GameAction.NOMINATE_PLAYER, 
 			"payload": {}
@@ -166,7 +165,6 @@ class GameConsumerTests(TransactionTestCase):
 		await communicator.connect()
 		await communicator.receive_json_from()
 		
-		# submit_answer in LOBBY state should fail
 		await communicator.send_json_to({
 			"action": GameAction.SUBMIT_ANSWER, 
 			"payload": {"answer": "yes"}
@@ -290,7 +288,6 @@ class GameConsumerTests(TransactionTestCase):
 		current_player_id = start_response["snapshot"]["current_player"]
 		current_communicator = comm1 if current_player_id == self.player.id else comm2
 		
-		# Early correct answer transitions state out of ANSWERING
 		await current_communicator.send_json_to({
 			"action": GameAction.SUBMIT_ANSWER,
 			"payload": {"answer": "yes"}
