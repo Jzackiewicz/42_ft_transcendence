@@ -45,7 +45,6 @@ class PlayerSnapshotSerializer(serializers.ModelSerializer):
 class QuestionSnapshotSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Question
-		# UWAGA: Celowo omijamy 'correct_answer' by zapobiec oszustwom na frontendzie!
 		fields = ['question_text', 'category']
 
 class SessionQuestionSnapshotSerializer(serializers.ModelSerializer):
