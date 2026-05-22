@@ -1,5 +1,9 @@
 from game.models import GameSession, SessionPlayer, AnswerAttempt
 from django.utils import timezone
+from .guards import (
+	require_current_attempt,
+	require_attempt_correctness_determined,
+)
 
 
 def check_answer_correctness(attempt: AnswerAttempt) -> bool:
@@ -36,10 +40,9 @@ def apply_wrong_answer_effects(attempt: AnswerAttempt) -> None:
 	player.save()
 
 
-def evaluate_current_attempt(session: GameSession) -> None:
+def	evaluate_current_attempt(session: GameSession) -> None:
+	require_current_attempt(session)
 	attempt = session.current_attempt
-	if attempt is None:
-		raise ValueError("No current attempt to evaluate")
 	
 	attempt.is_correct = check_answer_correctness(attempt=attempt)
 	attempt.evaluation_status = AnswerAttempt.EvaluationStatus.EVALUATED
@@ -47,12 +50,9 @@ def evaluate_current_attempt(session: GameSession) -> None:
 	attempt.save()
 
 def apply_answer_verdict(session: GameSession) -> None:
+	require_current_attempt(session)
 	attempt = session.current_attempt
-	if attempt is None:
-		raise ValueError("No attempt to apply verdict for")
-
-	if attempt.is_correct is None:
-		raise ValueError("Attempt correctness not determined")
+	require_attempt_correctness_determined(attempt)
 	
 	if attempt.is_correct:
 		apply_correct_answer_effects(session, attempt)

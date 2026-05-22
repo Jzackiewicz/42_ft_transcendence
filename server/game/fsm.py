@@ -20,6 +20,13 @@ class GameStateMachine(StateMachine):
 
 	nominate_player = nomination.to(answering)
 
+	cancel_game = (
+		lobby.to(game_over) |
+		answering.to(game_over) |
+		evaluation.to(game_over) |
+		nomination.to(game_over)
+	)
+
 	# Guards
 	def has_last_correct_player_alive(self):
 		return self.model.has_last_correct_player_alive()

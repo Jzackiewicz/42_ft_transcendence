@@ -81,6 +81,10 @@ dev-shell: dev-up
 	@echo "Opening Django shell locally..."
 	cd server && DB_HOST=127.0.0.1 DB_PORT=$(DEV_DB_EXPOSED_PORT) REDIS_HOST=127.0.0.1 REDIS_PORT=$(DEV_REDIS_EXPOSED_PORT) $(VENV_PYTHON) manage.py shell
 
+dev-makemigrations: dev-up
+	@echo "Running migrations locally (Dev)..."
+	cd server && DB_HOST=127.0.0.1 DB_PORT=$(DEV_DB_EXPOSED_PORT) REDIS_HOST=127.0.0.1 REDIS_PORT=$(DEV_REDIS_EXPOSED_PORT) $(VENV_PYTHON) manage.py makemigrations
+
 # Run migrations locally
 dev-migrate: dev-up
 	@echo "Running migrations locally (Dev)..."
@@ -105,10 +109,10 @@ dev-runserver: dev-up
 	@echo "Running Django locally..."
 	cd server && DB_HOST=127.0.0.1 DB_PORT=$(DEV_DB_EXPOSED_PORT) REDIS_HOST=127.0.0.1 REDIS_PORT=$(DEV_REDIS_EXPOSED_PORT) $(VENV_PYTHON) manage.py runserver
 
-# Run tests locally
+# Run tests locally (use TEST="module" to run specific tests)
 dev-test: dev-up
 	@echo "Running tests locally..."
-	cd server && DB_HOST=127.0.0.1 DB_PORT=$(DEV_DB_EXPOSED_PORT) REDIS_HOST=127.0.0.1 REDIS_PORT=$(DEV_REDIS_EXPOSED_PORT) $(VENV_PYTHON) manage.py test
+	cd server && DB_HOST=127.0.0.1 DB_PORT=$(DEV_DB_EXPOSED_PORT) REDIS_HOST=127.0.0.1 REDIS_PORT=$(DEV_REDIS_EXPOSED_PORT) $(VENV_PYTHON) manage.py test $(TEST)
 
 # Create superuser locally
 dev-createsuperuser: dev-up

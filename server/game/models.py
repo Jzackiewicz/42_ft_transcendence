@@ -21,6 +21,14 @@ class GameSession(MachineMixin, models.Model):
 
 	session_uuid = models.UUIDField(default=uuid.uuid4, unique=True)
 
+	host_player = models.ForeignKey(
+		"SessionPlayer",
+		null=True,
+		blank=True,
+		on_delete=models.SET_NULL,
+		related_name="hosted_sessions",
+	)
+
 	current_status = models.CharField(
 		max_length=32,
 		choices=Status.choices,
@@ -91,6 +99,7 @@ class GameSession(MachineMixin, models.Model):
 
 	answer_time_limit_ms = models.PositiveIntegerField(default=20000)
 	# starting_lives = models.PositiveIntegerField(default=3)
+	max_players = models.PositiveIntegerField(default=5)
 
 	state_machine_name = "game.fsm.GameStateMachine"
 	state_machine_attr = "fsm"
@@ -156,6 +165,11 @@ class SessionPlayer(models.Model):
 			models.UniqueConstraint(
 				fields=["session", "seat_number"],
 				name="unique_seat_number_per_session",
+			),
+			models.UniqueConstraint(
+				fields=["session", "user"],
+				condition=models.Q(user__isnull=False),
+				name="unique_human_user_per_session",
 			),
 		]
 

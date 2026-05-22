@@ -58,17 +58,25 @@ It means our code structure looks like this:
 - `urls.py` / `routing.py` - HTTP and WebSocket routing.
 
 ### Game section
+
+#### Structure
+The game logic follows a strict layered architecture to separate concerns:
+- **`consumers.py` (Presentation Layer):** Manages WebSocket connections, validates incoming JSON payloads using DRF serializers, and passes standardized requests (DTOs) to the action handler.
+- **`game_action_handler.py` (Application Layer):** Acts as a dispatcher. It translates external context (e.g., User object, session ID) into database models and invokes the appropriate methods on the game service.
+- **`game_service.py` (Domain Layer):** The core business logic facade. It enforces game rules using standalone guards, mutates database state, and handles the lifecycle of the game.
+- **`fsm.py` (State Machine):** A pure Finite State Machine (FSM) defining allowed game states and transitions, keeping the flow rules isolated from data mutations.
+
 #### Game logic
 
 Base game loop is constructed as a finite state machine (FSM) visualized as a graph below:
 
-![FSM_diagram](game_state_machine.svg)
+![FSM_diagram](game_fsm.svg)
 
 States:
 
 - `Lobby` - waiting for players and game start.
 - `Answering` - current player answers a question.
-- `Evaluation` - answer is evaluated as correct, wrong or timeout.
+- `Evaluation` - answer is evaluated as correct, wrong or timeout. This state is automatically called by the server after Answering state.
 - `Nomination` - last correct player selects the next player.
 - `GameOver` - game is finished.
 
@@ -78,8 +86,8 @@ Whole game loop is fully backend-driven, frontend only sends player actions and 
 Current architecture:
 - `fsm.py` - declared states and transition with no business logic
 - `services/` - business logic including game rules, calling FSM transitions, calling ORM data models
-- `selectors.py` - game state snapshots ***(TBA)***
-- `consumers.py` - Websocket interface layer ***(TBA)***
+- `selectors.py` - game state snapshots
+- `consumers.py` - Websocket interface layer
 
 #### Game Data model (ORM)
 ![EntityRelationDiagram](game_erd.svg)
@@ -87,8 +95,8 @@ Current architecture:
 
 *Diagrams generated with*
 ```bash
-python -m statemachine.contrib.diagram game.fsm.GameStateMachine game_fsm.png
-python manage.py graph_models game --pydot -g -o game_erd.svg   
+python -m statemachine.contrib.diagram server.game.fsm.GameStateMachine docs/game_fsm.svg
+python server/manage.py graph_models game --pydot -g -o docs/game_erd.svg   
 ```
 ### Endpoints
 
