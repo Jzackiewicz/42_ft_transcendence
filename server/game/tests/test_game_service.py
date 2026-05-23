@@ -215,10 +215,11 @@ class GameServiceTests(TestCase):
 		self.assertEqual(actor.answered_count, 1)
 		self.assertIsNone(self.session.current_attempt)
 
-	def test_evaluate_correct_answer_gives_20_points_if_player_was_nominated(self):
+	def test_evaluate_correct_answer_gives_20_points_if_player_self_nominated(self):
 		self.session.current_status = GameSession.Status.ANSWERING
 		self.session.current_player = self.p2
 		self.session.last_nominated_player = self.p2
+		self.session.last_correct_player = self.p2
 		self.session.save()
 
 		GameService(self.session)._start_answering_turn()
@@ -230,6 +231,23 @@ class GameServiceTests(TestCase):
 		self.p2.refresh_from_db()
 
 		self.assertEqual(self.p2.points, 20)
+
+	def test_evaluate_correct_answer_gives_10_points_if_nominated_by_other(self):
+		self.session.current_status = GameSession.Status.ANSWERING
+		self.session.current_player = self.p2
+		self.session.last_nominated_player = self.p2
+		self.session.last_correct_player = self.p1
+		self.session.save()
+
+		GameService(self.session)._start_answering_turn()
+		self.session.refresh_from_db()
+
+		GameService(self.session).submit_player_answer(actor=self.p2, answer="4")
+		self.session.refresh_from_db()
+
+		self.p2.refresh_from_db()
+
+		self.assertEqual(self.p2.points, 10)
 
 	def test_wrong_answer_without_last_correct_player_fallbacks_to_next_alive_player_and_starts_new_attempt(self):
 		self.session.current_status = GameSession.Status.ANSWERING
