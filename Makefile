@@ -13,6 +13,7 @@ DEV_PROJECT = dev-transcendence
 # Default port values (can be overridden in .env)
 DB_EXPOSED_PORT ?= 5432
 REDIS_EXPOSED_PORT ?= 6379
+BACKEND_EXPOSED_PORT ?= 8000
 HTTP_EXPOSED_PORT ?= 8080
 HTTPS_EXPOSED_PORT ?= 8443
 
@@ -27,6 +28,7 @@ up:
 	@echo "Starting the stack (Production)..."
 	DB_EXPOSED_PORT=$(DB_EXPOSED_PORT) \
 	REDIS_EXPOSED_PORT=$(REDIS_EXPOSED_PORT) \
+	BACKEND_EXPOSED_PORT=$(BACKEND_EXPOSED_PORT) \
 	HTTP_EXPOSED_PORT=$(HTTP_EXPOSED_PORT) \
 	HTTPS_EXPOSED_PORT=$(HTTPS_EXPOSED_PORT) \
 	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(PROD_PROJECT) up -d --build
@@ -57,6 +59,10 @@ createsuperuser:
 	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(PROD_PROJECT) exec api python manage.py createsuperuser
 
 # Run migrations in production stack
+makemigrations:
+	@echo "Preparing migrations (Production)..."
+	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(PROD_PROJECT) exec api python manage.py makemigrations
+
 migrate:
 	@echo "Running migrations (Production)..."
 	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(PROD_PROJECT) exec api python manage.py migrate
