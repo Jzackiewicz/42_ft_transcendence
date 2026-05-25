@@ -19,6 +19,9 @@ HTTPS_EXPOSED_PORT ?= 8443
 
 DEV_DB_EXPOSED_PORT ?= 5433
 DEV_REDIS_EXPOSED_PORT ?= 6380
+DEV_BACKEND_EXPOSED_PORT ?= 8001
+DEV_HTTP_EXPOSED_PORT ?= 8081
+DEV_HTTPS_EXPOSED_PORT ?= 8444
 
 # Default target
 all: up
@@ -124,6 +127,23 @@ dev-test: dev-up
 dev-createsuperuser: dev-up
 	@echo "Creating superuser locally..."
 	cd server && DB_HOST=127.0.0.1 DB_PORT=$(DEV_DB_EXPOSED_PORT) REDIS_HOST=127.0.0.1 REDIS_PORT=$(DEV_REDIS_EXPOSED_PORT) $(VENV_PYTHON) manage.py createsuperuser
+
+# --- Frontend (Client) ---
+
+# Install dependencies
+client-install:
+	@echo "Installing frontend dependencies..."
+	cd client && npm install
+
+# Run frontend locally (Dev)
+dev-client: client-install
+	@echo "Running frontend locally..."
+	cd client && npm run dev
+
+# Build frontend locally (Prod check)
+client-build: client-install
+	@echo "Building frontend..."
+	cd client && npm run build
 
 # Check container status
 ps:
