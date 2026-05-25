@@ -3,7 +3,7 @@
 # Vite Deployment: https://vitejs.dev/guide/static-deploy.html
 
 # Stage 1: Build
-FROM node:20.12.2-alpine3.19 AS build
+FROM node:26.2.0-alpine3.22 AS build
 
 WORKDIR /app
 
