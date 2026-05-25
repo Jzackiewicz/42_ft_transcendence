@@ -81,10 +81,15 @@ dev-venv:
 
 VENV_PYTHON = ../.venv/bin/python3
 
-# Start only DB and Redis for local dev
-dev-up: dev-venv
-	@echo "Starting DB and Redis (Dev)..."
-	DB_EXPOSED_PORT=$(DEV_DB_EXPOSED_PORT) REDIS_EXPOSED_PORT=$(DEV_REDIS_EXPOSED_PORT) $(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) up -d db redis
+# Start stack for local dev
+dev-up: dev-venv client-install
+	@echo "Starting development stack..."
+	DB_EXPOSED_PORT=$(DEV_DB_EXPOSED_PORT) \
+	REDIS_EXPOSED_PORT=$(DEV_REDIS_EXPOSED_PORT) \
+	BACKEND_EXPOSED_PORT=$(DEV_BACKEND_EXPOSED_PORT) \
+	HTTP_EXPOSED_PORT=$(DEV_HTTP_EXPOSED_PORT) \
+	HTTPS_EXPOSED_PORT=$(DEV_HTTPS_EXPOSED_PORT) \
+	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) up -d db redis api web proxy
 
 dev-shell: dev-up
 	@echo "Opening Django shell locally..."
@@ -102,7 +107,7 @@ dev-migrate: dev-up
 # Stop only DB and Redis
 dev-down:
 	@echo "Stopping DB and Redis (Dev)..."
-	DB_EXPOSED_PORT=$(DEV_DB_EXPOSED_PORT) REDIS_EXPOSED_PORT=$(DEV_REDIS_EXPOSED_PORT) $(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) stop db redis
+	DB_EXPOSED_PORT=$(DEV_DB_EXPOSED_PORT) REDIS_EXPOSED_PORT=$(DEV_REDIS_EXPOSED_PORT) $(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) stop db redis api web proxy
 
 # Stop and wipe dev volumes (Isolated from production)
 dev-clean: check_clean
@@ -111,7 +116,12 @@ dev-clean: check_clean
 
 # Show logs for dev stack
 dev-logs:
-	DB_EXPOSED_PORT=$(DEV_DB_EXPOSED_PORT) REDIS_EXPOSED_PORT=$(DEV_REDIS_EXPOSED_PORT) $(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) logs -f
+	DB_EXPOSED_PORT=$(DEV_DB_EXPOSED_PORT) \
+	REDIS_EXPOSED_PORT=$(DEV_REDIS_EXPOSED_PORT) \
+	BACKEND_EXPOSED_PORT=$(DEV_BACKEND_EXPOSED_PORT) \
+	HTTP_EXPOSED_PORT=$(DEV_HTTP_EXPOSED_PORT) \
+	HTTPS_EXPOSED_PORT=$(DEV_HTTPS_EXPOSED_PORT) \
+	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) logs -f
 
 # Run Django locally
 dev-runserver: dev-up
@@ -150,7 +160,12 @@ ps:
 	@echo "--- Production Stack ---"
 	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(PROD_PROJECT) ps
 	@echo "\n--- Dev Stack ---"
-	DB_EXPOSED_PORT=$(DEV_DB_EXPOSED_PORT) REDIS_EXPOSED_PORT=$(DEV_REDIS_EXPOSED_PORT) $(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) ps
+	DB_EXPOSED_PORT=$(DEV_DB_EXPOSED_PORT) \
+	REDIS_EXPOSED_PORT=$(DEV_REDIS_EXPOSED_PORT) \
+	BACKEND_EXPOSED_PORT=$(DEV_BACKEND_EXPOSED_PORT) \
+	HTTP_EXPOSED_PORT=$(DEV_HTTP_EXPOSED_PORT) \
+	HTTPS_EXPOSED_PORT=$(DEV_HTTPS_EXPOSED_PORT) \
+	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) ps
 
 check_fclean:
 	@echo -n "Are you sure? This will remove all the docker objects on the system (including other directories) [y/N] " && read ans && [ $${ans:-N} = y ]
@@ -162,4 +177,4 @@ fclean: check_fclean clean dev-clean
 
 re: clean up
 
-.PHONY: all up down restart re clean check_clean check_fclean logs dev-logs ps fclean migrate dev-up dev-migrate dev-down dev-clean dev-runserver dev-test dev-createsuperuser dev-shell dev-venv
+.PHONY: all up down restart re clean check_clean check_fclean logs dev-logs ps fclean migrate dev-up dev-migrate dev-down dev-clean dev-runserver dev-test dev-createsuperuser dev-shell dev-venv client-install dev-client client-build dev-proxy dev-test dev-createsuperuser dev-shell dev-venv client-install dev-client client-build
