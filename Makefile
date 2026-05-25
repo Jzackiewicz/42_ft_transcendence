@@ -35,6 +35,10 @@ up:
 	HTTP_EXPOSED_PORT=$(HTTP_EXPOSED_PORT) \
 	HTTPS_EXPOSED_PORT=$(HTTPS_EXPOSED_PORT) \
 	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(PROD_PROJECT) up -d --build
+	@echo "Waiting for database..."
+	sleep 5
+	@echo "Creating superuser if not exists (Production)..."
+	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(PROD_PROJECT) exec -e DJANGO_SUPERUSER_PASSWORD=$(DJANGO_SUPERUSER_PASSWORD) api python manage.py createsuperuser --noinput || true
 
 # Stop the stack
 down:
@@ -90,6 +94,10 @@ dev-up: dev-venv client-install
 	HTTP_EXPOSED_PORT=$(DEV_HTTP_EXPOSED_PORT) \
 	HTTPS_EXPOSED_PORT=$(DEV_HTTPS_EXPOSED_PORT) \
 	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) up -d db redis api web proxy
+	@echo "Waiting for database..."
+	sleep 5
+	@echo "Creating superuser if not exists (Dev)..."
+	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) exec -e DJANGO_SUPERUSER_PASSWORD=$(DJANGO_SUPERUSER_PASSWORD) api python manage.py createsuperuser --noinput || true
 
 dev-shell: dev-up
 	@echo "Opening Django shell locally..."
@@ -104,15 +112,29 @@ dev-migrate: dev-up
 	@echo "Running migrations locally (Dev)..."
 	cd server && DB_HOST=127.0.0.1 DB_PORT=$(DEV_DB_EXPOSED_PORT) REDIS_HOST=127.0.0.1 REDIS_PORT=$(DEV_REDIS_EXPOSED_PORT) $(VENV_PYTHON) manage.py migrate
 
-# Stop only DB and Redis
+# Stop dev stack
 dev-down:
-	@echo "Stopping DB and Redis (Dev)..."
-	DB_EXPOSED_PORT=$(DEV_DB_EXPOSED_PORT) REDIS_EXPOSED_PORT=$(DEV_REDIS_EXPOSED_PORT) $(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) stop db redis api web proxy
+	@echo "Stopping development stack..."
+	DB_EXPOSED_PORT=$(DEV_DB_EXPOSED_PORT) \
+	REDIS_EXPOSED_PORT=$(DEV_REDIS_EXPOSED_PORT) \
+	BACKEND_EXPOSED_PORT=$(DEV_BACKEND_EXPOSED_PORT) \
+	HTTP_EXPOSED_PORT=$(DEV_HTTP_EXPOSED_PORT) \
+	HTTPS_EXPOSED_PORT=$(DEV_HTTPS_EXPOSED_PORT) \
+	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) stop
+
+# Start proxy in dev (with deps)
+dev-proxy: dev-up
+	@echo "Proxy should be running via dev-up."
 
 # Stop and wipe dev volumes (Isolated from production)
 dev-clean: check_clean
 	@echo "Cleaning dev stack..."
-	DB_EXPOSED_PORT=$(DEV_DB_EXPOSED_PORT) REDIS_EXPOSED_PORT=$(DEV_REDIS_EXPOSED_PORT) $(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) down -v
+	DB_EXPOSED_PORT=$(DEV_DB_EXPOSED_PORT) \
+	REDIS_EXPOSED_PORT=$(DEV_REDIS_EXPOSED_PORT) \
+	BACKEND_EXPOSED_PORT=$(DEV_BACKEND_EXPOSED_PORT) \
+	HTTP_EXPOSED_PORT=$(DEV_HTTP_EXPOSED_PORT) \
+	HTTPS_EXPOSED_PORT=$(DEV_HTTPS_EXPOSED_PORT) \
+	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) down -v
 
 # Show logs for dev stack
 dev-logs:
@@ -177,4 +199,4 @@ fclean: check_fclean clean dev-clean
 
 re: clean up
 
-.PHONY: all up down restart re clean check_clean check_fclean logs dev-logs ps fclean migrate dev-up dev-migrate dev-down dev-clean dev-runserver dev-test dev-createsuperuser dev-shell dev-venv client-install dev-client client-build dev-proxy dev-test dev-createsuperuser dev-shell dev-venv client-install dev-client client-build
+.PHONY: all up down restart re clean check_clean check_fclean logs dev-logs ps fclean migrate dev-up dev-migrate dev-down dev-clean dev-runserver dev-test dev-createsuperuser dev-shell dev-venv client-install dev-client client-build dev-proxy
