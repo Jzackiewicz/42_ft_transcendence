@@ -181,6 +181,7 @@ class SessionQuestion(models.Model):
 		on_delete=models.CASCADE,
 		related_name="session_questions",
 	)
+# FLAG_001B
 
 	question = models.ForeignKey(
 		Question,

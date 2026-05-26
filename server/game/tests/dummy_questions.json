@@ -1,0 +1,157 @@
+[
+  {
+    "category": "Astronomy",
+    "question": "What planet is known as the Red Planet?",
+    "answer": [
+      "Mars"
+    ]
+  },
+  {
+    "category": "Chemistry",
+    "question": "What is the chemical symbol for Gold?",
+    "answer": [
+      "Au",
+      "Aurum"
+    ]
+  },
+  {
+    "category": "Biology",
+    "question": "What organelle is the powerhouse of the cell?",
+    "answer": [
+      "Mitochondria",
+      "Mitochondrion"
+    ]
+  },
+  {
+    "category": "Physics",
+    "question": "Who formulated the laws of universal gravitation?",
+    "answer": [
+      "Isaac Newton",
+      "Sir Isaac Newton",
+      "Newton"
+    ]
+  },
+  {
+    "category": "Biology",
+    "question": "What is the common name for the deoxyribonucleic acid molecule?",
+    "answer": [
+      "DNA"
+    ]
+  },
+  {
+    "category": "Astronomy",
+    "question": "What is the largest planet in our solar system?",
+    "answer": [
+      "Jupiter"
+    ]
+  },
+  {
+    "category": "Chemistry",
+    "question": "What is the most abundant gas in Earth's atmosphere?",
+    "answer": [
+      "Nitrogen",
+      "N2"
+    ]
+  },
+  {
+    "category": "Physics",
+    "question": "What constant represents the speed of light in a vacuum?",
+    "answer": [
+      "c",
+      "299792458 m/s",
+      "186282 miles per second"
+    ]
+  },
+  {
+    "category": "Biology",
+    "question": "Who wrote 'On the Origin of Species'?",
+    "answer": [
+      "Charles Darwin",
+      "Darwin"
+    ]
+  },
+  {
+    "category": "Geology",
+    "question": "What is the hardest natural mineral found on Earth?",
+    "answer": [
+      "Diamond"
+    ]
+  },
+  {
+    "category": "Chemistry",
+    "question": "What is the chemical symbol for Silver?",
+    "answer": [
+      "Ag",
+      "Argentum"
+    ]
+  },
+  {
+    "category": "Astronomy",
+    "question": "What star is at the center of the Solar System?",
+    "answer": [
+      "The Sun",
+      "Sol",
+      "Sun"
+    ]
+  },
+  {
+    "category": "Biology",
+    "question": "What process do plants use to convert sunlight into food?",
+    "answer": [
+      "Photosynthesis"
+    ]
+  },
+  {
+    "category": "Physics",
+    "question": "What unit measures electrical resistance?",
+    "answer": [
+      "Ohm",
+      "Ohms"
+    ]
+  },
+  {
+    "category": "Chemistry",
+    "question": "What is the chemical symbol for Iron?",
+    "answer": [
+      "Fe",
+      "Ferrum"
+    ]
+  },
+  {
+    "category": "Biology",
+    "question": "What pigment gives leaves their green color?",
+    "answer": [
+      "Chlorophyll"
+    ]
+  },
+  {
+    "category": "Geology",
+    "question": "What layer of Earth lies directly below the crust?",
+    "answer": [
+      "Mantle"
+    ]
+  },
+  {
+    "category": "Meteorology",
+    "question": "What instrument measures atmospheric pressure?",
+    "answer": [
+      "Barometer"
+    ]
+  },
+  {
+    "category": "Physics",
+    "question": "Who proposed the theory of general relativity?",
+    "answer": [
+      "Albert Einstein",
+      "Einstein"
+    ]
+  },
+  {
+    "category": "Chemistry",
+    "question": "What is the chemical symbol for Sodium?",
+    "answer": [
+      "Na",
+      "Natrium"
+    ]
+  }
+]
