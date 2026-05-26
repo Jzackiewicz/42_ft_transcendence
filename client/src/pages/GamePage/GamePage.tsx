@@ -109,21 +109,6 @@ export function GamePage() {
         }
     };
 
-
-
-    // If game is over, we replace the entire view as requested
-    if (isGameOver) {
-        return (
-            <div style={{ padding: '20px', fontFamily: 'sans-serif', maxWidth: '800px', margin: '0 auto' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                    <h1>Quizscendence</h1>
-                    <div><strong>Session Code:</strong> {sessionUuid}</div>
-                </div>
-                {renderActiveView()}
-            </div>
-        );
-    }
-
     return (
         <div style={{ padding: '20px', fontFamily: 'sans-serif', maxWidth: '1000px', margin: '0 auto' }}>
             {/* Top Bar (Session Code & Leave Button) */}
