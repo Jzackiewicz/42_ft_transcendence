@@ -41,6 +41,8 @@ static/
 # Environment / secrets
 .env
 *.env
+.env.local
+.env.*.local
 
 # Logs
 *.log
@@ -57,3 +59,14 @@ logs/
 Thumbs.db
 
 cookies.txt
+
+# Frontend
+
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Vite cache
+.vite/

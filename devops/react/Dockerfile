@@ -3,7 +3,7 @@
 # Vite Deployment: https://vitejs.dev/guide/static-deploy.html
 
 # Stage 1: Build
-FROM node:22-alpine AS build
+FROM node:26.2.0-alpine3.22 AS build
 
 WORKDIR /app
 
@@ -11,8 +11,8 @@ WORKDIR /app
 COPY client/package*.json ./
 
 # Install dependencies
-# TODO: Later change to npm ci when packagelock.json exists (frontend is started)
-RUN npm install
+# uses npm ci for reproducable builds instead of npm istall
+RUN npm ci
 
 # Copy source
 COPY client/ ./
@@ -32,16 +32,16 @@ COPY --from=build /app/dist /usr/share/nginx/html
 
 # Configure NGINX to serve the SPA and fall back to index.html for deep links
 RUN printf '%s\n' \
-    'server {' \
-    '    listen 80;' \
-    '    server_name _;' \
-    '    root /usr/share/nginx/html;' \
-    '    index index.html;' \
-    '' \
-    '    location / {' \
-    '        try_files $uri $uri/ /index.html;' \
-    '    }' \
-    '}' > /etc/nginx/conf.d/default.conf
+	'server {' \
+	'    listen 80;' \
+	'    server_name _;' \
+	'    root /usr/share/nginx/html;' \
+	'    index index.html;' \
+	'' \
+	'    location / {' \
+	'        try_files $uri $uri/ /index.html;' \
+	'    }' \
+	'}' > /etc/nginx/conf.d/default.conf
 
 # Default NGINX port
 EXPOSE 80
