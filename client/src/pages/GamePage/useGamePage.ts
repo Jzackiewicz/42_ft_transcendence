@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useUser } from '../../context/UserContext';
 
 export interface Player {
     id: number;
@@ -22,7 +23,7 @@ export interface Question {
 
 export interface GameSnapshot {
     session_uuid: string;
-    current_status: string; // 'LOBBY', 'ANSWERING', 'EVALUATION', 'NOMINATION', 'GAME_OVER' etc.
+    current_status: string; // 'LOBBY', 'ANSWERING', 'EVALUATION', 'NOMINATION', 'GAME_OVER'
     current_player: number | null;
     last_correct_player: number | null;
     last_nominated_player: number | null;
@@ -33,9 +34,13 @@ export interface GameSnapshot {
     end_reason: string | null;
     question_asked_count: number;
     total_questions_count: number;
+    current_attempt_started_at?: string | null;
+    turn_deadline_at?: string | null;
 }
 
 export function useGamePage() {
+    const { user } = useUser();
+
     // Retrieve data passed from another page (e.g. from HomePage)
     const location = useLocation();
     const initialUuid = location.state?.sessionUuid || '';
@@ -45,7 +50,53 @@ export function useGamePage() {
     const [isConnected, setIsConnected] = useState<boolean>(false);
     const [gameState, setGameState] = useState<GameSnapshot | null>(null);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
-    
+
+    const [answerText, setAnswerText] = useState('');
+    const [selectedNomineeId, setSelectedNomineeId] = useState<number | ''>('');
+    const [timeLeft, setTimeLeft] = useState<number | null>(null);
+
+    const eligiblePlayers = gameState?.players.filter(p => p.is_alive) || [];
+
+    // Helper computations
+    const currentPlayerObj = gameState?.players.find(p => p.display_name === user?.username);
+    const sortedPlayers = [...(gameState?.players || [])].sort((a, b) => a.id - b.id);
+    const isHost = sortedPlayers.length > 0 && currentPlayerObj !== undefined && (sortedPlayers[0].id === currentPlayerObj.id);
+    const hostPlayerId = sortedPlayers.length > 0 ? sortedPlayers[0].id : null;
+    const gameStarted = gameState !== null && gameState.current_status.toUpperCase() !== 'LOBBY';
+    const isGameOver = gameState !== null && gameState.current_status.toUpperCase() === 'GAME_OVER';
+
+    useEffect(() => {
+        if (eligiblePlayers.length > 0) {
+            if (!selectedNomineeId || !eligiblePlayers.some(p => p.id === selectedNomineeId)) {
+                setSelectedNomineeId(eligiblePlayers[0].id);
+            }
+        } else {
+            setSelectedNomineeId('');
+        }
+    }, [gameState?.players, user?.username, eligiblePlayers.length]);
+
+    // Timer effect synchronizing with server turn_deadline_at
+    useEffect(() => {
+        if (!gameState || gameState.current_status.toUpperCase() !== 'ANSWERING' || !gameState.turn_deadline_at) {
+            setTimeLeft(null);
+            return;
+        }
+
+        const deadline = new Date(gameState.turn_deadline_at).getTime();
+
+        const updateTimer = () => {
+            const now = new Date().getTime();
+            const diff = deadline - now;
+            const secondsLeft = Math.max(0, Math.ceil(diff / 1000));
+            setTimeLeft(secondsLeft);
+        };
+
+        updateTimer();
+        const intervalId = setInterval(updateTimer, 200);
+
+        return () => clearInterval(intervalId);
+    }, [gameState?.current_status, gameState?.turn_deadline_at]);
+
     const wsRef = useRef<WebSocket | null>(null);
     const closeTimeoutRef = useRef<any>(null);
 
@@ -161,6 +212,18 @@ export function useGamePage() {
         submitAnswer,
         nominatePlayer,
         connectToLobby,
-        disconnect
+        disconnect,
+        answerText,
+        setAnswerText,
+        selectedNomineeId,
+        setSelectedNomineeId,
+        eligiblePlayers,
+        timeLeft,
+        currentPlayerObj,
+        isHost,
+        hostPlayerId,
+        gameStarted,
+        isGameOver,
+        sortedPlayers
     };
 }
