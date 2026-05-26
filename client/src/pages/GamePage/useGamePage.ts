@@ -21,9 +21,17 @@ export interface Question {
     order_index: number;
 }
 
+export enum GameStatus {
+    LOBBY = 'LOBBY',
+    ANSWERING = 'ANSWERING',
+    EVALUATION = 'EVALUATION',
+    NOMINATION = 'NOMINATION',
+    GAME_OVER = 'GAME_OVER'
+}
+
 export interface GameSnapshot {
     session_uuid: string;
-    current_status: string; // 'LOBBY', 'ANSWERING', 'EVALUATION', 'NOMINATION', 'GAME_OVER'
+    current_status: GameStatus; // 'LOBBY', 'ANSWERING', 'EVALUATION', 'NOMINATION', 'GAME_OVER'
     current_player: number | null;
     last_correct_player: number | null;
     last_nominated_player: number | null;
@@ -62,8 +70,8 @@ export function useGamePage() {
     const sortedPlayers = [...(gameState?.players || [])].sort((a, b) => a.id - b.id);
     const isHost = sortedPlayers.length > 0 && currentPlayerObj !== undefined && (sortedPlayers[0].id === currentPlayerObj.id);
     const hostPlayerId = sortedPlayers.length > 0 ? sortedPlayers[0].id : null;
-    const gameStarted = gameState !== null && gameState.current_status.toUpperCase() !== 'LOBBY';
-    const isGameOver = gameState !== null && gameState.current_status.toUpperCase() === 'GAME_OVER';
+    const gameStarted = gameState !== null && gameState.current_status !== GameStatus.LOBBY;
+    const isGameOver = gameState !== null && gameState.current_status === GameStatus.GAME_OVER;
 
     useEffect(() => {
         if (eligiblePlayers.length > 0) {
@@ -77,7 +85,7 @@ export function useGamePage() {
 
     // Timer effect synchronizing with server turn_deadline_at
     useEffect(() => {
-        if (!gameState || gameState.current_status.toUpperCase() !== 'ANSWERING' || !gameState.turn_deadline_at) {
+        if (!gameState || gameState.current_status !== GameStatus.ANSWERING || !gameState.turn_deadline_at) {
             setTimeLeft(null);
             return;
         }

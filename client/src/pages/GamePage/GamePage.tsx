@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useGamePage } from './useGamePage';
+import { useGamePage, GameStatus } from './useGamePage';
 import { useUser } from '../../context/UserContext';
 import { LobbyView } from './SubviewsGamePage/LobbyView/LobbyView';
 import { AnsweringView } from './SubviewsGamePage/AnsweringView/AnsweringView';
@@ -52,13 +52,12 @@ export function GamePage() {
         }
     };
 
+    // Dynamic game states renderer
     const renderActiveView = () => {
         if (!gameState) return null;
 
-        const statusUpper = gameState.current_status.toUpperCase();
-
-        switch (statusUpper) {
-            case 'LOBBY':
+        switch (gameState.current_status) {
+            case GameStatus.LOBBY:
                 return (
                     <LobbyView 
                         isHost={isHost}
@@ -66,7 +65,7 @@ export function GamePage() {
                         onStartGame={startGame}
                     />
                 );
-            case 'ANSWERING':
+            case GameStatus.ANSWERING:
                 return (
                     <AnsweringView 
                         questionText={gameState.current_question?.question?.question_text || ''}
@@ -79,7 +78,7 @@ export function GamePage() {
                         timeLeft={timeLeft}
                     />
                 );
-            case 'NOMINATION':
+            case GameStatus.NOMINATION:
                 return (
                     <NominationView 
                         isCurrentNominator={gameState.last_correct_player === currentPlayerObj?.id}
@@ -90,9 +89,9 @@ export function GamePage() {
                         onNominatePlayer={handleNominateSubmit}
                     />
                 );
-            case 'EVALUATION':
+            case GameStatus.EVALUATION:
                 return <EvaluationView />;
-            case 'GAME_OVER':
+            case GameStatus.GAME_OVER:
                 return (
                     <GameOverView 
                         winnerName={gameState.players.find(p => p.id === gameState.winner)?.display_name || ''}
