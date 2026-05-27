@@ -70,8 +70,8 @@
 - **Frontend**: `https://localhost:8443/`
 - **Django Admin**: `https://localhost:8443/admin/`
 - **API Docs**: `https://localhost:8443/api/docs/`
-- **Account API**: `https://localhost:8443/account/users/`
-- **Game API**: `https://localhost:8443/game/questions/`
+- **Account API**: `https://localhost:8443/api/account/users/`
+- **Game API**: `https://localhost:8443/api/game/questions/`
 
 ## Persistent uncertainties
 
