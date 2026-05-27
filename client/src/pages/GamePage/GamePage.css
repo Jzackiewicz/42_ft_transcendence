@@ -1,0 +1,95 @@
+.game-page-container {
+    padding: 20px;
+    font-family: sans-serif;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.game-top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.game-top-bar-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.btn-leave {
+    padding: 6px 12px;
+    cursor: pointer;
+}
+
+.game-error-banner {
+    color: #721c24;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.btn-error-close {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #721c24;
+}
+
+.game-main-layout {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.game-sidebar {
+    flex: 1 1 280px;
+    min-width: 250px;
+    border: 1px solid #ccc;
+    padding: 15px;
+    border-radius: 4px;
+    background-color: #fafafa;
+}
+
+.game-sidebar-title {
+    margin: 0 0 15px 0;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+}
+
+.game-players-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.game-active-area {
+    flex: 2 1 500px;
+    min-width: 300px;
+}
+
+.game-question-counter {
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: #e8eaf6;
+    border-radius: 4px;
+    font-weight: bold;
+    color: #3f51b5;
+    border-left: 4px solid #3f51b5;
+}
+
+.game-loading-banner {
+    margin: 20px 0;
+    padding: 20px;
+    border: 1px dashed #ccc;
+    text-align: center;
+}

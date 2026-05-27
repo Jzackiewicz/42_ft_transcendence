@@ -1,0 +1,60 @@
+.player-tile {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+    opacity: 1;
+}
+
+.player-tile.active {
+    border: 2px solid #009688;
+    background-color: #e6fffa;
+}
+
+.player-tile.eliminated {
+    opacity: 0.6;
+}
+
+.player-tile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+}
+
+.player-name-alive {
+    text-decoration: none;
+}
+
+.player-name-dead {
+    text-decoration: line-through;
+}
+
+.player-role-badges {
+    font-size: 12px;
+}
+
+.player-role-active {
+    margin-left: 4px;
+    color: #009688;
+}
+
+.player-role-nominator {
+    margin-left: 4px;
+    color: #3f51b5;
+}
+
+.player-stats-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+    font-size: 13px;
+    color: #555;
+}
+
+.player-eliminated-label {
+    margin-top: 5px;
+    font-size: 11px;
+    color: #c62828;
+    font-weight: bold;
+}

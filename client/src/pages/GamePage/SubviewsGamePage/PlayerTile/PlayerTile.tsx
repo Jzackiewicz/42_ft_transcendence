@@ -1,5 +1,6 @@
 import React from 'react';
 import { Player } from '../../useGamePage';
+import './PlayerTile.css';
 
 interface PlayerTileProps {
     player: Player;
@@ -23,35 +24,34 @@ export function PlayerTile({
         .map((_, i) => i < lives ? '❤️' : '🖤')
         .join('');
 
+    const tileClasses = [
+        'player-tile',
+        isPlayerActive ? 'active' : '',
+        !is_alive ? 'eliminated' : ''
+    ].filter(Boolean).join(' ');
+
     return (
-        <div 
-            style={{ 
-                padding: '10px', 
-                border: isPlayerActive ? '2px solid #009688' : '1px solid #ddd', 
-                borderRadius: '4px',
-                backgroundColor: isPlayerActive ? '#e6fffa' : '#fff',
-                opacity: is_alive ? 1 : 0.6
-            }}
-        >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontWeight: 'bold' }}>
-                <span style={{ textDecoration: is_alive ? 'none' : 'line-through' }}>
+        <div className={tileClasses}>
+            <div className="player-tile-header">
+                <span className={is_alive ? 'player-name-alive' : 'player-name-dead'}>
                     👤 {display_name} {isCurrentUser && '(You)'}
                 </span>
-                <span style={{ fontSize: '12px' }}>
+                <span className="player-role-badges">
                     {isPlayerHost && <span title="Lobby Host">👑</span>}
-                    {isPlayerActive && <span title="Answering Turn" style={{ marginLeft: '4px', color: '#009688' }}>⚡</span>}
-                    {isPlayerNominator && <span title="Has Nomination Rights" style={{ marginLeft: '4px', color: '#3f51b5' }}>🎯</span>}
+                    {isPlayerActive && <span title="Answering Turn" className="player-role-active">⚡</span>}
+                    {isPlayerNominator && <span title="Has Nomination Rights" className="player-role-nominator">🎯</span>}
                 </span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '5px', fontSize: '13px', color: '#555' }}>
+            <div className="player-stats-row">
                 <div>Lives: {hearts}</div>
                 <div>Points: <strong>{points}</strong></div>
             </div>
             {!is_alive && (
-                <div style={{ marginTop: '5px', fontSize: '11px', color: '#c62828', fontWeight: 'bold' }}>
+                <div className="player-eliminated-label">
                     💀 ELIMINATED
                 </div>
             )}
         </div>
     );
 }
+

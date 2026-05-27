@@ -1,4 +1,5 @@
 import React from 'react';
+import './LobbyView.css';
 
 interface LobbyViewProps {
     isHost: boolean;
@@ -8,17 +9,17 @@ interface LobbyViewProps {
 
 export function LobbyView({ isHost, playersCount, onStartGame }: LobbyViewProps) {
     return (
-        <div style={{ padding: '20px', border: '1px solid #ccc', borderRadius: '4px', backgroundColor: '#f9f9f9' }}>
+        <div className="lobby-view-container">
             <h2>Lobby</h2>
             
             {isHost ? (
                 <div>
                     {playersCount < 2 ? (
-                        <div style={{ marginBottom: '15px', color: '#666' }}>
+                        <div className="lobby-waiting-more">
                             Waiting for more players to join... (Minimum 2 players required, currently {playersCount})
                         </div>
                     ) : (
-                        <div style={{ marginBottom: '15px', color: 'green', fontWeight: 'bold' }}>
+                        <div className="lobby-ready">
                             Ready to start! {playersCount} players in lobby.
                         </div>
                     )}
@@ -26,20 +27,17 @@ export function LobbyView({ isHost, playersCount, onStartGame }: LobbyViewProps)
                     <button 
                         onClick={onStartGame} 
                         disabled={playersCount < 2}
-                        style={{ 
-                            padding: '10px 20px', 
-                            fontSize: '16px', 
-                            cursor: playersCount < 2 ? 'not-allowed' : 'pointer' 
-                        }}
+                        className="btn-start-game"
                     >
                         Start Game
                     </button>
                 </div>
             ) : (
-                <div style={{ color: '#666', fontStyle: 'italic' }}>
+                <div className="lobby-spectator-waiting">
                     Waiting for lobby host to start the game...
                 </div>
             )}
         </div>
     );
 }
+

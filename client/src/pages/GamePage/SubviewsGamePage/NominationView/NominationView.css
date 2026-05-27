@@ -1,0 +1,39 @@
+.nomination-view-container {
+    padding: 20px;
+    border: 1px dashed #3f51b5;
+    border-radius: 4px;
+    background-color: #e8eaf6;
+}
+
+.nomination-active-prompt {
+    margin-top: 10px;
+}
+
+.nomination-prompt-label {
+    color: #3f51b5;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.nomination-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.nomination-select {
+    padding: 8px;
+    font-size: 16px;
+}
+
+.btn-nominate {
+    padding: 8px 16px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.nomination-spectator-waiting {
+    margin-top: 10px;
+    color: #666;
+    font-style: italic;
+}

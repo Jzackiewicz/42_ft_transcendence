@@ -1,0 +1,35 @@
+.lobby-view-container {
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+}
+
+.lobby-waiting-more {
+    margin-bottom: 15px;
+    color: #666;
+}
+
+.lobby-ready {
+    margin-bottom: 15px;
+    color: green;
+    font-weight: bold;
+}
+
+.btn-start-game {
+    padding: 10px 20px;
+    font-size: 16px;
+}
+
+.btn-start-game:disabled {
+    cursor: not-allowed;
+}
+
+.btn-start-game:enabled {
+    cursor: pointer;
+}
+
+.lobby-spectator-waiting {
+    color: #666;
+    font-style: italic;
+}

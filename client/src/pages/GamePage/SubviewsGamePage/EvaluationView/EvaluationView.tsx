@@ -1,12 +1,14 @@
 import React from 'react';
+import './EvaluationView.css';
 
 export function EvaluationView() {
     return (
-        <div style={{ padding: '20px', border: '1px solid #ff9800', borderRadius: '4px', backgroundColor: '#fff3e0' }}>
+        <div className="evaluation-view-container">
             <h2>Evaluation Phase</h2>
-            <p style={{ fontSize: '16px', color: '#e65100', fontWeight: 'bold' }}>
+            <p className="evaluation-loading-text">
                 🔄 Evaluating answer... Please wait.
             </p>
         </div>
     );
 }
+

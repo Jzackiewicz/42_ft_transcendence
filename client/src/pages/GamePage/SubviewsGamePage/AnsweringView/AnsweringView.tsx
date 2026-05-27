@@ -1,4 +1,5 @@
 import React from 'react';
+import './AnsweringView.css';
 
 interface AnsweringViewProps {
     questionText: string;
@@ -22,53 +23,49 @@ export function AnsweringView({
     timeLeft
 }: AnsweringViewProps) {
     return (
-        <div style={{ padding: '20px', border: '1px dashed #009688', borderRadius: '4px', backgroundColor: '#f0fdfa' }}>
+        <div className="answering-view-container">
             <h2>Answering Phase</h2>
             
-            <div style={{ margin: '15px 0', padding: '10px', backgroundColor: '#e6fffa', borderLeft: '4px solid #009688' }}>
-                <div style={{ fontSize: '12px', textTransform: 'uppercase', color: '#00796b', fontWeight: 'bold' }}>
+            <div className="answering-question-box">
+                <div className="answering-category">
                     Category: {category || 'General'}
                 </div>
-                <div style={{ fontSize: '18px', marginTop: '5px', fontWeight: 'bold' }}>
+                <div className="answering-question-text">
                     {questionText}
                 </div>
             </div>
 
             {timeLeft !== null && (
-                <div style={{ 
-                    fontSize: '20px', 
-                    fontWeight: 'bold', 
-                    color: timeLeft <= 5 ? 'red' : 'black',
-                    margin: '10px 0' 
-                }}>
+                <div className={`answering-timer ${timeLeft <= 5 ? 'warning' : ''}`}>
                     🕒 Time Left: {timeLeft}s
                 </div>
             )}
 
             {isCurrentAnswering ? (
-                <div style={{ marginTop: '15px' }}>
-                    <div style={{ color: '#00796b', fontWeight: 'bold', marginBottom: '8px' }}>
+                <div className="answering-active-prompt">
+                    <div className="answering-prompt-label">
                         YOUR TURN TO ANSWER:
                     </div>
-                    <form onSubmit={onSubmitAnswer} style={{ display: 'flex', gap: '10px' }}>
+                    <form onSubmit={onSubmitAnswer} className="answering-form">
                         <input
                             type="text"
                             value={answerText}
                             onChange={(e) => setAnswerText(e.target.value)}
                             placeholder="Type your answer..."
                             autoFocus
-                            style={{ padding: '8px', fontSize: '16px', flex: 1 }}
+                            className="answering-input"
                         />
-                        <button type="submit" style={{ padding: '8px 16px', fontSize: '16px', cursor: 'pointer' }}>
+                        <button type="submit" className="btn-answer-submit">
                             Submit
                         </button>
                     </form>
                 </div>
             ) : (
-                <div style={{ marginTop: '15px', color: '#666', fontStyle: 'italic' }}>
+                <div className="answering-spectator-waiting">
                     👀 {activePlayerName} is answering the question...
                 </div>
             )}
         </div>
     );
 }
+

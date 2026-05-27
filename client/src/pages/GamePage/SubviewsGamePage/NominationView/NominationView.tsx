@@ -1,5 +1,6 @@
 import React from 'react';
 import { Player } from '../../useGamePage';
+import './NominationView.css';
 
 interface NominationViewProps {
     isCurrentNominator: boolean;
@@ -19,19 +20,19 @@ export function NominationView({
     onNominatePlayer
 }: NominationViewProps) {
     return (
-        <div style={{ padding: '20px', border: '1px dashed #3f51b5', borderRadius: '4px', backgroundColor: '#e8eaf6' }}>
+        <div className="nomination-view-container">
             <h2>Nomination Phase</h2>
 
             {isCurrentNominator ? (
-                <div style={{ marginTop: '10px' }}>
-                    <div style={{ color: '#3f51b5', fontWeight: 'bold', marginBottom: '8px' }}>
+                <div className="nomination-active-prompt">
+                    <div className="nomination-prompt-label">
                         👉 YOU ANSWERED CORRECTLY! Select the next player to answer:
                     </div>
-                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                    <div className="nomination-controls">
                         <select
                             value={selectedNomineeId}
                             onChange={(e) => setSelectedNomineeId(Number(e.target.value))}
-                            style={{ padding: '8px', fontSize: '16px' }}
+                            className="nomination-select"
                         >
                             {eligiblePlayers.map((player) => (
                                 <option key={player.id} value={player.id}>
@@ -42,17 +43,18 @@ export function NominationView({
                         <button
                             onClick={onNominatePlayer}
                             disabled={!selectedNomineeId}
-                            style={{ padding: '8px 16px', fontSize: '16px', cursor: 'pointer' }}
+                            className="btn-nominate"
                         >
                             Nominate
                         </button>
                     </div>
                 </div>
             ) : (
-                <div style={{ marginTop: '10px', color: '#666', fontStyle: 'italic' }}>
+                <div className="nomination-spectator-waiting">
                     👀 {nominatorName} is selecting the next target...
                 </div>
             )}
         </div>
     );
 }
+

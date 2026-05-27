@@ -1,0 +1,12 @@
+.evaluation-view-container {
+    padding: 20px;
+    border: 1px solid #ff9800;
+    border-radius: 4px;
+    background-color: #fff3e0;
+}
+
+.evaluation-loading-text {
+    font-size: 16px;
+    color: #e65100;
+    font-weight: bold;
+}

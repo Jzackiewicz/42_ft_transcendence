@@ -1,5 +1,6 @@
 import React from 'react';
 import { Player } from '../../useGamePage';
+import './GameOverView.css';
 
 interface GameOverViewProps {
     winnerName: string;
@@ -15,49 +16,43 @@ export function GameOverView({ winnerName, endReason, players, onReturnToHome }:
     });
 
     return (
-        <div style={{ padding: '20px', border: '2px solid #f44336', borderRadius: '4px', backgroundColor: '#ffebee' }}>
-            <h2 style={{ color: '#d32f2f' }}>Game Over!</h2>
+        <div className="game-over-container">
+            <h2 className="game-over-title">Game Over!</h2>
 
-            <div style={{ 
-                margin: '20px 0', 
-                padding: '15px', 
-                backgroundColor: '#fff', 
-                borderLeft: '5px solid #f44336',
-                borderRadius: '4px' 
-            }}>
-                <div style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '8px' }}>
+            <div className="game-over-winner-card">
+                <div className="game-over-winner-name">
                     🏆 Winner: {winnerName || 'No winner (Draw)'}
                 </div>
-                <div style={{ fontSize: '14px', color: '#555' }}>
+                <div className="game-over-reason">
                     <strong>Reason:</strong> {endReason || 'Game completed.'}
                 </div>
             </div>
 
             <h3>Final Standings</h3>
-            <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px', backgroundColor: '#fff' }}>
+            <table className="game-over-table">
                 <thead>
-                    <tr style={{ backgroundColor: '#f2f2f2', borderBottom: '2px solid #ccc' }}>
-                        <th style={{ padding: '10px', textAlign: 'left', border: '1px solid #ddd' }}>Rank</th>
-                        <th style={{ padding: '10px', textAlign: 'left', border: '1px solid #ddd' }}>Player</th>
-                        <th style={{ padding: '10px', textAlign: 'center', border: '1px solid #ddd' }}>Status</th>
-                        <th style={{ padding: '10px', textAlign: 'center', border: '1px solid #ddd' }}>Lives</th>
-                        <th style={{ padding: '10px', textAlign: 'center', border: '1px solid #ddd' }}>Points</th>
-                        <th style={{ padding: '10px', textAlign: 'center', border: '1px solid #ddd' }}>Answers</th>
+                    <tr className="game-over-table-header">
+                        <th className="game-over-th-left">Rank</th>
+                        <th className="game-over-th-left">Player</th>
+                        <th className="game-over-th-center">Status</th>
+                        <th className="game-over-th-center">Lives</th>
+                        <th className="game-over-th-center">Points</th>
+                        <th className="game-over-th-center">Answers</th>
                     </tr>
                 </thead>
                 <tbody>
                     {sortedLeaderboard.map((player, idx) => (
-                        <tr key={player.id} style={{ borderBottom: '1px solid #ddd' }}>
-                            <td style={{ padding: '10px', fontWeight: 'bold', border: '1px solid #ddd' }}>#{idx + 1}</td>
-                            <td style={{ padding: '10px', border: '1px solid #ddd' }}>{player.display_name}</td>
-                            <td style={{ padding: '10px', textAlign: 'center', border: '1px solid #ddd' }}>
+                        <tr key={player.id} className="game-over-tr">
+                            <td className="game-over-td-rank">#{idx + 1}</td>
+                            <td className="game-over-td-name">{player.display_name}</td>
+                            <td className="game-over-td-center">
                                 {player.is_alive ? '❤️ Alive' : '💀 Dead'}
                             </td>
-                            <td style={{ padding: '10px', textAlign: 'center', border: '1px solid #ddd' }}>{player.lives}</td>
-                            <td style={{ padding: '10px', textAlign: 'center', fontWeight: 'bold', border: '1px solid #ddd' }}>
+                            <td className="game-over-td-center">{player.lives}</td>
+                            <td className="game-over-td-points">
                                 {player.points}
                             </td>
-                            <td style={{ padding: '10px', textAlign: 'center', border: '1px solid #ddd' }}>
+                            <td className="game-over-td-center">
                                 {player.answered_count}
                             </td>
                         </tr>
@@ -65,19 +60,10 @@ export function GameOverView({ winnerName, endReason, players, onReturnToHome }:
                 </tbody>
             </table>
 
-            <div style={{ marginTop: '20px' }}>
+            <div className="game-over-actions">
                 <button 
                     onClick={onReturnToHome}
-                    style={{ 
-                        padding: '10px 20px', 
-                        fontSize: '16px', 
-                        cursor: 'pointer',
-                        backgroundColor: '#d32f2f',
-                        color: '#fff',
-                        border: 'none',
-                        borderRadius: '4px',
-                        fontWeight: 'bold'
-                    }}
+                    className="btn-game-over-home"
                 >
                     Return to Home
                 </button>
@@ -85,3 +71,4 @@ export function GameOverView({ winnerName, endReason, players, onReturnToHome }:
         </div>
     );
 }
+

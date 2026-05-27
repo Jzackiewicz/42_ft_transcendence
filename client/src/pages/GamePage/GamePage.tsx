@@ -8,6 +8,7 @@ import { NominationView } from './SubviewsGamePage/NominationView/NominationView
 import { EvaluationView } from './SubviewsGamePage/EvaluationView/EvaluationView';
 import { GameOverView } from './SubviewsGamePage/GameOverView/GameOverView';
 import { PlayerTile } from './SubviewsGamePage/PlayerTile/PlayerTile';
+import './GamePage.css';
 
 export function GamePage() {
     const { user } = useUser();
@@ -110,40 +111,23 @@ export function GamePage() {
     };
 
     return (
-        <div style={{ padding: '20px', fontFamily: 'sans-serif', maxWidth: '1000px', margin: '0 auto' }}>
+        <div className="game-page-container">
             {/* Top Bar (Session Code & Leave Button) */}
-            <div style={{ 
-                display: 'flex', 
-                justifyContent: 'space-between', 
-                alignItems: 'center', 
-                borderBottom: '1px solid #ccc', 
-                paddingBottom: '10px',
-                marginBottom: '20px'
-            }}>
+            <div className="game-top-bar">
                 <h1>Quizscendence</h1>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                <div className="game-top-bar-right">
                     <div><strong>SESSION CODE:</strong> {sessionUuid || 'None'}</div>
-                    <button onClick={handleLeave} style={{ padding: '6px 12px', cursor: 'pointer' }}>Leave Game</button>
+                    <button onClick={handleLeave} className="btn-leave">Leave Game</button>
                 </div>
             </div>
 
             {/* Error Banner */}
             {errorMsg && (
-                <div style={{ 
-                    color: '#721c24', 
-                    backgroundColor: '#f8d7da', 
-                    border: '1px solid #f5c6cb', 
-                    padding: '10px', 
-                    margin: '10px 0',
-                    borderRadius: '4px',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center'
-                }}>
+                <div className="game-error-banner">
                     <span><strong>Error:</strong> {errorMsg}</span>
                     <button 
                         onClick={() => setErrorMsg(null)} 
-                        style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: '#721c24' }}
+                        className="btn-error-close"
                     >
                         &times;
                     </button>
@@ -151,19 +135,12 @@ export function GamePage() {
             )}
 
             {gameState ? (
-                <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+                <div className="game-main-layout">
                     
                     {/* Players List Sidebar (Always Visible) */}
-                    <div style={{ 
-                        flex: '1 1 280px', 
-                        minWidth: '250px', 
-                        border: '1px solid #ccc', 
-                        padding: '15px', 
-                        borderRadius: '4px',
-                        backgroundColor: '#fafafa'
-                    }}>
-                        <h3 style={{ margin: '0 0 15px 0', borderBottom: '1px solid #eee', paddingBottom: '8px' }}>Players</h3>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <div className="game-sidebar">
+                        <h3 className="game-sidebar-title">Players</h3>
+                        <div className="game-players-list">
                             {gameState.players.map((player) => (
                                 <PlayerTile
                                     key={player.id}
@@ -178,18 +155,10 @@ export function GamePage() {
                     </div>
 
                     {/* Active State View Component */}
-                    <div style={{ flex: '2 1 500px', minWidth: '300px' }}>
+                    <div className="game-active-area">
                         {/* Question counter if the game has started */}
                         {gameStarted && (
-                            <div style={{ 
-                                marginBottom: '15px', 
-                                padding: '10px', 
-                                backgroundColor: '#e8eaf6', 
-                                borderRadius: '4px', 
-                                fontWeight: 'bold',
-                                color: '#3f51b5',
-                                borderLeft: '4px solid #3f51b5'
-                            }}>
+                            <div className="game-question-counter">
                                 Question {gameState.question_asked_count} of {gameState.total_questions_count}
                             </div>
                         )}
@@ -198,7 +167,7 @@ export function GamePage() {
 
                 </div>
             ) : (
-                <div style={{ margin: '20px 0', padding: '20px', border: '1px dashed #ccc', textAlign: 'center' }}>
+                <div className="game-loading-banner">
                     <h3>Waiting for Game Snapshot...</h3>
                     <p>Connection established. Awaiting state from the server...</p>
                 </div>
