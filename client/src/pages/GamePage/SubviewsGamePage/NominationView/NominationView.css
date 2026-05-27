@@ -2,7 +2,8 @@
     padding: 20px;
     border: 1px dashed #3f51b5;
     border-radius: 4px;
-    background-color: #e8eaf6;
+    background-color: #000;
+    color: #fff;
 }
 
 .nomination-active-prompt {
@@ -10,7 +11,7 @@
 }
 
 .nomination-prompt-label {
-    color: #3f51b5;
+    color: #7986cb;
     font-weight: bold;
     margin-bottom: 8px;
 }
@@ -24,16 +25,22 @@
 .nomination-select {
     padding: 8px;
     font-size: 16px;
+    background-color: #000;
+    color: #fff;
+    border: 1px solid #444;
 }
 
 .btn-nominate {
     padding: 8px 16px;
     font-size: 16px;
     cursor: pointer;
+    background-color: #000;
+    color: #fff;
+    border: 1px solid #444;
 }
 
 .nomination-spectator-waiting {
     margin-top: 10px;
-    color: #666;
+    color: #aaa;
     font-style: italic;
 }

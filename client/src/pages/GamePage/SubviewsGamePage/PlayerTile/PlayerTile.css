@@ -1,14 +1,15 @@
 .player-tile {
     padding: 10px;
-    border: 1px solid #ddd;
+    border: 1px solid #444;
     border-radius: 4px;
-    background-color: #fff;
+    background-color: #000;
+    color: #fff;
     opacity: 1;
 }
 
 .player-tile.active {
     border: 2px solid #009688;
-    background-color: #e6fffa;
+    background-color: #000;
 }
 
 .player-tile.eliminated {
@@ -28,6 +29,7 @@
 
 .player-name-dead {
     text-decoration: line-through;
+    color: #888;
 }
 
 .player-role-badges {
@@ -49,12 +51,12 @@
     justify-content: space-between;
     margin-top: 5px;
     font-size: 13px;
-    color: #555;
+    color: #bbb;
 }
 
 .player-eliminated-label {
     margin-top: 5px;
     font-size: 11px;
-    color: #c62828;
+    color: #ff5252;
     font-weight: bold;
 }
