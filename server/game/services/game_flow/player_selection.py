@@ -21,3 +21,6 @@ def get_next_alive_player(
 			return player
 
 	return alive_players[0]
+
+def get_new_host_player(session: GameSession) -> SessionPlayer | None:
+	return session.session_players.order_by('id').first()

@@ -6,8 +6,13 @@ from .services import create_chat_message
 
 
 class ChatConsumer(AsyncJsonWebsocketConsumer):
-    # TODO: add authentication (JWT token) and get the username from the token
     async def connect(self):
+        user = self.scope["user"]
+        if not user.is_authenticated:
+            await self.accept()
+            await self.close(code=4001)
+            return
+
         self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
         self.room_group_name = f"chat_{self.room_name}"
 
@@ -16,7 +21,9 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 
     # Remember to manually close possible future processes
     async def disconnect(self, close_code):
-        await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+        # room_group_name is only set when an authenticated connection succeeded.
+        if hasattr(self, "room_group_name"):
+            await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
 
     async def receive_json(self, content, **kwargs):
         input_serializer = ChatMessageSerializer(data=content)
@@ -28,7 +35,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
             return
 
         message = input_serializer.validated_data["message"]
-        sender = "Mr. Player"  # TODO: get sender's username from the scope (JWT token)
+        sender = self.scope["user"].username
 
         await self.channel_layer.group_send(
             self.room_group_name,

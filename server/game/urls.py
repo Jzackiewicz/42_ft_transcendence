@@ -2,7 +2,7 @@ from django.urls import path
 from game import apis
 
 urlpatterns = [
-	path("questions/", apis.QuestionListApi.as_view(), name="question-list"),
-	path("questions/<int:question_id>/", apis.QuestionDetailApi.as_view(), name="question-detail"),
-	path("questions/generate/", apis.QuestionGenerateApi.as_view(), name="question-generate"),
+	path('lobby/create/', apis.RoomCreateApi.as_view(), name='room-create'),
+	path('lobby/join/<uuid:session_uuid>/', apis.RoomJoinApi.as_view(), name='room-join'),
+	path('lobby/destroy/<uuid:session_uuid>/', apis.RoomDestroyApi.as_view(), name='room-destroy'),
 ]

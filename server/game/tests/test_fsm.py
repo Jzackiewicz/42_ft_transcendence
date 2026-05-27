@@ -1,4 +1,5 @@
 from django.test import TestCase
+from statemachine.exceptions import TransitionNotAllowed
 from game.models import GameSession, SessionPlayer, Question, SessionQuestion
 
 
@@ -130,6 +131,18 @@ class GameStateMachineTests(TestCase):
 		self.session.refresh_from_db()
 		self.assertEqual(self.session.current_status, GameSession.Status.ANSWERING)
 
+	def test_resolve_evaluation_prioritizes_game_over_over_nomination(self):
+		self.session.current_status = GameSession.Status.EVALUATION
+		self.session.last_correct_player = self.player1
+		self.session.question_asked_count = self.session.session_questions.count()
+		self.session.save()
+
+		self.session.fsm.resolve_evaluation()
+		self.session.save()
+
+		self.session.refresh_from_db()
+		self.assertEqual(self.session.current_status, GameSession.Status.GAME_OVER)
+
 	def test_nominate_player_transitions_from_nomination_to_answering(self):
 		self.session.current_status = GameSession.Status.NOMINATION
 		self.session.save()
@@ -139,6 +152,46 @@ class GameStateMachineTests(TestCase):
 
 		self.session.refresh_from_db()
 		self.assertEqual(self.session.current_status, GameSession.Status.ANSWERING)
+
+	def test_cancel_game_from_lobby_transitions_to_game_over(self):
+		self.session.fsm.cancel_game()
+		self.session.save()
+		self.session.refresh_from_db()
+		self.assertEqual(self.session.current_status, GameSession.Status.GAME_OVER)
+
+	def test_cancel_game_from_answering_transitions_to_game_over(self):
+		self.session.current_status = GameSession.Status.ANSWERING
+		self.session.save()
+		self.session.fsm.cancel_game()
+		self.session.save()
+		self.session.refresh_from_db()
+		self.assertEqual(self.session.current_status, GameSession.Status.GAME_OVER)
+
+	def test_cancel_game_from_evaluation_transitions_to_game_over(self):
+		self.session.current_status = GameSession.Status.EVALUATION
+		self.session.save()
+		self.session.fsm.cancel_game()
+		self.session.save()
+		self.session.refresh_from_db()
+		self.assertEqual(self.session.current_status, GameSession.Status.GAME_OVER)
+
+	def test_cancel_game_from_nomination_transitions_to_game_over(self):
+		self.session.current_status = GameSession.Status.NOMINATION
+		self.session.save()
+		self.session.fsm.cancel_game()
+		self.session.save()
+		self.session.refresh_from_db()
+		self.assertEqual(self.session.current_status, GameSession.Status.GAME_OVER)
+		
+	def test_invalid_transitions_are_blocked_by_fsm(self):
+		self.session.current_status = GameSession.Status.LOBBY
+		self.session.save()
+
+		with self.assertRaises(TransitionNotAllowed):
+			self.session.fsm.submit_answer()
+			
+		with self.assertRaises(TransitionNotAllowed):
+			self.session.fsm.nominate_player()
 
 	def test_has_last_correct_player_alive_returns_false_without_last_correct_player(self):
 		self.session.last_correct_player = None
