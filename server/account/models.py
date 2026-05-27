@@ -33,3 +33,9 @@ class UserProfile(models.Model):
 
     def __str__(self) -> str:
         return f"{self.user.username}'s profile"
+    
+    def avatar_url(self, request=None) -> str | None:
+        if not self.avatar:
+            return None
+        url = self.avatar.url
+        return request.build_absolute_uri(url) if request else url

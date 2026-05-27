@@ -61,13 +61,25 @@ class UserUpdateInputSerializer(serializers.Serializer):
 # UserProfile serializers
 # ---------------------------------------------------------------------------
 
-
+# me
 class UserProfileOutputSerializer(serializers.ModelSerializer):
     user = UserOutputSerializer(read_only=True)
 
     class Meta:
         model = UserProfile
         fields = ["id", "user", "avatar", "is_online"]
+
+
+# expose to other users
+class PublicUserSerializer(serializers.ModelSerializer):
+    avatar = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ["id", "username", "avatar"]
+
+    def get_avatar(self, user):
+        return user.profile.avatar_url(self.context.get("request"))
 
 
 class UserProfileAvatarInputSerializer(serializers.Serializer):
