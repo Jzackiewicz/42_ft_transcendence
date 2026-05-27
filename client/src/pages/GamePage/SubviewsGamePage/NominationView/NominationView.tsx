@@ -26,7 +26,7 @@ export function NominationView({
             {isCurrentNominator ? (
                 <div className="nomination-active-prompt">
                     <div className="nomination-prompt-label">
-                        👉 YOU ANSWERED CORRECTLY! Select the next player to answer:
+                        👉 Select the next player to answer:
                     </div>
                     <div className="nomination-controls">
                         <select

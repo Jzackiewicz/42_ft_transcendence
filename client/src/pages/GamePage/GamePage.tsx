@@ -91,7 +91,19 @@ export function GamePage() {
                     />
                 );
             case GameStatus.EVALUATION:
-                return <EvaluationView />;
+                const attempt = gameState.current_attempt;
+                const activePlayer = gameState.players.find(p => p.id === attempt?.player);
+                return (
+                    <EvaluationView 
+                        answerText={attempt?.answer_text || null}
+                        correctAnswer={attempt?.correct_answer || ''}
+                        playerName={activePlayer?.display_name || 'Unknown'}
+                        isCorrect={attempt?.is_correct || false}
+                        isTimeout={attempt?.is_timeout || false}
+                        questionText={gameState.current_question?.question?.question_text || ''}
+                        category={gameState.current_question?.question?.category || ''}
+                    />
+                );
             case GameStatus.GAME_OVER:
                 return (
                     <GameOverView 

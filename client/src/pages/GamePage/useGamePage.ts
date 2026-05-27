@@ -22,21 +22,32 @@ export interface Question {
 }
 
 export enum GameStatus {
-    LOBBY = 'LOBBY',
-    ANSWERING = 'ANSWERING',
-    EVALUATION = 'EVALUATION',
-    NOMINATION = 'NOMINATION',
-    GAME_OVER = 'GAME_OVER'
+    LOBBY = 'lobby',
+    ANSWERING = 'answering',
+    EVALUATION = 'evaluation',
+    NOMINATION = 'nomination',
+    GAME_OVER = 'game_over'
+}
+
+export interface AnswerAttempt {
+    id: number;
+    answer_text: string | null;
+    is_timeout: boolean;
+    is_correct: boolean | null;
+    evaluation_status: string;
+    correct_answer?: string;
+    player: number; // player ID
 }
 
 export interface GameSnapshot {
     session_uuid: string;
-    current_status: GameStatus; // 'LOBBY', 'ANSWERING', 'EVALUATION', 'NOMINATION', 'GAME_OVER'
+    current_status: GameStatus;
     current_player: number | null;
     last_correct_player: number | null;
     last_nominated_player: number | null;
     players: Player[];
     current_question: Question | null;
+    current_attempt: AnswerAttempt | null;
     answer_time_limit_ms: number;
     winner: number | null;
     end_reason: string | null;
@@ -62,6 +73,26 @@ export function useGamePage() {
     const [answerText, setAnswerText] = useState('');
     const [selectedNomineeId, setSelectedNomineeId] = useState<number | ''>('');
     const [timeLeft, setTimeLeft] = useState<number | null>(null);
+
+    // Mock evaluation states & refs
+    const submittedAnswerRef = useRef<string | null>(null);
+    const isSubmittingRef = useRef<boolean>(false);
+    const gameStateRef = useRef<GameSnapshot | null>(null);
+    const mockEvalTimeoutRef = useRef<any>(null);
+
+    // Update gameStateRef on every render to avoid WebSocket stale closure
+    useEffect(() => {
+        gameStateRef.current = gameState;
+    }, [gameState]);
+
+    // Clean up timers on unmount
+    useEffect(() => {
+        return () => {
+            if (mockEvalTimeoutRef.current) {
+                clearTimeout(mockEvalTimeoutRef.current);
+            }
+        };
+    }, []);
 
     const eligiblePlayers = gameState?.players.filter(p => p.is_alive) || [];
 
@@ -139,7 +170,48 @@ export function useGamePage() {
             try {
                 const data = JSON.parse(event.data);
                 if (data.snapshot) {
-                    setGameState(data.snapshot);
+                    const nextSnapshot = data.snapshot as GameSnapshot;
+                    const prevSnapshot = gameStateRef.current;
+                    const prevStatus = prevSnapshot?.current_status;
+
+                    if (prevStatus === GameStatus.ANSWERING) {
+                        // Intercept and simulate EVALUATION snapshot state locally
+                        const prevPlayerId = prevSnapshot?.current_player || 0;
+                        const simulatedEvaluationSnapshot: GameSnapshot = {
+                            ...prevSnapshot!,
+                            current_status: GameStatus.EVALUATION,
+                            current_attempt: {
+                                id: prevSnapshot?.current_attempt?.id || 1,
+                                answer_text: "...",
+                                correct_answer: "...",
+                                is_correct: false,
+                                is_timeout: false,
+                                evaluation_status: 'evaluated',
+                                player: prevPlayerId
+                            }
+                        };
+
+                        setGameState(simulatedEvaluationSnapshot);
+
+                        if (mockEvalTimeoutRef.current) {
+                            clearTimeout(mockEvalTimeoutRef.current);
+                        }
+                        mockEvalTimeoutRef.current = setTimeout(() => {
+                            setGameState(nextSnapshot);
+                            mockEvalTimeoutRef.current = null;
+                        }, 3000);
+                    } else {
+                        // If simulated transition is running, keep it but buffer the latest snapshot
+                        if (mockEvalTimeoutRef.current) {
+                            clearTimeout(mockEvalTimeoutRef.current);
+                            mockEvalTimeoutRef.current = setTimeout(() => {
+                                setGameState(nextSnapshot);
+                                mockEvalTimeoutRef.current = null;
+                            }, 3000);
+                        } else {
+                            setGameState(nextSnapshot);
+                        }
+                    }
                     setErrorMsg(null);
                 } else if (data.type === 'error' || data.error) {
                     setErrorMsg(data.message || data.error || 'Unknown error occurred');
@@ -178,6 +250,8 @@ export function useGamePage() {
     };
 
     const submitAnswer = (answer: string) => {
+        submittedAnswerRef.current = answer;
+        isSubmittingRef.current = true;
         sendAction('submit_answer', { answer });
     };
 
