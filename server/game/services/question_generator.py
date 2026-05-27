@@ -1,5 +1,7 @@
 """Question generation utilities backed by the Google GenAI SDK."""
 
+# THIS IS AND WILL BE UNUSED. CHECK extra_question_generator.py.
+
 from __future__ import annotations
 
 import json

@@ -44,7 +44,7 @@ def load_lobby_questions(lobby_id):
 		questions_data = json.load(f)
 	return questions_data
 
-# TODO
+# TODO Update the load_lobby_questions function to actually load data from a lobbies questions once one exists with seeded data.
 # This function can raise an exception
 def generate_extra_questions(lobby_id, n_questions_to_generate):
 	"""Takes a lobby ID and generates json formatted questions based the lobbies questions."""
