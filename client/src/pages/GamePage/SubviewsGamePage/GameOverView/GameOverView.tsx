@@ -11,8 +11,22 @@ interface GameOverViewProps {
 
 export function GameOverView({ winnerName, endReason, players, onReturnToHome }: GameOverViewProps) {
     const sortedLeaderboard = [...players].sort((a, b) => {
-        if (b.points !== a.points) return b.points - a.points;
-        return b.answered_count - a.answered_count;
+        // 1. points DESC (highest points first)
+        if (b.points !== a.points) {
+            return b.points - a.points;
+        }
+        // 2. answered_count DESC (most answered questions first)
+        if (b.answered_count !== a.answered_count) {
+            return b.answered_count - a.answered_count;
+        }
+        // 3. total_answer_time_ms ASC (fastest total response time first)
+        const aTime = a.total_answer_time_ms ?? 0;
+        const bTime = b.total_answer_time_ms ?? 0;
+        if (aTime !== bTime) {
+            return aTime - bTime;
+        }
+        // 4. seat_number ASC (lowest seat number first)
+        return a.seat_number - b.seat_number;
     });
 
     return (

@@ -11,6 +11,7 @@ export interface Player {
     answered_count: number;
     is_alive: boolean;
     player_type?: 'human' | 'bot';
+    total_answer_time_ms?: number;
 }
 
 export interface Question {
@@ -333,7 +334,8 @@ export function useGamePage() {
             points: 0,
             answered_count: 0,
             is_alive: true,
-            player_type: 'bot'
+            player_type: 'bot',
+            total_answer_time_ms: 0
         };
 
         setAddedBots(prev => [...prev, newBot]);
