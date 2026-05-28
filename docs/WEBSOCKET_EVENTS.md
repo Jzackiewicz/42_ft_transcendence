@@ -142,7 +142,9 @@ Whenever the game state changes (e.g., player joins, turn changes, points are aw
     "winner": null,
     "end_reason": null,
     "question_asked_count": 1,
-    "total_questions_count": 10
+    "total_questions_count": 10,
+    "current_attempt_started_at": "2026-05-24T00:15:00.123456+02:00",
+    "turn_deadline_at": "2026-05-24T00:15:20.123456+02:00"
   }
 }
 ```
@@ -154,6 +156,6 @@ If the client sends an invalid action, lacks permissions (e.g., trying to answer
 ```json
 {
   "type": "error",
-  "error": "Only current player can submit answer"
+  "message": "Only current player can submit answer"
 }
 ```

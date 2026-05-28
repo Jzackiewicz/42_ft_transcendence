@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react"
-import {getMe} from "../api/apiWrapper"
+import { getMe } from "../api/authWrapper"
 
 interface User {
     id: number

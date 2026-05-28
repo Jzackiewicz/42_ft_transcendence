@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import {logout} from '../../api/apiWrapper'
+import { logout } from '../../api/authWrapper'
 import { useUser } from '../../context/UserContext'
 
 

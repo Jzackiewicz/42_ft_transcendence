@@ -5,7 +5,7 @@ import './AuthPage.css'
 
 import { useAuthPage, useLoginNavigation, useRegistrationNavigation } from './useAuthPage'
 
-function LoginPage() {
+export function AuthPage() {
     const { isLoginTabActive, setIsLoginTabActive } = useAuthPage()
     const { onLoginSuccess } = useLoginNavigation()
     const { onRegistrationSuccess } = useRegistrationNavigation()
@@ -46,5 +46,3 @@ function LoginPage() {
         </div>
     )
 }
-
-export default LoginPage

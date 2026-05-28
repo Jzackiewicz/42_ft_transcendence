@@ -46,7 +46,8 @@ if not SECRET_KEY:
 _https_port = os.getenv("HTTPS_EXPOSED_PORT", "8443")
 _default_origins = f"https://localhost:{_https_port},https://127.0.0.1:{_https_port}"
 if DEBUG:
-    _default_origins += ",http://localhost:8000,http://127.0.0.1:8000"
+    _default_origins += ",http://localhost:8000,http://127.0.0.1:8000,http://localhost:5173,http://127.0.0.1:5173"
+
 
 CSRF_TRUSTED_ORIGINS = get_list_settings("CSRF_TRUSTED_ORIGINS", _default_origins)
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")

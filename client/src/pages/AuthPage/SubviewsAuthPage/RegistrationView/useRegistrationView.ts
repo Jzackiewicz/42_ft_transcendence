@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useUser } from '../../../../context/UserContext'
-import { register, login } from '../../../../api/apiWrapper'
+import { register, login } from '../../../../api/authWrapper'
 
 interface RegErrors {
     mailIsEmptyErr?: string
