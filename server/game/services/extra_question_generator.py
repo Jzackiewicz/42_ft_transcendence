@@ -4,6 +4,9 @@ from pathlib import Path
 from dotenv import load_dotenv
 from google import genai
 import time
+from django.db.models import Q
+
+from game.models import GameSession
 
 SYSTEM_INSTRUCTION_PATH = Path(__file__).with_name("extra_question_generator_system_instruction.txt")
 SYSTEM_INSTRUCTION = SYSTEM_INSTRUCTION_PATH.read_text(encoding="utf-8")
@@ -37,11 +40,24 @@ def generate(client, model, prompt):
 
 def load_lobby_questions(lobby_id):
 	"""Takes a lobby ID and returns a a data object containing the questions, their answers, and a category for each question."""
-	# TODO actually load the lobby_id and take the needed data from the database.
-	# For now we just load a json file with dummy data to test the generate_expanded_questions function.
+	lobby = GameSession.objects.filter(
+		Q(pk=lobby_id) | Q(session_uuid=lobby_id)
+	).first()
+	if lobby is None:
+		raise RuntimeError(f"Lobby not found: {lobby_id}")
 
-	with open("../tests/dummy_questions.json", "r") as f:
-		questions_data = json.load(f)
+	questions_data = [
+		{
+			"category": session_question.question.category,
+			"question": session_question.question.question_text,
+			"answer": [session_question.question.correct_answer],
+		}
+		for session_question in lobby.session_questions.select_related("question").order_by("order_index")
+	]
+
+	if not questions_data:
+		raise RuntimeError(f"Lobby has no questions: {lobby_id}")
+
 	return questions_data
 
 # TODO Update the load_lobby_questions function to actually load data from a lobbies questions once one exists with seeded data.
