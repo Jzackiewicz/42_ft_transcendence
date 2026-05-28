@@ -10,6 +10,7 @@ export interface Player {
     points: number;
     answered_count: number;
     is_alive: boolean;
+    player_type?: 'human' | 'bot';
 }
 
 export interface Question {
@@ -74,6 +75,31 @@ export function useGamePage() {
     const [selectedNomineeId, setSelectedNomineeId] = useState<number | ''>('');
     const [timeLeft, setTimeLeft] = useState<number | null>(null);
 
+    // Lobby settings states
+    const [questionCount, setQuestionCount] = useState<number>(20);
+    const [answerTimeLimitMs, setAnswerTimeLimitMs] = useState<number>(20000);
+    const [addedBots, setAddedBots] = useState<Player[]>([]);
+    const [aiQuestionsRequested, setAiQuestionsRequested] = useState<boolean>(false);
+
+    // Derive activeGameState that merges customized settings and added bots
+    const activeGameState: GameSnapshot | null = gameState ? {
+        ...gameState,
+        answer_time_limit_ms: answerTimeLimitMs,
+        total_questions_count: questionCount,
+        players: [
+            ...gameState.players.map(p => ({ ...p, player_type: 'human' as const })),
+            ...addedBots
+        ]
+    } : null;
+
+    // Reset added bots and settings when the game actually starts
+    useEffect(() => {
+        if (gameState && gameState.current_status !== GameStatus.LOBBY) {
+            setAddedBots([]);
+            setAiQuestionsRequested(false);
+        }
+    }, [gameState?.current_status]);
+
     // Mock evaluation states & refs
     const submittedAnswerRef = useRef<string | null>(null);
     const isSubmittingRef = useRef<boolean>(false);
@@ -82,8 +108,8 @@ export function useGamePage() {
 
     // Update gameStateRef on every render to avoid WebSocket stale closure
     useEffect(() => {
-        gameStateRef.current = gameState;
-    }, [gameState]);
+        gameStateRef.current = activeGameState;
+    }, [activeGameState]);
 
     // Clean up timers on unmount
     useEffect(() => {
@@ -94,15 +120,15 @@ export function useGamePage() {
         };
     }, []);
 
-    const eligiblePlayers = gameState?.players.filter(p => p.is_alive) || [];
+    const eligiblePlayers = activeGameState?.players.filter(p => p.is_alive) || [];
 
     // Helper computations
-    const currentPlayerObj = gameState?.players.find(p => p.display_name === user?.username);
-    const sortedPlayers = [...(gameState?.players || [])].sort((a, b) => a.id - b.id);
+    const currentPlayerObj = activeGameState?.players.find(p => p.display_name === user?.username);
+    const sortedPlayers = [...(activeGameState?.players || [])].sort((a, b) => a.id - b.id);
     const isHost = sortedPlayers.length > 0 && currentPlayerObj !== undefined && (sortedPlayers[0].id === currentPlayerObj.id);
     const hostPlayerId = sortedPlayers.length > 0 ? sortedPlayers[0].id : null;
-    const gameStarted = gameState !== null && gameState.current_status !== GameStatus.LOBBY;
-    const isGameOver = gameState !== null && gameState.current_status === GameStatus.GAME_OVER;
+    const gameStarted = activeGameState !== null && activeGameState.current_status !== GameStatus.LOBBY;
+    const isGameOver = activeGameState !== null && activeGameState.current_status === GameStatus.GAME_OVER;
 
     useEffect(() => {
         if (eligiblePlayers.length > 0) {
@@ -112,16 +138,16 @@ export function useGamePage() {
         } else {
             setSelectedNomineeId('');
         }
-    }, [gameState?.players, user?.username, eligiblePlayers.length]);
+    }, [activeGameState?.players, user?.username, eligiblePlayers.length]);
 
     // Timer effect synchronizing with server turn_deadline_at
     useEffect(() => {
-        if (!gameState || gameState.current_status !== GameStatus.ANSWERING || !gameState.turn_deadline_at) {
+        if (!activeGameState || activeGameState.current_status !== GameStatus.ANSWERING || !activeGameState.turn_deadline_at) {
             setTimeLeft(null);
             return;
         }
 
-        const deadline = new Date(gameState.turn_deadline_at).getTime();
+        const deadline = new Date(activeGameState.turn_deadline_at).getTime();
 
         const updateTimer = () => {
             const now = new Date().getTime();
@@ -134,7 +160,7 @@ export function useGamePage() {
         const intervalId = setInterval(updateTimer, 200);
 
         return () => clearInterval(intervalId);
-    }, [gameState?.current_status, gameState?.turn_deadline_at]);
+    }, [activeGameState?.current_status, activeGameState?.turn_deadline_at]);
 
     const wsRef = useRef<WebSocket | null>(null);
     const closeTimeoutRef = useRef<any>(null);
@@ -282,12 +308,52 @@ export function useGamePage() {
         return () => disconnect(); // calling a destructor
     }, []); // Happens only once
 
+    const updateSettings = (questions: number, timeLimitSec: number) => {
+        setQuestionCount(questions);
+        setAnswerTimeLimitMs(timeLimitSec * 1000);
+    };
+
+    const addAiBot = () => {
+        if (!activeGameState) return;
+        const totalPlayers = activeGameState.players.length;
+        if (totalPlayers >= 5) return;
+
+        // Find the lowest unoccupied seat number from 1 to 5
+        const activeSeats = activeGameState.players.map(p => p.seat_number);
+        let seatNumber = 1;
+        while (activeSeats.includes(seatNumber)) {
+            seatNumber++;
+        }
+
+        const newBot: Player = {
+            id: 9000 + addedBots.length + 1,
+            display_name: `🤖 AI Bot ${addedBots.length + 1}`,
+            seat_number: seatNumber,
+            lives: 3,
+            points: 0,
+            answered_count: 0,
+            is_alive: true,
+            player_type: 'bot'
+        };
+
+        setAddedBots(prev => [...prev, newBot]);
+    };
+
+    const removeAiBot = () => {
+        if (addedBots.length === 0) return;
+        setAddedBots(prev => prev.slice(0, -1));
+    };
+
+    const requestAiQuestions = () => {
+        setAiQuestionsRequested(true);
+    };
+
     return {
         sessionUuid,
         setSessionUuid,
         messages,
         isConnected,
-        gameState,
+        gameState: activeGameState,
         errorMsg,
         setErrorMsg,
         startGame,
@@ -306,6 +372,14 @@ export function useGamePage() {
         hostPlayerId,
         gameStarted,
         isGameOver,
-        sortedPlayers
+        sortedPlayers,
+        questionCount,
+        answerTimeLimitMs,
+        addedBots,
+        aiQuestionsRequested,
+        updateSettings,
+        addAiBot,
+        removeAiBot,
+        requestAiQuestions
     };
 }

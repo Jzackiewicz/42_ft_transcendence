@@ -34,7 +34,7 @@ export function PlayerTile({
         <div className={tileClasses}>
             <div className="player-tile-header">
                 <span className={is_alive ? 'player-name-alive' : 'player-name-dead'}>
-                    👤 {display_name} {isCurrentUser && '(You)'}
+                    {player.player_type === 'bot' ? '🤖' : '👤'} {display_name} {isCurrentUser && '(You)'}
                 </span>
                 <span className="player-role-badges">
                     {isPlayerHost && <span title="Lobby Host">👑</span>}
