@@ -44,34 +44,6 @@ from .services import (
 
 
 # ---------------------------------------------------------------------------
-# CSRF token endpoint
-# ---------------------------------------------------------------------------
-
-
-# NOTE: Frontend MUST hit this endpoint via a GET request when it boots up
-class CSRFTokenApi(APIView):
-    """
-    An APIView dedicated to forcing Django to drop
-    the 'csrftoken' cookie into the browser.
-    """
-
-    permission_classes = [AllowAny]
-
-    @extend_schema(
-        request=None,
-        responses={
-            200: OpenApiTypes.OBJECT,
-        },
-        description="Set a CSRF cookie for user session.",
-    )
-    @method_decorator(ensure_csrf_cookie)
-    def get(self, request):
-        return Response(
-            {"detail": "CSRF cookie set successfully."}, status=status.HTTP_200_OK
-        )
-
-
-# ---------------------------------------------------------------------------
 # User endpoints
 # ---------------------------------------------------------------------------
 
@@ -153,46 +125,6 @@ class UserMeApi(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class UserMeExportApi(APIView):
-    permission_classes = [
-        IsAuthenticated,
-    ]
-
-    @extend_schema(
-        request=None,
-        responses={
-            200: UserOutputSerializer,
-            403: {"type": "object", "properties": {"detail": {"type": "string"}}},
-        },
-        description="Export user data as json object",
-    )
-    # TODO: know if that is enough or if we need to provide more info
-    def get(self, request):
-        output_serializer = UserOutputSerializer(request.user)
-        return Response(output_serializer.data)
-
-
-class UserRegisterApi(APIView):
-    permission_classes = [IsAnonymous]
-
-    @extend_schema(
-        request=UserRegisterInputSerializer,
-        responses={
-            201: UserOutputSerializer,
-            403: {"type": "object", "properties": {"detail": {"type": "string"}}},
-        },
-        description="Register a new user account.",
-    )
-    def post(self, request):
-        input_serializer = UserRegisterInputSerializer(data=request.data)
-        input_serializer.is_valid(raise_exception=True)
-
-        user = user_create(**input_serializer.validated_data)
-
-        output_serializer = UserOutputSerializer(user)
-        return Response(output_serializer.data, status=status.HTTP_201_CREATED)
-
-
 class UserListApi(APIView):
     @extend_schema(
         request=None,
@@ -218,24 +150,6 @@ class UserDetailApi(APIView):
         output_serializer = UserOutputSerializer(user)
         return Response(output_serializer.data, status=status.HTTP_200_OK)
 
-    @extend_schema(
-        request=UserUpdateInputSerializer,
-        responses={200: UserOutputSerializer},
-        description="Update username or email for a user.",
-    )
-    def patch(self, request, user_id: int):
-        user = user_get_by_id(user_id=user_id)
-
-        input_serializer = UserUpdateInputSerializer(
-            data=request.data, context={"request": request, "user": user}
-        )
-        input_serializer.is_valid(raise_exception=True)
-
-        user = user_update_basic_info(user=user, **input_serializer.validated_data)
-
-        output_serializer = UserOutputSerializer(user)
-        return Response(output_serializer.data, status=status.HTTP_200_OK)
-
 
 # ---------------------------------------------------------------------------
 # UserProfile endpoints
@@ -255,6 +169,7 @@ class UserProfileMeApi(APIView):
         },
         description="Retrieve the authenticated user's profile information.",
     )
+    @method_decorator(ensure_csrf_cookie)
     def get(self, request):
         profile = profile_get_by_user_id(user_id=request.user.id)
         output_serializer = UserProfileOutputSerializer(profile)
@@ -317,8 +232,29 @@ class UserProfileAvatarApi(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 # ---------------------------------------------------------------------------
-# User Login/Logout endpoints
+# User Register/Login/Logout endpoints
 # ---------------------------------------------------------------------------
+
+
+class UserRegisterApi(APIView):
+    permission_classes = [IsAnonymous]
+
+    @extend_schema(
+        request=UserRegisterInputSerializer,
+        responses={
+            201: UserOutputSerializer,
+            403: {"type": "object", "properties": {"detail": {"type": "string"}}},
+        },
+        description="Register a new user account.",
+    )
+    def post(self, request):
+        input_serializer = UserRegisterInputSerializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+
+        user = user_create(**input_serializer.validated_data)
+
+        output_serializer = UserOutputSerializer(user)
+        return Response(output_serializer.data, status=status.HTTP_201_CREATED)
 
 
 class UserLoginApi(APIView):
