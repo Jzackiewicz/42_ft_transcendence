@@ -204,7 +204,7 @@ CSRF_COOKIE_HTTPONLY = False
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",  # for swagger
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.SessionAuthentication",  # use django sessions to identify users
+        "account.authentication.ActionSessionAuthentication",  # use custom sessions to identify users
     ],
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",  # by default all users must be authenticated

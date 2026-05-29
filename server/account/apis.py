@@ -58,7 +58,7 @@ class UserMeApi(APIView):
         request=None,
         responses={
             200: UserOutputSerializer,
-            403: {"type": "object", "properties": {"detail": {"type": "string"}}},
+            401: {"type": "object", "properties": {"detail": {"type": "string"}}},
         },
         description="Retrieve the authenticated user's information.",
     )
@@ -264,7 +264,7 @@ class UserLoginApi(APIView):
         request=UserLoginInputSerializer,
         responses={
             200: UserOutputSerializer,
-            403: {"type": "object", "properties": {"detail": {"type": "string"}}},
+            401: {"type": "object", "properties": {"detail": {"type": "string"}}},
         },
         description="Login",
     )
