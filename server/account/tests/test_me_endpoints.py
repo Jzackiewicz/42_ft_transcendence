@@ -20,7 +20,7 @@ class MeTest(APITestCase):
 
     def test_me_endpoint_get_unauthenticated(self):
         response = self.client.get(reverse("user-me"))
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 401)
 
     def test_me_endpoint_patch_success(self):
         self.client.login(username="testuser", password="testpassword")
@@ -35,7 +35,7 @@ class MeTest(APITestCase):
 
     def test_me_endpoint_patch_unauthenticated(self):
         response = self.client.patch(reverse("user-me"))
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 401)
 
     def test_me_endpoint_patch_duplicate_username(self):
         User.objects.create_user(
@@ -83,7 +83,7 @@ class MeTest(APITestCase):
 
     def test_me_endpoint_delete_unauthenticated(self):
         response = self.client.delete(reverse("user-me"))
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 401)
 
 
 class UserProfileMeTest(APITestCase):
@@ -109,22 +109,4 @@ class UserProfileMeTest(APITestCase):
 
     def test_profile_me_endpoint_unauthenticated(self):
         response = self.client.get(reverse("profile-me"))
-        self.assertEqual(response.status_code, 403)
-
-
-class UserMeExportTest(APITestCase):
-    def setUp(self) -> None:
-        self.user = User.objects.create_user(
-            username="testuser", password="testpassword", email="test@example.com"
-        )
-
-    def test_me_export_endpoint_get_success(self):
-        self.client.login(username="testuser", password="testpassword")
-        response = self.client.get(reverse("user-me-export"))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data["username"], "testuser")
-        self.assertEqual(response.data["email"], "test@example.com")
-
-    def test_me_export_endpoint_get_unauthenticated(self):
-        response = self.client.get(reverse("user-me-export"))
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 401)

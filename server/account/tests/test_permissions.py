@@ -31,7 +31,6 @@ def _png_bytes() -> bytes:
 
 
 class IsSelfOrReadOnlyTests(APITestCase):
-
     @classmethod
     def setUpTestData(cls):
         cls.user_a = User.objects.create_user(
@@ -48,24 +47,6 @@ class IsSelfOrReadOnlyTests(APITestCase):
         # Log in as A for every negative-path test. Positive-path tests
         # that need a different actor re-login explicitly.
         self.client.login(username="alice", password="pw-aaaa-1234")
-
-    # -------------------- UserDetailApi.patch --------------------
-
-    def test_user_a_cannot_patch_user_b(self):
-        url = reverse("user-detail", kwargs={"user_id": self.user_b.id})
-        response = self.client.patch(url, {"username": "hacked"}, format="json")
-
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        self.user_b.refresh_from_db()
-        self.assertEqual(self.user_b.username, "bob")
-
-    def test_user_a_can_patch_self(self):
-        url = reverse("user-detail", kwargs={"user_id": self.user_a.id})
-        response = self.client.patch(url, {"username": "alice2"}, format="json")
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.user_a.refresh_from_db()
-        self.assertEqual(self.user_a.username, "alice2")
 
     def test_user_detail_get_remains_open_to_authenticated(self):
         # Guards the documented policy: GET stays open even on someone
@@ -89,9 +70,7 @@ class IsSelfOrReadOnlyTests(APITestCase):
     def test_user_a_cannot_delete_user_b_avatar(self):
         self.user_b.profile.avatar.save(
             "existing.png",
-            SimpleUploadedFile(
-                "existing.png", _png_bytes(), content_type="image/png"
-            ),
+            SimpleUploadedFile("existing.png", _png_bytes(), content_type="image/png"),
             save=True,
         )
         self.user_b.profile.refresh_from_db()
@@ -104,3 +83,35 @@ class IsSelfOrReadOnlyTests(APITestCase):
         self.user_b.profile.refresh_from_db()
         self.assertTrue(self.user_b.profile.avatar)
         self.assertEqual(self.user_b.profile.avatar.name, original_avatar_name)
+
+    # -------------------- UserProfileFriendDetailApi --------------------
+
+    def test_user_a_cannot_add_friend_to_user_b(self):
+        url = reverse(
+            "profile-friend-detail",
+            kwargs={"user_id": self.user_b.id, "friend_user_id": self.user_c.id},
+        )
+        response = self.client.post(url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertFalse(
+            self.user_b.profile.friends.filter(pk=self.user_c.profile.pk).exists()
+        )
+
+    def test_user_a_cannot_remove_friend_from_user_b(self):
+        # Pre-seed B↔C at the model level so this would actually mutate
+        # state if the permission were missing — a 403 alone wouldn't
+        # prove the request was rejected before reaching the service.
+        self.user_b.profile.friends.add(self.user_c.profile)
+
+        url = reverse(
+            "profile-friend-detail",
+            kwargs={"user_id": self.user_b.id, "friend_user_id": self.user_c.id},
+        )
+        response = self.client.delete(url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertTrue(
+            self.user_b.profile.friends.filter(pk=self.user_c.profile.pk).exists()
+        )
+

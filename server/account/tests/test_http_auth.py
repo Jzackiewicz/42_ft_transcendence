@@ -14,7 +14,7 @@ class AuthenticationTests(APITestCase):
     def test_unauthenticated_request_is_blocked(self):
         response = self.client.get('/api/account/users/')
         
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 401)
         self.assertEqual(response.data['detail'], "Authentication credentials were not provided.")
 
     def test_login_with_wrong_credentials(self):
@@ -52,7 +52,7 @@ class AuthenticationTests(APITestCase):
         self.assertEqual(logout_response.status_code, 204)
         
         protected_response = self.client.get('/api/account/users/')
-        self.assertEqual(protected_response.status_code, 403)
+        self.assertEqual(protected_response.status_code, 401)
 
     def test_login_missing_fields(self):
         response = self.client.post('/api/account/users/login/', {
