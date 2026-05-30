@@ -8,6 +8,7 @@ import { NominationView } from './SubviewsGamePage/NominationView/NominationView
 import { EvaluationView } from './SubviewsGamePage/EvaluationView/EvaluationView';
 import { GameOverView } from './SubviewsGamePage/GameOverView/GameOverView';
 import { PlayerTile } from './SubviewsGamePage/PlayerTile/PlayerTile';
+import { GameHUD } from './SubviewsGamePage/GameHUD/GameHUD';
 import './GamePage.css';
 
 export function GamePage() {
@@ -184,11 +185,13 @@ export function GamePage() {
 
                     {/* Active State View Component */}
                     <div className="game-active-area">
-                        {/* Question counter if the game has started */}
+                        {/* Question & Timer HUD if the game has started */}
                         {gameStarted && (
-                            <div className="game-question-counter">
-                                Question {gameState.question_asked_count} of {gameState.total_questions_count}
-                            </div>
+                            <GameHUD
+                                questionAskedCount={gameState.question_asked_count}
+                                totalQuestionsCount={gameState.total_questions_count}
+                                timeLeft={timeLeft}
+                            />
                         )}
                         {renderActiveView()}
                     </div>

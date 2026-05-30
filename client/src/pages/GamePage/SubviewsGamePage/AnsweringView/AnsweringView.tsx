@@ -35,12 +35,6 @@ export function AnsweringView({
                 </div>
             </div>
 
-            {timeLeft !== null && (
-                <div className={`answering-timer ${timeLeft <= 5 ? 'warning' : ''}`}>
-                    🕒 Time Left: {timeLeft}s
-                </div>
-            )}
-
             {isCurrentAnswering ? (
                 <div className="answering-active-prompt">
                     <div className="answering-prompt-label">
