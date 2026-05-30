@@ -79,27 +79,14 @@ export function useGamePage() {
     // Lobby settings states
     const [questionCount, setQuestionCount] = useState<number>(20);
     const [answerTimeLimitMs, setAnswerTimeLimitMs] = useState<number>(20000);
-    const [addedBots, setAddedBots] = useState<Player[]>([]);
-    const [aiQuestionsRequested, setAiQuestionsRequested] = useState<boolean>(false);
 
-    // Derive activeGameState that merges customized settings and added bots
+    // Derive activeGameState that merges customized settings
     const activeGameState: GameSnapshot | null = gameState ? {
         ...gameState,
         answer_time_limit_ms: answerTimeLimitMs,
         total_questions_count: questionCount,
-        players: [
-            ...gameState.players.map(p => ({ ...p, player_type: 'human' as const })),
-            ...addedBots
-        ]
+        players: gameState.players.map(p => ({ ...p, player_type: p.player_type || 'human' }))
     } : null;
-
-    // Reset added bots and settings when the game actually starts
-    useEffect(() => {
-        if (gameState && gameState.current_status !== GameStatus.LOBBY) {
-            setAddedBots([]);
-            setAiQuestionsRequested(false);
-        }
-    }, [gameState?.current_status]);
 
     // Mock evaluation states & refs
     const submittedAnswerRef = useRef<string | null>(null);
@@ -315,39 +302,15 @@ export function useGamePage() {
     };
 
     const addAiBot = () => {
-        if (!activeGameState) return;
-        const totalPlayers = activeGameState.players.length;
-        if (totalPlayers >= 5) return;
-
-        // Find the lowest unoccupied seat number from 1 to 5
-        const activeSeats = activeGameState.players.map(p => p.seat_number);
-        let seatNumber = 1;
-        while (activeSeats.includes(seatNumber)) {
-            seatNumber++;
-        }
-
-        const newBot: Player = {
-            id: 9000 + addedBots.length + 1,
-            display_name: `🤖 AI Bot ${addedBots.length + 1}`,
-            seat_number: seatNumber,
-            lives: 3,
-            points: 0,
-            answered_count: 0,
-            is_alive: true,
-            player_type: 'bot',
-            total_answer_time_ms: 0
-        };
-
-        setAddedBots(prev => [...prev, newBot]);
+        // No-op for now (backend integration in separate issue #84)
     };
 
     const removeAiBot = () => {
-        if (addedBots.length === 0) return;
-        setAddedBots(prev => prev.slice(0, -1));
+        // No-op for now (backend integration in separate issue #84)
     };
 
     const requestAiQuestions = () => {
-        setAiQuestionsRequested(true);
+        // No-op for now (backend integration in separate issue #82)
     };
 
     return {
@@ -377,8 +340,8 @@ export function useGamePage() {
         sortedPlayers,
         questionCount,
         answerTimeLimitMs,
-        addedBots,
-        aiQuestionsRequested,
+        addedBots: [] as Player[],
+        aiQuestionsRequested: false,
         updateSettings,
         addAiBot,
         removeAiBot,
