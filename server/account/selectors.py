@@ -48,6 +48,3 @@ def profile_list() -> QuerySet:
 def profile_list_online() -> QuerySet:
     return UserProfile.objects.filter(is_online=True)
 
-
-def profile_list_friends(*, profile: UserProfile) -> QuerySet:
-    return profile.friends.all()

@@ -3,12 +3,11 @@ Negative-path tests for the IsSelfOrReadOnly permission.
 
 These tests must fail against the pre-fix code (where account/ endpoints
 only required IsAuthenticated) and pass once IsSelfOrReadOnly is wired up
-to UserDetailApi.patch, UserProfileAvatarApi, and UserProfileFriendDetailApi.
+to UserDetailApi.patch and UserProfileAvatarApi.
 
-User A is the actor in every negative case; users B and C are passive
-targets. We assert both the HTTP status and the underlying DB state — a
-buggy implementation that returned 403 but still mutated would slip past
-a status-only check.
+The friend-permission cases lived against a UserProfile.friends M2M that
+was removed (the relationship now lives in social.Friendship). Coverage
+for friend boundaries lives in social/tests/test_friends.py.
 """
 
 from io import BytesIO
@@ -105,34 +104,3 @@ class IsSelfOrReadOnlyTests(APITestCase):
         self.user_b.profile.refresh_from_db()
         self.assertTrue(self.user_b.profile.avatar)
         self.assertEqual(self.user_b.profile.avatar.name, original_avatar_name)
-
-    # -------------------- UserProfileFriendDetailApi --------------------
-
-    def test_user_a_cannot_add_friend_to_user_b(self):
-        url = reverse(
-            "profile-friend-detail",
-            kwargs={"user_id": self.user_b.id, "friend_user_id": self.user_c.id},
-        )
-        response = self.client.post(url)
-
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertFalse(
-            self.user_b.profile.friends.filter(pk=self.user_c.profile.pk).exists()
-        )
-
-    def test_user_a_cannot_remove_friend_from_user_b(self):
-        # Pre-seed B↔C at the model level so this would actually mutate
-        # state if the permission were missing — a 403 alone wouldn't
-        # prove the request was rejected before reaching the service.
-        self.user_b.profile.friends.add(self.user_c.profile)
-
-        url = reverse(
-            "profile-friend-detail",
-            kwargs={"user_id": self.user_b.id, "friend_user_id": self.user_c.id},
-        )
-        response = self.client.delete(url)
-
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertTrue(
-            self.user_b.profile.friends.filter(pk=self.user_c.profile.pk).exists()
-        )
