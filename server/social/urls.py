@@ -18,5 +18,45 @@ from django.urls import path
 from social import apis
 
 urlpatterns = [
+    # chat
     path('chat/<str:room_name>/history/', apis.ChatHistoryApi.as_view(), name='chat_history'),
+    # friend requests
+    path(
+        "friend-requests/",
+        apis.FriendRequestCollectionApi.as_view(),
+        name="friend-request-collection",
+    ),
+    path(
+        "friend-requests/incoming/",
+        apis.FriendRequestIncomingApi.as_view(),
+        name="friend-request-incoming",
+    ),
+    path(
+        "friend-requests/outgoing/",
+        apis.FriendRequestOutgoingApi.as_view(),
+        name="friend-request-outgoing",
+    ),
+    path(
+        "friend-requests/<int:request_id>/",
+        apis.FriendRequestDetailApi.as_view(),
+        name="friend-request-detail",
+    ),
+    #friends
+    path("friends/", apis.FriendListApi.as_view(), name="friend-list"),
+    path(
+        "friends/search/",
+        apis.FriendSearchApi.as_view(),
+        name="friend-search",
+    ),
+    path(
+        "friends/<int:user_id>/",
+        apis.FriendDetailApi.as_view(),
+        name="friend-detail",
+    ),
+    # relationships
+    path(
+        "relationship/<int:user_id>/",
+        apis.RelationshipStatusApi.as_view(),
+        name="relationship-status",
+    ),
 ]
