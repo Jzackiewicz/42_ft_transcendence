@@ -89,8 +89,6 @@ export function useGamePage() {
     } : null;
 
     // Mock evaluation states & refs
-    const submittedAnswerRef = useRef<string | null>(null);
-    const isSubmittingRef = useRef<boolean>(false);
     const gameStateRef = useRef<GameSnapshot | null>(null);
     const mockEvalTimeoutRef = useRef<any>(null);
 
@@ -264,8 +262,6 @@ export function useGamePage() {
     };
 
     const submitAnswer = (answer: string) => {
-        submittedAnswerRef.current = answer;
-        isSubmittingRef.current = true;
         sendAction('submit_answer', { answer });
     };
 
@@ -340,7 +336,6 @@ export function useGamePage() {
         sortedPlayers,
         questionCount,
         answerTimeLimitMs,
-        addedBots: [] as Player[],
         aiQuestionsRequested: false,
         updateSettings,
         addAiBot,

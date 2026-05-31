@@ -9,7 +9,6 @@ interface AnsweringViewProps {
     answerText: string;
     setAnswerText: (val: string) => void;
     onSubmitAnswer: (e: React.FormEvent) => void;
-    timeLeft: number | null;
 }
 
 export function AnsweringView({
@@ -19,8 +18,7 @@ export function AnsweringView({
     activePlayerName,
     answerText,
     setAnswerText,
-    onSubmitAnswer,
-    timeLeft
+    onSubmitAnswer
 }: AnsweringViewProps) {
     return (
         <div className="answering-view-container">

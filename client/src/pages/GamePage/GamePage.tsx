@@ -93,7 +93,6 @@ export function GamePage() {
                         answerText={answerText}
                         setAnswerText={setAnswerText}
                         onSubmitAnswer={handleAnswerSubmit}
-                        timeLeft={timeLeft}
                     />
                 );
             case GameStatus.NOMINATION:
