@@ -136,8 +136,8 @@ normalized(player_answer) == normalized(question.correct_answer)
 
 ### Scoring
 
-- Correct answer gives **10 points**.
-- Correct answer by the **nominated player** gives **20 points**.
+- Correct answer when **nominated by another player** (or selected as the starting/fallback player) gives **10 points**.
+- Correct answer when **self-nominated** gives **20 points**.
 - Wrong answer gives **0 points**.
 - Timeout gives **0 points**.
 - Each evaluated attempt increments `answered_count`.

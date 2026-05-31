@@ -112,7 +112,13 @@ dev-migrate: dev-up
 	@echo "Running migrations locally (Dev)..."
 	cd server && DB_HOST=127.0.0.1 DB_PORT=$(DEV_DB_EXPOSED_PORT) REDIS_HOST=127.0.0.1 REDIS_PORT=$(DEV_REDIS_EXPOSED_PORT) $(VENV_PYTHON) manage.py migrate
 
-# Stop dev stack
+# Seed questions locally
+dev-seed: dev-up
+	@echo "Seeding questions locally (Dev)..."
+	cd server && DB_HOST=127.0.0.1 DB_PORT=$(DEV_DB_EXPOSED_PORT) REDIS_HOST=127.0.0.1 REDIS_PORT=$(DEV_REDIS_EXPOSED_PORT) $(VENV_PYTHON) manage.py seed-questions
+
+
+# Stop only DB and Redis
 dev-down:
 	@echo "Stopping development stack..."
 	DB_EXPOSED_PORT=$(DEV_DB_EXPOSED_PORT) \
@@ -199,4 +205,4 @@ fclean: check_fclean clean dev-clean
 
 re: clean up
 
-.PHONY: all up down restart re clean check_clean check_fclean logs dev-logs ps fclean migrate dev-up dev-migrate dev-down dev-clean dev-runserver dev-test dev-createsuperuser dev-shell dev-venv client-install dev-client client-build dev-proxy
+.PHONY: all up down restart re clean check_clean check_fclean logs dev-logs ps fclean migrate dev-up dev-migrate dev-down dev-clean dev-runserver dev-test dev-createsuperuser dev-shell dev-venv client-install dev-client client-build dev-proxy dev-seed

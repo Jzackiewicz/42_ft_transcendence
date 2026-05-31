@@ -215,10 +215,11 @@ class GameServiceTests(TestCase):
 		self.assertEqual(actor.answered_count, 1)
 		self.assertIsNone(self.session.current_attempt)
 
-	def test_evaluate_correct_answer_gives_20_points_if_player_was_nominated(self):
+	def test_evaluate_correct_answer_gives_20_points_if_player_self_nominated(self):
 		self.session.current_status = GameSession.Status.ANSWERING
 		self.session.current_player = self.p2
 		self.session.last_nominated_player = self.p2
+		self.session.last_correct_player = self.p2
 		self.session.save()
 
 		GameService(self.session)._start_answering_turn()
@@ -230,6 +231,23 @@ class GameServiceTests(TestCase):
 		self.p2.refresh_from_db()
 
 		self.assertEqual(self.p2.points, 20)
+
+	def test_evaluate_correct_answer_gives_10_points_if_nominated_by_other(self):
+		self.session.current_status = GameSession.Status.ANSWERING
+		self.session.current_player = self.p2
+		self.session.last_nominated_player = self.p2
+		self.session.last_correct_player = self.p1
+		self.session.save()
+
+		GameService(self.session)._start_answering_turn()
+		self.session.refresh_from_db()
+
+		GameService(self.session).submit_player_answer(actor=self.p2, answer="4")
+		self.session.refresh_from_db()
+
+		self.p2.refresh_from_db()
+
+		self.assertEqual(self.p2.points, 10)
 
 	def test_wrong_answer_without_last_correct_player_fallbacks_to_next_alive_player_and_starts_new_attempt(self):
 		self.session.current_status = GameSession.Status.ANSWERING
@@ -353,8 +371,6 @@ class GameServiceTests(TestCase):
 		self.p3.total_answer_time_ms = 1000
 		self.p3.save()
 
-		self.session.current_status = GameSession.Status.GAME_OVER
-		self.session.question_asked_count = self.session.session_questions.count()
 		self.session.current_status = GameSession.Status.ANSWERING
 		self.session.current_player = self.p3
 		self.session.question_asked_count = self.session.session_questions.count() - 1
@@ -389,8 +405,6 @@ class GameServiceTests(TestCase):
 		self.p3.total_answer_time_ms = 1000
 		self.p3.save()
 
-		self.session.current_status = GameSession.Status.GAME_OVER
-		self.session.question_asked_count = self.session.session_questions.count()
 		self.session.current_status = GameSession.Status.ANSWERING
 		self.session.current_player = self.p3
 		self.session.question_asked_count = self.session.session_questions.count() - 1
@@ -672,6 +686,7 @@ class GameServiceTests(TestCase):
 		self.p1.refresh_from_db()
 		
 		self.assertEqual(self.p1.lives, 3)
+
 	def test_wrong_answer_fallbacks_and_skips_dead_player_in_queue(self):
 		self.p2.lives = 0
 		self.p2.save()
@@ -723,3 +738,54 @@ class GameServiceTests(TestCase):
 
 		self.assertEqual(self.session.current_status, GameSession.Status.ANSWERING)
 		self.assertEqual(self.session.current_player_id, self.p3.id)
+
+	def test_nominate_requires_target_player_id(self):
+		self.session.current_status = GameSession.Status.NOMINATION
+		self.session.last_correct_player = self.p1
+		self.session.current_player = self.p1
+		self.session.save()
+
+		with self.assertRaises(ValidationError):
+			GameService(self.session).nominate_player(
+				actor=self.p1,
+				target_player_id=None,
+			)
+
+	def test_nominate_self(self):
+		self.session.current_status = GameSession.Status.NOMINATION
+		self.session.last_correct_player = self.p1
+		self.session.current_player = self.p1
+		self.session.save()
+
+		GameService(self.session).nominate_player(
+			actor=self.p1,
+			target_player_id=self.p1.id,
+		)
+		self.session.refresh_from_db()
+
+		self.assertEqual(self.session.current_status, GameSession.Status.ANSWERING)
+		self.assertEqual(self.session.current_player_id, self.p1.id)
+
+	def test_disconnect_in_evaluation_does_not_break_flow(self):
+		self.session.current_status = GameSession.Status.ANSWERING
+		self.session.current_player = self.p1
+		self.session.save()
+
+		GameService(self.session)._start_answering_turn()
+		self.session.refresh_from_db()
+
+		GameService(self.session).submit_player_answer(actor=self.p1, answer="4")
+		self.session.refresh_from_db()
+
+		self.assertEqual(self.session.current_status, GameSession.Status.NOMINATION)
+
+		GameService(self.session).disconnect_player(self.p3)
+		self.session.refresh_from_db()
+		self.p3.refresh_from_db()
+
+		self.assertEqual(self.p3.lives, 0)
+		self.assertEqual(self.session.current_status, GameSession.Status.NOMINATION)
+
+	def test_start_game_requires_actor(self):
+		with self.assertRaises(ValidationError):
+			GameService(self.session).start_game_session(actor=None)

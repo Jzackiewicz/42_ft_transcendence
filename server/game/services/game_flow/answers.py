@@ -22,7 +22,7 @@ def check_answer_correctness(attempt: AnswerAttempt) -> bool:
 
 def apply_correct_answer_effects(session: GameSession,attempt: AnswerAttempt) -> None:
 	player = attempt.player
-	if session.last_nominated_player_id == player.id:
+	if session.last_correct_player_id == player.id:
 		player.points += 20
 	else:
 		player.points += 10
