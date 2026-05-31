@@ -24,7 +24,6 @@ from .selectors import (
     user_list,
     profile_get_by_user_id,
     profile_list,
-    profile_list_friends,
 )
 from .serializers import (
     UserRegisterInputSerializer,
@@ -32,7 +31,6 @@ from .serializers import (
     UserUpdateInputSerializer,
     UserProfileOutputSerializer,
     UserProfileAvatarInputSerializer,
-    UserProfileFriendOutputSerializer,
     UserLoginInputSerializer,
     UserReauthSerializer,
 )
@@ -42,8 +40,6 @@ from .services import (
     user_soft_delete,
     profile_update_avatar,
     profile_clear_avatar,
-    profile_add_friend,
-    profile_remove_friend,
 )
 
 
@@ -319,46 +315,6 @@ class UserProfileAvatarApi(APIView):
         profile = profile_get_by_user_id(user_id=user_id)
         profile_clear_avatar(profile=profile)
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class UserProfileFriendListApi(APIView):
-    @extend_schema(
-        request=None,
-        responses={200: UserProfileFriendOutputSerializer(many=True)},
-        description="List friends of a user profile.",
-    )
-    def get(self, request, user_id: int):
-        profile = profile_get_by_user_id(user_id=user_id)
-        friends = profile_list_friends(profile=profile)
-        output_serializer = UserProfileFriendOutputSerializer(friends, many=True)
-        return Response(output_serializer.data, status=status.HTTP_200_OK)
-
-
-class UserProfileFriendDetailApi(APIView):
-    permission_classes = [IsSelfOrReadOnly]
-
-    @extend_schema(
-        request=None,
-        responses={204: None},
-        description="Add a user as a friend.",
-    )
-    def post(self, request, user_id: int, friend_user_id: int):
-        profile = profile_get_by_user_id(user_id=user_id)
-        friend_profile = profile_get_by_user_id(user_id=friend_user_id)
-        profile_add_friend(profile=profile, friend_profile=friend_profile)
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-    @extend_schema(
-        request=None,
-        responses={204: None},
-        description="Remove a user from friends.",
-    )
-    def delete(self, request, user_id: int, friend_user_id: int):
-        profile = profile_get_by_user_id(user_id=user_id)
-        friend_profile = profile_get_by_user_id(user_id=friend_user_id)
-        profile_remove_friend(profile=profile, friend_profile=friend_profile)
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
 
 # ---------------------------------------------------------------------------
 # User Login/Logout endpoints

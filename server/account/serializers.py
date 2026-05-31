@@ -61,7 +61,7 @@ class UserUpdateInputSerializer(serializers.Serializer):
 # UserProfile serializers
 # ---------------------------------------------------------------------------
 
-
+# me
 class UserProfileOutputSerializer(serializers.ModelSerializer):
     user = UserOutputSerializer(read_only=True)
 
@@ -70,18 +70,20 @@ class UserProfileOutputSerializer(serializers.ModelSerializer):
         fields = ["id", "user", "avatar", "is_online"]
 
 
-class UserProfileAvatarInputSerializer(serializers.Serializer):
-    avatar = serializers.ImageField()
-
-
-class UserProfileFriendOutputSerializer(serializers.ModelSerializer):
-    """Lightweight representation used when listing a profile's friends."""
-
-    user = UserOutputSerializer(read_only=True)
+# expose to other users
+class PublicUserSerializer(serializers.ModelSerializer):
+    avatar = serializers.SerializerMethodField()
 
     class Meta:
-        model = UserProfile
-        fields = ["id", "user", "avatar", "is_online"]
+        model = User
+        fields = ["id", "username", "avatar"]
+
+    def get_avatar(self, user):
+        return user.profile.avatar_url(self.context.get("request"))
+
+
+class UserProfileAvatarInputSerializer(serializers.Serializer):
+    avatar = serializers.ImageField()
 
 
 # ---------------------------------------------------------------------------
