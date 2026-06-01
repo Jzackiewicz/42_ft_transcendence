@@ -69,3 +69,7 @@ def generate_extra_questions(lobby_id, n_questions_to_generate):
 	print(data)
 	return data
 
+# remove gemini as a magic number, have it defined in .env
+# create a fake lobby filled with questions, answers and categories in order to inject into this function for testing
+# think about how emulate it, perhaps you need to populate the database with a lobby
+# call POST from SWAGGER while using this emulated lobby
