@@ -80,11 +80,3 @@ def profile_set_online_status(*, profile: UserProfile, is_online: bool) -> UserP
     return profile
 
 
-def profile_add_friend(*, profile: UserProfile, friend_profile: UserProfile) -> None:
-    if profile == friend_profile:
-        raise ValueError("A user cannot add themselves as a friend.")
-    profile.friends.add(friend_profile)
-
-
-def profile_remove_friend(*, profile: UserProfile, friend_profile: UserProfile) -> None:
-    profile.friends.remove(friend_profile)
