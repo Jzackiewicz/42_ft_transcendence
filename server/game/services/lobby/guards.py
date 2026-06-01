@@ -23,3 +23,14 @@ def check_can_destroy_room(*, session: GameSession, user) -> None:
 		raise ValidationError("Only the host can destroy the room.")
 	if session.current_status != GameSession.Status.LOBBY:
 		raise ValidationError("Cannot destroy a game that is already in progress.")
+
+
+def check_can_generate_extra_questions(*, session: GameSession, user) -> None:
+	if not user.is_authenticated:
+		raise ValidationError("User must be authenticated to generate extra questions.")
+	if not session:
+		raise Exception("Room not found")
+	if session.host_player is None or session.host_player.user != user:
+		raise ValidationError("Only the host can generate extra questions.")
+	if session.current_status != GameSession.Status.LOBBY:
+		raise ValidationError("Cannot generate extra questions once the game has started.")
