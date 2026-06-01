@@ -3,29 +3,44 @@ import { Player } from '../../useGamePage';
 import './GameOverView.css';
 
 interface GameOverViewProps {
+    winnerId: number | null;
     winnerName: string;
     endReason: string;
     players: Player[];
     onReturnToHome: () => void;
 }
 
-export function GameOverView({ winnerName, endReason, players, onReturnToHome }: GameOverViewProps) {
+export function GameOverView({ winnerId, winnerName, endReason, players, onReturnToHome }: GameOverViewProps) {
     const sortedLeaderboard = [...players].sort((a, b) => {
-        // 1. points DESC (highest points first)
+        // 0. The official winner always comes first
+        if (winnerId !== null) {
+            if (a.id === winnerId) return -1;
+            if (b.id === winnerId) return 1;
+        }
+
+        // 1. Survival status: alive players (is_alive = true) first
+        if (b.is_alive !== a.is_alive) {
+            return b.is_alive ? 1 : -1;
+        }
+
+        // 2. points DESC (highest points first)
         if (b.points !== a.points) {
             return b.points - a.points;
         }
-        // 2. answered_count DESC (most answered questions first)
+
+        // 3. answered_count DESC (most answered questions first)
         if (b.answered_count !== a.answered_count) {
             return b.answered_count - a.answered_count;
         }
-        // 3. total_answer_time_ms ASC (fastest total response time first)
+
+        // 4. total_answer_time_ms ASC (fastest total response time first)
         const aTime = a.total_answer_time_ms ?? 0;
         const bTime = b.total_answer_time_ms ?? 0;
         if (aTime !== bTime) {
             return aTime - bTime;
         }
-        // 4. seat_number ASC (lowest seat number first)
+
+        // 5. seat_number ASC (lowest seat number first)
         return a.seat_number - b.seat_number;
     });
 

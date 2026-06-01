@@ -123,6 +123,7 @@ export function GamePage() {
             case GameStatus.GAME_OVER:
                 return (
                     <GameOverView 
+                        winnerId={gameState.winner}
                         winnerName={gameState.players.find(p => p.id === gameState.winner)?.display_name || ''}
                         endReason={gameState.end_reason || ''}
                         players={gameState.players}
