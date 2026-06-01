@@ -13,11 +13,13 @@ for friend boundaries lives in social/tests/test_friends.py.
 from io import BytesIO
 
 from PIL import Image
+from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
-from ..models import User
+
+User = get_user_model()
 
 
 def _png_bytes() -> bytes:
@@ -112,3 +114,4 @@ class IsSelfOrReadOnlyTests(APITestCase):
         self.assertTrue(
             self.user_b.profile.friends.filter(pk=self.user_c.profile.pk).exists()
         )
+

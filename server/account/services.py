@@ -1,10 +1,13 @@
 from datetime import datetime
-from .models import UserProfile, User
+from django.contrib.auth import get_user_model
+from .models import UserProfile
 
 # ---------------------------------------------------------------------------
 # User services
 # CRUD
 # ---------------------------------------------------------------------------
+
+User = get_user_model()
 
 
 def user_create(*, username: str, email: str, password: str) -> User:

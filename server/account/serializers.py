@@ -1,12 +1,15 @@
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-from .models import UserProfile, User
+from .models import UserProfile
 
 # ---------------------------------------------------------------------------
 # User serializers
 # Serializers validate data only; all creation/mutation logic lives in
 # services.py and is never embedded here.
 # ---------------------------------------------------------------------------
+
+User = get_user_model()
 
 
 class UserRegisterInputSerializer(serializers.Serializer):

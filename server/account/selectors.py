@@ -1,13 +1,16 @@
 from datetime import datetime
 
+from django.contrib.auth import get_user_model
 from django.db.models import QuerySet
 from django.shortcuts import get_object_or_404
 
-from .models import UserProfile, User
+from .models import UserProfile
 
 # ---------------------------------------------------------------------------
 # User selectors
 # ---------------------------------------------------------------------------
+
+User = get_user_model()
 
 
 def user_get_by_id(*, user_id: int) -> User:
@@ -25,7 +28,6 @@ def user_list() -> QuerySet:
 # ---------------------------------------------------------------------------
 # UserProfile selectors
 # ---------------------------------------------------------------------------
-
 
 def profile_get_by_id(*, profile_id: int) -> UserProfile:
     return get_object_or_404(UserProfile, id=profile_id)
