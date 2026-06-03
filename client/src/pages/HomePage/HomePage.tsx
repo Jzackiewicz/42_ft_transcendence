@@ -6,8 +6,15 @@ import StatsView from './SubviewsHomePage/StatsView/StatsView'
 import ChatContainer from './SubviewsHomePage/ChatContainer/ChatContainer'
 import './HomePage.css'
 
-function HomePage() {
-    const { user, handleLogout } = useHomePage()
+export function HomePage() {
+    const {
+        user,
+        handleLogout,
+        handleCreateLobby,
+        handleJoinLobby,
+        joinUuid, setJoinUuid,
+        showJoinModal, setShowJoinModal,
+    } = useHomePage()
 
     return (
         <div className="home-page-container">
@@ -17,7 +24,8 @@ function HomePage() {
             <nav className="home-nav">
                 <div className="home-nav-logo"><span className="logo-quiz">QUIZ</span>SENDENCE</div>
                 <div className="home-nav-space" />
-                <button className="home-nav-play">▶ Play Now</button>
+                <button className="home-nav-join" onClick={() => setShowJoinModal(true)}>⟶ Join Game</button>
+                <button className="home-nav-play" onClick={handleCreateLobby}>▶ Play Now</button>
             </nav>
 
             {/* ── Main ── */}
@@ -44,6 +52,27 @@ function HomePage() {
                 <span className="home-footer-sep" />
                 <a className="home-footer-link" href="/terms-of-use">Terms of Use</a>
             </footer>
+
+            {/* ── Join modal ── */}
+            {showJoinModal && (
+                <div className="join-modal-overlay">
+                    <div className="join-modal">
+                        <h3 className="join-modal-title">Join Lobby</h3>
+                        <input
+                            className="join-modal-input"
+                            type="text"
+                            placeholder="Paste lobby UUID…"
+                            value={joinUuid}
+                            onChange={e => setJoinUuid(e.target.value)}
+                            onKeyDown={e => e.key === 'Enter' && handleJoinLobby()}
+                        />
+                        <div className="join-modal-actions">
+                            <button className="home-nav-play" onClick={handleJoinLobby}>Join</button>
+                            <button className="join-modal-cancel" onClick={() => setShowJoinModal(false)}>Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

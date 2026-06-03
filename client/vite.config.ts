@@ -6,27 +6,26 @@ export default defineConfig({
   server: {
     proxy: {
       '/account': {
-        target: 'https://localhost:8443',
+        target: 'http://127.0.0.1:8000',
         secure: false,
         changeOrigin: true,
       },
       '/game': {
-        target: 'https://localhost:8443',
+        target: 'http://127.0.0.1:8000',
         secure: false,
         changeOrigin: true,
       },
       '/social': {
-        target: 'https://localhost:8443',
+        target: 'http://127.0.0.1:8000',
         secure: false,
         changeOrigin: true,
       },
       '/ws': {
-        target: 'wss://localhost:8443',
+        target: 'ws://127.0.0.1:8000',
         ws: true,
         secure: false,
         changeOrigin: true,
       },
     }
-
   }
 })

@@ -304,6 +304,420 @@ class GameConsumerTests(TransactionTestCase):
 					evaluate_timeout_seen = True
 					break
 
-		self.assertFalse(evaluate_timeout_seen, 'Received evaluate_timeout event despite answering early! Task not cancelled.')
+		self.assertFalse(evaluate_timeout_seen, 'Received stale evaluate_timeout event.')
 		await comm1.disconnect()
 		await comm2.disconnect()
+
+	async def test_last_player_disconnect_deletes_session_gracefully(self):
+		await database_sync_to_async(self.player2.delete)()
+		headers = [(b'cookie', f'sessionid={self.cookie}'.encode('ascii'))]
+		communicator = WebsocketCommunicator(
+			self.application, 
+			f"/ws/game/{self.session.session_uuid}/",
+			headers=headers
+		)
+		connected, _ = await communicator.connect()
+		self.assertTrue(connected)
+		await communicator.receive_json_from()
+
+		await communicator.disconnect()
+
+		session_exists = await database_sync_to_async(
+			GameSession.objects.filter(id=self.session.id).exists
+		)()
+		self.assertFalse(session_exists)
+
+	async def test_websocket_nomination_flow(self):
+		q2 = await database_sync_to_async(Question.objects.create)(
+			question_text="Test2?", correct_answer="no"
+		)
+		await database_sync_to_async(SessionQuestion.objects.create)(
+			session=self.session, question=q2, order_index=1
+		)
+
+		headers1 = [(b'cookie', f'sessionid={self.cookie}'.encode('ascii'))]
+		comm1 = WebsocketCommunicator(
+			self.application, f"/ws/game/{self.session.session_uuid}/", headers=headers1
+		)
+		await comm1.connect()
+		await comm1.receive_json_from()
+		
+		headers2 = [(b'cookie', f'sessionid={self.cookie2}'.encode('ascii'))]
+		comm2 = WebsocketCommunicator(
+			self.application, f"/ws/game/{self.session.session_uuid}/", headers=headers2
+		)
+		await comm2.connect()
+		await comm1.receive_json_from()
+		await comm2.receive_json_from()
+
+		await comm1.send_json_to({"action": GameAction.START_GAME})
+		res_start = await comm1.receive_json_from()
+		await comm2.receive_json_from()
+		
+		current_player_id = res_start["snapshot"]["current_player"]
+		current_comm = comm1 if current_player_id == self.player.id else comm2
+		other_comm = comm2 if current_player_id == self.player.id else comm1
+		other_player_id = self.player2.id if current_player_id == self.player.id else self.player.id
+		
+		# Submit correct answer to force a nomination turn
+		await current_comm.send_json_to({
+			"action": GameAction.SUBMIT_ANSWER,
+			"payload": {"answer": "yes"}
+		})
+		res_eval = await current_comm.receive_json_from()
+		await other_comm.receive_json_from()
+		
+		self.assertEqual(res_eval["snapshot"]["current_status"], GameSession.Status.NOMINATION)
+		
+		# Nominate player
+		await current_comm.send_json_to({
+			"action": GameAction.NOMINATE_PLAYER,
+			"payload": {"target_player_id": other_player_id}
+		})
+		
+		res_nom = await current_comm.receive_json_from()
+		await other_comm.receive_json_from()
+		
+		self.assertEqual(res_nom["type"], "game_state_update")
+		self.assertEqual(res_nom["action"], GameAction.NOMINATE_PLAYER)
+		self.assertEqual(res_nom["snapshot"]["current_status"], GameSession.Status.ANSWERING)
+		self.assertEqual(res_nom["snapshot"]["current_player"], other_player_id)
+		
+		await comm1.disconnect()
+		await comm2.disconnect()
+
+	async def test_websocket_reconnection_state_sync(self):
+		headers1 = [(b'cookie', f'sessionid={self.cookie}'.encode('ascii'))]
+		comm1 = WebsocketCommunicator(
+			self.application, f"/ws/game/{self.session.session_uuid}/", headers=headers1
+		)
+		await comm1.connect()
+		await comm1.receive_json_from()
+		
+		headers2 = [(b'cookie', f'sessionid={self.cookie2}'.encode('ascii'))]
+		comm2 = WebsocketCommunicator(
+			self.application, f"/ws/game/{self.session.session_uuid}/", headers=headers2
+		)
+		await comm2.connect()
+		await comm1.receive_json_from()
+		await comm2.receive_json_from()
+
+		# Start game so disconnect doesn't delete player
+		await comm1.send_json_to({"action": GameAction.START_GAME})
+		await comm1.receive_json_from()
+		await comm2.receive_json_from()
+
+		await comm1.disconnect()
+		
+		# Reconnect the same user and receive state immediately
+		comm1_new = WebsocketCommunicator(
+			self.application, f"/ws/game/{self.session.session_uuid}/", headers=headers1
+		)
+		connected, _ = await comm1_new.connect()
+		self.assertTrue(connected)
+		res = await comm1_new.receive_json_from()
+		self.assertEqual(res["type"], "game_state_update")
+		self.assertIn("snapshot", res)
+		
+		await comm1_new.disconnect()
+		await comm2.disconnect()
+
+	async def test_non_host_cannot_start_game(self):
+		headers = [(b'cookie', f'sessionid={self.cookie2}'.encode('ascii'))]
+		communicator = WebsocketCommunicator(
+			self.application, 
+			f"/ws/game/{self.session.session_uuid}/",
+			headers=headers
+		)
+		connected, _ = await communicator.connect()
+		self.assertTrue(connected)
+		await communicator.receive_json_from()
+
+		await communicator.send_json_to({
+			"action": GameAction.START_GAME,
+			"payload": {}
+		})
+		response = await communicator.receive_json_from()
+		self.assertEqual(response["type"], "error")
+		self.assertIn("Only the host can start the game", response["message"])
+		await communicator.disconnect()
+
+	async def test_submit_answer_out_of_turn(self):
+		headers1 = [(b'cookie', f'sessionid={self.cookie}'.encode('ascii'))]
+		comm1 = WebsocketCommunicator(
+			self.application, f"/ws/game/{self.session.session_uuid}/", headers=headers1
+		)
+		await comm1.connect()
+		await comm1.receive_json_from()
+		
+		headers2 = [(b'cookie', f'sessionid={self.cookie2}'.encode('ascii'))]
+		comm2 = WebsocketCommunicator(
+			self.application, f"/ws/game/{self.session.session_uuid}/", headers=headers2
+		)
+		await comm2.connect()
+		await comm1.receive_json_from()
+		await comm2.receive_json_from()
+
+		await comm1.send_json_to({"action": GameAction.START_GAME})
+		res_start = await comm1.receive_json_from()
+		await comm2.receive_json_from()
+		
+		current_player_id = res_start["snapshot"]["current_player"]
+		other_comm = comm2 if current_player_id == self.player.id else comm1
+		
+		await other_comm.send_json_to({
+			"action": GameAction.SUBMIT_ANSWER,
+			"payload": {"answer": "yes"}
+		})
+		response = await other_comm.receive_json_from()
+		self.assertEqual(response["type"], "error")
+		self.assertIn("Only current player can submit answer", response["message"])
+		
+		await comm1.disconnect()
+		await comm2.disconnect()
+
+	async def test_nominate_out_of_turn(self):
+		q2 = await database_sync_to_async(Question.objects.create)(
+			question_text="Test2?", correct_answer="no"
+		)
+		await database_sync_to_async(SessionQuestion.objects.create)(
+			session=self.session, question=q2, order_index=1
+		)
+
+		headers1 = [(b'cookie', f'sessionid={self.cookie}'.encode('ascii'))]
+		comm1 = WebsocketCommunicator(
+			self.application, f"/ws/game/{self.session.session_uuid}/", headers=headers1
+		)
+		await comm1.connect()
+		await comm1.receive_json_from()
+		
+		headers2 = [(b'cookie', f'sessionid={self.cookie2}'.encode('ascii'))]
+		comm2 = WebsocketCommunicator(
+			self.application, f"/ws/game/{self.session.session_uuid}/", headers=headers2
+		)
+		await comm2.connect()
+		await comm1.receive_json_from()
+		await comm2.receive_json_from()
+
+		await comm1.send_json_to({"action": GameAction.START_GAME})
+		res_start = await comm1.receive_json_from()
+		await comm2.receive_json_from()
+		
+		current_player_id = res_start["snapshot"]["current_player"]
+		current_comm = comm1 if current_player_id == self.player.id else comm2
+		other_comm = comm2 if current_player_id == self.player.id else comm1
+		other_player_id = self.player2.id if current_player_id == self.player.id else self.player.id
+		
+		await current_comm.send_json_to({
+			"action": GameAction.SUBMIT_ANSWER,
+			"payload": {"answer": "yes"}
+		})
+		await current_comm.receive_json_from()
+		await other_comm.receive_json_from()
+		
+		await other_comm.send_json_to({
+			"action": GameAction.NOMINATE_PLAYER,
+			"payload": {"target_player_id": other_player_id}
+		})
+		response = await other_comm.receive_json_from()
+		self.assertEqual(response["type"], "error")
+		self.assertIn("Only last correct player can nominate", response["message"])
+		
+		await comm1.disconnect()
+		await comm2.disconnect()
+
+	async def test_nominate_invalid_player(self):
+		q2 = await database_sync_to_async(Question.objects.create)(
+			question_text="Test2?", correct_answer="no"
+		)
+		await database_sync_to_async(SessionQuestion.objects.create)(
+			session=self.session, question=q2, order_index=1
+		)
+
+		headers1 = [(b'cookie', f'sessionid={self.cookie}'.encode('ascii'))]
+		comm1 = WebsocketCommunicator(
+			self.application, f"/ws/game/{self.session.session_uuid}/", headers=headers1
+		)
+		await comm1.connect()
+		await comm1.receive_json_from()
+		
+		headers2 = [(b'cookie', f'sessionid={self.cookie2}'.encode('ascii'))]
+		comm2 = WebsocketCommunicator(
+			self.application, f"/ws/game/{self.session.session_uuid}/", headers=headers2
+		)
+		await comm2.connect()
+		await comm1.receive_json_from()
+		await comm2.receive_json_from()
+
+		await comm1.send_json_to({"action": GameAction.START_GAME})
+		res_start = await comm1.receive_json_from()
+		await comm2.receive_json_from()
+		
+		current_player_id = res_start["snapshot"]["current_player"]
+		current_comm = comm1 if current_player_id == self.player.id else comm2
+		other_comm = comm2 if current_player_id == self.player.id else comm1
+		
+		await current_comm.send_json_to({
+			"action": GameAction.SUBMIT_ANSWER,
+			"payload": {"answer": "yes"}
+		})
+		await current_comm.receive_json_from()
+		await other_comm.receive_json_from()
+		
+		await current_comm.send_json_to({
+			"action": GameAction.NOMINATE_PLAYER,
+			"payload": {"target_player_id": 9999}
+		})
+		response = await current_comm.receive_json_from()
+		self.assertEqual(response["type"], "error")
+		self.assertIn("Player does not belong to this session", response["message"])
+		
+		await comm1.disconnect()
+		await comm2.disconnect()
+
+	async def test_websocket_disconnect_in_game_over(self):
+		self.session.current_status = GameSession.Status.GAME_OVER
+		await database_sync_to_async(self.session.save)()
+
+		headers = [(b'cookie', f'sessionid={self.cookie}'.encode('ascii'))]
+		communicator = WebsocketCommunicator(
+			self.application, 
+			f"/ws/game/{self.session.session_uuid}/",
+			headers=headers
+		)
+		connected, _ = await communicator.connect()
+		self.assertTrue(connected)
+		await communicator.receive_json_from()
+
+		await communicator.disconnect()
+
+		session_exists = await database_sync_to_async(
+			GameSession.objects.filter(id=self.session.id).exists
+		)()
+		self.assertTrue(session_exists)
+
+	async def test_host_disconnect_transfers_host(self):
+		headers1 = [(b'cookie', f'sessionid={self.cookie}'.encode('ascii'))]
+		comm1 = WebsocketCommunicator(
+			self.application, f"/ws/game/{self.session.session_uuid}/", headers=headers1
+		)
+		await comm1.connect()
+		await comm1.receive_json_from()
+		
+		headers2 = [(b'cookie', f'sessionid={self.cookie2}'.encode('ascii'))]
+		comm2 = WebsocketCommunicator(
+			self.application, f"/ws/game/{self.session.session_uuid}/", headers=headers2
+		)
+		await comm2.connect()
+		await comm1.receive_json_from()
+		await comm2.receive_json_from()
+
+		await comm1.disconnect()
+
+		response = await comm2.receive_json_from()
+		self.assertEqual(response["type"], "game_state_update")
+		self.assertEqual(response["action"], GameAction.DISCONNECT)
+
+		host_player_id = await database_sync_to_async(
+			lambda: GameSession.objects.get(id=self.session.id).host_player_id
+		)()
+		self.assertEqual(host_player_id, self.player2.id)
+		
+		await comm2.disconnect()
+
+	async def test_websocket_full_game_to_game_over(self):
+		q2 = await database_sync_to_async(Question.objects.create)(
+			question_text="Test2?", correct_answer="no"
+		)
+		await database_sync_to_async(SessionQuestion.objects.create)(
+			session=self.session, question=q2, order_index=1
+		)
+
+		self.player.lives = 1
+		self.player2.lives = 1
+		await database_sync_to_async(self.player.save)()
+		await database_sync_to_async(self.player2.save)()
+
+		headers1 = [(b'cookie', f'sessionid={self.cookie}'.encode('ascii'))]
+		comm1 = WebsocketCommunicator(
+			self.application, f"/ws/game/{self.session.session_uuid}/", headers=headers1
+		)
+		await comm1.connect()
+		await comm1.receive_json_from()
+		
+		headers2 = [(b'cookie', f'sessionid={self.cookie2}'.encode('ascii'))]
+		comm2 = WebsocketCommunicator(
+			self.application, f"/ws/game/{self.session.session_uuid}/", headers=headers2
+		)
+		await comm2.connect()
+		await comm1.receive_json_from()
+		await comm2.receive_json_from()
+
+		await comm1.send_json_to({"action": GameAction.START_GAME})
+		res_start = await comm1.receive_json_from()
+		await comm2.receive_json_from()
+		
+		current_player_id = res_start["snapshot"]["current_player"]
+		current_comm = comm1 if current_player_id == self.player.id else comm2
+		other_comm = comm2 if current_player_id == self.player.id else comm1
+		other_player_id = self.player2.id if current_player_id == self.player.id else self.player.id
+		
+		await current_comm.send_json_to({
+			"action": GameAction.SUBMIT_ANSWER,
+			"payload": {"answer": "yes"}
+		})
+		res_eval = await current_comm.receive_json_from()
+		await other_comm.receive_json_from()
+		
+		self.assertEqual(res_eval["snapshot"]["current_status"], GameSession.Status.NOMINATION)
+		
+		await current_comm.send_json_to({
+			"action": GameAction.NOMINATE_PLAYER,
+			"payload": {"target_player_id": other_player_id}
+		})
+		res_nom = await current_comm.receive_json_from()
+		await other_comm.receive_json_from()
+		
+		self.assertEqual(res_nom["snapshot"]["current_status"], GameSession.Status.ANSWERING)
+		self.assertEqual(res_nom["snapshot"]["current_player"], other_player_id)
+		
+		await other_comm.send_json_to({
+			"action": GameAction.SUBMIT_ANSWER,
+			"payload": {"answer": "wrong"}
+		})
+		res_game_over = await other_comm.receive_json_from()
+		await current_comm.receive_json_from()
+		
+		self.assertEqual(res_game_over["snapshot"]["current_status"], GameSession.Status.GAME_OVER)
+		self.assertEqual(res_game_over["snapshot"]["winner"], current_player_id)
+		
+		await comm1.disconnect()
+		await comm2.disconnect()
+
+	async def test_connect_to_nonexistent_session(self):
+		import uuid
+		fake_uuid = uuid.uuid4()
+		headers = [(b'cookie', f'sessionid={self.cookie}'.encode('ascii'))]
+		communicator = WebsocketCommunicator(
+			self.application, 
+			f"/ws/game/{fake_uuid}/",
+			headers=headers
+		)
+		connected, _ = await communicator.connect()
+		self.assertFalse(connected)
+
+	async def test_receive_unknown_action(self):
+		headers = [(b'cookie', f'sessionid={self.cookie}'.encode('ascii'))]
+		communicator = WebsocketCommunicator(
+			self.application, 
+			f"/ws/game/{self.session.session_uuid}/",
+			headers=headers
+		)
+		connected, _ = await communicator.connect()
+		self.assertTrue(connected)
+		await communicator.receive_json_from()
+
+		await communicator.send_json_to({"action": "NONEXISTENT_ACTION", "payload": {}})
+		response = await communicator.receive_json_from()
+		self.assertEqual(response["type"], "error")
+		await communicator.disconnect()

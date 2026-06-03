@@ -57,6 +57,9 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 				handler = GameActionHandler()
 				result = await database_sync_to_async(handler.handle_action)(request)
 
+				if result.session_deleted:
+					return
+
 				snapshot = await database_sync_to_async(get_game_snapshot)(self.session_id)
 				await self.channel_layer.group_send(
 					self.room_group_name,
