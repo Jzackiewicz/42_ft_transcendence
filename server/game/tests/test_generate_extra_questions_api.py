@@ -28,15 +28,7 @@ class TestGenerateExtraQuestionsApi(APITestCase):
 
 	@patch("game.apis.generate_extra_questions_for_room")
 	def test_generate_extra_questions_success(self, mock_generate):
-		mock_generate.return_value = {
-			"questions": [
-				{
-					"category": "math",
-					"question": "What is 2 + 2?",
-					"answer": ["4"],
-				}
-			]
-		}
+		mock_generate.return_value = {"created_question_ids": [123]}
 
 		url = reverse("generate-extra-questions")
 		self.client.force_authenticate(user=self.host)
@@ -48,6 +40,8 @@ class TestGenerateExtraQuestionsApi(APITestCase):
 
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		self.assertEqual(response.data, mock_generate.return_value)
+		# Print created IDs for visibility in test output
+		print("Created question IDs:", response.data.get("created_question_ids"))
 		mock_generate.assert_called_once_with(
 			session_uuid=self.session.session_uuid,
 			user=self.host,
@@ -56,7 +50,7 @@ class TestGenerateExtraQuestionsApi(APITestCase):
 
 	@patch("game.apis.generate_extra_questions_for_room")
 	def test_generate_extra_questions_uses_default_amount(self, mock_generate):
-		mock_generate.return_value = {"questions": []}
+		mock_generate.return_value = {"created_question_ids": []}
 
 		url = reverse("generate-extra-questions")
 		self.client.force_authenticate(user=self.host)
