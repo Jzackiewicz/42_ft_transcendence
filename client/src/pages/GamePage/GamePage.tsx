@@ -24,8 +24,6 @@ export function GamePage() {
         submitAnswer,
         nominatePlayer,
         disconnect,
-        answerText,
-        setAnswerText,
         selectedNomineeId,
         setSelectedNomineeId,
         eligiblePlayers,
@@ -41,12 +39,6 @@ export function GamePage() {
     const handleLeave = () => {
         disconnect();
         navigate('/home');
-    };
-
-    const handleAnswerSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        submitAnswer(answerText);
-        setAnswerText('');
     };
 
     const handleNominateSubmit = () => {
@@ -76,9 +68,7 @@ export function GamePage() {
                         category={gameState.current_question?.question?.category || ''}
                         isCurrentAnswering={gameState.current_player === currentPlayerObj?.id}
                         activePlayerName={gameState.players.find(p => p.id === gameState.current_player)?.display_name || 'Someone'}
-                        answerText={answerText}
-                        setAnswerText={setAnswerText}
-                        onSubmitAnswer={handleAnswerSubmit}
+                        onSubmitAnswer={submitAnswer}
                     />
                 );
             case GameStatus.NOMINATION:

@@ -72,7 +72,6 @@ export function useGamePage() {
     const [gameState, setGameState] = useState<GameSnapshot | null>(null);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-    const [answerText, setAnswerText] = useState('');
     const [selectedNomineeId, setSelectedNomineeId] = useState<number | ''>('');
     const [timeLeft, setTimeLeft] = useState<number | null>(null);
 
@@ -334,8 +333,6 @@ export function useGamePage() {
         nominatePlayer,
         connectToLobby,
         disconnect,
-        answerText,
-        setAnswerText,
         selectedNomineeId,
         setSelectedNomineeId,
         eligiblePlayers,
