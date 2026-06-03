@@ -26,7 +26,7 @@ export function GamePage() {
         if (!gameState) return null;
 
         switch (gameState.current_status) {
-            case GameStatus.LOBBY:
+            case GameStatus.LOBBY: {
                 return (
                     <LobbyView 
                         isHost={isHost}
@@ -35,7 +35,8 @@ export function GamePage() {
                         lobbySettings={lobbySettings}
                     />
                 );
-            case GameStatus.ANSWERING:
+            }
+            case GameStatus.ANSWERING: {
                 return (
                     <AnsweringView 
                         questionText={gameState.current_question?.question?.question_text || ''}
@@ -45,7 +46,8 @@ export function GamePage() {
                         onSubmitAnswer={gameActions.submitAnswer}
                     />
                 );
-            case GameStatus.NOMINATION:
+            }
+            case GameStatus.NOMINATION: {
                 return (
                     <NominationView 
                         isCurrentNominator={gameState.last_correct_player === currentPlayerObj?.id}
@@ -54,6 +56,7 @@ export function GamePage() {
                         onNominatePlayer={gameActions.nominatePlayer}
                     />
                 );
+            }
             case GameStatus.EVALUATION: {
                 const attempt = gameState.current_attempt;
                 const activePlayer = gameState.players.find(p => p.id === attempt?.player);
@@ -69,7 +72,7 @@ export function GamePage() {
                     />
                 );
             }
-            case GameStatus.GAME_OVER:
+            case GameStatus.GAME_OVER: {
                 return (
                     <GameOverView 
                         winnerId={gameState.winner}
@@ -79,12 +82,14 @@ export function GamePage() {
                         onReturnToHome={connection.leaveGame}
                     />
                 );
-            default:
+            }
+            default: {
                 return (
                     <div>
                         Unknown game status: {gameState.current_status}
                     </div>
                 );
+            }
         }
     };
 
