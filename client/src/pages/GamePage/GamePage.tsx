@@ -24,8 +24,6 @@ export function GamePage() {
         submitAnswer,
         nominatePlayer,
         disconnect,
-        selectedNomineeId,
-        setSelectedNomineeId,
         eligiblePlayers,
         timeLeft,
         currentPlayerObj,
@@ -39,12 +37,6 @@ export function GamePage() {
     const handleLeave = () => {
         disconnect();
         navigate('/home');
-    };
-
-    const handleNominateSubmit = () => {
-        if (selectedNomineeId) {
-            nominatePlayer(selectedNomineeId);
-        }
     };
 
     // Dynamic game states renderer
@@ -77,9 +69,7 @@ export function GamePage() {
                         isCurrentNominator={gameState.last_correct_player === currentPlayerObj?.id}
                         nominatorName={gameState.players.find(p => p.id === gameState.last_correct_player)?.display_name || 'Someone'}
                         eligiblePlayers={eligiblePlayers}
-                        selectedNomineeId={selectedNomineeId}
-                        setSelectedNomineeId={setSelectedNomineeId}
-                        onNominatePlayer={handleNominateSubmit}
+                        onNominatePlayer={nominatePlayer}
                     />
                 );
             case GameStatus.EVALUATION:

@@ -72,7 +72,6 @@ export function useGamePage() {
     const [gameState, setGameState] = useState<GameSnapshot | null>(null);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-    const [selectedNomineeId, setSelectedNomineeId] = useState<number | ''>('');
     const [timeLeft, setTimeLeft] = useState<number | null>(null);
 
     // Lobby settings states
@@ -115,15 +114,7 @@ export function useGamePage() {
     const gameStarted = activeGameState !== null && activeGameState.current_status !== GameStatus.LOBBY;
     const isGameOver = activeGameState !== null && activeGameState.current_status === GameStatus.GAME_OVER;
 
-    useEffect(() => {
-        if (eligiblePlayers.length > 0) {
-            if (!selectedNomineeId || !eligiblePlayers.some(p => p.id === selectedNomineeId)) {
-                setSelectedNomineeId(eligiblePlayers[0].id);
-            }
-        } else {
-            setSelectedNomineeId('');
-        }
-    }, [activeGameState?.players, user?.username, eligiblePlayers.length]);
+
 
     // Timer effect synchronizing with server turn_deadline_at
     useEffect(() => {
@@ -333,8 +324,6 @@ export function useGamePage() {
         nominatePlayer,
         connectToLobby,
         disconnect,
-        selectedNomineeId,
-        setSelectedNomineeId,
         eligiblePlayers,
         timeLeft,
         currentPlayerObj,
