@@ -39,6 +39,13 @@ export function LobbySettings({
         setLocalAnswerTimeLimitSec(answerTimeLimitSec);
     }, [answerTimeLimitSec]);
 
+    const isDirty = localQuestionCount !== questionCount || localAnswerTimeLimitSec !== answerTimeLimitSec;
+
+    const syncSettings = () => {
+        if (isDirty) {
+            onUpdateSettings(localQuestionCount, localAnswerTimeLimitSec);
+        }
+    };
 
     useEffect(() => {
         if (aiQuestionsRequested) {
@@ -100,6 +107,17 @@ export function LobbySettings({
                             <span>5s</span>
                             <span>45s</span>
                         </div>
+                    </div>
+
+                    {/* Apply changes button */}
+                    <div className="setting-control-group">
+                        <button
+                            onClick={syncSettings}
+                            disabled={!isDirty}
+                            className="btn-settings btn-apply-settings"
+                        >
+                            {isDirty ? '💾 Apply Changes' : '✓ Settings Saved'}
+                        </button>
                     </div>
 
                     {/* AI Buttons Grid */}
