@@ -1,0 +1,44 @@
+.friends-request-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.request-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--pb);
+}
+
+.request-actions {
+    display: flex;
+    gap: 6px;
+    margin-left: auto;
+}
+
+.req-accept, .req-decline {
+    padding: 4px 12px;
+    border-radius: 6px;
+    border: none;
+    font-family: var(--fb);
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s;
+}
+
+.req-accept  { background: var(--cyan);    color: #000; }
+.req-decline { background: rgba(255,255,255,0.08); color: var(--dim); }
+
+.req-accept:hover, .req-decline:hover { opacity: 0.8; }
+
+.friends-empty {
+    color: var(--dim);
+    font-size: var(--font-sm);
+    text-align: center;
+    padding: 20px 0;
+}
