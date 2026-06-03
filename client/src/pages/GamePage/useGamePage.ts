@@ -311,19 +311,25 @@ export function useGamePage() {
         onRequestAiQuestions: requestAiQuestions
     };
 
-    return {
+    const connection = {
         sessionUuid,
         setSessionUuid,
         messages,
         isConnected,
-        gameState: activeGameState,
         errorMsg,
         setErrorMsg,
+        connect: connectToLobby,
+        disconnect
+    };
+
+    const gameActions = {
         startGame,
         submitAnswer,
-        nominatePlayer,
-        connectToLobby,
-        disconnect,
+        nominatePlayer
+    };
+
+    const sessionState = {
+        gameState: activeGameState,
         eligiblePlayers,
         timeLeft,
         currentPlayerObj,
@@ -331,7 +337,13 @@ export function useGamePage() {
         hostPlayerId,
         gameStarted,
         isGameOver,
-        sortedPlayers,
+        sortedPlayers
+    };
+
+    return {
+        connection,
+        gameActions,
+        sessionState,
         lobbySettings
     };
 }

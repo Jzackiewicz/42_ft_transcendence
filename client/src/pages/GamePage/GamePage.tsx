@@ -16,31 +16,20 @@ export function GamePage() {
     const navigate = useNavigate();
 
     const {
-        sessionUuid,
-        gameState,
-        errorMsg,
-        setErrorMsg,
-        startGame,
-        submitAnswer,
-        nominatePlayer,
-        disconnect,
-        eligiblePlayers,
-        timeLeft,
-        currentPlayerObj,
-        isHost,
-        hostPlayerId,
-        gameStarted,
-        isGameOver,
+        connection,
+        gameActions,
+        sessionState,
         lobbySettings
     } = useGamePage();
 
     const handleLeave = () => {
-        disconnect();
+        connection.disconnect();
         navigate('/home');
     };
 
     // Dynamic game states renderer
     const renderActiveView = () => {
+        const { gameState, isHost, currentPlayerObj, eligiblePlayers } = sessionState;
         if (!gameState) return null;
 
         switch (gameState.current_status) {
@@ -49,7 +38,7 @@ export function GamePage() {
                     <LobbyView 
                         isHost={isHost}
                         playersCount={gameState.players.length}
-                        onStartGame={startGame}
+                        onStartGame={gameActions.startGame}
                         lobbySettings={lobbySettings}
                     />
                 );
@@ -60,7 +49,7 @@ export function GamePage() {
                         category={gameState.current_question?.question?.category || ''}
                         isCurrentAnswering={gameState.current_player === currentPlayerObj?.id}
                         activePlayerName={gameState.players.find(p => p.id === gameState.current_player)?.display_name || 'Someone'}
-                        onSubmitAnswer={submitAnswer}
+                        onSubmitAnswer={gameActions.submitAnswer}
                     />
                 );
             case GameStatus.NOMINATION:
@@ -69,10 +58,10 @@ export function GamePage() {
                         isCurrentNominator={gameState.last_correct_player === currentPlayerObj?.id}
                         nominatorName={gameState.players.find(p => p.id === gameState.last_correct_player)?.display_name || 'Someone'}
                         eligiblePlayers={eligiblePlayers}
-                        onNominatePlayer={nominatePlayer}
+                        onNominatePlayer={gameActions.nominatePlayer}
                     />
                 );
-            case GameStatus.EVALUATION:
+            case GameStatus.EVALUATION: {
                 const attempt = gameState.current_attempt;
                 const activePlayer = gameState.players.find(p => p.id === attempt?.player);
                 return (
@@ -86,6 +75,7 @@ export function GamePage() {
                         category={gameState.current_question?.question?.category || ''}
                     />
                 );
+            }
             case GameStatus.GAME_OVER:
                 return (
                     <GameOverView 
@@ -104,6 +94,9 @@ export function GamePage() {
                 );
         }
     };
+
+    const { sessionUuid, errorMsg, setErrorMsg } = connection;
+    const { gameState, gameStarted, timeLeft, hostPlayerId } = sessionState;
 
     return (
         <div className="game-page-container">
