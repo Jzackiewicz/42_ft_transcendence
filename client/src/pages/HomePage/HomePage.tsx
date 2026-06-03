@@ -1,7 +1,7 @@
 import BlinkingSpaceBGDiv from '../../components/BlinkingSpaceBGDiv'
 import { useHomePage } from './useHomePage'
 import AccountHeader from './SubviewsHomePage/AccountHeader/AccountHeader'
-import AvatarView from './SubviewsHomePage/AvatarView/AvatarView'
+import FriendsView from './SubviewsHomePage/FriendsView/FriendsView'
 import StatsView from './SubviewsHomePage/StatsView/StatsView'
 import ChatContainer from './SubviewsHomePage/ChatContainer/ChatContainer'
 import './HomePage.css'
@@ -29,7 +29,7 @@ function HomePage() {
                 />
 
                 <div className="account-grid">
-                    <AvatarView />
+                    <FriendsView />
                     <StatsView />
 
                     <div className="account-grid-chat">
