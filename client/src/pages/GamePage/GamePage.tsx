@@ -1,5 +1,4 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useGamePage, GameStatus } from './useGamePage';
 import { useUser } from '../../context/UserContext';
 import { LobbyView } from './SubviewsGamePage/LobbyView/LobbyView';
@@ -13,7 +12,6 @@ import './GamePage.css';
 
 export function GamePage() {
     const { user } = useUser();
-    const navigate = useNavigate();
 
     const {
         connection,
@@ -21,11 +19,6 @@ export function GamePage() {
         sessionState,
         lobbySettings
     } = useGamePage();
-
-    const handleLeave = () => {
-        connection.disconnect();
-        navigate('/home');
-    };
 
     // Dynamic game states renderer
     const renderActiveView = () => {
@@ -83,7 +76,7 @@ export function GamePage() {
                         winnerName={gameState.players.find(p => p.id === gameState.winner)?.display_name || ''}
                         endReason={gameState.end_reason || ''}
                         players={gameState.players}
-                        onReturnToHome={handleLeave}
+                        onReturnToHome={connection.leaveGame}
                     />
                 );
             default:
@@ -105,7 +98,7 @@ export function GamePage() {
                 <h1>Quizscendence</h1>
                 <div className="game-top-bar-right">
                     <div><strong>SESSION CODE:</strong> {sessionUuid || 'None'}</div>
-                    <button onClick={handleLeave} className="btn-leave">Leave Game</button>
+                    <button onClick={connection.leaveGame} className="btn-leave">Leave Game</button>
                 </div>
             </div>
 

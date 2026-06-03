@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useUser } from '../../context/UserContext';
 
 export interface Player {
@@ -64,6 +64,7 @@ export function useGamePage() {
 
     // Retrieve data passed from another page (e.g. from HomePage)
     const location = useLocation();
+    const navigate = useNavigate();
     const initialUuid = location.state?.sessionUuid || '';
 
     const [sessionUuid, setSessionUuid] = useState<string>(initialUuid);
@@ -311,6 +312,11 @@ export function useGamePage() {
         onRequestAiQuestions: requestAiQuestions
     };
 
+    const leaveGame = () => {
+        disconnect();
+        navigate('/home');
+    };
+
     const connection = {
         sessionUuid,
         setSessionUuid,
@@ -319,7 +325,8 @@ export function useGamePage() {
         errorMsg,
         setErrorMsg,
         connect: connectToLobby,
-        disconnect
+        disconnect,
+        leaveGame
     };
 
     const gameActions = {
