@@ -35,13 +35,7 @@ export function GamePage() {
         hostPlayerId,
         gameStarted,
         isGameOver,
-        questionCount,
-        answerTimeLimitMs,
-        aiQuestionsRequested,
-        updateSettings,
-        addAiBot,
-        removeAiBot,
-        requestAiQuestions
+        lobbySettings
     } = useGamePage();
 
     const handleLeave = () => {
@@ -72,15 +66,7 @@ export function GamePage() {
                         isHost={isHost}
                         playersCount={gameState.players.length}
                         onStartGame={startGame}
-                        questionCount={questionCount}
-                        answerTimeLimitMs={answerTimeLimitMs}
-                        hasBotPlayer={gameState.players.some(p => p.player_type === 'bot')}
-                        canAddBot={gameState.players.length < 5}
-                        onUpdateSettings={updateSettings}
-                        onAddBot={addAiBot}
-                        onRemoveBot={removeAiBot}
-                        onRequestAiQuestions={requestAiQuestions}
-                        aiQuestionsRequested={aiQuestionsRequested}
+                        lobbySettings={lobbySettings}
                     />
                 );
             case GameStatus.ANSWERING:

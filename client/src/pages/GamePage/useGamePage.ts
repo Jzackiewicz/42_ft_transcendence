@@ -309,6 +309,18 @@ export function useGamePage() {
         // No-op for now (backend integration in separate issue #82)
     };
 
+    const lobbySettings = {
+        questionCount,
+        answerTimeLimitMs,
+        hasBotPlayer: activeGameState?.players.some(p => p.player_type === 'bot') ?? false,
+        canAddBot: (activeGameState?.players.length ?? 0) < 5,
+        aiQuestionsRequested: false,
+        onUpdateSettings: updateSettings,
+        onAddBot: addAiBot,
+        onRemoveBot: removeAiBot,
+        onRequestAiQuestions: requestAiQuestions
+    };
+
     return {
         sessionUuid,
         setSessionUuid,
@@ -334,12 +346,6 @@ export function useGamePage() {
         gameStarted,
         isGameOver,
         sortedPlayers,
-        questionCount,
-        answerTimeLimitMs,
-        aiQuestionsRequested: false,
-        updateSettings,
-        addAiBot,
-        removeAiBot,
-        requestAiQuestions
+        lobbySettings
     };
 }
