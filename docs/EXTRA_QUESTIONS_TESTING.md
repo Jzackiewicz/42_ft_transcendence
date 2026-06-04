@@ -21,7 +21,23 @@ What this one test covers
 
 That is the only supported test path in this guide. The test is fully automated and does not require a real `LLM_API_KEY` because the LLM call is mocked.
 
-<!-- notes -->
-<!-- cd /nfs/homes/dbozic/main_core_github/42_ft_transcendence/server
-DB_HOST=127.0.0.1 DB_PORT=5433 REDIS_HOST=127.0.0.1 REDIS_PORT=6380 ../.venv/bin/python3 manage.py test game.tests.test_generate_extra_questions_api --keepdb -v 2
-DB_HOST=127.0.0.1 DB_PORT=5433 REDIS_HOST=127.0.0.1 REDIS_PORT=6380 ../.venv/bin/python3 manage.py test game.tests.test_generate_extra_questions_integration --keepdb -v 2 -->
+3. Run the REST API tests:
+```bash
+make dev-test TEST=game.tests.test_generate_extra_questions_api
+```
+
+What these tests cover
+- 1: test_generate_extra_questions_success
+	- Host successfully generates questions and receives a 200 OK.
+- 2: test_generate_extra_questions_rejects_more_than_50
+	- Requesting more than 50 questions returns 400 Bad Request.
+- 3: test_generate_extra_questions_uses_default_amount
+	- If no amount is provided, the API uses the default of 10 questions.
+- 4: test_generate_extra_questions_rejects_non_host
+	- A non-host user cannot generate questions and receives 400 Bad Request.
+- 5: test_generate_extra_questions_missing_room_returns_404
+	- An invalid/nonexistent session UUID returns 404 Not Found.
+- 6: test_generate_extra_questions_rejects_started_room
+	- Question generation is rejected if the game has already started (not in lobby state).
+- 7: test_generate_extra_questions_is_limited_per_user_per_hour
+	- After 5 successful requests within an hour, the 6th request is blocked with 429 Too Many Requests.
