@@ -105,7 +105,6 @@ class UserProfileMeApi(APIView):
             200: UserProfileOutputSerializer,
             400: {"type": "object", "properties": {"detail": {"type": "string"}}},
             401: {"type": "object", "properties": {"detail": {"type": "string"}}},
-            403: {"type": "object", "properties": {"detail": {"type": "string"}}},
         },
         description="Update username or email for the authenticated user.",
     )
