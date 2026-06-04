@@ -789,3 +789,100 @@ class GameServiceTests(TestCase):
 	def test_start_game_requires_actor(self):
 		with self.assertRaises(ValidationError):
 			GameService(self.session).start_game_session(actor=None)
+
+
+from game.serializers import GameStateSnapshotSerializer
+
+class GameStateSnapshotTests(TestCase):
+	def setUp(self):
+		self.session = GameSession.objects.create(answer_time_limit_ms=20_000)
+		self.p1 = SessionPlayer.objects.create(
+			session=self.session,
+			display_name="P1",
+			seat_number=1,
+			lives=3,
+		)
+		self.p2 = SessionPlayer.objects.create(
+			session=self.session,
+			display_name="P2",
+			seat_number=2,
+			lives=3,
+		)
+		self.q1 = Question.objects.create(
+			question_text="2 + 2?",
+			correct_answer="4",
+			category="math",
+		)
+		self.sq1 = SessionQuestion.objects.create(
+			session=self.session,
+			question=self.q1,
+			order_index=0,
+		)
+		self.session.current_player = self.p1
+		self.session.current_question = self.sq1
+		self.session.save()
+
+	def test_snapshot_answering_phase_hides_correct_answer(self):
+		self.session.current_status = GameSession.Status.ANSWERING
+		attempt = AnswerAttempt.objects.create(
+			session=self.session,
+			player=self.p1,
+			session_question=self.sq1,
+			started_at=timezone.now(),
+		)
+		self.session.current_attempt = attempt
+		self.session.save()
+
+		serializer = GameStateSnapshotSerializer(self.session)
+		data = serializer.data
+
+		self.assertEqual(data["current_status"], "answering")
+		self.assertIsNotNone(data["current_attempt"])
+		self.assertIsNone(data["current_attempt"]["correct_answer"])
+		self.assertEqual(data["current_attempt"]["evaluation_status"], "pending")
+
+	def test_snapshot_evaluation_phase_reveals_correct_answer(self):
+		self.session.current_status = GameSession.Status.EVALUATION
+		attempt = AnswerAttempt.objects.create(
+			session=self.session,
+			player=self.p1,
+			session_question=self.sq1,
+			answer_text="4",
+			is_correct=True,
+			evaluation_status=AnswerAttempt.EvaluationStatus.EVALUATED,
+			started_at=timezone.now(),
+			evaluated_at=timezone.now(),
+		)
+		self.session.current_attempt = attempt
+		self.session.save()
+
+		serializer = GameStateSnapshotSerializer(self.session)
+		data = serializer.data
+
+		self.assertEqual(data["current_status"], "evaluation")
+		self.assertIsNotNone(data["current_attempt"])
+		self.assertEqual(data["current_attempt"]["correct_answer"], "4")
+		self.assertEqual(data["current_attempt"]["evaluation_status"], "evaluated")
+
+	def test_snapshot_other_phase_with_evaluated_attempt_hides_correct_answer(self):
+		# Safe measure: even if evaluation_status is EVALUATED, if state is not EVALUATION, hide correct answer
+		self.session.current_status = GameSession.Status.NOMINATION
+		attempt = AnswerAttempt.objects.create(
+			session=self.session,
+			player=self.p1,
+			session_question=self.sq1,
+			answer_text="4",
+			is_correct=True,
+			evaluation_status=AnswerAttempt.EvaluationStatus.EVALUATED,
+			started_at=timezone.now(),
+			evaluated_at=timezone.now(),
+		)
+		self.session.current_attempt = attempt
+		self.session.save()
+
+		serializer = GameStateSnapshotSerializer(self.session)
+		data = serializer.data
+
+		self.assertEqual(data["current_status"], "nomination")
+		self.assertIsNotNone(data["current_attempt"])
+		self.assertIsNone(data["current_attempt"]["correct_answer"])
