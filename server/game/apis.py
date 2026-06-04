@@ -59,7 +59,7 @@ class RoomDestroyApi(APIView):
 class GenerateExtraQuestionsApi(APIView):
 	@extend_schema(
 		request=GenerateExtraQuestionsPayloadSerializer,
-		responses={200: OpenApiTypes.OBJECT},
+		responses={200: OpenApiTypes.OBJECT, 429: OpenApiTypes.OBJECT},
 		description="Generate extra questions for a lobby (host only)."
 	)
 	def post(self, request):

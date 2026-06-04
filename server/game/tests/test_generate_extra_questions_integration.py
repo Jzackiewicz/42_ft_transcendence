@@ -1,5 +1,6 @@
 from unittest.mock import patch
 
+from django.core.cache import cache
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth import get_user_model
@@ -10,6 +11,7 @@ from game.services.lobby.lobby_management import create_room
 
 class ExtraQuestionsIntegrationTest(TestCase):
     def setUp(self):
+        cache.clear()
         User = get_user_model()
         self.user = User.objects.create_user(username="host", password="pass")
         self.client.force_login(self.user)

@@ -37,7 +37,7 @@ class NominatePlayerPayloadSerializer(StrictSerializer):
 
 class GenerateExtraQuestionsPayloadSerializer(StrictSerializer):
 	session_uuid = serializers.UUIDField(required=True)
-	n_questions_to_generate = serializers.IntegerField(required=False, default=10, min_value=1)
+	n_questions_to_generate = serializers.IntegerField(required=False, default=10, min_value=1, max_value=50)
 
 
 class PlayerSnapshotSerializer(serializers.ModelSerializer):

@@ -4,7 +4,14 @@ from game.models import GameSession, SessionPlayer
 from game.selectors.lobby_selectors import get_room_by_uuid
 from game.services.extra_question_generator import generate_extra_questions
 
-from .guards import check_can_create_room, check_can_join_room, check_can_destroy_room, check_can_generate_extra_questions
+from .guards import (
+    check_can_create_room,
+    check_can_join_room,
+    check_can_destroy_room,
+    check_can_generate_extra_questions,
+    reserve_extra_question_generation_quota,
+    release_extra_question_generation_quota,
+)
 
 
 def create_room(*, user) -> GameSession:
@@ -65,4 +72,9 @@ def generate_extra_questions_for_room(*, session_uuid: str, user, n_questions_to
     session = get_room_by_uuid(session_uuid=session_uuid)
 
     check_can_generate_extra_questions(session=session, user=user)
-    return generate_extra_questions(session.session_uuid, n_questions_to_generate)
+    reserve_extra_question_generation_quota(user=user)
+    try:
+        return generate_extra_questions(session.session_uuid, n_questions_to_generate)
+    except Exception:
+        release_extra_question_generation_quota(user=user)
+        raise

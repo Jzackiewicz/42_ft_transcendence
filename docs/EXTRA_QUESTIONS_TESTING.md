@@ -20,3 +20,8 @@ What this one test covers
 - C: it checks that the requesting `GameSession` gained new `SessionQuestion` rows for the generated questions.
 
 That is the only supported test path in this guide. The test is fully automated and does not require a real `LLM_API_KEY` because the LLM call is mocked.
+
+<!-- notes -->
+<!-- cd /nfs/homes/dbozic/main_core_github/42_ft_transcendence/server
+DB_HOST=127.0.0.1 DB_PORT=5433 REDIS_HOST=127.0.0.1 REDIS_PORT=6380 ../.venv/bin/python3 manage.py test game.tests.test_generate_extra_questions_api --keepdb -v 2
+DB_HOST=127.0.0.1 DB_PORT=5433 REDIS_HOST=127.0.0.1 REDIS_PORT=6380 ../.venv/bin/python3 manage.py test game.tests.test_generate_extra_questions_integration --keepdb -v 2 -->
