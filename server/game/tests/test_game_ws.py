@@ -241,6 +241,68 @@ class GameConsumerTests(TransactionTestCase):
 		
 		await communicator.disconnect()
 
+	async def test_evaluation_phase_duration_holds_state_and_transitions(self):
+		q2 = await database_sync_to_async(Question.objects.create)(
+			question_text="Test2?", correct_answer="no"
+		)
+		await database_sync_to_async(SessionQuestion.objects.create)(
+			session=self.session, question=q2, order_index=1
+		)
+
+		self.session.evaluation_time_limit_ms = 400
+		self.session.answer_time_limit_ms = 10000
+		await database_sync_to_async(self.session.save)()
+
+		headers1 = [(b'cookie', f'sessionid={self.cookie}'.encode('ascii'))]
+		comm1 = WebsocketCommunicator(
+			self.application, f"/ws/game/{self.session.session_uuid}/", headers=headers1
+		)
+		await comm1.connect()
+		await comm1.receive_json_from()
+		
+		headers2 = [(b'cookie', f'sessionid={self.cookie2}'.encode('ascii'))]
+		comm2 = WebsocketCommunicator(
+			self.application, f"/ws/game/{self.session.session_uuid}/", headers=headers2
+		)
+		await comm2.connect()
+		await comm1.receive_json_from()
+		await comm2.receive_json_from()
+
+		await comm1.send_json_to({"action": GameAction.START_GAME})
+		res_start = await comm1.receive_json_from()
+		await comm2.receive_json_from()
+
+		current_player_id = res_start["snapshot"]["current_player"]
+		current_comm = comm1 if current_player_id == self.player.id else comm2
+		other_comm = comm2 if current_player_id == self.player.id else comm1
+
+		# Submit answer from the correct active player to trigger evaluation state
+		await current_comm.send_json_to({
+			"action": GameAction.SUBMIT_ANSWER,
+			"payload": {"answer": "yes"}
+		})
+
+		# Immediately receive response - we should be in EVALUATION status
+		eval_response = await current_comm.receive_json_from()
+		await other_comm.receive_json_from()
+		self.assertEqual(eval_response["type"], "game_state_update")
+		self.assertEqual(eval_response["snapshot"]["current_status"], GameSession.Status.EVALUATION)
+
+		# Verify that we do not transition immediately (wait 100ms and expect no message)
+		# We use receive_nothing here because a timeout on receive_json_from would cancel/terminate the communicator.
+		is_empty = await current_comm.receive_nothing(timeout=0.1)
+		self.assertTrue(is_empty)
+
+		# Wait for the transition to finish after evaluation timeout (400ms total, so wait up to 2.0s)
+		finish_response = await current_comm.receive_json_from(timeout=2.0)
+		await other_comm.receive_json_from()
+		self.assertEqual(finish_response["type"], "game_state_update")
+		self.assertEqual(finish_response["action"], "handle_evaluation_finish")
+		self.assertEqual(finish_response["snapshot"]["current_status"], GameSession.Status.NOMINATION)
+
+		await comm1.disconnect()
+		await comm2.disconnect()
+
 	async def test_websocket_disconnect_triggers_disconnect_broadcast_to_others(self):
 		headers1 = [(b'cookie', f'sessionid={self.cookie}'.encode('ascii'))]
 		comm1 = WebsocketCommunicator(
