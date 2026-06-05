@@ -81,6 +81,18 @@ class GameActionHandler:
 			action="evaluate_timeout",
 		)
 
+	@transaction.atomic
+	def handle_evaluation_finish(self, session_id: int) -> GameActionResult:
+		session = self._get_session(session_id=session_id)
+		service = GameService(session)
+		service.resolve_evaluation()
+		session.refresh_from_db()
+		return GameActionResult(
+			session_id=session.id,
+			status=session.current_status,
+			action="handle_evaluation_finish",
+		)
+
 	@staticmethod
 	def _get_session(*, session_id: int) -> GameSession:
 		require_session_id(session_id)
