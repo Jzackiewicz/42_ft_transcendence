@@ -88,23 +88,7 @@ export function useGamePage() {
         players: gameState.players.map(p => ({ ...p, player_type: p.player_type || 'human' }))
     } : null;
 
-    // Mock evaluation states & refs
-    const gameStateRef = useRef<GameSnapshot | null>(null);
-    const mockEvalTimeoutRef = useRef<any>(null);
 
-    // Update gameStateRef on every render to avoid WebSocket stale closure
-    useEffect(() => {
-        gameStateRef.current = activeGameState;
-    }, [activeGameState]);
-
-    // Clean up timers on unmount
-    useEffect(() => {
-        return () => {
-            if (mockEvalTimeoutRef.current) {
-                clearTimeout(mockEvalTimeoutRef.current);
-            }
-        };
-    }, []);
 
     const eligiblePlayers = activeGameState?.players.filter(p => p.is_alive) || [];
 
@@ -182,48 +166,7 @@ export function useGamePage() {
             try {
                 const data = JSON.parse(event.data);
                 if (data.snapshot) {
-                    const nextSnapshot = data.snapshot as GameSnapshot;
-                    const prevSnapshot = gameStateRef.current;
-                    const prevStatus = prevSnapshot?.current_status;
-
-                    if (prevStatus === GameStatus.ANSWERING) {
-                        // Intercept and simulate EVALUATION snapshot state locally
-                        const prevPlayerId = prevSnapshot?.current_player || 0;
-                        const simulatedEvaluationSnapshot: GameSnapshot = {
-                            ...prevSnapshot!,
-                            current_status: GameStatus.EVALUATION,
-                            current_attempt: {
-                                id: prevSnapshot?.current_attempt?.id || 1,
-                                answer_text: "...",
-                                correct_answer: "...",
-                                is_correct: false,
-                                is_timeout: false,
-                                evaluation_status: 'evaluated',
-                                player: prevPlayerId
-                            }
-                        };
-
-                        setGameState(simulatedEvaluationSnapshot);
-
-                        if (mockEvalTimeoutRef.current) {
-                            clearTimeout(mockEvalTimeoutRef.current);
-                        }
-                        mockEvalTimeoutRef.current = setTimeout(() => {
-                            setGameState(nextSnapshot);
-                            mockEvalTimeoutRef.current = null;
-                        }, 3000);
-                    } else {
-                        // If simulated transition is running, keep it but buffer the latest snapshot
-                        if (mockEvalTimeoutRef.current) {
-                            clearTimeout(mockEvalTimeoutRef.current);
-                            mockEvalTimeoutRef.current = setTimeout(() => {
-                                setGameState(nextSnapshot);
-                                mockEvalTimeoutRef.current = null;
-                            }, 3000);
-                        } else {
-                            setGameState(nextSnapshot);
-                        }
-                    }
+                    setGameState(data.snapshot as GameSnapshot);
                     setErrorMsg(null);
                 } else if (data.type === 'error' || data.error) {
                     setErrorMsg(data.message || data.error || 'Unknown error occurred');
