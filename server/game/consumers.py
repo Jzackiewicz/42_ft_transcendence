@@ -135,12 +135,14 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 			self._cancel_timeout()
 
 	def _schedule_timeout(self, snapshot):
-		attempt_id = snapshot.get('current_attempt')
+		attempt = snapshot.get('current_attempt')
 		deadline_at = snapshot.get('turn_deadline_at')
 
-		if not attempt_id or not deadline_at:
+		if not attempt or not deadline_at:
 			self._cancel_timeout()
 			return
+
+		attempt_id = attempt.get('id') if isinstance(attempt, dict) else attempt
 
 		current_attempt_id = getattr(self, 'timeout_attempt_id', None)
 		timeout_task = getattr(self, 'timeout_task', None)
