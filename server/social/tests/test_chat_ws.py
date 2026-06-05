@@ -198,7 +198,7 @@ class ChatHistoryAPITests(TestCase):
 
     def test_get_chat_history_returns_200_and_data(self):
         """Getting chat history returns 200 OK with the stored messages."""
-        response = self.client.get(f"/social/chat/{self.room_name}/history/")
+        response = self.client.get(f"/api/social/chat/{self.room_name}/history/")
         self.assertEqual(response.status_code, 200)
 
         data = response.json()
@@ -215,6 +215,6 @@ class ChatHistoryAPITests(TestCase):
                 message=f"Spam message {i}",
             )
 
-        response = self.client.get(f"/social/chat/{self.room_name}/history/")
+        response = self.client.get(f"/api/social/chat/{self.room_name}/history/")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), 50)
