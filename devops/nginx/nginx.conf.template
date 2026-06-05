@@ -40,6 +40,21 @@ server {
 
     # Backend API (generic)
     location /api/ {
+        # Block direct browser access (document navigation) only if DEBUG is not True
+        set $block_direct 0;
+        if ($http_sec_fetch_dest = "document") {
+            set $block_direct 1;
+        }
+
+        set $is_debug "${DEBUG}";
+        if ($is_debug = "True") {
+            set $block_direct 0;
+        }
+
+        if ($block_direct = 1) {
+            return 403;
+        }
+
         proxy_pass http://django;
         proxy_set_header Host $http_host;
         proxy_set_header X-Forwarded-Port $server_port;
