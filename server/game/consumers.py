@@ -1,5 +1,5 @@
 import asyncio
-from datetime import datetime
+from datetime import datetime, timedelta
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.db import database_sync_to_async
 from django.core.exceptions import ValidationError
@@ -131,6 +131,8 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 		current_status = snapshot.get('current_status')
 		if current_status == GameSession.Status.ANSWERING:
 			self._schedule_timeout(snapshot)
+		elif current_status == GameSession.Status.EVALUATION:
+			self._schedule_evaluation_resolution(snapshot)
 		else:
 			self._cancel_timeout()
 
@@ -146,13 +148,41 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 
 		current_attempt_id = getattr(self, 'timeout_attempt_id', None)
 		timeout_task = getattr(self, 'timeout_task', None)
-		if current_attempt_id == attempt_id and timeout_task and not timeout_task.done():
+		task_type = getattr(self, 'timeout_task_type', None)
+		if task_type == 'timeout' and current_attempt_id == attempt_id and timeout_task and not timeout_task.done():
 			return
 
 		self._cancel_timeout()
 		self.timeout_attempt_id = attempt_id
+		self.timeout_task_type = 'timeout'
 		self.timeout_task = asyncio.create_task(
 			self._force_timeout(attempt_id, deadline_at)
+		)
+
+	def _schedule_evaluation_resolution(self, snapshot):
+		attempt = snapshot.get('current_attempt')
+		if not attempt:
+			self._cancel_timeout()
+			return
+
+		attempt_id = attempt.get('id')
+		evaluated_at_str = attempt.get('evaluated_at')
+
+		if not attempt_id or not evaluated_at_str:
+			self._cancel_timeout()
+			return
+
+		current_attempt_id = getattr(self, 'timeout_attempt_id', None)
+		timeout_task = getattr(self, 'timeout_task', None)
+		task_type = getattr(self, 'timeout_task_type', None)
+		if task_type == 'evaluation' and current_attempt_id == attempt_id and timeout_task and not timeout_task.done():
+			return
+
+		self._cancel_timeout()
+		self.timeout_attempt_id = attempt_id
+		self.timeout_task_type = 'evaluation'
+		self.timeout_task = asyncio.create_task(
+			self._force_evaluation_resolution(attempt_id, evaluated_at_str)
 		)
 
 	def _cancel_timeout(self):
@@ -160,6 +190,7 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 		if timeout_task and not timeout_task.done():
 			timeout_task.cancel()
 		self.timeout_attempt_id = None
+		self.timeout_task_type = None
 
 	async def _force_timeout(self, attempt_id, deadline_at):
 		deadline = datetime.fromisoformat(deadline_at)
@@ -181,6 +212,47 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 
 			handler = GameActionHandler()
 			result = await database_sync_to_async(handler.handle_timeout)(self.session_id)
+
+			snapshot = await database_sync_to_async(get_game_snapshot)(self.session_id)
+			await self.channel_layer.group_send(
+				self.room_group_name,
+				{
+					'type': 'game_state_update',
+					'action': result.action,
+					'snapshot': snapshot
+				}
+			)
+		except ValidationError:
+			pass
+
+	async def _force_evaluation_resolution(self, attempt_id, evaluated_at_str):
+		duration_ms = await database_sync_to_async(
+			lambda: GameSession.objects.filter(id=self.session_id).values_list('evaluation_time_limit_ms', flat=True).first()
+		)()
+		if duration_ms is None:
+			duration_ms = 3000
+
+
+		evaluated_at = datetime.fromisoformat(evaluated_at_str)
+		deadline = evaluated_at + timedelta(milliseconds=duration_ms)
+		now = datetime.now(deadline.tzinfo) if deadline.tzinfo else datetime.now()
+		sleep_seconds = max((deadline - now).total_seconds(), 0)
+
+		await asyncio.sleep(sleep_seconds + 0.05)
+
+		try:
+			is_current_attempt = await database_sync_to_async(
+				lambda sid, aid: GameSession.objects.filter(
+					id=sid,
+					current_attempt_id=aid,
+					current_status=GameSession.Status.EVALUATION,
+				).exists()
+			)(self.session_id, attempt_id)
+			if not is_current_attempt:
+				return
+
+			handler = GameActionHandler()
+			result = await database_sync_to_async(handler.handle_evaluation_finish)(self.session_id)
 
 			snapshot = await database_sync_to_async(get_game_snapshot)(self.session_id)
 			await self.channel_layer.group_send(
