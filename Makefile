@@ -93,7 +93,7 @@ dev-up: dev-venv client-install
 	BACKEND_EXPOSED_PORT=$(DEV_BACKEND_EXPOSED_PORT) \
 	HTTP_EXPOSED_PORT=$(DEV_HTTP_EXPOSED_PORT) \
 	HTTPS_EXPOSED_PORT=$(DEV_HTTPS_EXPOSED_PORT) \
-	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) up -d db redis api web proxy
+	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) up -d --build proxy db redis api web
 	@echo "Waiting for database..."
 	sleep 5
 	@echo "Creating superuser if not exists (Dev)..."
@@ -126,11 +126,7 @@ dev-down:
 	BACKEND_EXPOSED_PORT=$(DEV_BACKEND_EXPOSED_PORT) \
 	HTTP_EXPOSED_PORT=$(DEV_HTTP_EXPOSED_PORT) \
 	HTTPS_EXPOSED_PORT=$(DEV_HTTPS_EXPOSED_PORT) \
-	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) stop
-
-# Start proxy in dev (with deps)
-dev-proxy: dev-up
-	@echo "Proxy should be running via dev-up."
+	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) down
 
 # Stop and wipe dev volumes (Isolated from production)
 dev-clean: check_clean
@@ -157,9 +153,9 @@ dev-runserver: dev-up
 	cd server && DB_HOST=127.0.0.1 DB_PORT=$(DEV_DB_EXPOSED_PORT) REDIS_HOST=127.0.0.1 REDIS_PORT=$(DEV_REDIS_EXPOSED_PORT) $(VENV_PYTHON) manage.py runserver
 
 # Run tests locally (use TEST="module" to run specific tests)
-dev-test: dev-up
+dev-test:
 	@echo "Running tests locally..."
-	cd server && DB_HOST=127.0.0.1 DB_PORT=$(DEV_DB_EXPOSED_PORT) REDIS_HOST=127.0.0.1 REDIS_PORT=$(DEV_REDIS_EXPOSED_PORT) $(VENV_PYTHON) manage.py test $(TEST)
+	cd server && SECURE_SSL_REDIRECT=False DEBUG=False DB_HOST=127.0.0.1 DB_PORT=$(DEV_DB_EXPOSED_PORT) REDIS_HOST=127.0.0.1 REDIS_PORT=$(DEV_REDIS_EXPOSED_PORT) $(VENV_PYTHON) manage.py test $(TEST)
 
 # Create superuser locally
 dev-createsuperuser: dev-up
