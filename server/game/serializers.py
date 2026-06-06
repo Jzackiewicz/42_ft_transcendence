@@ -40,7 +40,7 @@ class PlayerSnapshotSerializer(serializers.ModelSerializer):
 	
 	class Meta:
 		model = SessionPlayer
-		fields = ['id', 'display_name', 'seat_number', 'lives', 'points', 'answered_count', 'is_alive']
+		fields = ['id', 'display_name', 'seat_number', 'lives', 'points', 'answered_count', 'is_alive', 'total_answer_time_ms']
 
 class QuestionSnapshotSerializer(serializers.ModelSerializer):
 	class Meta:
