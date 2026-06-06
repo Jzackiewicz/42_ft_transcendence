@@ -2,7 +2,7 @@ import { useFriendsFindTabView } from './useFriendsFindTabView'
 import './FriendsFindTabView.css'
 
 function FriendsFindTabView() {
-    const { searchQuery, setSearchQuery, handleSendRequest } = useFriendsFindTabView()
+    const { searchQuery, setSearchQuery, handleSendRequest, friends } = useFriendsFindTabView()
 
     return (
         <div className="friends-find">
@@ -17,6 +17,15 @@ function FriendsFindTabView() {
                 <button className="find-btn" onClick={() => handleSendRequest(searchQuery)}>
                     Send Request
                 </button>
+            </div>
+            <div className="friends-scroll">
+                <div className="find-results">
+                    {friends.map(user => (
+                        <div key={user.id} className="find-result-item" onClick={() => setSearchQuery(user.username)}>
+                            {user.username}
+                        </div>
+                    ))}
+                </div>
             </div>
         </div>
     )

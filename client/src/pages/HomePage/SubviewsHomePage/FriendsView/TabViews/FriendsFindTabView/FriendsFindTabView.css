@@ -1,6 +1,7 @@
 .find-row {
     display: flex;
     gap: 10px;
+    flex-shrink: 0;
 }
 
 .find-input {
@@ -34,3 +35,23 @@
 }
 
 .find-btn:hover { box-shadow: 0 0 16px rgba(0, 229, 255, 0.4); }
+
+.find-results {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    border: 1px solid var(--pb);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.find-result-item {
+    padding: 8px 14px;
+    color: var(--text);
+    font-family: var(--fb);
+    font-size: var(--font-sm);
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.find-result-item:hover { background: rgba(255, 255, 255, 0.07); }

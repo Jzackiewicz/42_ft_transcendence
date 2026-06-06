@@ -13,6 +13,16 @@ export function useFriendsListTabView() {
         { id: 3, username: 'Nova',   online: false },
         { id: 4, username: 'Julia',  online: true  },
         { id: 5, username: 'Aurora', online: false },
+                { id: 1, username: 'Vega',   online: true  },
+        { id: 2, username: 'Orion',  online: true  },
+        { id: 3, username: 'Nova',   online: false },
+        { id: 4, username: 'Julia',  online: true  },
+        { id: 5, username: 'Aurora', online: false },
+                { id: 1, username: 'Vega',   online: true  },
+        { id: 2, username: 'Orion',  online: true  },
+        { id: 3, username: 'Nova',   online: false },
+        { id: 4, username: 'Julia',  online: true  },
+        { id: 5, username: 'Aurora', online: false },
     ])
 
     const handleRemove = (id: number) => { console.log('remove', id) }

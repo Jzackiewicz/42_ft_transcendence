@@ -1,6 +1,15 @@
 /* ── CARD HEIGHT ─────────────────────────────────────────────────── */
 .friends-view {
     height: 300px;
+    overflow: hidden;
+}
+
+.friends-view > *:last-child {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 /* ── TAB BAR ─────────────────────────────────────────────────────── */
