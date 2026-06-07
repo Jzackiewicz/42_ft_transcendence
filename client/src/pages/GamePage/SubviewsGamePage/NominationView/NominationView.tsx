@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Player } from '../../useGamePage';
 import './NominationView.css';
 
@@ -6,19 +6,33 @@ interface NominationViewProps {
     isCurrentNominator: boolean;
     nominatorName: string;
     eligiblePlayers: Player[];
-    selectedNomineeId: number | '';
-    setSelectedNomineeId: (id: number) => void;
-    onNominatePlayer: () => void;
+    onNominatePlayer: (targetPlayerId: number) => void;
 }
 
 export function NominationView({
     isCurrentNominator,
     nominatorName,
     eligiblePlayers,
-    selectedNomineeId,
-    setSelectedNomineeId,
     onNominatePlayer
 }: NominationViewProps) {
+    const [localSelectedId, setLocalSelectedId] = useState<number | ''>('');
+
+    useEffect(() => {
+        if (eligiblePlayers.length > 0) {
+            if (!localSelectedId || !eligiblePlayers.some(p => p.id === localSelectedId)) {
+                setLocalSelectedId(eligiblePlayers[0].id);
+            }
+        } else {
+            setLocalSelectedId('');
+        }
+    }, [eligiblePlayers, localSelectedId]);
+
+    const handleSubmit = () => {
+        if (localSelectedId !== '') {
+            onNominatePlayer(localSelectedId);
+        }
+    };
+
     return (
         <div className="nomination-view-container">
             <h2>Nomination Phase</h2>
@@ -30,8 +44,8 @@ export function NominationView({
                     </div>
                     <div className="nomination-controls">
                         <select
-                            value={selectedNomineeId}
-                            onChange={(e) => setSelectedNomineeId(Number(e.target.value))}
+                            value={localSelectedId}
+                            onChange={(e) => setLocalSelectedId(Number(e.target.value))}
                             className="nomination-select"
                         >
                             {eligiblePlayers.map((player) => (
@@ -41,8 +55,8 @@ export function NominationView({
                             ))}
                         </select>
                         <button
-                            onClick={onNominatePlayer}
-                            disabled={!selectedNomineeId}
+                            onClick={handleSubmit}
+                            disabled={!localSelectedId}
                             className="btn-nominate"
                         >
                             Nominate

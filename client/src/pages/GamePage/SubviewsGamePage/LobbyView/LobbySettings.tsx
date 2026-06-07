@@ -27,7 +27,25 @@ export function LobbySettings({
     aiQuestionsRequested
 }: LobbySettingsProps) {
     const answerTimeLimitSec = Math.round(answerTimeLimitMs / 1000);
+    const [localQuestionCount, setLocalQuestionCount] = useState(questionCount);
+    const [localAnswerTimeLimitSec, setLocalAnswerTimeLimitSec] = useState(answerTimeLimitSec);
     const [aiQuestionsFeedback, setAiQuestionsFeedback] = useState(false);
+
+    useEffect(() => {
+        setLocalQuestionCount(questionCount);
+    }, [questionCount]);
+
+    useEffect(() => {
+        setLocalAnswerTimeLimitSec(answerTimeLimitSec);
+    }, [answerTimeLimitSec]);
+
+    const isDirty = localQuestionCount !== questionCount || localAnswerTimeLimitSec !== answerTimeLimitSec;
+
+    const syncSettings = () => {
+        if (isDirty) {
+            onUpdateSettings(localQuestionCount, localAnswerTimeLimitSec);
+        }
+    };
 
     useEffect(() => {
         if (aiQuestionsRequested) {
@@ -38,16 +56,6 @@ export function LobbySettings({
             return () => clearTimeout(timer);
         }
     }, [aiQuestionsRequested]);
-
-    const handleQuestionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = parseInt(e.target.value, 10);
-        onUpdateSettings(value, answerTimeLimitSec);
-    };
-
-    const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = parseInt(e.target.value, 10);
-        onUpdateSettings(questionCount, value);
-    };
 
     return (
         <div className="lobby-settings-panel">
@@ -61,7 +69,7 @@ export function LobbySettings({
                     <div className="setting-control-group">
                         <div className="setting-label-row">
                             <label htmlFor="questions-slider">Questions Limit:</label>
-                            <span className="setting-value-badge">{questionCount} questions</span>
+                            <span className="setting-value-badge">{localQuestionCount} questions</span>
                         </div>
                         <input
                             id="questions-slider"
@@ -69,8 +77,8 @@ export function LobbySettings({
                             min="10"
                             max="100"
                             step="1"
-                            value={questionCount}
-                            onChange={handleQuestionChange}
+                            value={localQuestionCount}
+                            onChange={(e) => setLocalQuestionCount(parseInt(e.target.value, 10))}
                             className="settings-slider"
                         />
                         <div className="slider-limits">
@@ -83,7 +91,7 @@ export function LobbySettings({
                     <div className="setting-control-group">
                         <div className="setting-label-row">
                             <label htmlFor="time-slider">Answer Time Limit:</label>
-                            <span className="setting-value-badge">{answerTimeLimitSec} seconds</span>
+                            <span className="setting-value-badge">{localAnswerTimeLimitSec} seconds</span>
                         </div>
                         <input
                             id="time-slider"
@@ -91,14 +99,25 @@ export function LobbySettings({
                             min="5"
                             max="45"
                             step="1"
-                            value={answerTimeLimitSec}
-                            onChange={handleTimeChange}
+                            value={localAnswerTimeLimitSec}
+                            onChange={(e) => setLocalAnswerTimeLimitSec(parseInt(e.target.value, 10))}
                             className="settings-slider"
                         />
                         <div className="slider-limits">
                             <span>5s</span>
                             <span>45s</span>
                         </div>
+                    </div>
+
+                    {/* Apply changes button */}
+                    <div className="setting-control-group">
+                        <button
+                            onClick={syncSettings}
+                            disabled={!isDirty}
+                            className="btn-settings btn-apply-settings"
+                        >
+                            {isDirty ? '💾 Apply Changes' : '✓ Settings Saved'}
+                        </button>
                     </div>
 
                     {/* AI Buttons Grid */}

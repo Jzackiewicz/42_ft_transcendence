@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useUser } from '../../context/UserContext';
 
 export interface Player {
@@ -64,6 +64,7 @@ export function useGamePage() {
 
     // Retrieve data passed from another page (e.g. from HomePage)
     const location = useLocation();
+    const navigate = useNavigate();
     const initialUuid = location.state?.sessionUuid || '';
 
     const [sessionUuid, setSessionUuid] = useState<string>(initialUuid);
@@ -72,8 +73,6 @@ export function useGamePage() {
     const [gameState, setGameState] = useState<GameSnapshot | null>(null);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-    const [answerText, setAnswerText] = useState('');
-    const [selectedNomineeId, setSelectedNomineeId] = useState<number | ''>('');
     const [timeLeft, setTimeLeft] = useState<number | null>(null);
 
     // Lobby settings states
@@ -100,15 +99,7 @@ export function useGamePage() {
     const gameStarted = activeGameState !== null && activeGameState.current_status !== GameStatus.LOBBY;
     const isGameOver = activeGameState !== null && activeGameState.current_status === GameStatus.GAME_OVER;
 
-    useEffect(() => {
-        if (eligiblePlayers.length > 0) {
-            if (!selectedNomineeId || !eligiblePlayers.some(p => p.id === selectedNomineeId)) {
-                setSelectedNomineeId(eligiblePlayers[0].id);
-            }
-        } else {
-            setSelectedNomineeId('');
-        }
-    }, [activeGameState?.players, user?.username, eligiblePlayers.length]);
+
 
     // Timer effect synchronizing with server turn_deadline_at
     useEffect(() => {
@@ -252,23 +243,43 @@ export function useGamePage() {
         // No-op for now (backend integration in separate issue #82)
     };
 
-    return {
+    const lobbySettings = {
+        questionCount,
+        answerTimeLimitMs,
+        hasBotPlayer: activeGameState?.players.some(p => p.player_type === 'bot') ?? false,
+        canAddBot: (activeGameState?.players.length ?? 0) < 5,
+        aiQuestionsRequested: false,
+        onUpdateSettings: updateSettings,
+        onAddBot: addAiBot,
+        onRemoveBot: removeAiBot,
+        onRequestAiQuestions: requestAiQuestions
+    };
+
+    const leaveGame = () => {
+        disconnect();
+        navigate('/home');
+    };
+
+    const connection = {
         sessionUuid,
         setSessionUuid,
         messages,
         isConnected,
-        gameState: activeGameState,
         errorMsg,
         setErrorMsg,
+        connect: connectToLobby,
+        disconnect,
+        leaveGame
+    };
+
+    const gameActions = {
         startGame,
         submitAnswer,
-        nominatePlayer,
-        connectToLobby,
-        disconnect,
-        answerText,
-        setAnswerText,
-        selectedNomineeId,
-        setSelectedNomineeId,
+        nominatePlayer
+    };
+
+    const sessionState = {
+        gameState: activeGameState,
         eligiblePlayers,
         timeLeft,
         currentPlayerObj,
@@ -276,13 +287,13 @@ export function useGamePage() {
         hostPlayerId,
         gameStarted,
         isGameOver,
-        sortedPlayers,
-        questionCount,
-        answerTimeLimitMs,
-        aiQuestionsRequested: false,
-        updateSettings,
-        addAiBot,
-        removeAiBot,
-        requestAiQuestions
+        sortedPlayers
+    };
+
+    return {
+        connection,
+        gameActions,
+        sessionState,
+        lobbySettings
     };
 }

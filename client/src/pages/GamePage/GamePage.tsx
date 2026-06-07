@@ -1,5 +1,4 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useGamePage, GameStatus } from './useGamePage';
 import { useUser } from '../../context/UserContext';
 import { LobbyView } from './SubviewsGamePage/LobbyView/LobbyView';
@@ -13,100 +12,52 @@ import './GamePage.css';
 
 export function GamePage() {
     const { user } = useUser();
-    const navigate = useNavigate();
 
     const {
-        sessionUuid,
-        gameState,
-        errorMsg,
-        setErrorMsg,
-        startGame,
-        submitAnswer,
-        nominatePlayer,
-        disconnect,
-        answerText,
-        setAnswerText,
-        selectedNomineeId,
-        setSelectedNomineeId,
-        eligiblePlayers,
-        timeLeft,
-        currentPlayerObj,
-        isHost,
-        hostPlayerId,
-        gameStarted,
-        isGameOver,
-        questionCount,
-        answerTimeLimitMs,
-        aiQuestionsRequested,
-        updateSettings,
-        addAiBot,
-        removeAiBot,
-        requestAiQuestions
+        connection,
+        gameActions,
+        sessionState,
+        lobbySettings
     } = useGamePage();
-
-    const handleLeave = () => {
-        disconnect();
-        navigate('/home');
-    };
-
-    const handleAnswerSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        submitAnswer(answerText);
-        setAnswerText('');
-    };
-
-    const handleNominateSubmit = () => {
-        if (selectedNomineeId) {
-            nominatePlayer(selectedNomineeId);
-        }
-    };
 
     // Dynamic game states renderer
     const renderActiveView = () => {
+        const { gameState, isHost, currentPlayerObj, eligiblePlayers } = sessionState;
         if (!gameState) return null;
 
         switch (gameState.current_status) {
-            case GameStatus.LOBBY:
+            case GameStatus.LOBBY: {
                 return (
                     <LobbyView 
                         isHost={isHost}
                         playersCount={gameState.players.length}
-                        onStartGame={startGame}
-                        questionCount={questionCount}
-                        answerTimeLimitMs={answerTimeLimitMs}
-                        hasBotPlayer={gameState.players.some(p => p.player_type === 'bot')}
-                        canAddBot={gameState.players.length < 5}
-                        onUpdateSettings={updateSettings}
-                        onAddBot={addAiBot}
-                        onRemoveBot={removeAiBot}
-                        onRequestAiQuestions={requestAiQuestions}
-                        aiQuestionsRequested={aiQuestionsRequested}
+                        onStartGame={gameActions.startGame}
+                        lobbySettings={lobbySettings}
                     />
                 );
-            case GameStatus.ANSWERING:
+            }
+            case GameStatus.ANSWERING: {
                 return (
                     <AnsweringView 
                         questionText={gameState.current_question?.question?.question_text || ''}
                         category={gameState.current_question?.question?.category || ''}
                         isCurrentAnswering={gameState.current_player === currentPlayerObj?.id}
                         activePlayerName={gameState.players.find(p => p.id === gameState.current_player)?.display_name || 'Someone'}
-                        answerText={answerText}
-                        setAnswerText={setAnswerText}
-                        onSubmitAnswer={handleAnswerSubmit}
+                        onSubmitAnswer={gameActions.submitAnswer}
                     />
                 );
-            case GameStatus.NOMINATION:
+            }
+            case GameStatus.NOMINATION: {
                 return (
                     <NominationView 
                         isCurrentNominator={gameState.last_correct_player === currentPlayerObj?.id}
                         nominatorName={gameState.players.find(p => p.id === gameState.last_correct_player)?.display_name || 'Someone'}
                         eligiblePlayers={eligiblePlayers}
-                        selectedNomineeId={selectedNomineeId}
-                        setSelectedNomineeId={setSelectedNomineeId}
-                        onNominatePlayer={handleNominateSubmit}
+                        onNominatePlayer={gameActions.nominatePlayer}
                     />
                 );
-            case GameStatus.EVALUATION:
+            }
+            case GameStatus.EVALUATION: {
                 const attempt = gameState.current_attempt;
                 const activePlayer = gameState.players.find(p => p.id === attempt?.player);
                 return (
@@ -120,24 +71,30 @@ export function GamePage() {
                         category={gameState.current_question?.question?.category || ''}
                     />
                 );
-            case GameStatus.GAME_OVER:
+            }
+            case GameStatus.GAME_OVER: {
                 return (
                     <GameOverView 
                         winnerId={gameState.winner}
                         winnerName={gameState.players.find(p => p.id === gameState.winner)?.display_name || ''}
                         endReason={gameState.end_reason || ''}
                         players={gameState.players}
-                        onReturnToHome={handleLeave}
+                        onReturnToHome={connection.leaveGame}
                     />
                 );
-            default:
+            }
+            default: {
                 return (
                     <div>
                         Unknown game status: {gameState.current_status}
                     </div>
                 );
+            }
         }
     };
+
+    const { sessionUuid, errorMsg, setErrorMsg } = connection;
+    const { gameState, gameStarted, timeLeft, hostPlayerId } = sessionState;
 
     return (
         <div className="game-page-container">
@@ -146,7 +103,7 @@ export function GamePage() {
                 <h1>Quizscendence</h1>
                 <div className="game-top-bar-right">
                     <div><strong>SESSION CODE:</strong> {sessionUuid || 'None'}</div>
-                    <button onClick={handleLeave} className="btn-leave">Leave Game</button>
+                    <button onClick={connection.leaveGame} className="btn-leave">Leave Game</button>
                 </div>
             </div>
 
