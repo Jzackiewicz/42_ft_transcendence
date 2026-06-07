@@ -8,11 +8,11 @@ import { GamePage } from './pages/GamePage/GamePage.tsx'
 
 import {useUser , UserProvider} from './context/UserContext.tsx'
 
-//Prevents navigating without authentication (if user is on https:site/login, disable navigating just by changing the route to the https:site/home)
-function ProtectedRoute({ children }: { children: React.ReactNode }) {
+function ProtectedRoute({ children, requireAuth }: { children: React.ReactNode, requireAuth: boolean }) {
     const { user } = useUser()
     if (user === undefined) return null
-    if (!user) return <Navigate to="/login" />
+    if (requireAuth && !user) return <Navigate to="/login" />
+    if (!requireAuth && user) return <Navigate to="/home" />
     return children
 }
 
@@ -22,17 +22,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <BrowserRouter>
         <Routes>
             <Route path="/" element={<Navigate to="/login" />} />
-            <Route path="/login" element={<AuthPage />} />
-            <Route path="/home" element={
-              <ProtectedRoute>
-                <HomePage />
-              </ProtectedRoute>
-            } />
-            <Route path="/lobby" element={
-              <ProtectedRoute>
-                <GamePage />
-              </ProtectedRoute>
-            } />
+            <Route path="/login" element={<ProtectedRoute requireAuth={false}><AuthPage /></ProtectedRoute>} />
+            <Route path="/home"  element={<ProtectedRoute requireAuth={true}><HomePage /></ProtectedRoute>} />
+            <Route path="/lobby" element={<ProtectedRoute requireAuth={true}><GamePage /></ProtectedRoute>} />
         </Routes>
       </BrowserRouter>
     </UserProvider>
