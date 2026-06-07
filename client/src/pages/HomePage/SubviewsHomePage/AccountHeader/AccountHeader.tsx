@@ -3,10 +3,11 @@ import './AccountHeader.css'
 interface AccountHeaderProps {
     username: string
     email: string
-    onLogout: () => void
+    setShowJoinModal: (bool: boolean) => void
+    handleCreateLobby: () => void
 }
 
-function AccountHeader({ username, email, onLogout }: AccountHeaderProps) {
+function AccountHeader({ username, email, setShowJoinModal, handleCreateLobby }: AccountHeaderProps) {
     const initial = username[0]?.toUpperCase() ?? '?'
 
     return (
@@ -20,9 +21,8 @@ function AccountHeader({ username, email, onLogout }: AccountHeaderProps) {
                     <span className="badge joined">Player</span>
                 </div>
             </div>
-            <button className="home-nav-play" style={{ marginLeft: 'auto' }} onClick={onLogout}>
-                Logout
-            </button>
+            <button className="home-nav-join" onClick={() => setShowJoinModal(true)}>⟶ Join Game</button>
+            <button className="home-nav-play" onClick={handleCreateLobby}>▶ Play Now</button>
         </div>
     )
 }

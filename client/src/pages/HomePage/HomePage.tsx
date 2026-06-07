@@ -24,34 +24,8 @@ export function HomePage() {
             <nav className="home-nav">
                 <div className="home-nav-logo"><span className="logo-quiz">QUIZ</span>SENDENCE</div>
                 <div className="home-nav-space" />
-                <button className="home-nav-join" onClick={() => setShowJoinModal(true)}>⟶ Join Game</button>
-                <button className="home-nav-play" onClick={handleCreateLobby}>▶ Play Now</button>
+                <button className="home-nav-play" onClick={handleLogout}>Logout</button>
             </nav>
-
-            {/* ── Main ── */}
-            <main className="home-content">
-                <AccountHeader
-                    username={user?.username ?? ''}
-                    email={user?.email ?? ''}
-                    onLogout={handleLogout}
-                />
-
-                <div className="account-grid">
-                    <FriendsView />
-                    <StatsView />
-
-                    <div className="account-grid-chat">
-                        <ChatContainer />
-                    </div>
-                </div>
-            </main>
-
-            {/* ── Footer ── */}
-            <footer className="home-footer">
-                <a className="home-footer-link" href="/privacy-policy">Privacy Policy</a>
-                <span className="home-footer-sep" />
-                <a className="home-footer-link" href="/terms-of-use">Terms of Use</a>
-            </footer>
 
             {/* ── Join modal ── */}
             {showJoinModal && (
@@ -73,6 +47,32 @@ export function HomePage() {
                     </div>
                 </div>
             )}
+
+            {/* ── Main ── */}
+            <main className="home-content">
+                <AccountHeader
+                    username={user?.username ?? ''}
+                    email={user?.email ?? ''}
+                    setShowJoinModal={setShowJoinModal}
+                    handleCreateLobby={handleCreateLobby}
+                />
+
+                <div className="account-grid">
+                    <FriendsView />
+                    <StatsView />
+
+                    <div className="account-grid-chat">
+                        <ChatContainer />
+                    </div>
+                </div>
+            </main>
+
+            {/* ── Footer ── */}
+            <footer className="home-footer">
+                <a className="home-footer-link" href="/privacy-policy">Privacy Policy</a>
+                <span className="home-footer-sep" />
+                <a className="home-footer-link" href="/terms-of-use">Terms of Use</a>
+            </footer>
         </div>
     )
 }
