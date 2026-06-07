@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './AnsweringView.css';
 
 interface AnsweringViewProps {
@@ -6,9 +6,7 @@ interface AnsweringViewProps {
     category: string;
     isCurrentAnswering: boolean;
     activePlayerName: string;
-    answerText: string;
-    setAnswerText: (val: string) => void;
-    onSubmitAnswer: (e: React.FormEvent) => void;
+    onSubmitAnswer: (answer: string) => void;
 }
 
 export function AnsweringView({
@@ -16,10 +14,16 @@ export function AnsweringView({
     category,
     isCurrentAnswering,
     activePlayerName,
-    answerText,
-    setAnswerText,
     onSubmitAnswer
 }: AnsweringViewProps) {
+    const [localAnswerText, setLocalAnswerText] = useState('');
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        onSubmitAnswer(localAnswerText);
+        setLocalAnswerText('');
+    };
+
     return (
         <div className="answering-view-container">
             <h2>Answering Phase</h2>
@@ -38,11 +42,11 @@ export function AnsweringView({
                     <div className="answering-prompt-label">
                         YOUR TURN TO ANSWER:
                     </div>
-                    <form onSubmit={onSubmitAnswer} className="answering-form">
+                    <form onSubmit={handleSubmit} className="answering-form">
                         <input
                             type="text"
-                            value={answerText}
-                            onChange={(e) => setAnswerText(e.target.value)}
+                            value={localAnswerText}
+                            onChange={(e) => setLocalAnswerText(e.target.value)}
                             placeholder="Type your answer..."
                             autoFocus
                             className="answering-input"
