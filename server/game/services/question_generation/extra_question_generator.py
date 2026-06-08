@@ -71,7 +71,7 @@ def generate_extra_questions(lobby_id, n_questions_to_generate):
 	)
 	load_dotenv(dotenv_path="../../../.env")
 	client = genai.Client(api_key=os.environ["LLM_API_KEY"])
-	data = generate(client, "gemini-3.1-flash-lite", prompt)
+	data = generate(client, os.environ["LLM_MODEL"], prompt)
 
 	# Normalize the LLM response into a list of question dicts
 	def _extract_question_list(obj):
