@@ -17,3 +17,16 @@ apiClient.interceptors.request.use((config) => {
 	}
 	return config;
 });
+
+apiClient.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response && error.response.status >= 500) {
+            if (window.location.pathname !== '/error') {
+                sessionStorage.setItem('lastErrorStatus', error.response.status.toString());
+                window.location.href = '/error';
+            }
+        }
+        return Promise.reject(error);
+    }
+);

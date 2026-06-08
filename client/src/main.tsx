@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import { HomePage } from './pages/HomePage/HomePage.tsx'
 import { AuthPage } from './pages/AuthPage/AuthPage.tsx'
 import { GamePage } from './pages/GamePage/GamePage.tsx'
+import { ErrorPage } from './pages/ErrorPage/ErrorPage.tsx'
 
 import { useUser, UserProvider } from './context/UserContext.tsx'
 
@@ -78,6 +79,8 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 							</SessionProtectedRoute>
 						</ProtectedRoute>
 					} />
+					<Route path="/error" element={<ErrorPage />} />
+					<Route path="*" element={<Navigate to="/error" replace />} />
 				</Routes>
 			</BrowserRouter>
 		</UserProvider>
