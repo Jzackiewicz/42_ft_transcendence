@@ -42,5 +42,5 @@ export async function getOutgoingRequestsList() {
 }
 
 export async function deleteFromFriends(userId: number) {
-    const res = await apiClient.delete(`/social/friends/${userId}`)
+    await apiClient.delete(`/social/friends/${userId}/`)
 }

@@ -1,21 +1,26 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { getFriends, deleteFromFriends } from '../../../../../../api/socialsWrapper'
 
-export interface Friend {
+export interface PublicUser {
     id: number
     username: string
-    online: boolean
+    avatar: string | null
+}
+
+export interface Friendship {
+    friend: PublicUser
+    created_at: string
 }
 
 export function useFriendsListTabView() {
-    const [friends] = useState<Friend[]>([
-        { id: 1, username: 'Vega',   online: true  },
-        { id: 2, username: 'Orion',  online: true  },
-        { id: 3, username: 'Nova',   online: false },
-        { id: 4, username: 'Julia',  online: true  },
-        { id: 5, username: 'Aurora', online: false },
-    ])
+    const [friendsList, setFriendsList] = useState<Friendship[]>([])
+    const [refreshTab, setRefreshTab] = useState(0)
 
-    const handleRemove = (id: number) => { console.log('remove', id) }
+    useEffect(() => {
+        getFriends().then(data => setFriendsList(data)) 
+    }, [refreshTab])
 
-    return { friends, handleRemove }
+    const handleRemove = async (userId: number) => { await deleteFromFriends(userId); setRefreshTab(prev => prev + 1) }
+
+    return { friendsList, handleRemove }
 }

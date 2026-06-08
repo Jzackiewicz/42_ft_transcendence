@@ -1,20 +1,20 @@
-import { useFriendsListTabView, Friend } from './useFriendsListTabView'
+import { useFriendsListTabView } from './useFriendsListTabView'
 import './FriendsListTabView.css'
 
 function FriendsListTabView() {
-    const { friends, handleRemove } = useFriendsListTabView()
+    const { friendsList, handleRemove } = useFriendsListTabView()
 
     return (
         <div className="friends-scroll">
             <div className="friends-grid">
-                {friends.map((f: Friend) => (
-                    <div key={f.id} className="friend-item">
+                {friendsList.map((f) => (
+                    <div key={f.friend.id} className="friend-item">
                         <div className="friend-avatar">
-                            {f.username[0].toUpperCase()}
-                            <span className={`friend-dot ${f.online ? 'online' : 'offline'}`} />
+                            {(f.friend.username ?? '?')[0].toUpperCase()}
+                            {/* <span className={`friend-dot ${f.online ? 'online' : 'offline'}`} /> */}
                         </div>
-                        <span className="friend-name">{f.username}</span>
-                        <button className="friend-remove" onClick={() => handleRemove(f.id)}>Remove</button>
+                        <span className="friend-name">{f.friend.username}</span>
+                        <button className="friend-remove" onClick={() => handleRemove(f.friend.id)}>Remove</button>
                     </div>
                 ))}
             </div>
