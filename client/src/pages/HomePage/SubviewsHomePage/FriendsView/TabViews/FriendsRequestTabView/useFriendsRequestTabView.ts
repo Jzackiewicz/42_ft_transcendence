@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { getIncomingRequestsList, getOutgoingRequestsList } from '../../../../../../api/socialsWrapper'
+import { getIncomingRequestsList, getOutgoingRequestsList, 
+    acceptFriendRequest, declineFriendRequest, cancelMyFriendRequest} from '../../../../../../api/socialsWrapper'
 
 interface PublicUser {
     id: number
@@ -16,18 +17,20 @@ export interface FriendRequest {
 export function useFriendsRequestTabView() {
     const [incomingRequestsList, setIncomingRequestsList] = useState<FriendRequest[]>([])
     const [outgoingRequestsList, setOutgoingRequestList] = useState<FriendRequest[]>([])
+    const [refresh, setRefresh] = useState(0)
 
     useEffect(() => {
         getIncomingRequestsList().then(data => setIncomingRequestsList(data))
         getOutgoingRequestsList().then(data => setOutgoingRequestList(data))
-    }, [])
+    }, [refresh])
 
-    const handleAccept  = (id: number) => { console.log('accept',  id) }
-    const handleDecline = (id: number) => { console.log('decline', id) }
-    const handleCancel = (id: number) => { console.log('accept',  id) }
+    const handleAccept  = async (requestID: number) => { await acceptFriendRequest(requestID);  setRefresh(prev => prev + 1) }
+    const handleDecline = async (requestID: number) => { await declineFriendRequest(requestID); setRefresh(prev => prev + 1) }
+    const handleCancel  = async (requestID: number) => { await cancelMyFriendRequest(requestID); setRefresh(prev => prev + 1) }
 
     return { incomingRequestsList, setIncomingRequestsList,
         outgoingRequestsList, setOutgoingRequestList,
         handleAccept, handleDecline, handleCancel
     }
+
 }
