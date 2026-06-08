@@ -69,7 +69,6 @@ def generate_extra_questions(lobby_id, n_questions_to_generate):
 		+ json.dumps(questions_data)
 		+ ". The questions must not be duplicates of the ones given. Return a JSON array of objects with keys: question, answer (or answers), category."
 	)
-	print("About to generate extra questions..")
 	load_dotenv(dotenv_path="../../../.env")
 	client = genai.Client(api_key=os.environ["LLM_API_KEY"])
 	data = generate(client, "gemini-3.1-flash-lite", prompt)
