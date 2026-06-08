@@ -45,6 +45,7 @@ export interface GameSnapshot {
     session_uuid: string;
     current_status: GameStatus;
     current_player: number | null;
+    host_player: number | null;
     last_correct_player: number | null;
     last_nominated_player: number | null;
     players: Player[];
@@ -72,6 +73,7 @@ export function useGamePage() {
     const [messages, setMessages] = useState<string[]>([]);
     const [isConnected, setIsConnected] = useState<boolean>(false);
     const [gameState, setGameState] = useState<GameSnapshot | null>(null);
+    const [myPlayerId, setMyPlayerId] = useState<number | null>(null);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
     const [timeLeft, setTimeLeft] = useState<number | null>(null);
@@ -93,10 +95,14 @@ export function useGamePage() {
     const eligiblePlayers = activeGameState?.players.filter(p => p.is_alive) || [];
 
     // Helper computations
-    const currentPlayerObj = activeGameState?.players.find(p => p.display_name === user?.username);
+    const currentPlayerObj = myPlayerId !== null
+        ? activeGameState?.players.find(p => p.id === myPlayerId)
+        : activeGameState?.players.find(p => p.display_name === user?.username);
     const sortedPlayers = [...(activeGameState?.players || [])].sort((a, b) => a.id - b.id);
-    const isHost = sortedPlayers.length > 0 && currentPlayerObj !== undefined && (sortedPlayers[0].id === currentPlayerObj.id);
-    const hostPlayerId = sortedPlayers.length > 0 ? sortedPlayers[0].id : null;
+    const isHost = activeGameState !== null &&
+        ((myPlayerId !== null && activeGameState.host_player === myPlayerId) ||
+         (myPlayerId === null && sortedPlayers.length > 0 && currentPlayerObj !== undefined && sortedPlayers[0].id === currentPlayerObj.id));
+    const hostPlayerId = activeGameState?.host_player ?? (sortedPlayers.length > 0 ? sortedPlayers[0].id : null);
     const gameStarted = activeGameState !== null && activeGameState.current_status !== GameStatus.LOBBY;
     const isGameOver = activeGameState !== null && activeGameState.current_status === GameStatus.GAME_OVER;
 
@@ -170,6 +176,9 @@ export function useGamePage() {
             setMessages(prev => [...prev, `[Server]: ${event.data}`]);
             try {
                 const data = JSON.parse(event.data);
+                if (data.your_player_id !== undefined) {
+                    setMyPlayerId(data.your_player_id);
+                }
                 if (data.snapshot) {
                     setGameState(data.snapshot as GameSnapshot);
                     setErrorMsg(null);

@@ -84,7 +84,7 @@ class GameStateSnapshotSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = GameSession
 		fields = [
-			'session_uuid', 'current_status', 'current_player', 'last_correct_player',
+			'session_uuid', 'current_status', 'host_player', 'current_player', 'last_correct_player',
 			'last_nominated_player', 'players', 'current_question', 'current_attempt',
 			'answer_time_limit_ms', 'winner', 'end_reason', 'question_asked_count',
 			'total_questions_count',
