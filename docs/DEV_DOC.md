@@ -104,8 +104,8 @@ python server/manage.py graph_models game --pydot -g -o docs/game_erd.svg
 | --- | --- | --- |
 | Admin panel | <https://localhost:8443/admin/> | <http://127.0.0.1:8000/admin/> |
 | API docs (Swagger) | <https://localhost:8443/api/docs/> | <http://127.0.0.1:8000/api/docs/> |
-| Questions API | <https://localhost:8443/game/questions/> | <http://127.0.0.1:8000/game/questions/> |
-| Users API | <https://localhost:8443/account/users/> | <http://127.0.0.1:8000/account/users/> |
+| Questions API | <https://localhost:8443/api/game/questions/> | <http://127.0.0.1:8000/api/game/questions/> |
+| Users API | <https://localhost:8443/api/account/users/> | <http://127.0.0.1:8000/api/account/users/> |
 | WebSocket docs | `docs/WEBSOCKET_EVENTS.md` | - |
 
 - To run automatic tests:
