@@ -153,9 +153,3 @@ def generate_extra_questions(lobby_id, n_questions_to_generate):
 			SessionQuestion.objects.bulk_create(session_questions_to_create)
 
 	return {"created_question_ids": created_question_ids}
-
-# remove gemini as a magic number, have it defined in .env
-# create a fake lobby filled with questions, answers and categories in order to inject into this function for testing
-# think about how emulate it, perhaps you need to populate the database with a lobby
-# call POST from SWAGGER while using this emulated lobby
-# respond to the POST request with the generated question IDs so that the lobby can fetch them and display to the user
