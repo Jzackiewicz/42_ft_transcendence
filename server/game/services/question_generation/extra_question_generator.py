@@ -90,7 +90,6 @@ def generate_extra_questions(lobby_id, n_questions_to_generate):
 			if any(key in obj for key in ("question", "question_text", "q")):
 				return [obj]
 		return []
-
 	generated = _extract_question_list(data)
 
 	# Persist generated questions and attach to the session

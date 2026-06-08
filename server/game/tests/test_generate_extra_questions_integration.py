@@ -24,7 +24,7 @@ class ExtraQuestionsIntegrationTest(TestCase):
             q = Question.objects.create(question_text="Seed?", correct_answer="S", category="general")
             SessionQuestion.objects.create(session=self.session, question=q, order_index=0)
 
-    @patch("game.services.extra_question_generator.generate")
+    @patch("game.services.question_generation.extra_question_generator.generate")
     def test_generate_extra_questions_api_creates_and_attaches(self, mock_generate):
         # Mock LLM response as a simple list of question dicts
         mock_generate.return_value = [

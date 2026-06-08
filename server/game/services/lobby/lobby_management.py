@@ -2,7 +2,7 @@ from django.db import transaction
 from django.db.models import Max
 from game.models import GameSession, SessionPlayer
 from game.selectors.lobby_selectors import get_room_by_uuid
-from game.services.extra_question_generator import generate_extra_questions
+from game.services.question_generation.extra_question_generator import generate_extra_questions
 
 from .guards import (
     check_can_create_room,
