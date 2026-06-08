@@ -465,6 +465,69 @@ class GameConsumerTests(TransactionTestCase):
 		await comm1.disconnect()
 		await comm2.disconnect()
 
+	async def test_websocket_nomination_timeout(self):
+		q2 = await database_sync_to_async(Question.objects.create)(
+			question_text="Test2?", correct_answer="no"
+		)
+		await database_sync_to_async(SessionQuestion.objects.create)(
+			session=self.session, question=q2, order_index=1
+		)
+
+		# Set a short nomination time limit to speed up test execution
+		await database_sync_to_async(
+			lambda: GameSession.objects.filter(id=self.session.id).update(
+				nomination_time_limit_ms=100
+			)
+		)()
+
+		headers1 = [(b'cookie', f'sessionid={self.cookie}'.encode('ascii'))]
+		comm1 = WebsocketCommunicator(
+			self.application, f"/ws/game/{self.session.session_uuid}/", headers=headers1
+		)
+		await comm1.connect()
+		await comm1.receive_json_from()
+		
+		headers2 = [(b'cookie', f'sessionid={self.cookie2}'.encode('ascii'))]
+		comm2 = WebsocketCommunicator(
+			self.application, f"/ws/game/{self.session.session_uuid}/", headers=headers2
+		)
+		await comm2.connect()
+		await comm1.receive_json_from()
+		await comm2.receive_json_from()
+
+		await comm1.send_json_to({"action": GameAction.START_GAME})
+		res_start = await comm1.receive_json_from()
+		await comm2.receive_json_from()
+		
+		current_player_id = res_start["snapshot"]["current_player"]
+		current_comm = comm1 if current_player_id == self.player.id else comm2
+		other_comm = comm2 if current_player_id == self.player.id else comm1
+		
+		# Submit correct answer to force a nomination turn
+		await current_comm.send_json_to({
+			"action": GameAction.SUBMIT_ANSWER,
+			"payload": {"answer": "yes"}
+		})
+		await current_comm.receive_json_from()
+		await other_comm.receive_json_from()
+		
+		# Wait for auto-resolution to transition to nomination
+		res_nom_phase = await current_comm.receive_json_from()
+		await other_comm.receive_json_from()
+		self.assertEqual(res_nom_phase["snapshot"]["current_status"], GameSession.Status.NOMINATION)
+		
+		# Wait for nomination timeout (100ms + some buffer)
+		res_nom_timeout = await current_comm.receive_json_from()
+		await other_comm.receive_json_from()
+
+		self.assertEqual(res_nom_timeout["type"], "game_state_update")
+		self.assertEqual(res_nom_timeout["action"], "nomination_timeout")
+		self.assertEqual(res_nom_timeout["snapshot"]["current_status"], GameSession.Status.ANSWERING)
+		self.assertIn(res_nom_timeout["snapshot"]["current_player"], [self.player.id, self.player2.id])
+		
+		await comm1.disconnect()
+		await comm2.disconnect()
+
 	async def test_websocket_reconnection_state_sync(self):
 		headers1 = [(b'cookie', f'sessionid={self.cookie}'.encode('ascii'))]
 		comm1 = WebsocketCommunicator(
