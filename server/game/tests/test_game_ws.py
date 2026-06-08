@@ -528,6 +528,156 @@ class GameConsumerTests(TransactionTestCase):
 		await comm1.disconnect()
 		await comm2.disconnect()
 
+	async def _run_multi_player_timeout_test(self, num_players: int):
+		# Create additional questions to support multiple turns
+		for i in range(1, 4):
+			q = await database_sync_to_async(Question.objects.create)(
+				question_text=f"Question {i}?", correct_answer="yes"
+			)
+			await database_sync_to_async(SessionQuestion.objects.create)(
+				session=self.session, question=q, order_index=i
+			)
+
+		# Set short timeouts to speed up the test
+		await database_sync_to_async(
+			lambda: GameSession.objects.filter(id=self.session.id).update(
+				answer_time_limit_ms=150,
+				nomination_time_limit_ms=150,
+				evaluation_time_limit_ms=50
+			)
+		)()
+
+		# Retrieve updated session
+		session = await database_sync_to_async(GameSession.objects.get)(id=self.session.id)
+
+		# We already have self.user/self.player and self.user2/self.player2.
+		# Create the additional users and players as needed.
+		users = [self.user, self.user2]
+		cookies = [self.cookie, self.cookie2]
+		players = [self.player, self.player2]
+
+		for idx in range(3, num_players + 1):
+			u = await database_sync_to_async(User.objects.create_user)(
+				username=f"testuser{idx}",
+				password="password",
+				email=f"testuser{idx}@test.com"
+			)
+			p = await database_sync_to_async(SessionPlayer.objects.create)(
+				session=session,
+				user=u,
+				display_name=f"Player {idx}",
+				seat_number=idx
+			)
+			client = Client()
+			await database_sync_to_async(client.force_login)(u)
+			cookie = client.cookies.get('sessionid').value
+			
+			users.append(u)
+			cookies.append(cookie)
+			players.append(p)
+
+		# Connect all players to WebSocket
+		communicators = []
+		for cookie in cookies:
+			headers = [(b'cookie', f'sessionid={cookie}'.encode('ascii'))]
+			comm = WebsocketCommunicator(
+				self.application, f"/ws/game/{session.session_uuid}/", headers=headers
+			)
+			await comm.connect()
+			# Consume connection state broadcast
+			await comm.receive_json_from()
+			communicators.append(comm)
+
+		# Clear queue
+		for comm in communicators:
+			while not await comm.receive_nothing(timeout=0.01):
+				await comm.receive_json_from()
+
+		# 1. Start the game
+		await communicators[0].send_json_to({"action": GameAction.START_GAME})
+		
+		# Receive start game event on all connections
+		start_events = []
+		for comm in communicators:
+			evt = await comm.receive_json_from(timeout=2.0)
+			self.assertEqual(evt["action"], GameAction.START_GAME)
+			start_events.append(evt)
+
+		# Get current player from snapshot
+		current_player_id = start_events[0]["snapshot"]["current_player"]
+		player_ids = [p.id for p in players]
+		self.assertIn(current_player_id, player_ids)
+
+		# Find index of current player
+		curr_idx = player_ids.index(current_player_id)
+
+		# 2. Test Answering Timeout
+		eval_event = await communicators[0].receive_json_from(timeout=3.0)
+		self.assertEqual(eval_event["action"], "evaluate_timeout")
+		self.assertEqual(eval_event["snapshot"]["current_status"], GameSession.Status.EVALUATION)
+		
+		for i in range(1, len(communicators)):
+			evt = await communicators[i].receive_json_from(timeout=2.0)
+			self.assertEqual(evt["action"], "evaluate_timeout")
+
+		# 3. Test Evaluation Finish
+		next_turn_event = await communicators[0].receive_json_from(timeout=3.0)
+		self.assertEqual(next_turn_event["action"], "handle_evaluation_finish")
+		self.assertEqual(next_turn_event["snapshot"]["current_status"], GameSession.Status.ANSWERING)
+
+		for i in range(1, len(communicators)):
+			evt = await communicators[i].receive_json_from(timeout=2.0)
+			self.assertEqual(evt["action"], "handle_evaluation_finish")
+
+		# Get the new current player
+		current_player_id = next_turn_event["snapshot"]["current_player"]
+		self.assertIn(current_player_id, player_ids)
+		curr_idx = player_ids.index(current_player_id)
+
+		# 4. Test Nomination Timeout
+		# Submit a correct answer to transition to EVALUATION and then to NOMINATION
+		await communicators[curr_idx].send_json_to({
+			"action": GameAction.SUBMIT_ANSWER,
+			"payload": {"answer": "yes"}
+		})
+		
+		for comm in communicators:
+			evt = await comm.receive_json_from(timeout=2.0)
+			self.assertEqual(evt["action"], GameAction.SUBMIT_ANSWER)
+			self.assertEqual(evt["snapshot"]["current_status"], GameSession.Status.EVALUATION)
+
+		nom_phase_event = await communicators[0].receive_json_from(timeout=3.0)
+		self.assertEqual(nom_phase_event["snapshot"]["current_status"], GameSession.Status.NOMINATION)
+		
+		for i in range(1, len(communicators)):
+			evt = await communicators[i].receive_json_from(timeout=2.0)
+			self.assertEqual(evt["snapshot"]["current_status"], GameSession.Status.NOMINATION)
+
+		# Let nomination phase time out
+		nom_timeout_event = await communicators[0].receive_json_from(timeout=3.0)
+		self.assertEqual(nom_timeout_event["action"], "nomination_timeout")
+		self.assertEqual(nom_timeout_event["snapshot"]["current_status"], GameSession.Status.ANSWERING)
+
+		for i in range(1, len(communicators)):
+			evt = await communicators[i].receive_json_from(timeout=2.0)
+			self.assertEqual(evt["action"], "nomination_timeout")
+
+		new_player_id = nom_timeout_event["snapshot"]["current_player"]
+		self.assertIn(new_player_id, player_ids)
+
+		# Disconnect all
+		for comm in communicators:
+			await comm.disconnect()
+
+	async def test_websocket_timeout_3_players(self):
+		await self._run_multi_player_timeout_test(3)
+
+	async def test_websocket_timeout_4_players(self):
+		await self._run_multi_player_timeout_test(4)
+
+	async def test_websocket_timeout_5_players(self):
+		await self._run_multi_player_timeout_test(5)
+
 	async def test_websocket_reconnection_state_sync(self):
 		headers1 = [(b'cookie', f'sessionid={self.cookie}'.encode('ascii'))]
 		comm1 = WebsocketCommunicator(
