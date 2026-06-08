@@ -24,16 +24,35 @@ class GameTimerManager:
 		cls.cancel(session_id)
 
 		deadline_at = timer_data['deadline_at']
-		attempt_id = timer_data['attempt_id']
 		timer_type = timer_data['type']
 
 		now = datetime.now(deadline_at.tzinfo) if deadline_at.tzinfo else datetime.now()
 		sleep_seconds = max((deadline_at - now).total_seconds(), 0)
 
 		if timer_type == 'answer_timeout':
-			coro = cls._run_answer_timeout(session_id, attempt_id, sleep_seconds, room_group_name)
+			coro = cls._run_timer(
+				session_id=session_id,
+				sleep_seconds=sleep_seconds,
+				room_group_name=room_group_name,
+				expected_status=GameSession.Status.ANSWERING,
+				action_name='evaluate_timeout',
+			)
 		elif timer_type == 'evaluation_finish':
-			coro = cls._run_evaluation_finish(session_id, attempt_id, sleep_seconds, room_group_name)
+			coro = cls._run_timer(
+				session_id=session_id,
+				sleep_seconds=sleep_seconds,
+				room_group_name=room_group_name,
+				expected_status=GameSession.Status.EVALUATION,
+				action_name='handle_evaluation_finish',
+			)
+		elif timer_type == 'nomination_timeout':
+			coro = cls._run_timer(
+				session_id=session_id,
+				sleep_seconds=sleep_seconds,
+				room_group_name=room_group_name,
+				expected_status=GameSession.Status.NOMINATION,
+				action_name='nomination_timeout',
+			)
 		else:
 			return
 
@@ -48,12 +67,13 @@ class GameTimerManager:
 	# Internal coroutines
 
 	@classmethod
-	async def _run_answer_timeout(
+	async def _run_timer(
 		cls,
 		session_id: int,
-		attempt_id: int,
 		sleep_seconds: float,
 		room_group_name: str,
+		expected_status: GameSession.Status,
+		action_name: str,
 	) -> None:
 		await asyncio.sleep(sleep_seconds + 0.05)
 		cls._timers.pop(session_id, None)
@@ -62,55 +82,16 @@ class GameTimerManager:
 			is_current = await database_sync_to_async(
 				lambda: GameSession.objects.filter(
 					id=session_id,
-					current_attempt_id=attempt_id,
-					current_status=GameSession.Status.ANSWERING,
+					current_status=expected_status,
 				).exists()
 			)()
 			if not is_current:
 				return
 
 			handler = GameActionHandler()
-			result = await database_sync_to_async(handler.handle_timeout)(session_id)
-
-			snapshot = await database_sync_to_async(get_game_snapshot)(session_id)
-			channel_layer = get_channel_layer()
-			await channel_layer.group_send(
-				room_group_name,
-				{
-					'type': 'game_state_update',
-					'action': result.action,
-					'snapshot': snapshot,
-				}
-			)
-
-			cls._schedule_from_result(session_id, result, room_group_name)
-		except ValidationError:
-			pass
-
-	@classmethod
-	async def _run_evaluation_finish(
-		cls,
-		session_id: int,
-		attempt_id: int,
-		sleep_seconds: float,
-		room_group_name: str,
-	) -> None:
-		await asyncio.sleep(sleep_seconds + 0.05)
-		cls._timers.pop(session_id, None)
-
-		try:
-			is_current = await database_sync_to_async(
-				lambda: GameSession.objects.filter(
-					id=session_id,
-					current_attempt_id=attempt_id,
-					current_status=GameSession.Status.EVALUATION,
-				).exists()
+			result = await database_sync_to_async(
+				lambda: handler.handle_timer_timeout(session_id, action_name)
 			)()
-			if not is_current:
-				return
-
-			handler = GameActionHandler()
-			result = await database_sync_to_async(handler.handle_evaluation_finish)(session_id)
 
 			snapshot = await database_sync_to_async(get_game_snapshot)(session_id)
 			channel_layer = get_channel_layer()
@@ -133,3 +114,4 @@ class GameTimerManager:
 		if not result.timer_data:
 			return
 		cls.schedule(session_id, result.timer_data, room_group_name)
+
