@@ -1,24 +1,33 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { getIncomingRequestsList, getOutgoingRequestsList } from '../../../../../../api/socialsWrapper'
+
+interface PublicUser {
+    id: number
+    username: string
+    avatar: string | null
+}
 
 export interface FriendRequest {
     id: number
-    username: string
+    from_user: PublicUser
+    to_user: PublicUser
 }
 
 export function useFriendsRequestTabView() {
-    const [requests] = useState<FriendRequest[]>([
-        { id: 1, username: 'Luna'   },
-        { id: 2, username: 'Cosmos' },
-                { id: 1, username: 'Luna'   },
-        { id: 2, username: 'Cosmos' },
-                { id: 1, username: 'Luna'   },
-        { id: 2, username: 'Cosmos' },
-                { id: 1, username: 'Luna'   },
-        { id: 2, username: 'Cosmos' },
-    ])
+    const [incomingRequestsList, setIncomingRequestsList] = useState<FriendRequest[]>([])
+    const [outgoingRequestsList, setOutgoingRequestList] = useState<FriendRequest[]>([])
+
+    useEffect(() => {
+        getIncomingRequestsList().then(data => setIncomingRequestsList(data))
+        getOutgoingRequestsList().then(data => setOutgoingRequestList(data))
+    }, [])
 
     const handleAccept  = (id: number) => { console.log('accept',  id) }
     const handleDecline = (id: number) => { console.log('decline', id) }
+    const handleCancel = (id: number) => { console.log('accept',  id) }
 
-    return { requests, handleAccept, handleDecline }
+    return { incomingRequestsList, setIncomingRequestsList,
+        outgoingRequestsList, setOutgoingRequestList,
+        handleAccept, handleDecline, handleCancel
+    }
 }

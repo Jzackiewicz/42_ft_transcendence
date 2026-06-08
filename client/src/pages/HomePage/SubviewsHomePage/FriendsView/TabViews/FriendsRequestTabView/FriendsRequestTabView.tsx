@@ -2,24 +2,38 @@ import { useFriendsRequestTabView, FriendRequest } from './useFriendsRequestTabV
 import './FriendsRequestTabView.css'
 
 function FriendsRequestTabView() {
-    const { requests, handleAccept, handleDecline } = useFriendsRequestTabView()
+    const { incomingRequestsList, outgoingRequestsList,
+            handleAccept, handleDecline, handleCancel } = useFriendsRequestTabView()
 
     return (
-        <div className="friends-scroll">
-            <div className="friends-request-list">
-                {requests.length === 0 && (
-                    <span className="friends-empty">No pending requests</span>
-                )}
-                {requests.map((r: FriendRequest) => (
-                    <div key={r.id} className="request-item">
-                        <div className="friend-avatar">{r.username[0].toUpperCase()}</div>
-                        <span className="friend-name">{r.username}</span>
-                        <div className="request-actions">
-                            <button className="req-accept"  onClick={() => handleAccept(r.id)}>Accept</button>
-                            <button className="req-decline" onClick={() => handleDecline(r.id)}>Decline</button>
+        <div className="friends-request-list">
+            {incomingRequestsList.length === 0 && outgoingRequestsList.length === 0 && (
+                <span className="friends-empty">No pending requests</span>
+            )}
+            <div className="request-types-container">
+                <div className="incoming-request">
+                    {incomingRequestsList.map((r: FriendRequest) => (
+                        <div key={r.id} className="request-item">
+                            <div className="friend-avatar">{r.from_user.username[0].toUpperCase()}</div>
+                            <span className="friend-name">{r.from_user.username}</span>
+                            <div className="request-actions">
+                                <button className="req-accept"  onClick={() => handleAccept(r.id)}>Accept</button>
+                                <button className="req-decline" onClick={() => handleDecline(r.id)}>Decline</button>
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
+                <div className="outgoing-request">
+                    {outgoingRequestsList.map((r: FriendRequest) => (
+                        <div key={r.id} className="request-item">
+                            <div className="friend-avatar">{r.to_user.username[0].toUpperCase()}</div>
+                            <span className="friend-name">{r.to_user.username}</span>
+                            <div className="request-actions">
+                                <button className="req-decline" onClick={() => handleCancel(r.id)}>Cancel</button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
             </div>
         </div>
     )

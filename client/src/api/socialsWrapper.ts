@@ -16,3 +16,13 @@ export async function sendFriendRequest(futureFriendID: number) {
 
     return res.data
 }
+
+export async function getIncomingRequestsList() {
+    const res = await apiClient.get('/social/friend-requests/incoming/')
+    return res.data
+}
+
+export async function getOutgoingRequestsList() {
+    const res = await apiClient.get('/social/friend-requests/outgoing/')
+    return res.data
+}
