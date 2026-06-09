@@ -17,7 +17,7 @@ export function useFriendsListTabView() {
     const [refreshTab, setRefreshTab] = useState(0)
 
     useEffect(() => {
-        getFriends().then(data => setFriendsList(data)) 
+        getFriends().then(data => setFriendsList(Array.isArray(data) ? data : (data.results ?? [])))
     }, [refreshTab])
 
     const handleRemove = async (userId: number) => { await deleteFromFriends(userId); setRefreshTab(prev => prev + 1) }
