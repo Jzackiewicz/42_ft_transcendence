@@ -33,11 +33,12 @@ def join_room(*, session_uuid: str, user) -> SessionPlayer:
     with transaction.atomic():
         session = GameSession.objects.select_for_update().get(id=session.id)
 
+        if user.is_authenticated:
+            existing_player = session.session_players.filter(user=user).first()
+            if existing_player:
+                return existing_player
+
         check_can_join_room(session=session, user=user)
-            
-        existing_player = session.session_players.filter(user=user).first()
-        if existing_player:
-            return existing_player
             
         max_seat = session.session_players.aggregate(Max('seat_number'))['seat_number__max'] or 0
         

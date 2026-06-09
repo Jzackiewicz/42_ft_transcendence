@@ -126,3 +126,6 @@ def handle_disconnect_in_nomination(session: GameSession, actor: SessionPlayer) 
 			session.save()
 			return True
 	return False
+
+def reconnect_player(player_id: int) -> None:
+	SessionPlayer.objects.filter(id=player_id).update(disconnected_at=None)

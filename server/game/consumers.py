@@ -3,6 +3,7 @@ from channels.db import database_sync_to_async
 from django.core.exceptions import ValidationError
 from .services.game_flow.game_action_handler import GameActionHandler, GameActionRequest, GameAction
 from .services.game_flow.timer_manager import GameTimerManager
+from .services.game_flow.lifecycle import reconnect_player
 from .selectors.lobby_selectors import verify_player_in_session
 from .selectors.game_flow_selectors import get_game_snapshot
 from .serializers import SubmitAnswerPayloadSerializer, NominatePlayerPayloadSerializer
@@ -27,6 +28,8 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 			self.channel_name
 		)
 		await self.accept()
+		
+		await database_sync_to_async(reconnect_player)(self.session_player_id)
 		
 		handler = GameActionHandler()
 		await database_sync_to_async(handler.sync_game_disconnections)(self.session_id)
