@@ -7,7 +7,7 @@ from django.contrib.auth import get_user_model
 
 from game.models import Question, SessionQuestion
 from game.services.lobby.lobby_management import create_room
-
+from game.services.question_generation.extra_question_generator import GeneratedQuestion
 
 class ExtraQuestionsIntegrationTest(TestCase):
     def setUp(self):
@@ -28,9 +28,9 @@ class ExtraQuestionsIntegrationTest(TestCase):
     def test_generate_extra_questions_api_creates_and_attaches(self, mock_generate):
         # Mock LLM response as a simple list of question dicts
         mock_generate.return_value = [
-            {"question": "AI Q1?", "answer": "A1", "category": "general"},
-            {"question": "AI Q2?", "answer": "A2", "category": "general"},
-            {"question": "AI Q3?", "answer": "A3", "category": "general"},
+            GeneratedQuestion(question="AI Q1?", answers=["A1"], category="general"),
+            GeneratedQuestion(question="AI Q2?", answers=["A2"], category="general"),
+            GeneratedQuestion(question="AI Q3?", answers=["A3"], category="general"),
         ]
 
         url = reverse("generate-extra-questions")
