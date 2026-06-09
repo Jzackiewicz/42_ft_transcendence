@@ -55,20 +55,24 @@ def load_lobby_questions(lobby_id):
 		}
 		for session_question in lobby.session_questions.select_related("question").order_by("order_index")
 	]
-	if not questions_data:
-		raise RuntimeError(f"Lobby has no questions: {lobby_id}")
 	return questions_data
 
 def generate_extra_questions(lobby_id, n_questions_to_generate):
 	# Load existing lobby questions to provide context to the LLM
 	questions_data = load_lobby_questions(lobby_id)
-	prompt = (
-		"Generate "
+	if not questions_data:
+		prompt = ("Generate "
+		+ str(n_questions_to_generate)
+		+ " general knowledge questions. "
+		+ ". The questions must not be duplicates of the ones given. Return a JSON array of objects with keys: question, answer (or answers), category."
+		)
+	else:
+		prompt = ("Generate "
 		+ str(n_questions_to_generate)
 		+ " questions and answers based off of the following questions: "
 		+ json.dumps(questions_data)
-		+ ". The questions must not be duplicates of the ones given. Return a JSON array of objects with keys: question, answer (or answers), category."
-	)
+		+ ". The questions must not be duplicates. Return a JSON array of objects with keys: question, answer (or answers), category."
+		)
 	load_dotenv(dotenv_path="../../../.env")
 	client = genai.Client(api_key=os.environ["LLM_API_KEY"])
 	data = generate(client, os.environ["LLM_MODEL"], prompt)
