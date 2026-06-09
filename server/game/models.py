@@ -98,6 +98,7 @@ class GameSession(MachineMixin, models.Model):
 
 
 	answer_time_limit_ms = models.PositiveIntegerField(default=20000)
+	evaluation_time_limit_ms = models.PositiveIntegerField(default=3000)
 	# starting_lives = models.PositiveIntegerField(default=3)
 	max_players = models.PositiveIntegerField(default=5)
 

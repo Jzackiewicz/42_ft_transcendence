@@ -59,7 +59,4 @@ def apply_answer_verdict(session: GameSession) -> None:
 	else:
 		apply_wrong_answer_effects(attempt)
 
-	session.current_attempt = None
-	session.save()
-
 	
