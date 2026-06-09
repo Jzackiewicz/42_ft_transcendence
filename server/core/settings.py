@@ -230,3 +230,5 @@ CHANNEL_LAYERS = {
         "CONFIG": {"hosts": [REDIS_URL]},
     }
 }
+
+DISCONNECT_GRACE_PERIOD_S = int(os.getenv("DISCONNECT_GRACE_PERIOD_S", "30"))
