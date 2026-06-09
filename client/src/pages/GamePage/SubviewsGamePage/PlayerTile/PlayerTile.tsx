@@ -26,7 +26,8 @@ export function PlayerTile({
     const tileClasses = [
         'player-tile',
         isPlayerActive ? 'active' : '',
-        !is_alive ? 'eliminated' : ''
+        !is_alive ? 'eliminated' : '',
+        !player.is_online ? 'offline' : ''
     ].filter(Boolean).join(' ');
 
     return (
@@ -48,6 +49,11 @@ export function PlayerTile({
             {!is_alive && (
                 <div className="player-eliminated-label">
                     💀 ELIMINATED
+                </div>
+            )}
+            {player.is_online === false && is_alive && (
+                <div className="player-offline-label">
+                    📡 DISCONNECTED
                 </div>
             )}
         </div>

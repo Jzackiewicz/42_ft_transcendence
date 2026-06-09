@@ -10,6 +10,7 @@ export interface Player {
     points: number;
     answered_count: number;
     is_alive: boolean;
+    is_online: boolean;
     player_type?: 'human' | 'bot';
     total_answer_time_ms?: number;
 }
