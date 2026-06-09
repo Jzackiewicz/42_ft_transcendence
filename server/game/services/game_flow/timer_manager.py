@@ -93,6 +93,7 @@ class GameTimerManager:
 				lambda: handler.handle_timer_timeout(session_id, action_name)
 			)()
 
+			await database_sync_to_async(handler.sync_game_disconnections)(session_id)
 			snapshot = await database_sync_to_async(get_game_snapshot)(session_id)
 			channel_layer = get_channel_layer()
 			await channel_layer.group_send(

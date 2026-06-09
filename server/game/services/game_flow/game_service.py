@@ -1,3 +1,5 @@
+from datetime import timedelta
+from django.conf import settings
 from django.utils import timezone
 from game.models import GameSession, SessionPlayer
 
@@ -194,4 +196,24 @@ class GameService:
 		elif self.session.current_status == GameSession.Status.GAME_OVER:
 			return
 		else:
-			self._handle_active_game_disconnect(actor)
+			actor.disconnected_at = timezone.now()
+			actor.save(update_fields=['disconnected_at'])
+
+	def expire_disconnected_players(self) -> None:
+		if self.session.current_status in [GameSession.Status.LOBBY, GameSession.Status.GAME_OVER]:
+			return
+
+		grace_limit = timezone.now() - timedelta(seconds=settings.DISCONNECT_GRACE_PERIOD_S)
+		expired_players = list(self.session.session_players.filter(
+			lives__gt=0,
+			disconnected_at__isnull=False,
+			disconnected_at__lte=grace_limit
+		))
+
+		if not expired_players:
+			return
+
+		for player in expired_players:
+			if self.session.current_status == GameSession.Status.GAME_OVER:
+				break
+			self._handle_active_game_disconnect(player)

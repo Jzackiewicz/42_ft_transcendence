@@ -95,6 +95,10 @@ class GameActionHandler:
 			timer_data=self._build_timer_data(session),
 		)
 
+	@transaction.atomic
+	def sync_game_disconnections(self, session_id: int) -> None:
+		session = self._get_session(session_id=session_id)
+		GameService(session).expire_disconnected_players()
 
 	@staticmethod
 	def _build_timer_data(session: GameSession) -> dict | None:

@@ -28,6 +28,8 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 		)
 		await self.accept()
 		
+		handler = GameActionHandler()
+		await database_sync_to_async(handler.sync_game_disconnections)(self.session_id)
 		snapshot = await database_sync_to_async(get_game_snapshot)(self.session_id)
 		await self.channel_layer.group_send(
 			self.room_group_name,
@@ -59,6 +61,7 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 					GameTimerManager.cancel(self.session_id)
 					return
 
+				await database_sync_to_async(handler.sync_game_disconnections)(self.session_id)
 				snapshot = await database_sync_to_async(get_game_snapshot)(self.session_id)
 				await self.channel_layer.group_send(
 					self.room_group_name,
@@ -105,6 +108,7 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 			handler = GameActionHandler()
 			result = await database_sync_to_async(handler.handle_action)(request)
 
+			await database_sync_to_async(handler.sync_game_disconnections)(self.session_id)
 			snapshot = await database_sync_to_async(get_game_snapshot)(self.session_id)
 			await self.channel_layer.group_send(
 				self.room_group_name,
