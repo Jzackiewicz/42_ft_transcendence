@@ -700,6 +700,13 @@ class GameConsumerTests(TransactionTestCase):
 		await comm2.receive_json_from()
 
 		await comm1.disconnect()
+
+		# Receive the disconnect broadcast on comm2
+		disc_msg = await comm2.receive_json_from()
+		self.assertEqual(disc_msg["type"], "game_state_update")
+		self.assertEqual(disc_msg["action"], "disconnect")
+		players = {p["id"]: p for p in disc_msg["snapshot"]["players"]}
+		self.assertFalse(players[self.player.id]["is_online"])
 		
 		# Reconnect the same user and receive state immediately
 		comm1_new = WebsocketCommunicator(
@@ -707,9 +714,20 @@ class GameConsumerTests(TransactionTestCase):
 		)
 		connected, _ = await comm1_new.connect()
 		self.assertTrue(connected)
+		
+		# comm1_new receives state sync on connect
 		res = await comm1_new.receive_json_from()
 		self.assertEqual(res["type"], "game_state_update")
-		self.assertIn("snapshot", res)
+		self.assertEqual(res["action"], "player_connected")
+		players_new = {p["id"]: p for p in res["snapshot"]["players"]}
+		self.assertTrue(players_new[self.player.id]["is_online"])
+
+		# comm2 receives player_connected broadcast
+		conn_msg = await comm2.receive_json_from()
+		self.assertEqual(conn_msg["type"], "game_state_update")
+		self.assertEqual(conn_msg["action"], "player_connected")
+		players_conn = {p["id"]: p for p in conn_msg["snapshot"]["players"]}
+		self.assertTrue(players_conn[self.player.id]["is_online"])
 		
 		await comm1_new.disconnect()
 		await comm2.disconnect()

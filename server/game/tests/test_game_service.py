@@ -372,8 +372,24 @@ class GameServiceTests(TestCase):
 
 		# p2 disconnects, leaving only p1 alive
 		GameService(self.session).disconnect_player(actor=self.p2)
-		self.session.refresh_from_db()
+		self.p2.refresh_from_db()
+		self.assertIsNotNone(self.p2.disconnected_at)
 
+		# Check game is not ended yet (lives still > 0)
+		self.session.refresh_from_db()
+		self.p2.refresh_from_db()
+		self.assertEqual(self.p2.lives, 3)
+		self.assertEqual(self.session.current_status, GameSession.Status.ANSWERING)
+
+		# Simulate 30s elapsed
+		self.p2.disconnected_at = timezone.now() - timedelta(seconds=31)
+		self.p2.save()
+
+		# Trigger lazy check
+		from game.services.game_flow.game_action_handler import GameActionHandler
+		GameActionHandler().sync_game_disconnections(self.session.id)
+
+		self.session.refresh_from_db()
 		self.assertEqual(self.session.winner_id, self.p1.id)
 		self.assertEqual(
 			self.session.end_reason,
@@ -687,6 +703,20 @@ class GameServiceTests(TestCase):
 		old_attempt_id = self.session.current_attempt_id
 
 		GameService(self.session).disconnect_player(self.p1)
+		self.p1.refresh_from_db()
+		self.assertIsNotNone(self.p1.disconnected_at)
+
+		# Check that they are not eliminated immediately
+		self.assertEqual(self.p1.lives, 3)
+
+		# Simulate 30s elapsed
+		self.p1.disconnected_at = timezone.now() - timedelta(seconds=31)
+		self.p1.save()
+
+		# Trigger lazy check
+		from game.services.game_flow.game_action_handler import GameActionHandler
+		GameActionHandler().sync_game_disconnections(self.session.id)
+
 		self.session.refresh_from_db()
 		self.p1.refresh_from_db()
 
@@ -702,6 +732,20 @@ class GameServiceTests(TestCase):
 		self.session.save()
 
 		GameService(self.session).disconnect_player(self.p1)
+		self.p1.refresh_from_db()
+		self.assertIsNotNone(self.p1.disconnected_at)
+
+		# Check that they are not eliminated immediately
+		self.assertEqual(self.p1.lives, 3)
+
+		# Simulate 30s elapsed
+		self.p1.disconnected_at = timezone.now() - timedelta(seconds=31)
+		self.p1.save()
+
+		# Trigger lazy check
+		from game.services.game_flow.game_action_handler import GameActionHandler
+		GameActionHandler().sync_game_disconnections(self.session.id)
+
 		self.session.refresh_from_db()
 		self.p1.refresh_from_db()
 
@@ -721,6 +765,20 @@ class GameServiceTests(TestCase):
 
 		# p1 (not their turn) disconnects
 		GameService(self.session).disconnect_player(self.p1)
+		self.p1.refresh_from_db()
+		self.assertIsNotNone(self.p1.disconnected_at)
+
+		# Check that they are not eliminated immediately
+		self.assertEqual(self.p1.lives, 3)
+
+		# Simulate 30s elapsed
+		self.p1.disconnected_at = timezone.now() - timedelta(seconds=31)
+		self.p1.save()
+
+		# Trigger lazy check
+		from game.services.game_flow.game_action_handler import GameActionHandler
+		GameActionHandler().sync_game_disconnections(self.session.id)
+
 		self.session.refresh_from_db()
 		self.p1.refresh_from_db()
 
@@ -854,6 +912,20 @@ class GameServiceTests(TestCase):
 		self.assertEqual(self.session.current_status, GameSession.Status.NOMINATION)
 
 		GameService(self.session).disconnect_player(self.p3)
+		self.p3.refresh_from_db()
+		self.assertIsNotNone(self.p3.disconnected_at)
+
+		# Check that they are not eliminated immediately
+		self.assertEqual(self.p3.lives, 3)
+
+		# Simulate 30s elapsed
+		self.p3.disconnected_at = timezone.now() - timedelta(seconds=31)
+		self.p3.save()
+
+		# Trigger lazy check
+		from game.services.game_flow.game_action_handler import GameActionHandler
+		GameActionHandler().sync_game_disconnections(self.session.id)
+
 		self.session.refresh_from_db()
 		self.p3.refresh_from_db()
 
