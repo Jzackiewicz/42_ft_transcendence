@@ -29,7 +29,7 @@ class GameConsumerTests(TransactionTestCase):
 			email="testuser2@test.com"
 		)
 		
-		self.session = GameSession.objects.create(current_status=GameSession.Status.LOBBY)
+		self.session = GameSession.objects.create(current_status=GameSession.Status.LOBBY, evaluation_time_limit_ms=0)
 		self.player = SessionPlayer.objects.create(
 			session=self.session,
 			user=self.user,
@@ -202,6 +202,13 @@ class GameConsumerTests(TransactionTestCase):
 		await communicator.disconnect()
 
 	async def test_answering_state_triggers_automatic_timeout_broadcast(self):
+		q2 = await database_sync_to_async(Question.objects.create)(
+			question_text="Test2?", correct_answer="no"
+		)
+		await database_sync_to_async(SessionQuestion.objects.create)(
+			session=self.session, question=q2, order_index=1
+		)
+
 		self.session.answer_time_limit_ms = 100
 		await database_sync_to_async(self.session.save)()
 		
@@ -225,9 +232,76 @@ class GameConsumerTests(TransactionTestCase):
 		timeout_response = await communicator.receive_json_from(timeout=2.0)
 		self.assertEqual(timeout_response["type"], "game_state_update")
 		self.assertEqual(timeout_response["action"], "evaluate_timeout")
-		self.assertIn(timeout_response["snapshot"]["current_status"], [GameSession.Status.ANSWERING, GameSession.Status.GAME_OVER])
+		self.assertEqual(timeout_response["snapshot"]["current_status"], GameSession.Status.EVALUATION)
+
+		# Wait for auto-resolution to transition to the next turn (answering)
+		next_response = await communicator.receive_json_from(timeout=2.0)
+		self.assertEqual(next_response["type"], "game_state_update")
+		self.assertEqual(next_response["snapshot"]["current_status"], GameSession.Status.ANSWERING)
 		
 		await communicator.disconnect()
+
+	async def test_evaluation_phase_duration_holds_state_and_transitions(self):
+		q2 = await database_sync_to_async(Question.objects.create)(
+			question_text="Test2?", correct_answer="no"
+		)
+		await database_sync_to_async(SessionQuestion.objects.create)(
+			session=self.session, question=q2, order_index=1
+		)
+
+		self.session.evaluation_time_limit_ms = 400
+		self.session.answer_time_limit_ms = 10000
+		await database_sync_to_async(self.session.save)()
+
+		headers1 = [(b'cookie', f'sessionid={self.cookie}'.encode('ascii'))]
+		comm1 = WebsocketCommunicator(
+			self.application, f"/ws/game/{self.session.session_uuid}/", headers=headers1
+		)
+		await comm1.connect()
+		await comm1.receive_json_from()
+		
+		headers2 = [(b'cookie', f'sessionid={self.cookie2}'.encode('ascii'))]
+		comm2 = WebsocketCommunicator(
+			self.application, f"/ws/game/{self.session.session_uuid}/", headers=headers2
+		)
+		await comm2.connect()
+		await comm1.receive_json_from()
+		await comm2.receive_json_from()
+
+		await comm1.send_json_to({"action": GameAction.START_GAME})
+		res_start = await comm1.receive_json_from()
+		await comm2.receive_json_from()
+
+		current_player_id = res_start["snapshot"]["current_player"]
+		current_comm = comm1 if current_player_id == self.player.id else comm2
+		other_comm = comm2 if current_player_id == self.player.id else comm1
+
+		# Submit answer from the correct active player to trigger evaluation state
+		await current_comm.send_json_to({
+			"action": GameAction.SUBMIT_ANSWER,
+			"payload": {"answer": "yes"}
+		})
+
+		# Immediately receive response - we should be in EVALUATION status
+		eval_response = await current_comm.receive_json_from()
+		await other_comm.receive_json_from()
+		self.assertEqual(eval_response["type"], "game_state_update")
+		self.assertEqual(eval_response["snapshot"]["current_status"], GameSession.Status.EVALUATION)
+
+		# Verify that we do not transition immediately (wait 100ms and expect no message)
+		# We use receive_nothing here because a timeout on receive_json_from would cancel/terminate the communicator.
+		is_empty = await current_comm.receive_nothing(timeout=0.1)
+		self.assertTrue(is_empty)
+
+		# Wait for the transition to finish after evaluation timeout (400ms total, so wait up to 2.0s)
+		finish_response = await current_comm.receive_json_from(timeout=2.0)
+		await other_comm.receive_json_from()
+		self.assertEqual(finish_response["type"], "game_state_update")
+		self.assertEqual(finish_response["action"], "handle_evaluation_finish")
+		self.assertEqual(finish_response["snapshot"]["current_status"], GameSession.Status.NOMINATION)
+
+		await comm1.disconnect()
+		await comm2.disconnect()
 
 	async def test_websocket_disconnect_triggers_disconnect_broadcast_to_others(self):
 		headers1 = [(b'cookie', f'sessionid={self.cookie}'.encode('ascii'))]
@@ -367,7 +441,12 @@ class GameConsumerTests(TransactionTestCase):
 		res_eval = await current_comm.receive_json_from()
 		await other_comm.receive_json_from()
 		
-		self.assertEqual(res_eval["snapshot"]["current_status"], GameSession.Status.NOMINATION)
+		self.assertEqual(res_eval["snapshot"]["current_status"], GameSession.Status.EVALUATION)
+
+		# Wait for auto-resolution to transition to nomination
+		res_nom_phase = await current_comm.receive_json_from()
+		await other_comm.receive_json_from()
+		self.assertEqual(res_nom_phase["snapshot"]["current_status"], GameSession.Status.NOMINATION)
 		
 		# Nominate player
 		await current_comm.send_json_to({
@@ -515,6 +594,10 @@ class GameConsumerTests(TransactionTestCase):
 		await current_comm.receive_json_from()
 		await other_comm.receive_json_from()
 		
+		# Receive the automated handle_evaluation_finish broadcast to transition to nomination
+		await current_comm.receive_json_from()
+		await other_comm.receive_json_from()
+		
 		await other_comm.send_json_to({
 			"action": GameAction.NOMINATE_PLAYER,
 			"payload": {"target_player_id": other_player_id}
@@ -561,6 +644,10 @@ class GameConsumerTests(TransactionTestCase):
 			"action": GameAction.SUBMIT_ANSWER,
 			"payload": {"answer": "yes"}
 		})
+		await current_comm.receive_json_from()
+		await other_comm.receive_json_from()
+		
+		# Receive the automated handle_evaluation_finish broadcast to transition to nomination
 		await current_comm.receive_json_from()
 		await other_comm.receive_json_from()
 		
@@ -668,8 +755,12 @@ class GameConsumerTests(TransactionTestCase):
 		})
 		res_eval = await current_comm.receive_json_from()
 		await other_comm.receive_json_from()
-		
-		self.assertEqual(res_eval["snapshot"]["current_status"], GameSession.Status.NOMINATION)
+		self.assertEqual(res_eval["snapshot"]["current_status"], GameSession.Status.EVALUATION)
+
+		# Wait for auto-resolution to transition to nomination
+		res_nom_phase = await current_comm.receive_json_from()
+		await other_comm.receive_json_from()
+		self.assertEqual(res_nom_phase["snapshot"]["current_status"], GameSession.Status.NOMINATION)
 		
 		await current_comm.send_json_to({
 			"action": GameAction.NOMINATE_PLAYER,
@@ -685,6 +776,11 @@ class GameConsumerTests(TransactionTestCase):
 			"action": GameAction.SUBMIT_ANSWER,
 			"payload": {"answer": "wrong"}
 		})
+		res_eval_wrong = await other_comm.receive_json_from()
+		await current_comm.receive_json_from()
+		self.assertEqual(res_eval_wrong["snapshot"]["current_status"], GameSession.Status.EVALUATION)
+
+		# Wait for auto-resolution to transition to game over
 		res_game_over = await other_comm.receive_json_from()
 		await current_comm.receive_json_from()
 		
