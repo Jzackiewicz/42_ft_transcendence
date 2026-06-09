@@ -37,10 +37,14 @@ class NominatePlayerPayloadSerializer(StrictSerializer):
 
 class PlayerSnapshotSerializer(serializers.ModelSerializer):
 	is_alive = serializers.BooleanField(read_only=True)
+	is_online = serializers.SerializerMethodField()
 	
 	class Meta:
 		model = SessionPlayer
-		fields = ['id', 'display_name', 'seat_number', 'lives', 'points', 'answered_count', 'is_alive', 'total_answer_time_ms']
+		fields = ['id', 'display_name', 'seat_number', 'lives', 'points', 'answered_count', 'is_alive', 'total_answer_time_ms', 'is_online']
+
+	def get_is_online(self, obj: SessionPlayer) -> bool:
+		return obj.disconnected_at is None
 
 class QuestionSnapshotSerializer(serializers.ModelSerializer):
 	class Meta:
