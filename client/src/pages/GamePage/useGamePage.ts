@@ -57,6 +57,7 @@ export interface GameSnapshot {
     total_questions_count: number;
     current_attempt_started_at?: string | null;
     turn_deadline_at?: string | null;
+    nomination_deadline_at?: string | null;
 }
 
 export function useGamePage() {
@@ -109,14 +110,27 @@ export function useGamePage() {
 
 
 
-    // Timer effect synchronizing with server turn_deadline_at
+    // Timer effect synchronizing with server deadline
     useEffect(() => {
-        if (!activeGameState || activeGameState.current_status !== GameStatus.ANSWERING || !activeGameState.turn_deadline_at) {
+        if (!activeGameState) {
             setTimeLeft(null);
             return;
         }
 
-        const deadline = new Date(activeGameState.turn_deadline_at).getTime();
+        let deadlineStr: string | null | undefined = null;
+
+        if (activeGameState.current_status === GameStatus.ANSWERING) {
+            deadlineStr = activeGameState.turn_deadline_at;
+        } else if (activeGameState.current_status === GameStatus.NOMINATION) {
+            deadlineStr = activeGameState.nomination_deadline_at;
+        }
+
+        if (!deadlineStr) {
+            setTimeLeft(null);
+            return;
+        }
+
+        const deadline = new Date(deadlineStr).getTime();
 
         const updateTimer = () => {
             const now = new Date().getTime();
@@ -129,7 +143,7 @@ export function useGamePage() {
         const intervalId = setInterval(updateTimer, 200);
 
         return () => clearInterval(intervalId);
-    }, [activeGameState?.current_status, activeGameState?.turn_deadline_at]);
+    }, [activeGameState?.current_status, activeGameState?.turn_deadline_at, activeGameState?.nomination_deadline_at]);
 
     const wsRef = useRef<WebSocket | null>(null);
     const closeTimeoutRef = useRef<any>(null);
