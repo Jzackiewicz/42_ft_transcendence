@@ -35,9 +35,10 @@ export function ErrorPage() {
 			<h1 className="error-code">{code}</h1>
 			<h2 className="error-title">Something went wrong</h2>
 			<p className="error-msg">{message}</p>
-			<Link to="/home" className="home-btn">
-				Return to Safety
+			<Link to="/" className="home-btn">
+			    Return to Safety
 			</Link>
+
 		</div>
 	);
 }
