@@ -63,14 +63,22 @@ export interface GameSnapshot {
 }
 
 export function useGamePage() {
-    const { user } = useUser();
+    const { user, activeSessionUuid, setActiveSessionUuid } = useUser();
 
     // Retrieve data passed from another page (e.g. from HomePage)
     const location = useLocation();
     const navigate = useNavigate();
-    const initialUuid = location.state?.sessionUuid || '';
+    
+    // Priority: 1. State from navigation, 2. Persisted UUID from Context/LocalStorage
+    const initialUuid = location.state?.sessionUuid || activeSessionUuid || '';
 
     const [sessionUuid, setSessionUuid] = useState<string>(initialUuid);
+
+    useEffect(() => {
+        if (sessionUuid) {
+            setActiveSessionUuid(sessionUuid);
+        }
+    }, [sessionUuid, setActiveSessionUuid]);
     const [messages, setMessages] = useState<string[]>([]);
     const [isConnected, setIsConnected] = useState<boolean>(false);
     const [gameState, setGameState] = useState<GameSnapshot | null>(null);
@@ -281,6 +289,8 @@ export function useGamePage() {
 
     const leaveGame = () => {
         disconnect();
+        setSessionUuid('');
+        setActiveSessionUuid(null);
         navigate('/home');
     };
 
