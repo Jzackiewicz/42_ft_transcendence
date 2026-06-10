@@ -11,8 +11,17 @@ from pydantic import BaseModel
 from game.models import GameSession, Question, SessionQuestion
 from core.settings import LLM_API_KEY, LLM_MODEL
 
-SYSTEM_INSTRUCTION_PATH = Path(__file__).with_name("extra_question_generator_system_instruction.txt")
-SYSTEM_INSTRUCTION = SYSTEM_INSTRUCTION_PATH.read_text(encoding="utf-8")
+LLM_SYSTEM_INSTRUCTION = """You must respond using the JSON format only with each section containing a 'category', 'question', and 'answer' field.
+The answer field must be an array of possible answers to the question, and the question field must be a string containing the question itself.
+Questions must give a clear indication of what the answer should be, and the answer must be a clear and concise response to the question.
+Answers must made up of only one word, short phrase or name each.
+Questions must not include the word "and" or "type" or "while".
+Questions must give the full context of the question, and must not rely on the category field to give context to the question.
+If a question can have multiple answers, create a very extensive list of answers for that question.
+If the answer can have nicknames of itself, create a very extensive list out of answers that include the nickname and the actual name.
+You must generate an appropriate catagory name for each question, and the catagory name must be relevant to the question and answer.
+The catagory name must be a single word or phrase that is relevant to the question and answer, and it must not be a generic term like "general" or "miscellaneous".
+If you are not 100% sure about an answer, don't include it."""
 
 class GeneratedQuestion(BaseModel):
 	category: str
@@ -27,7 +36,7 @@ def generate(client, model, prompt):
 				model=model,
 				contents=prompt,
 				config={
-					"system_instruction": SYSTEM_INSTRUCTION,
+					"system_instruction": LLM_SYSTEM_INSTRUCTION,
 					"response_mime_type": "application/json",
 					"response_schema": list[GeneratedQuestion],
 				},
