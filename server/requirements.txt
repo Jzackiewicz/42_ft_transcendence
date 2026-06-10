@@ -7,6 +7,7 @@ certifi==2026.2.25
 cffi==2.0.0
 channels==4.3.2
 channels-redis==4.3.0
+django-redis==5.4.0
 charset-normalizer==3.4.6
 constantly==23.10.4
 cryptography==46.0.5
