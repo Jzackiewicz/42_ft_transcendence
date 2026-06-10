@@ -960,3 +960,21 @@ class GameStateSnapshotTests(TestCase):
 		self.assertEqual(data["current_status"], "nomination")
 		self.assertIsNotNone(data["current_attempt"])
 		self.assertIsNone(data["current_attempt"]["correct_answer"])
+
+	def test_nominate_timeout_selects_random_player(self):
+		self.session.current_status = GameSession.Status.NOMINATION
+		self.session.last_correct_player = self.p1
+		self.session.current_player = self.p1
+		self.session.save()
+
+		# Setup questions for the turn advance (self.sq1 is already created in setUp with self.q1)
+		q2 = Question.objects.create(question_text="Q2", correct_answer="A2", category="cat")
+		self.sq2 = SessionQuestion.objects.create(session=self.session, question=q2, order_index=1)
+
+		GameService(self.session).nominate_timeout()
+		self.session.refresh_from_db()
+
+		self.assertEqual(self.session.current_status, GameSession.Status.ANSWERING)
+		self.assertIn(self.session.current_player_id, [self.p1.id, self.p2.id])
+		self.assertIsNotNone(self.session.current_attempt)
+

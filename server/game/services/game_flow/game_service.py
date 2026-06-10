@@ -81,6 +81,10 @@ class GameService:
 			set_end_game_stats(self.session)
 			return
 
+		if self.session.current_status == GameSession.Status.NOMINATION:
+			self.session.nomination_started_at = timezone.now()
+			self.session.save()
+
 		if should_fallback:
 			self._no_last_correct_player_fallback()
 			self.session.save()
@@ -136,6 +140,15 @@ class GameService:
 		self.session.last_nominated_player = target
 		self.session.current_player = target
 
+		self.session.fsm.nominate_player()
+		self.session.save()
+		self._start_answering_turn()
+
+	def nominate_timeout(self) -> None:
+		require_status(self.session, GameSession.Status.NOMINATION)
+		target = get_random_alive_player(self.session)
+		self.session.last_nominated_player = target
+		self.session.current_player = target
 		self.session.fsm.nominate_player()
 		self.session.save()
 		self._start_answering_turn()

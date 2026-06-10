@@ -67,11 +67,10 @@ def submit_answer_attempt(session: GameSession, attempt: AnswerAttempt, answer_t
 	attempt.save()
 
 def handle_evaluate_timeout(session: GameSession, attempt: AnswerAttempt) -> None:
-	elapsed = timezone.now() - attempt.started_at
-	answer_time_ms = max(int(elapsed.total_seconds() * 1000), 0)
-	if answer_time_ms < session.answer_time_limit_ms:
-		raise ValidationError("Timeout has not elapsed yet")
-	submit_answer_attempt(session, attempt, None)
+	attempt.answer_time_ms = session.answer_time_limit_ms
+	attempt.is_timeout = True
+	attempt.answer_text = None
+	attempt.save()
 
 
 def assign_next_question(session: GameSession) -> None:
