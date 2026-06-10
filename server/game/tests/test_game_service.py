@@ -669,6 +669,17 @@ class GameServiceTests(TestCase):
 		GameService(self.session).disconnect_player(self.p1)
 		self.session.refresh_from_db()
 
+		# p1 is still there during grace period
+		self.assertTrue(SessionPlayer.objects.filter(id=self.p1.id).exists())
+
+		# Simulate 30s elapsed
+		self.p1.disconnected_at = timezone.now() - timedelta(seconds=31)
+		self.p1.save()
+
+		# Trigger expiration check
+		GameService(self.session).expire_disconnected_players()
+		self.session.refresh_from_db()
+
 		# p1 is deleted, host is shifted to p2 (lower ID than p3)
 		self.assertFalse(SessionPlayer.objects.filter(id=self.p1.id).exists())
 		self.assertEqual(self.session.host_player_id, self.p2.id)
@@ -682,6 +693,15 @@ class GameServiceTests(TestCase):
 		self.p3.delete()
 
 		GameService(self.session).disconnect_player(self.p1)
+		self.assertTrue(SessionPlayer.objects.filter(id=self.p1.id).exists())
+
+		# Simulate 30s elapsed
+		self.p1.disconnected_at = timezone.now() - timedelta(seconds=31)
+		self.p1.save()
+
+		# Trigger expiration check
+		GameService(self.session).expire_disconnected_players()
+
 		self.assertFalse(GameSession.objects.filter(id=self.session.id).exists())
 
 	def test_disconnect_in_answering_by_current_player_advances_turn(self):
