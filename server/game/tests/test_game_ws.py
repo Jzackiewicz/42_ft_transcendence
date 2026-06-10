@@ -985,6 +985,43 @@ class GameConsumerTests(TransactionTestCase):
 		
 		await comm2.disconnect()
 
+	async def test_player_explicit_leave_game_removes_immediately(self):
+		headers1 = [(b'cookie', f'sessionid={self.cookie}'.encode('ascii'))]
+		comm1 = WebsocketCommunicator(
+			self.application, f"/ws/game/{self.session.session_uuid}/", headers=headers1
+		)
+		await comm1.connect()
+		await comm1.receive_json_from()
+		
+		headers2 = [(b'cookie', f'sessionid={self.cookie2}'.encode('ascii'))]
+		comm2 = WebsocketCommunicator(
+			self.application, f"/ws/game/{self.session.session_uuid}/", headers=headers2
+		)
+		await comm2.connect()
+		await comm1.receive_json_from()
+		await comm2.receive_json_from()
+
+		# comm1 (host) explicitly leaves
+		await comm1.send_json_to({"action": GameAction.LEAVE_GAME})
+		
+		# comm2 receives update immediately
+		response = await comm2.receive_json_from()
+		self.assertEqual(response["type"], "game_state_update")
+		self.assertEqual(response["action"], GameAction.LEAVE_GAME)
+
+		# Host should be transferred immediately
+		host_player_id = await database_sync_to_async(
+			lambda: GameSession.objects.get(id=self.session.id).host_player_id
+		)()
+		self.assertEqual(host_player_id, self.player2.id)
+
+		# Player 1 should be deleted immediately (not in players snapshot list)
+		players_in_snapshot = [p["id"] for p in response["snapshot"]["players"]]
+		self.assertNotIn(self.player.id, players_in_snapshot)
+		
+		await comm1.disconnect()
+		await comm2.disconnect()
+
 	async def test_websocket_full_game_to_game_over(self):
 		q2 = await database_sync_to_async(Question.objects.create)(
 			question_text="Test2?", correct_answer="no"
