@@ -2,7 +2,7 @@ import { useChatContainer } from './useChatContainer'
 import './ChatContainer.css'
 
 function ChatContainer() {
-    const { conversations, active, activeId, setActiveId, draft, setDraft, handleSend } = useChatContainer()
+    const {  friendsList, activeConversation, activeId, setActiveId, handleChooseTab } = useChatContainer()
 
     return (
         <div className="chat-container">
@@ -11,22 +11,13 @@ function ChatContainer() {
             <div className="chat-sidebar">
                 <div className="chat-sidebar-title">Messages</div>
                 <div className="chat-conv-list">
-                    {conversations.map(conv => (
-                        <div
-                            key={conv.id}
-                            className={`chat-conv-item ${conv.id === activeId ? 'active' : ''}`}
-                            onClick={() => setActiveId(conv.id)}
-                        >
-                            <div className="chat-conv-avatar" style={{ background: conv.color }}>
-                                {conv.initial}
+                    {friendsList.map((f) => (
+                        <div key={f.friend.id} className="friend-item" onClick={() => handleChooseTab(f.friend.id)}>
+                            <div className="friend-avatar">
+                                {(f.friend.username ?? '?')[0].toUpperCase()}
+                                {/* <span className={`friend-dot ${f.online ? 'online' : 'offline'}`} /> */}
                             </div>
-                            <div className="chat-conv-info">
-                                <div className="chat-conv-name">{conv.username}</div>
-                                <div className="chat-conv-last">{conv.lastMsg}</div>
-                            </div>
-                            {conv.unread > 0 && (
-                                <div className="chat-unread">{conv.unread}</div>
-                            )}
+                            <span className="friend-name">{f.friend.username}</span>
                         </div>
                     ))}
                 </div>
@@ -34,7 +25,7 @@ function ChatContainer() {
 
             {/* ── Thread ── */}
             <div className="chat-thread">
-                <div className="chat-messages">
+                {/* <div className="chat-messages">
                     {active.messages.map(msg => (
                         <div key={msg.id} className={`chat-bubble-row ${msg.from}`}>
                             <div>
@@ -42,10 +33,10 @@ function ChatContainer() {
                                 <div className="chat-ts">{msg.timestamp}</div>
                             </div>
                         </div>
-                    ))}
-                </div>
+                    ))} */}
+                {/* </div> */}
 
-                <div className="chat-input-row">
+                {/* <div className="chat-input-row">
                     <input
                         className="chat-input"
                         placeholder={`Message ${active.username}…`}
@@ -54,7 +45,7 @@ function ChatContainer() {
                         onKeyDown={e => e.key === 'Enter' && handleSend()}
                     />
                     <button className="chat-send-btn" onClick={handleSend}>Send</button>
-                </div>
+                </div> */}
             </div>
 
         </div>

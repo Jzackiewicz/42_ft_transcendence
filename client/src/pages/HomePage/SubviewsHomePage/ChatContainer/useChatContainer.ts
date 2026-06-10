@@ -1,4 +1,6 @@
-import { useState } from 'react'
+// Placeholder data — replace with API/WebSocket once social endpoints exist
+import { useEffect, useState } from 'react'
+import { getFriends } from '../../../../api/socialsWrapper'
 
 export interface Message {
     id:        number
@@ -17,54 +19,40 @@ export interface Conversation {
     messages: Message[]
 }
 
-// Placeholder data — replace with API/WebSocket once social endpoints exist
-const MOCK_CONVERSATIONS: Conversation[] = [
-    {
-        id: 1, username: 'Marek', initial: 'M',
-        color: 'linear-gradient(135deg,#00e5ff,#0088aa)',
-        lastMsg: 'Good game! 🎮', unread: 2,
-        messages: [
-            { id: 1, from: 'them', text: 'Hey, wanna play?',      timestamp: '14:20' },
-            { id: 2, from: 'me',   text: 'Sure, in 5 min!',       timestamp: '14:21' },
-            { id: 3, from: 'them', text: 'Good game! 🎮',         timestamp: '14:45' },
-        ],
-    },
-    {
-        id: 2, username: 'Viktoria', initial: 'V',
-        color: 'linear-gradient(135deg,#e040fb,#880088)',
-        lastMsg: 'rematch?', unread: 0,
-        messages: [
-            { id: 1, from: 'them', text: 'that was close 😅',     timestamp: '13:10' },
-            { id: 2, from: 'me',   text: 'lol you got lucky',      timestamp: '13:11' },
-            { id: 3, from: 'them', text: 'rematch?',               timestamp: '13:12' },
-        ],
-    },
-    {
-        id: 3, username: 'Jonas', initial: 'J',
-        color: 'linear-gradient(135deg,#ffc400,#e65100)',
-        lastMsg: 'gg wp', unread: 0,
-        messages: [
-            { id: 1, from: 'me',   text: 'nice answers bro',       timestamp: '12:00' },
-            { id: 2, from: 'them', text: 'gg wp',                  timestamp: '12:01' },
-        ],
-    },
-]
 
-function getConversations(): Conversation[] {
-    return MOCK_CONVERSATIONS
+
+export interface PublicUser {
+    id: number
+    username: string
+    avatar: string | null
 }
 
-export function useChatContainer() {
-    const [conversations] = useState<Conversation[]>(getConversations())
-    const [activeId, setActiveId] = useState<number>(getConversations()[0].id)
-    const [draft, setDraft] = useState('')
+export interface Friendship {
+    friend: PublicUser
+    created_at: string
+}
 
-    const active = conversations.find(c => c.id === activeId) ?? conversations[0]
+
+export function useChatContainer() {
+    const [friendsList, setFriendsList] = useState<Friendship[]>([])
+    const [activeId, setActiveId] = useState<number>(0)
+    const [refreshTab, setRefreshTab] = useState(0)
+
+    useEffect(() => {
+        getFriends().then(data => setFriendsList(Array.isArray(data) ? data : (data.results ?? [])))
+    }, [refreshTab])
+
+
+    const activeConversation = friendsList.find(f => f.friend.id === activeId) ?? friendsList[0]
 
     const handleSend = () => {
         // TODO: send via WebSocket
-        setDraft('')
+        // setDraft('setActiveId')
     }
 
-    return { conversations, active, activeId, setActiveId, draft, setDraft, handleSend }
+    const handleChooseTab = (id: number) => {
+        setActiveId(id)
+    }
+
+    return { friendsList, activeConversation, activeId, setActiveId, handleChooseTab  }
 }
