@@ -69,8 +69,8 @@ export function useGamePage() {
     const location = useLocation();
     const navigate = useNavigate();
     
-    // Priority: 1. State from navigation, 2. Persisted UUID from Context/LocalStorage
-    const initialUuid = location.state?.sessionUuid || activeSessionUuid || '';
+    // Priority: 1. Persisted UUID from Context/LocalStorage, 2. State from navigation
+    const initialUuid = activeSessionUuid || location.state?.sessionUuid || '';
 
     const [sessionUuid, setSessionUuid] = useState<string>(initialUuid);
 
