@@ -4,7 +4,7 @@ from game.models import GameSession, SessionPlayer
 from game.selectors.lobby_selectors import get_room_by_uuid
 from game.services.game_flow.lifecycle import handle_disconnect_in_lobby
 from game.services.game_flow.game_action_handler import GameActionHandler
-from .guards import check_can_create_room, check_can_join_room, check_can_destroy_room
+from .guards import check_can_create_room, check_can_join_room, check_can_destroy_room, check_room_is_not_over
 
 
 def _cleanup_and_sync_other_sessions(user, exclude_session_id: int | None = None) -> None:
@@ -59,6 +59,8 @@ def join_room(*, session_uuid: str, user) -> SessionPlayer:
     
     with transaction.atomic():
         session = GameSession.objects.select_for_update().get(id=session.id)
+
+        check_room_is_not_over(session=session)
 
         if user.is_authenticated:
             existing_player = session.session_players.filter(user=user).first()
