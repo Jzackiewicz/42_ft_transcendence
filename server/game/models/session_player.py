@@ -3,6 +3,8 @@ from django.db import models
 
 
 class SessionPlayer(models.Model):
+	DEFAULT_LIVES = 3
+
 	class PlayerType(models.TextChoices):
 		HUMAN = "human", "Human"
 		BOT = "bot", "Bot"
@@ -31,7 +33,7 @@ class SessionPlayer(models.Model):
 
 	seat_number = models.PositiveIntegerField()
 
-	lives = models.PositiveIntegerField(default=3)
+	lives = models.PositiveIntegerField(default=DEFAULT_LIVES)
 	points = models.IntegerField(default=0)
 	answered_count = models.PositiveIntegerField(default=0)
 	total_answer_time_ms = models.PositiveIntegerField(default=0)

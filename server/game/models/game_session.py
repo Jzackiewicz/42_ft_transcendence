@@ -1,11 +1,14 @@
 import uuid
 
+from django.conf import settings
 from django.db import models
 from statemachine.mixins import MachineMixin
 import game.fsm
 
 
 class GameSession(MachineMixin, models.Model):
+	DEFAULT_MAX_PLAYERS = 5
+
 	class Status(models.TextChoices):
 		LOBBY = "lobby", "Lobby"
 		ANSWERING = "answering", "Answering"
@@ -96,13 +99,13 @@ class GameSession(MachineMixin, models.Model):
 	ended_at = models.DateTimeField(null=True, blank=True)
 
 
-	answer_time_limit_ms = models.PositiveIntegerField(default=20000)
-	evaluation_time_limit_ms = models.PositiveIntegerField(default=3000)
-	nomination_time_limit_ms = models.PositiveIntegerField(default=10000)
+	answer_time_limit_ms = models.PositiveIntegerField(default=settings.ANSWER_TIME_LIMIT_MS)
+	evaluation_time_limit_ms = models.PositiveIntegerField(default=settings.EVALUATION_TIME_LIMIT_MS)
+	nomination_time_limit_ms = models.PositiveIntegerField(default=settings.NOMINATION_TIME_LIMIT_MS)
 	nomination_started_at = models.DateTimeField(null=True, blank=True)
 	
 	# starting_lives = models.PositiveIntegerField(default=3)
-	max_players = models.PositiveIntegerField(default=5)
+	max_players = models.PositiveIntegerField(default=DEFAULT_MAX_PLAYERS)
 
 	state_machine_name = "game.fsm.GameStateMachine"
 	state_machine_attr = "fsm"
