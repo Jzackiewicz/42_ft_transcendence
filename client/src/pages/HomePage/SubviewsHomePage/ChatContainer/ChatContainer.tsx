@@ -2,7 +2,7 @@ import { useChatContainer } from './useChatContainer'
 import './ChatContainer.css'
 
 function ChatContainer() {
-    const {  friendsList, activeConversation, activeId, setActiveId, handleChooseTab } = useChatContainer()
+    const { friendsList, activeId, messages, myUsername, handleChooseTab } = useChatContainer()
 
     return (
         <div className="chat-container">
@@ -15,7 +15,6 @@ function ChatContainer() {
                         <div key={f.friend.id} className={`friend-item ${f.friend.id === activeId ? 'active' : ''}`} onClick={() => handleChooseTab(f.friend.id)}>
                             <div className="friend-avatar">
                                 {(f.friend.username ?? '?')[0].toUpperCase()}
-                                {/* <span className={`friend-dot ${f.online ? 'online' : 'offline'}`} /> */}
                             </div>
                             <span className="friend-name">{f.friend.username}</span>
                         </div>
@@ -25,27 +24,14 @@ function ChatContainer() {
 
             {/* ── Thread ── */}
             <div className="chat-thread">
-                {/* <div className="chat-messages">
-                    {active.messages.map(msg => (
-                        <div key={msg.id} className={`chat-bubble-row ${msg.from}`}>
-                            <div>
-                                <div className="chat-bubble">{msg.text}</div>
-                                <div className="chat-ts">{msg.timestamp}</div>
-                            </div>
+                <div className="chat-messages">
+                    {messages.map((msg, i) => (
+                        <div key={i} className={`chat-bubble-row ${msg.sender_username === myUsername ? 'me' : 'them'}`}>
+                            <div className="chat-bubble">{msg.message}</div>
+                            <div className="chat-ts">{msg.timestamp}</div>
                         </div>
-                    ))} */}
-                {/* </div> */}
-
-                {/* <div className="chat-input-row">
-                    <input
-                        className="chat-input"
-                        placeholder={`Message ${active.username}…`}
-                        value={draft}
-                        onChange={e => setDraft(e.target.value)}
-                        onKeyDown={e => e.key === 'Enter' && handleSend()}
-                    />
-                    <button className="chat-send-btn" onClick={handleSend}>Send</button>
-                </div> */}
+                    ))}
+                </div>
             </div>
 
         </div>

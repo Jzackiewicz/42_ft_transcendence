@@ -44,3 +44,9 @@ export async function getOutgoingRequestsList() {
 export async function deleteFromFriends(userId: number) {
     await apiClient.delete(`/social/friends/${userId}/`)
 }
+
+
+export async function getChatHistory(room_name: string) {
+    const res = await apiClient.get(`/social/chat/${room_name}/history/`)
+    return res.data
+}
