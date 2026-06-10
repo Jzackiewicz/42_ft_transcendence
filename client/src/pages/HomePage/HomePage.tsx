@@ -4,6 +4,7 @@ import AccountHeader from './SubviewsHomePage/AccountHeader/AccountHeader'
 import FriendsView from './SubviewsHomePage/FriendsView/FriendsView'
 import StatsView from './SubviewsHomePage/StatsView/StatsView'
 import ChatContainer from './SubviewsHomePage/ChatContainer/ChatContainer'
+import { FriendsProvider } from '../../context/FriendsListContext'
 import './HomePage.css'
 
 export function HomePage() {
@@ -17,6 +18,7 @@ export function HomePage() {
     } = useHomePage()
 
     return (
+        <FriendsProvider>
         <div className="home-page-container">
             <BlinkingSpaceBGDiv />
 
@@ -74,6 +76,7 @@ export function HomePage() {
                 <a className="home-footer-link" href="/terms-of-use">Terms of Use</a>
             </footer>
         </div>
+        </FriendsProvider>
     )
 }
 

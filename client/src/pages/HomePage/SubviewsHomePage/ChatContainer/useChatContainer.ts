@@ -1,14 +1,9 @@
-import { useEffect, useState } from 'react'
-import { getFriends } from '../../../../api/socialsWrapper'
-import { Friendship } from '../../../../types/User'
+import { useState } from 'react'
+import { useFriendsContext } from '../../../../context/FriendsListContext'
 
 export function useChatContainer() {
-    const [friendsList, setFriendsList] = useState<Friendship[]>([])
+    const { friendsList } = useFriendsContext()
     const [activeId, setActiveId] = useState<number>(0)
-
-    useEffect(() => {
-        getFriends().then(data => setFriendsList(Array.isArray(data) ? data : (data.results ?? [])))
-    }, [])
 
     const activeConversation = friendsList.find(f => f.friend.id === activeId) ?? friendsList[0]
 
