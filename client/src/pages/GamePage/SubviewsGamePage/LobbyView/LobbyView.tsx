@@ -1,31 +1,20 @@
 import React from 'react';
-import { LobbySettings } from './LobbySettings';
 import './LobbyView.css';
-
-interface LobbySettingsObj {
-    questionCount: number;
-    answerTimeLimitMs: number;
-    hasBotPlayer: boolean;
-    canAddBot: boolean;
-    aiQuestionsRequested: boolean;
-    onUpdateSettings: (questions: number, timeLimitSec: number) => void;
-    onAddBot: () => void;
-    onRemoveBot: () => void;
-    onRequestAiQuestions: () => void;
-}
 
 interface LobbyViewProps {
     isHost: boolean;
     playersCount: number;
     onStartGame: () => void;
-    lobbySettings: LobbySettingsObj;
+    isAiQuestionsRequested: boolean;
+    onRequestAiQuestions: () => void;
 }
 
 export function LobbyView({
     isHost,
     playersCount,
     onStartGame,
-    lobbySettings
+    isAiQuestionsRequested,
+    onRequestAiQuestions
 }: LobbyViewProps) {
     return (
         <div className="lobby-view-container">
@@ -50,18 +39,29 @@ export function LobbyView({
                     >
                         Start Game
                     </button>
+
+                    <div className="lobby-ai-actions">
+                        <div className="ai-questions-section">
+                            <button
+                                onClick={onRequestAiQuestions}
+                                className="btn-secondary"
+                                disabled={isAiQuestionsRequested}
+                            >
+                                {isAiQuestionsRequested ? '✨ Generation Requested!' : 'Generate AI Questions'}
+                            </button>
+                            {isAiQuestionsRequested && (
+                                <span className="ai-feedback-toast">
+                                    ✓ AI Questions successfully queued!
+                                </span>
+                            )}
+                        </div>
+                    </div>
                 </div>
             ) : (
                 <div className="lobby-spectator-waiting">
                     Waiting for lobby host to start the game...
                 </div>
             )}
-
-            <LobbySettings
-                isHost={isHost}
-                {...lobbySettings}
-            />
         </div>
     );
 }
-
