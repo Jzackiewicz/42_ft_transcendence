@@ -230,5 +230,6 @@ CHANNEL_LAYERS = {
         "CONFIG": {"hosts": [REDIS_URL]},
     }
 }
-
+# ---- Game Settings ----
 DISCONNECT_GRACE_PERIOD_S = int(os.getenv("DISCONNECT_GRACE_PERIOD_S", "30"))
+QUESTIONS_PER_SESSION = int(os.getenv("QUESTIONS_PER_SESSION", "10"))

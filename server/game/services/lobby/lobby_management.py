@@ -51,6 +51,8 @@ def create_room(*, user) -> GameSession:
         session.host_player = player
         session.save(update_fields=['host_player'])
         
+        assign_random_questions_to_session(session)
+        
     return session
 
 
