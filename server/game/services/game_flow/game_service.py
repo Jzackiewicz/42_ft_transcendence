@@ -28,8 +28,7 @@ from .lifecycle import (
 	handle_disconnect_in_lobby,
 	handle_disconnect_in_answering,
 	handle_disconnect_in_nomination,
-	handle_evaluate_timeout,
-	assign_random_questions_to_session
+	handle_evaluate_timeout
 )
 
 from .answers import (
@@ -113,7 +112,6 @@ class GameService:
 		require_actor_is_host(self.session, actor, "start the game")
 		require_minimum_players(self.session)
 		
-		assign_random_questions_to_session(self.session, amount=10)
 		require_questions_exist(self.session)
 		
 		starting_player = get_random_alive_player(self.session)
