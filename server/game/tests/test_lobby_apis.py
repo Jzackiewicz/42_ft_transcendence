@@ -107,6 +107,59 @@ class TestRoomCreateApi(APITestCase):
 
 		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
+	def test_create_room_succeeds_and_cleans_up_stale_lobby_sessions(self):
+		# User is host in a stale lobby session (status LOBBY)
+		stale_session = GameSession.objects.create(current_status=GameSession.Status.LOBBY)
+		stale_player = SessionPlayer.objects.create(
+			session=stale_session,
+			user=self.user,
+			display_name="testuser",
+			seat_number=1
+		)
+		stale_session.host_player = stale_player
+		stale_session.save()
+
+		# User is also a player in another stale lobby session (status LOBBY) where they are NOT the host
+		other_host = User.objects.create_user(username="otherhost", email="other@test.com", password="password")
+		stale_session2 = GameSession.objects.create(current_status=GameSession.Status.LOBBY)
+		host_player = SessionPlayer.objects.create(
+			session=stale_session2,
+			user=other_host,
+			display_name="otherhost",
+			seat_number=1
+		)
+		stale_session2.host_player = host_player
+		stale_session2.save()
+		
+		# Now add our user to stale_session2
+		stale_player2 = SessionPlayer.objects.create(
+			session=stale_session2,
+			user=self.user,
+			display_name="testuser",
+			seat_number=2
+		)
+
+		# Make sure both stale lobby sessions exist before API call
+		self.assertTrue(GameSession.objects.filter(id=stale_session.id).exists())
+		self.assertTrue(GameSession.objects.filter(id=stale_session2.id).exists())
+		self.assertEqual(stale_session2.session_players.count(), 2)
+
+		# Request to create a new room
+		url = reverse('room-create')
+		self.client.force_authenticate(user=self.user)
+		response = self.client.post(url)
+
+		# The request should succeed
+		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+		# The stale_session (where user was host and only player) should be deleted
+		self.assertFalse(GameSession.objects.filter(id=stale_session.id).exists())
+
+		# The stale_session2 (where user was a guest player) should NOT be deleted
+		self.assertTrue(GameSession.objects.filter(id=stale_session2.id).exists())
+		# But our user should be removed from stale_session2
+		self.assertEqual(stale_session2.session_players.count(), 1)
+		self.assertFalse(stale_session2.session_players.filter(user=self.user).exists())
 
 
 class TestRoomJoinApi(APITestCase):
