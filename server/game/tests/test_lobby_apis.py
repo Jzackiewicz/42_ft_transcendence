@@ -30,6 +30,84 @@ class TestRoomCreateApi(APITestCase):
 			[status.HTTP_400_BAD_REQUEST, status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN]
 		)
 
+	def test_create_room_fails_if_active_in_another_room(self):
+		# Create an active room where the user is already playing
+		other_session = GameSession.objects.create(current_status=GameSession.Status.ANSWERING)
+		SessionPlayer.objects.create(
+			session=other_session,
+			user=self.user,
+			display_name="testuser",
+			seat_number=1,
+			disconnected_at=None
+		)
+
+		url = reverse('room-create')
+		self.client.force_authenticate(user=self.user)
+		response = self.client.post(url)
+
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+		self.assertIn("Cannot create a new room while active in another game.", response.data["error"])
+
+	def test_create_room_fails_if_in_grace_period_in_another_room(self):
+		# User is in active game and disconnected, but grace period hasn't expired yet
+		from django.utils import timezone
+		other_session = GameSession.objects.create(current_status=GameSession.Status.ANSWERING)
+		SessionPlayer.objects.create(
+			session=other_session,
+			user=self.user,
+			display_name="testuser",
+			seat_number=1,
+			lives=3,
+			disconnected_at=timezone.now()
+		)
+
+		url = reverse('room-create')
+		self.client.force_authenticate(user=self.user)
+		response = self.client.post(url)
+
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+		self.assertIn("Cannot create a new room while active in another game.", response.data["error"])
+
+	def test_create_room_succeeds_if_grace_period_expired_in_another_room(self):
+		# User is in active game and disconnected, and grace period has expired
+		from django.utils import timezone
+		from datetime import timedelta
+		other_session = GameSession.objects.create(current_status=GameSession.Status.ANSWERING)
+		SessionPlayer.objects.create(
+			session=other_session,
+			user=self.user,
+			display_name="testuser",
+			seat_number=1,
+			lives=3,
+			disconnected_at=timezone.now() - timedelta(seconds=35)
+		)
+
+		url = reverse('room-create')
+		self.client.force_authenticate(user=self.user)
+		response = self.client.post(url)
+
+		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+	def test_create_room_succeeds_if_dead_in_another_room(self):
+		# User is in active game and disconnected, but they have 0 lives (already eliminated)
+		from django.utils import timezone
+		other_session = GameSession.objects.create(current_status=GameSession.Status.ANSWERING)
+		SessionPlayer.objects.create(
+			session=other_session,
+			user=self.user,
+			display_name="testuser",
+			seat_number=1,
+			lives=0,
+			disconnected_at=timezone.now()
+		)
+
+		url = reverse('room-create')
+		self.client.force_authenticate(user=self.user)
+		response = self.client.post(url)
+
+		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+
 
 class TestRoomJoinApi(APITestCase):
 	def setUp(self):
@@ -88,6 +166,86 @@ class TestRoomJoinApi(APITestCase):
 
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		self.assertEqual(self.session.session_players.count(), 2)
+
+	def test_join_room_fails_if_active_in_another_room(self):
+		# User is active in another room (disconnected_at=None, current_status != GAME_OVER)
+		other_session = GameSession.objects.create(current_status=GameSession.Status.ANSWERING)
+		SessionPlayer.objects.create(
+			session=other_session,
+			user=self.player,
+			display_name="Player",
+			seat_number=1,
+			disconnected_at=None
+		)
+
+		url = reverse('room-join', kwargs={'session_uuid': self.session.session_uuid})
+		self.client.force_authenticate(user=self.player)
+		response = self.client.post(url)
+
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+		self.assertIn("Cannot join another room while active in a game.", response.data["error"])
+
+	def test_join_room_fails_if_in_grace_period_in_another_room(self):
+		# User is in active game and disconnected, but grace period hasn't expired yet
+		from django.utils import timezone
+		other_session = GameSession.objects.create(current_status=GameSession.Status.ANSWERING)
+		SessionPlayer.objects.create(
+			session=other_session,
+			user=self.player,
+			display_name="Player",
+			seat_number=1,
+			lives=3,
+			disconnected_at=timezone.now()
+		)
+
+		url = reverse('room-join', kwargs={'session_uuid': self.session.session_uuid})
+		self.client.force_authenticate(user=self.player)
+		response = self.client.post(url)
+
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+		self.assertIn("Cannot join another room while active in a game.", response.data["error"])
+
+	def test_join_room_succeeds_if_grace_period_expired_in_another_room(self):
+		# User is in active game and disconnected, and grace period has expired
+		from django.utils import timezone
+		from datetime import timedelta
+		other_session = GameSession.objects.create(current_status=GameSession.Status.ANSWERING)
+		SessionPlayer.objects.create(
+			session=other_session,
+			user=self.player,
+			display_name="Player",
+			seat_number=1,
+			lives=3,
+			disconnected_at=timezone.now() - timedelta(seconds=35)
+		)
+
+		url = reverse('room-join', kwargs={'session_uuid': self.session.session_uuid})
+		self.client.force_authenticate(user=self.player)
+		response = self.client.post(url)
+
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(self.session.session_players.count(), 2)
+
+	def test_join_room_succeeds_if_dead_in_another_room(self):
+		# User is in active game and disconnected, but they have 0 lives (already eliminated)
+		from django.utils import timezone
+		other_session = GameSession.objects.create(current_status=GameSession.Status.ANSWERING)
+		SessionPlayer.objects.create(
+			session=other_session,
+			user=self.player,
+			display_name="Player",
+			seat_number=1,
+			lives=0,
+			disconnected_at=timezone.now()
+		)
+
+		url = reverse('room-join', kwargs={'session_uuid': self.session.session_uuid})
+		self.client.force_authenticate(user=self.player)
+		response = self.client.post(url)
+
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(self.session.session_players.count(), 2)
+
 
 
 
