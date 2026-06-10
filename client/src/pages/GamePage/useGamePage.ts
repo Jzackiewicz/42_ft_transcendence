@@ -288,6 +288,7 @@ export function useGamePage() {
     };
 
     const leaveGame = () => {
+        sendAction('leave_game');
         disconnect();
         setSessionUuid('');
         setActiveSessionUuid(null);
