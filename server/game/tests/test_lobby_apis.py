@@ -220,6 +220,23 @@ class TestRoomJoinApi(APITestCase):
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		self.assertEqual(self.session.session_players.count(), 2)
 
+	def test_rejoin_completed_room_fails(self):
+		SessionPlayer.objects.create(
+			session=self.session,
+			user=self.player,
+			display_name="Player",
+			seat_number=2
+		)
+		self.session.current_status = GameSession.Status.GAME_OVER
+		self.session.save()
+
+		url = reverse('room-join', kwargs={'session_uuid': self.session.session_uuid})
+		self.client.force_authenticate(user=self.player)
+		response = self.client.post(url)
+
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+		self.assertIn("Cannot join a game that has already ended.", response.data["error"])
+
 	def test_join_room_fails_if_active_in_another_room(self):
 		# User is active in another room (disconnected_at=None, current_status != GAME_OVER)
 		other_session = GameSession.objects.create(current_status=GameSession.Status.ANSWERING)
