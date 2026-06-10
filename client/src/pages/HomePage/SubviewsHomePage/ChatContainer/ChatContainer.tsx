@@ -12,7 +12,7 @@ function ChatContainer() {
                 <div className="chat-sidebar-title">Messages</div>
                 <div className="chat-conv-list">
                     {friendsList.map((f) => (
-                        <div key={f.friend.id} className="friend-item" onClick={() => handleChooseTab(f.friend.id)}>
+                        <div key={f.friend.id} className={`friend-item ${f.friend.id === activeId ? 'active' : ''}`} onClick={() => handleChooseTab(f.friend.id)}>
                             <div className="friend-avatar">
                                 {(f.friend.username ?? '?')[0].toUpperCase()}
                                 {/* <span className={`friend-dot ${f.online ? 'online' : 'offline'}`} /> */}
