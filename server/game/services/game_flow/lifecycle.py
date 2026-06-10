@@ -2,6 +2,7 @@ from game.models import GameSession, AnswerAttempt, SessionPlayer, Question, Ses
 from django.utils import timezone
 from .guards import require_status, require_enough_questions_in_db
 from django.core.exceptions import ValidationError
+from django.conf import settings
 
 
 def set_end_game_stats(session: GameSession) -> None:
@@ -25,13 +26,15 @@ def set_end_game_stats(session: GameSession) -> None:
 	session.current_attempt = None
 	session.save()
 
-def assign_random_questions_to_session(session: GameSession, amount: int = 10) -> None:
+def assign_random_questions_to_session(session: GameSession) -> None:
 	if session.session_questions.exists():
 		return
 
-	require_enough_questions_in_db(amount)
+	limit = getattr(settings, 'QUESTIONS_PER_SESSION', 10)
 
-	questions = list(Question.objects.order_by('?')[:amount])
+	require_enough_questions_in_db(limit)
+
+	questions = list(Question.objects.order_by('?')[:limit])
 
 	session_questions = [
 		SessionQuestion(session=session, question=q, order_index=i)

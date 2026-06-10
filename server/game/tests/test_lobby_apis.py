@@ -4,13 +4,20 @@ from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
 
-from game.models import GameSession, SessionPlayer
+from game.models import GameSession, SessionPlayer, Question
 
 User = get_user_model()
 
 class TestRoomCreateApi(APITestCase):
 	def setUp(self):
 		self.user = User.objects.create_user(username="testuser", email="test@test.com", password="password")
+		# Seed questions so that room creation succeeds
+		for i in range(10):
+			Question.objects.create(
+				question_text=f"Question {i}?",
+				correct_answer="Yes",
+				category="general"
+			)
 
 	def test_create_room_success(self):
 		url = reverse('room-create')
@@ -20,6 +27,32 @@ class TestRoomCreateApi(APITestCase):
 		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 		self.assertIn('session_uuid', response.data)
 		self.assertEqual(GameSession.objects.count(), 1)
+
+	def test_create_room_fails_when_no_questions(self):
+		Question.objects.all().delete()
+		url = reverse('room-create')
+		self.client.force_authenticate(user=self.user)
+		response = self.client.post(url)
+
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+		self.assertIn("error", response.data)
+		self.assertEqual(GameSession.objects.count(), 0)
+
+	def test_create_room_fails_when_not_enough_questions(self):
+		Question.objects.all().delete()
+		for i in range(4):
+			Question.objects.create(
+				question_text=f"Question {i}?",
+				correct_answer="Yes",
+				category="general"
+			)
+		url = reverse('room-create')
+		self.client.force_authenticate(user=self.user)
+		response = self.client.post(url)
+
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+		self.assertIn("error", response.data)
+		self.assertEqual(GameSession.objects.count(), 0)
 
 	def test_create_room_unauthenticated(self):
 		url = reverse('room-create')
