@@ -32,19 +32,19 @@ export function LobbyView({
                         </div>
                     )}
                     
-                    <button 
-                        onClick={onStartGame} 
-                        disabled={playersCount < 2}
-                        className="btn-start-game"
-                    >
-                        Start Game
-                    </button>
+                    <div className="lobby-actions-row">
+                        <button 
+                            onClick={onStartGame} 
+                            disabled={playersCount < 2}
+                            className="lobby-btn"
+                        >
+                            Start Game
+                        </button>
 
-                    <div className="lobby-ai-actions">
-                        <div className="ai-questions-section">
+                        <div className="ai-questions-wrapper">
                             <button
                                 onClick={onRequestAiQuestions}
-                                className="btn-secondary"
+                                className="lobby-btn"
                                 disabled={isAiQuestionsRequested}
                             >
                                 {isAiQuestionsRequested ? '✨ Generation Requested!' : 'Generate AI Questions'}
