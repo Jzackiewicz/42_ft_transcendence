@@ -231,6 +231,10 @@ CHANNEL_LAYERS = {
     }
 }
 
+#Rate-limiting for extra_question_generation
+EXTRA_QUESTION_GENERATION_MAX_PER_HOUR = 5
+EXTRA_QUESTION_GENERATION_CACHE_TIMEOUT_SECONDS = 60 * 60
+
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",

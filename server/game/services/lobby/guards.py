@@ -2,11 +2,8 @@ from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from rest_framework.exceptions import Throttled
 from game.models import GameSession
-
-
-EXTRA_QUESTION_GENERATION_MAX_PER_HOUR = 5
-EXTRA_QUESTION_GENERATION_CACHE_TIMEOUT_SECONDS = 60 * 60
-
+from core.settings import EXTRA_QUESTION_GENERATION_MAX_PER_HOUR
+from core.settings import EXTRA_QUESTION_GENERATION_CACHE_TIMEOUT_SECONDS
 
 def check_can_create_room(*, user) -> None:
 	if not user.is_authenticated:
