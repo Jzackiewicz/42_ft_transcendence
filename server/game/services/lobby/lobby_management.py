@@ -2,7 +2,7 @@ from django.db import transaction
 from django.db.models import Max
 from game.models import GameSession, SessionPlayer
 from game.selectors.lobby_selectors import get_room_by_uuid
-from game.services.game_flow.lifecycle import handle_disconnect_in_lobby
+from game.services.game_flow.lifecycle import handle_disconnect_in_lobby, assign_random_questions_to_session
 from game.services.game_flow.game_action_handler import GameActionHandler
 from .guards import check_can_create_room, check_can_join_room, check_can_destroy_room, check_room_is_not_over
 
@@ -50,6 +50,8 @@ def create_room(*, user) -> GameSession:
         
         session.host_player = player
         session.save(update_fields=['host_player'])
+        
+        assign_random_questions_to_session(session)
         
     return session
 

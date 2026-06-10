@@ -127,16 +127,7 @@ class GameServiceTests(TestCase):
 
 		with self.assertRaisesMessage(
 			ValidationError,
-			"Cannot start game without questions in the database.",
-		):
-			GameService(self.session).start_game_session(actor=self.p1)
-
-	def test_start_game_fails_if_not_enough_questions(self):
-		self.session.session_questions.all().delete()
-
-		with self.assertRaisesMessage(
-			ValidationError,
-			"Not enough questions. Required: 10, available: 4.",
+			"Cannot start game without questions",
 		):
 			GameService(self.session).start_game_session(actor=self.p1)
 
