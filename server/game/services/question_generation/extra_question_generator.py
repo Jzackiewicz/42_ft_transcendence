@@ -9,6 +9,7 @@ from django.db import transaction, IntegrityError
 from django.db.models import Max
 from pydantic import BaseModel
 from game.models import GameSession, Question, SessionQuestion
+from core.settings import LLM_API_KEY, LLM_MODEL
 
 SYSTEM_INSTRUCTION_PATH = Path(__file__).with_name("extra_question_generator_system_instruction.txt")
 SYSTEM_INSTRUCTION = SYSTEM_INSTRUCTION_PATH.read_text(encoding="utf-8")
@@ -124,11 +125,11 @@ def generate_extra_questions(lobby_id, n_questions_to_generate):
 	if session is None:
 		raise RuntimeError(f"Lobby not found: {lobby_id}")
 		
-	client = genai.Client(api_key=os.environ["LLM_API_KEY"])
+	client = genai.Client(api_key=LLM_API_KEY)
 	prompt = build_prompt(lobby_id, n_questions_to_generate)
 	generated = generate(
 		client,
-		os.environ["LLM_MODEL"],
+		LLM_MODEL,
 		prompt,
 	)
 
