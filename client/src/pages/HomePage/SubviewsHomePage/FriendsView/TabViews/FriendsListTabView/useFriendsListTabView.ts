@@ -1,16 +1,8 @@
 import { useEffect, useState } from 'react'
 import { getFriends, deleteFromFriends } from '../../../../../../api/socialsWrapper'
+import { Friendship } from '../../../../../../types/User'
 
-export interface PublicUser {
-    id: number
-    username: string
-    avatar: string | null
-}
-
-export interface Friendship {
-    friend: PublicUser
-    created_at: string
-}
+export type { Friendship }
 
 export function useFriendsListTabView() {
     const [friendsList, setFriendsList] = useState<Friendship[]>([])
