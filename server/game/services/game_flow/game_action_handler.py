@@ -15,6 +15,7 @@ class GameAction:
 	SUBMIT_ANSWER = "submit_answer"
 	NOMINATE_PLAYER = "nominate_player"
 	DISCONNECT = "disconnect"
+	LEAVE_GAME = "leave_game"
 
 
 @dataclass(frozen=True)
@@ -56,6 +57,9 @@ class GameActionHandler:
 
 		elif request.action == GameAction.DISCONNECT:
 			service.disconnect_player(actor=actor)
+
+		elif request.action == GameAction.LEAVE_GAME:
+			service.leave_game(actor=actor)
 
 		else:
 			raise ValidationError(f"Unsupported game action: {request.action}")

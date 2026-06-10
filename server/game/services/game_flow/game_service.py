@@ -191,16 +191,24 @@ class GameService:
 	def	disconnect_player(self, actor: SessionPlayer | None) -> None:
 		require_action_actor(actor, "disconnect")
 		
+		if self.session.current_status == GameSession.Status.GAME_OVER:
+			return
+		
+		actor.disconnected_at = timezone.now()
+		actor.save(update_fields=['disconnected_at'])
+
+	def leave_game(self, actor: SessionPlayer | None) -> None:
+		require_action_actor(actor, "leave game")
+		
 		if self.session.current_status == GameSession.Status.LOBBY:
 			handle_disconnect_in_lobby(self.session, actor)
 		elif self.session.current_status == GameSession.Status.GAME_OVER:
 			return
 		else:
-			actor.disconnected_at = timezone.now()
-			actor.save(update_fields=['disconnected_at'])
+			self._handle_active_game_disconnect(actor)
 
 	def expire_disconnected_players(self) -> None:
-		if self.session.current_status in [GameSession.Status.LOBBY, GameSession.Status.GAME_OVER]:
+		if self.session.current_status == GameSession.Status.GAME_OVER:
 			return
 
 		grace_limit = timezone.now() - timedelta(seconds=settings.DISCONNECT_GRACE_PERIOD_S)
@@ -210,10 +218,11 @@ class GameService:
 			disconnected_at__lte=grace_limit
 		))
 
-		if not expired_players:
-			return
-
 		for player in expired_players:
 			if self.session.current_status == GameSession.Status.GAME_OVER:
 				break
-			self._handle_active_game_disconnect(player)
+			
+			if self.session.current_status == GameSession.Status.LOBBY:
+				handle_disconnect_in_lobby(self.session, player)
+			else:
+				self._handle_active_game_disconnect(player)
