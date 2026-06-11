@@ -145,7 +145,12 @@ class TestGenerateExtraQuestionsApi(APITestCase):
 		self.assertEqual(blocked.status_code, status.HTTP_429_TOO_MANY_REQUESTS)
 		self.assertEqual(mock_generate.call_count, 5)
 
-	def test_response_matches_output_serializer(self):
+	@patch("game.services.lobby.lobby_management.generate_extra_questions")
+	def test_response_matches_output_serializer(self, mock_generate):
+		mock_generate.return_value = {
+			"created_question_ids": [1, 2, 3]
+		}
+
 		url = reverse("generate-extra-questions")
 		self.client.force_authenticate(user=self.host)
 
@@ -159,5 +164,13 @@ class TestGenerateExtraQuestionsApi(APITestCase):
 		)
 
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
-		serializer = GenerateExtraQuestionsResponseSerializer(data=response.data)
+
+		serializer = GenerateExtraQuestionsResponseSerializer(
+			data=response.data
+		)
 		self.assertTrue(serializer.is_valid(), serializer.errors)
+
+		mock_generate.assert_called_once_with(
+			self.session.session_uuid,
+			3,
+		)
