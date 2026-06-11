@@ -31,7 +31,7 @@ class SessionPlayer(models.Model):
 
 	display_name = models.CharField(max_length=100)
 
-	seat_number = models.PositiveIntegerField()
+	seat_number = models.PositiveIntegerField(null=True, blank=True)
 
 	lives = models.PositiveIntegerField(default=DEFAULT_LIVES)
 	points = models.IntegerField(default=0)
