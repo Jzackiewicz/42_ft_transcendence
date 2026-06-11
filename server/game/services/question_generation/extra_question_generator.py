@@ -10,6 +10,7 @@ from django.db.models import Max
 from pydantic import BaseModel
 from game.models import GameSession, Question, SessionQuestion
 from core.settings import LLM_API_KEY, LLM_MODEL
+from game.serializers import GameSessionOutputSerializer, SessionPlayerOutputSerializer, GenerateExtraQuestionsPayloadSerializer, GenerateExtraQuestionsResponseSerializer
 
 LLM_SYSTEM_INSTRUCTION = """You must respond using the JSON format only with each section containing a 'category', 'question', and 'answer' field.
 The answer field must be an array of possible answers to the question, and the question field must be a string containing the question itself.

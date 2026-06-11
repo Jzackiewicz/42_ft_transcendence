@@ -6,8 +6,8 @@ from django.contrib.auth import get_user_model
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
-
 from game.models import GameSession, SessionPlayer
+from game.serializers import GameSessionOutputSerializer, SessionPlayerOutputSerializer, GenerateExtraQuestionsPayloadSerializer, GenerateExtraQuestionsResponseSerializer
 
 User = get_user_model()
 
@@ -144,3 +144,20 @@ class TestGenerateExtraQuestionsApi(APITestCase):
 		self.assertTrue(all(response.status_code == status.HTTP_200_OK for response in responses))
 		self.assertEqual(blocked.status_code, status.HTTP_429_TOO_MANY_REQUESTS)
 		self.assertEqual(mock_generate.call_count, 5)
+
+	def test_response_matches_output_serializer(self):
+		url = reverse("generate-extra-questions")
+		self.client.force_authenticate(user=self.host)
+
+		response = self.client.post(
+			url,
+			{
+				"session_uuid": str(self.session.session_uuid),
+				"n_questions_to_generate": 3,
+			},
+			format="json",
+		)
+
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		serializer = GenerateExtraQuestionsResponseSerializer(data=response.data)
+		self.assertTrue(serializer.is_valid(), serializer.errors)

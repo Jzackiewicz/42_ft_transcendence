@@ -97,3 +97,8 @@ class GameStateSnapshotSerializer(serializers.ModelSerializer):
 
 	def get_total_questions_count(self, obj: GameSession) -> int:
 		return obj.session_questions.count()
+
+class GenerateExtraQuestionsResponseSerializer(serializers.Serializer):
+    created_question_ids = serializers.ListField(
+        child=serializers.IntegerField()
+    )
