@@ -32,7 +32,6 @@ class GeneratedQuestion(BaseModel):
 def generate(client, model, prompt):
 	for attempt in range(5):
 		try:
-			print("Calling " + model + "..")
 			response = client.models.generate_content(
 				model=model,
 				contents=prompt,
