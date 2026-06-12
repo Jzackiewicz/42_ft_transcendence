@@ -4,9 +4,10 @@ from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
 
-from game.models import GameSession, SessionPlayer, Question
+from game.models import GameSession, SessionPlayer, Question, SessionQuestion, AnswerAttempt
 
 User = get_user_model()
+
 
 class TestRoomCreateApi(APITestCase):
 	def setUp(self):
@@ -352,8 +353,6 @@ class TestRoomJoinApi(APITestCase):
 		self.assertEqual(self.session.session_players.count(), 2)
 
 
-
-
 class TestRoomDestroyApi(APITestCase):
 	def setUp(self):
 		self.host = User.objects.create_user(username="host", email="host@test.com", password="password")
@@ -448,3 +447,210 @@ class TestRoomDestroyApi(APITestCase):
 
 		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 		self.assertEqual(GameSession.objects.count(), 1)
+
+
+class TestUserGameStatsApis(APITestCase):
+	def setUp(self):
+		self.user = User.objects.create_user(
+			username="testuser", email="test@test.com", password="password"
+		)
+		self.opponent = User.objects.create_user(
+			username="opponent", email="opp@test.com", password="password"
+		)
+		self.no_game_user = User.objects.create_user(
+			username="nogame", email="nogame@test.com", password="password"
+		)
+
+		# Create some questions
+		self.q_history = Question.objects.create(
+			question_text="Who was the first president of the US?",
+			correct_answer="George Washington",
+			category="History"
+		)
+		self.q_science = Question.objects.create(
+			question_text="What is the chemical symbol for gold?",
+			correct_answer="Au",
+			category="Science"
+		)
+		self.q_geography = Question.objects.create(
+			question_text="What is the capital of France?",
+			correct_answer="Paris",
+			category="Geography"
+		)
+
+	def test_get_stats_empty_user(self):
+		self.client.force_authenticate(user=self.no_game_user)
+		url = reverse('user-game-stats', kwargs={'user_id': self.no_game_user.id})
+		response = self.client.get(url)
+
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		data = response.data
+		self.assertEqual(data['games_played'], 0)
+		self.assertEqual(data['wins'], 0)
+		self.assertEqual(data['win_rate'], 0.0)
+		self.assertEqual(data['avg_score'], 0.0)
+		self.assertEqual(data['total_points'], 0)
+		self.assertEqual(data['highest_score'], 0)
+		self.assertEqual(data['correct_rate'], 0.0)
+		self.assertEqual(data['avg_answer_time_seconds'], 0.0)
+		self.assertNotIn('timeouts_count', data)
+		self.assertNotIn('games_hosted', data)
+		self.assertNotIn('top_categories', data)
+
+	def test_get_stats_with_games(self):
+		# Game 1: Completed, user won, hosted by user
+		session1 = GameSession.objects.create(
+			current_status=GameSession.Status.GAME_OVER,
+		)
+		sp_user1 = SessionPlayer.objects.create(
+			session=session1,
+			user=self.user,
+			display_name="User",
+			seat_number=1,
+			points=30,
+			lives=3
+		)
+		sp_opp1 = SessionPlayer.objects.create(
+			session=session1,
+			user=self.opponent,
+			display_name="Opponent",
+			seat_number=2,
+			points=10,
+			lives=0
+		)
+		session1.host_player = sp_user1
+		session1.winner = sp_user1
+		session1.save()
+
+		# Setup questions and attempts for Game 1
+		sq1_1 = SessionQuestion.objects.create(session=session1, question=self.q_history, order_index=0)
+		sq1_2 = SessionQuestion.objects.create(session=session1, question=self.q_science, order_index=1)
+
+		# User attempts: 1 correct (History), 1 incorrect/timeout (Science)
+		AnswerAttempt.objects.create(
+			session=session1,
+			player=sp_user1,
+			session_question=sq1_1,
+			answer_text="George Washington",
+			is_correct=True,
+			is_timeout=False,
+			evaluation_status=AnswerAttempt.EvaluationStatus.EVALUATED,
+			answer_time_ms=1500
+		)
+		AnswerAttempt.objects.create(
+			session=session1,
+			player=sp_user1,
+			session_question=sq1_2,
+			answer_text=None,
+			is_correct=False,
+			is_timeout=True,
+			evaluation_status=AnswerAttempt.EvaluationStatus.EVALUATED,
+			answer_time_ms=20000
+		)
+
+		# Game 2: Completed, opponent won, hosted by opponent
+		session2 = GameSession.objects.create(
+			current_status=GameSession.Status.GAME_OVER,
+		)
+		sp_user2 = SessionPlayer.objects.create(
+			session=session2,
+			user=self.user,
+			display_name="User",
+			seat_number=1,
+			points=15,
+			lives=0
+		)
+		sp_opp2 = SessionPlayer.objects.create(
+			session=session2,
+			user=self.opponent,
+			display_name="Opponent",
+			seat_number=2,
+			points=40,
+			lives=2
+		)
+		session2.host_player = sp_opp2
+		session2.winner = sp_opp2
+		session2.save()
+
+		# Setup questions and attempts for Game 2
+		sq2_1 = SessionQuestion.objects.create(session=session2, question=self.q_geography, order_index=0)
+		sq2_2 = SessionQuestion.objects.create(session=session2, question=self.q_science, order_index=1)
+
+		# User attempts: 2 correct (Geography, Science)
+		AnswerAttempt.objects.create(
+			session=session2,
+			player=sp_user2,
+			session_question=sq2_1,
+			answer_text="Paris",
+			is_correct=True,
+			is_timeout=False,
+			evaluation_status=AnswerAttempt.EvaluationStatus.EVALUATED,
+			answer_time_ms=3000
+		)
+		AnswerAttempt.objects.create(
+			session=session2,
+			player=sp_user2,
+			session_question=sq2_2,
+			answer_text="Au",
+			is_correct=True,
+			is_timeout=False,
+			evaluation_status=AnswerAttempt.EvaluationStatus.EVALUATED,
+			answer_time_ms=2500
+		)
+
+		# Game 3: Active (Lobby) - should be excluded from stats!
+		session3 = GameSession.objects.create(
+			current_status=GameSession.Status.LOBBY,
+		)
+		SessionPlayer.objects.create(
+			session=session3,
+			user=self.user,
+			display_name="User",
+			seat_number=1,
+			points=100,
+			lives=3
+		)
+
+		# Query statistics
+		self.client.force_authenticate(user=self.user)
+		url = reverse('user-game-stats', kwargs={'user_id': self.user.id})
+		response = self.client.get(url)
+
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		data = response.data
+
+		# Assertions
+		self.assertEqual(data['games_played'], 2)  # Game 1 & Game 2 (excluding Game 3 because it is in Lobby)
+		self.assertEqual(data['wins'], 1)  # Only Game 1
+		self.assertEqual(data['win_rate'], 50.0)
+		self.assertEqual(data['total_points'], 45)  # 30 + 15
+		self.assertEqual(data['avg_score'], 22.5)  # (30 + 15) / 2
+		self.assertEqual(data['highest_score'], 30)  # max(30, 15)
+		
+		# User has 4 attempts across Game 1 and Game 2:
+		# Game 1: 1 correct (1500ms), 1 timeout (20000ms)
+		# Game 2: 1 correct (3000ms), 1 correct (2500ms)
+		# Total attempts: 4. Correct: 3.
+		self.assertEqual(data['correct_rate'], 75.0)  # 3/4
+
+		# Average answer time: non-timeout attempts are 1500ms, 3000ms, 2500ms.
+		# Avg = (1500 + 3000 + 2500) / 3 = 7000 / 3 = 2333.33ms = 2.33 seconds
+		self.assertEqual(data['avg_answer_time_seconds'], 2.33)
+		
+		# Unwanted statistics should not be present
+		self.assertNotIn('timeouts_count', data)
+		self.assertNotIn('games_hosted', data)
+		self.assertNotIn('top_categories', data)
+
+	def test_get_other_user_stats(self):
+		self.client.force_authenticate(user=self.opponent)
+		url = reverse('user-game-stats', kwargs={'user_id': self.user.id})
+		response = self.client.get(url)
+
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(response.data['games_played'], 0)  # No completed games for user setup
+
+	def test_unauthenticated_request(self):
+		url = reverse('user-game-stats', kwargs={'user_id': self.user.id})
+		response = self.client.get(url)
+		self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
