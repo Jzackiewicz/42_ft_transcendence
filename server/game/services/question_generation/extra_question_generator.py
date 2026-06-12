@@ -54,9 +54,7 @@ def generate(client, model, prompt):
 
 def load_lobby_questions(lobby_id):
 	"""Takes a lobby ID and returns a data object containing the questions, their answers, and a category for each question."""
-	lobby = GameSession.objects.filter(
-		Q(pk=lobby_id) | Q(session_uuid=lobby_id)
-	).first()
+	lobby = GameSession.objects.filter(session_uuid=lobby_id).first()
 	if lobby is None:
 		raise RuntimeError(f"Lobby not found: {lobby_id}")
 	questions_data = [
