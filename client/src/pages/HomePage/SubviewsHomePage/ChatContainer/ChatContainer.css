@@ -4,7 +4,7 @@
     --chat-accent-bg:     rgba(0, 229, 255, 0.07);
     --chat-accent-bg-hi:  rgba(0, 229, 255, 0.15);
     --chat-accent-border: rgba(0, 229, 255, 0.25);
-    --chat-bubble-them:   rgba(255, 255, 255, 0.05);
+    --chat-bubble-friend:   rgba(255, 255, 255, 0.05);
     --chat-scrollbar:     rgba(255, 255, 255, 0.08);
     --chat-hover:         rgba(255, 255, 255, 0.04);
     --chat-divider:       rgba(255, 255, 255, 0.03);
@@ -132,17 +132,20 @@
     border-radius: 2px;
 }
 
-.chat-bubble-row { display: flex; }
+.chat-bubble-row { display: flex; width: 100%; }
 
 .chat-bubble-row.me   { justify-content: flex-end; }
-.chat-bubble-row.them { justify-content: flex-start; }
+.chat-bubble-row.friend { justify-content: flex-start; }
 
 .chat-bubble {
-    max-width: 65%;
+    max-width: 50%;
     padding: 8px 13px;
     border-radius: 12px;
     font-size: 13px;
     line-height: 1.45;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    min-width: 0;
 }
 
 .chat-bubble-row.me .chat-bubble {
@@ -152,8 +155,8 @@
     border-bottom-right-radius: 3px;
 }
 
-.chat-bubble-row.them .chat-bubble {
-    background: var(--chat-bubble-them);
+.chat-bubble-row.friend .chat-bubble {
+    background: var(--chat-bubble-friend);
     border: 1px solid var(--pb);
     color: var(--text);
     border-bottom-left-radius: 3px;
@@ -166,7 +169,7 @@
     text-align: right;
 }
 
-.chat-bubble-row.them .chat-ts { text-align: left; }
+.chat-bubble-row.friend .chat-ts { text-align: left; }
 
 /* ── INPUT ──────────────────────────────────────────────────────── */
 .chat-input-row {
@@ -191,6 +194,7 @@
 }
 
 .chat-input:focus { border-color: var(--chat-accent); }
+.chat-input--error { border-color: #ff4d4d !important; }
 
 .chat-input::placeholder { color: var(--placeholder); }
 
@@ -206,6 +210,13 @@
     cursor: pointer;
     transition: box-shadow 0.2s;
     flex-shrink: 0;
+}
+
+.chat-send-btn:disabled {
+    background: rgba(255, 77, 77, 0.15);
+    color: #ff4d4d;
+    cursor: not-allowed;
+    font-size: 11px;
 }
 
 .chat-send-btn:hover {

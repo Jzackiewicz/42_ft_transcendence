@@ -26,7 +26,7 @@ export function useChatContainer() {
         socketRef.current = createChatSocket(roomName)
         socketRef.current.onmessage = (event) => {
             const msg: ChatMessage = JSON.parse(event.data)
-            setMessages(prev => [...prev, msg])
+            if (msg.message) setMessages(prev => [...prev, msg])
         }
 
         getChatHistory(roomName).then(data => setMessages(data))

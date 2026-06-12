@@ -32,10 +32,10 @@ function ChatContainer() {
             {/* ── Thread ── */}
             <div className="chat-thread">
                 <div className="chat-messages">
-                    {messages.map((msg, i) => (
-                        <div key={i} className={`chat-bubble-row ${msg.sender_username === myUsername ? 'me' : 'them'}`}>
+                    {messages.filter(msg => msg.message).map((msg, i) => (
+                        <div key={i} className={`chat-bubble-row ${msg.sender_username === myUsername ? 'me' : 'friend'}`}>
                             <div className="chat-bubble">{msg.message}</div>
-                            <div className="chat-ts">{msg.timestamp}</div>
+                            {/* <div className="chat-ts">{msg.timestamp}</div> */}
                         </div>
                     ))}
                 </div>
@@ -43,13 +43,20 @@ function ChatContainer() {
             {/* ── Input ── */}
                 <div className="chat-input-row">
                     <input
-                        className="chat-input"
+                        className={`chat-input ${draft.length === 500 ? 'chat-input--error' : ''}`}
                         placeholder="Message…"
                         value={draft}
+                        maxLength={500}
                         onChange={e => setDraft(e.target.value)}
                         onKeyDown={e => e.key === 'Enter' && send()}
                     />
-                    <button className="chat-send-btn" onClick={send}>Send</button>
+                    <button
+                        className="chat-send-btn"
+                        onClick={send}
+                        disabled={draft.length === 500}
+                    >
+                        {draft.length === 500 ? 'max 500 chars' : 'Send'}
+                    </button>
                 </div>
             </div>
 
