@@ -128,9 +128,7 @@ def persist_generated_questions(session, generated):
 
 def generate_extra_questions(lobby_id, n_questions_to_generate):
 	load_dotenv(dotenv_path="../../../.env")
-	session = GameSession.objects.filter(
-		Q(pk=lobby_id) | Q(session_uuid=lobby_id)
-	).first()
+	session = GameSession.objects.filter(session_uuid=lobby_id).first()
 	if session is None:
 		raise RuntimeError(f"Lobby not found: {lobby_id}")
 		
