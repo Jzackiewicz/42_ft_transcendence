@@ -12,7 +12,8 @@ def _cleanup_and_sync_other_sessions(user, exclude_session_id: int | None = None
         return
 
     active_sessions = GameSession.objects.filter(
-        session_players__user=user
+        session_players__user=user,
+        session_players__seat_number__isnull=False
     ).exclude(current_status=GameSession.Status.GAME_OVER)
 
     if exclude_session_id is not None:

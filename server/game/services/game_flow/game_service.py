@@ -40,7 +40,8 @@ from .answers import (
 
 from .player_selection import (
 	get_next_alive_player, 
-	get_random_alive_player
+	get_random_alive_player,
+	get_new_host_player
 )
 
 
@@ -92,6 +93,9 @@ class GameService:
 			self._start_answering_turn()
 
 	def _handle_active_game_disconnect(self, actor: SessionPlayer) -> None:
+		if actor.seat_number is None:
+			return
+
 		if self.session.current_status == GameSession.Status.ANSWERING:
 			handle_disconnect_in_answering(self.session, actor)
 
@@ -198,6 +202,10 @@ class GameService:
 	def leave_game(self, actor: SessionPlayer | None) -> None:
 		require_action_actor(actor, "leave game")
 		
+		if actor.seat_number is None:
+			actor.delete()
+			return
+
 		if self.session.current_status == GameSession.Status.LOBBY:
 			handle_disconnect_in_lobby(self.session, actor)
 		elif self.session.current_status == GameSession.Status.GAME_OVER:
@@ -211,7 +219,6 @@ class GameService:
 
 		grace_limit = timezone.now() - timedelta(seconds=settings.DISCONNECT_GRACE_PERIOD_S)
 		expired_players = list(self.session.session_players.filter(
-			lives__gt=0,
 			disconnected_at__isnull=False,
 			disconnected_at__lte=grace_limit
 		))
@@ -220,7 +227,9 @@ class GameService:
 			if self.session.current_status == GameSession.Status.GAME_OVER:
 				break
 			
-			if self.session.current_status == GameSession.Status.LOBBY:
+			if player.seat_number is None:
+				player.delete()
+			elif self.session.current_status == GameSession.Status.LOBBY:
 				handle_disconnect_in_lobby(self.session, player)
 			else:
 				self._handle_active_game_disconnect(player)

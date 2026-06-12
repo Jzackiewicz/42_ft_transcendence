@@ -1,6 +1,7 @@
 from game.models import GameSession, AnswerAttempt, SessionPlayer, Question, SessionQuestion
 from django.utils import timezone
 from .guards import require_status, require_enough_questions_in_db
+from .player_selection import get_new_host_player
 from django.core.exceptions import ValidationError
 from django.conf import settings
 import random
@@ -102,7 +103,7 @@ def handle_disconnect_in_lobby(session: GameSession, actor: SessionPlayer) -> No
 	actor.delete()
 
 	if is_host:
-		next_host = session.session_players.order_by('id').first()
+		next_host = get_new_host_player(session)
 		if next_host:
 			session.host_player = next_host
 			session.save(update_fields=['host_player'])

@@ -6,7 +6,10 @@ def _has_active_session(user, exclude_session_id: int | None = None) -> bool:
 	if not user.is_authenticated:
 		return False
 			
-	qs = SessionPlayer.objects.filter(user=user).exclude(
+	qs = SessionPlayer.objects.filter(
+		user=user,
+		seat_number__isnull=False
+	).exclude(
 		session__current_status=GameSession.Status.GAME_OVER
 	)
 	if exclude_session_id is not None:

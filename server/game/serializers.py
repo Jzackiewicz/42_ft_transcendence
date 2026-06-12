@@ -80,7 +80,7 @@ class AnswerAttemptSnapshotSerializer(serializers.ModelSerializer):
 
 
 class GameStateSnapshotSerializer(serializers.ModelSerializer):
-	players = PlayerSnapshotSerializer(source='session_players', many=True)
+	players = serializers.SerializerMethodField()
 	current_question = SessionQuestionSnapshotSerializer()
 	current_attempt = AnswerAttemptSnapshotSerializer()
 	total_questions_count = serializers.SerializerMethodField()
@@ -93,6 +93,10 @@ class GameStateSnapshotSerializer(serializers.ModelSerializer):
 			'answer_time_limit_ms', 'winner', 'end_reason', 'question_asked_count',
 			'total_questions_count',
 		]
+
+	def get_players(self, obj: GameSession):
+		players = [p for p in obj.session_players.all() if p.seat_number is not None]
+		return PlayerSnapshotSerializer(players, many=True).data
 
 	def get_total_questions_count(self, obj: GameSession) -> int:
 		return obj.session_questions.count()
