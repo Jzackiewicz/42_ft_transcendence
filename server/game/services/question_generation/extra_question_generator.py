@@ -4,6 +4,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from google import genai
 import time
+import random
 from django.db.models import Q
 from django.db import transaction, IntegrityError
 from django.db.models import Max
@@ -23,6 +24,7 @@ If the answer can have nicknames of itself, create a very extensive list out of 
 You must generate an appropriate catagory name for each question, and the catagory name must be relevant to the question and answer.
 The catagory name must be a single word or phrase that is relevant to the question and answer, and it must not be a generic term like "general" or "miscellaneous".
 If you are not 100% sure about an answer, don't include it."""
+RETRY_STATUS_CODES = {429, 500, 502, 503, 504}
 
 class GeneratedQuestion(BaseModel):
 	category: str
@@ -30,25 +32,25 @@ class GeneratedQuestion(BaseModel):
 	answers: list[str]
 
 def generate(client, model, prompt):
-	for attempt in range(5):
-		try:
-			response = client.models.generate_content(
-				model=model,
-				contents=prompt,
-				config={
-					"system_instruction": LLM_SYSTEM_INSTRUCTION,
-					"response_mime_type": "application/json",
-					"response_schema": list[GeneratedQuestion],
-				},
-			)
-			return response.parsed
-		except Exception as e:
-			if "503" in str(e):
-				print("Busy servers, retrying..")
-				time.sleep(2)
-			else:
-				raise RuntimeError("Fatal Error while generating questions") from e
-	raise RuntimeError("Stopping retries, servers are too busy.")
+    for attempt in range(5):
+        try:
+            response = client.models.generate_content(
+                model=model,
+                contents=prompt,
+                config={
+                    "system_instruction": LLM_SYSTEM_INSTRUCTION,
+                    "response_mime_type": "application/json",
+                    "response_schema": list[GeneratedQuestion],
+                },
+            )
+            return response.parsed
+        except LLMApiException as e:
+            if e.status_code in RETRY_STATUS_CODES:
+                delay = min(2 ** attempt, 30) + random.random()
+                time.sleep(delay)
+                continue
+            raise
+    raise RuntimeError("Maximum retries exceeded.")
 
 def load_lobby_questions(lobby_id):
 	"""Takes a lobby ID and returns a data object containing the questions, their answers, and a category for each question."""
