@@ -4,7 +4,13 @@ from game.models import GameSession, SessionPlayer
 from game.selectors.lobby_selectors import get_room_by_uuid
 from game.services.game_flow.lifecycle import handle_disconnect_in_lobby, assign_random_questions_to_session
 from game.services.game_flow.game_action_handler import GameActionHandler
-from .guards import check_can_create_room, check_can_join_room, check_can_destroy_room, check_room_is_not_over
+from .guards import (
+    check_can_create_room,
+    check_can_join_room,
+    check_can_destroy_room,
+    check_room_is_not_over,
+    check_can_join_as_spectator,
+)
 
 
 def _cleanup_and_sync_other_sessions(user, exclude_session_id: int | None = None) -> None:
@@ -72,15 +78,25 @@ def join_room(*, session_uuid: str, user) -> SessionPlayer:
 
             _cleanup_and_sync_other_sessions(user, exclude_session_id=session.id)
 
-        check_can_join_room(session=session, user=user)
-            
-        max_seat = session.session_players.aggregate(Max('seat_number'))['seat_number__max'] or 0
-        
+        active_players_count = session.session_players.filter(seat_number__isnull=False).count()
+        is_spectator = (session.current_status != GameSession.Status.LOBBY) or (active_players_count >= session.max_players)
+
+        if is_spectator:
+            check_can_join_as_spectator(session=session, user=user)
+            seat_num = None
+            lives_val = 0
+        else:
+            check_can_join_room(session=session, user=user)
+            max_seat = session.session_players.filter(seat_number__isnull=False).aggregate(Max('seat_number'))['seat_number__max'] or 0
+            seat_num = max_seat + 1
+            lives_val = 3
+
         player = SessionPlayer.objects.create(
             session=session,
             user=user,
             display_name=getattr(user, 'username', f'User_{user.id}'),
-            seat_number=max_seat + 1,
+            seat_number=seat_num,
+            lives=lives_val,
             player_type=SessionPlayer.PlayerType.HUMAN
         )
         
