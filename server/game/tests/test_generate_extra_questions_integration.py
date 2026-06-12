@@ -16,14 +16,16 @@ class ExtraQuestionsIntegrationTest(TestCase):
         self.user = User.objects.create_user(username="host", password="pass")
         self.client.force_login(self.user)
 
-        # create a lobby as host
+        # create questions FIRST (required by create_room)
+        for i in range(10):
+            Question.objects.create(
+                question_text=f"Seed question {i}?",
+                correct_answer=f"A{i}",
+                category="general",
+            )
+
+        # now create the lobby (it will pick from existing questions)
         self.session = create_room(user=self.user)
-
-        # ensure at least 1 question exists and attached to the session
-        if not self.session.session_questions.exists():
-            q = Question.objects.create(question_text="Seed?", correct_answer="S", category="general")
-            SessionQuestion.objects.create(session=self.session, question=q, order_index=0)
-
     @patch("game.services.question_generation.extra_question_generator.generate")
     def test_generate_extra_questions_api_creates_and_attaches(self, mock_generate):
         # Mock LLM response as a simple list of question dicts
