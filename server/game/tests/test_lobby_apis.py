@@ -226,7 +226,7 @@ class TestRoomJoinApi(APITestCase):
 
 		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-	def test_join_started_room(self):
+	def test_join_started_room_succeeds_as_spectator(self):
 		self.session.current_status = GameSession.Status.ANSWERING
 		self.session.save()
 
@@ -234,7 +234,9 @@ class TestRoomJoinApi(APITestCase):
 		self.client.force_authenticate(user=self.player)
 		response = self.client.post(url)
 
-		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertIsNone(response.data['seat_number'])
+		self.assertEqual(response.data['lives'], 0)
 
 	def test_rejoin_active_room_success(self):
 		SessionPlayer.objects.create(
@@ -397,7 +399,7 @@ class TestRoomDestroyApi(APITestCase):
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		self.assertEqual(self.session.session_players.filter(user=self.player).count(), 1)
 
-	def test_join_full_room(self):
+	def test_join_full_room_succeeds_as_spectator(self):
 		self.session.max_players = 1
 		self.session.save()
 
@@ -405,7 +407,9 @@ class TestRoomDestroyApi(APITestCase):
 		self.client.force_authenticate(user=self.player)
 		response = self.client.post(url)
 
-		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertIsNone(response.data['seat_number'])
+		self.assertEqual(response.data['lives'], 0)
 
 	def test_join_room_unauthenticated(self):
 		url = reverse('room-join', kwargs={'session_uuid': self.session.session_uuid})
