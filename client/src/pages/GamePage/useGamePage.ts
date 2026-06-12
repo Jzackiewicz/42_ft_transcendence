@@ -49,6 +49,7 @@ export interface GameSnapshot {
     last_correct_player: number | null;
     last_nominated_player: number | null;
     players: Player[];
+    is_spectator?: boolean;
     current_question: Question | null;
     current_attempt: AnswerAttempt | null;
     answer_time_limit_ms: number;
@@ -270,6 +271,7 @@ export function useGamePage() {
         eligiblePlayers,
         timeLeft,
         currentPlayerObj,
+        isSpectator: activeGameState?.is_spectator ?? false,
         isHost,
         hostPlayerId,
         gameStarted,
