@@ -247,3 +247,6 @@ CACHES = {
         },
     }
 }
+
+QUESTIONS_PER_SESSION = int(os.getenv("QUESTIONS_PER_SESSION", "10"))
+
