@@ -63,6 +63,13 @@ class GameConsumerTests(TransactionTestCase):
 
 		self.application = AuthMiddlewareStack(URLRouter(websocket_urlpatterns))
 
+	def tearDown(self):
+		from channels.layers import get_channel_layer
+		channel_layer = get_channel_layer()
+		if hasattr(channel_layer, 'receive_clean_locks'):
+			channel_layer.receive_clean_locks.locks.clear()
+		super().tearDown()
+
 	async def test_connect_success(self):
 		headers = [(b'cookie', f'sessionid={self.cookie}'.encode('ascii'))]
 		communicator = WebsocketCommunicator(
