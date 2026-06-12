@@ -100,3 +100,16 @@ class GameStateSnapshotSerializer(serializers.ModelSerializer):
 
 	def get_total_questions_count(self, obj: GameSession) -> int:
 		return obj.session_questions.count()
+
+
+class UserGameStatsSerializer(serializers.Serializer):
+	games_played = serializers.IntegerField()
+	wins = serializers.IntegerField()
+	win_rate = serializers.FloatField()
+	avg_score = serializers.FloatField()
+	total_points = serializers.IntegerField()
+	highest_score = serializers.IntegerField()
+	correct_rate = serializers.FloatField()
+	avg_answer_time_seconds = serializers.FloatField()
+
+
