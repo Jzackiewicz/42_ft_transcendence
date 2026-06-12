@@ -1,8 +1,15 @@
+import { useState } from 'react'
 import { useChatContainer } from './useChatContainer'
 import './ChatContainer.css'
 
 function ChatContainer() {
-    const { friendsList, activeId, messages, myUsername, handleChooseTab } = useChatContainer()
+    const { friendsList, activeId, messages, myUsername, handleChooseTab, handleSend } = useChatContainer()
+    const [draft, setDraft] = useState('')
+
+    const send = () => {
+        handleSend(draft)
+        setDraft('')
+    }
 
     return (
         <div className="chat-container">
@@ -31,6 +38,18 @@ function ChatContainer() {
                             <div className="chat-ts">{msg.timestamp}</div>
                         </div>
                     ))}
+                </div>
+                
+            {/* ── Input ── */}
+                <div className="chat-input-row">
+                    <input
+                        className="chat-input"
+                        placeholder="Message…"
+                        value={draft}
+                        onChange={e => setDraft(e.target.value)}
+                        onKeyDown={e => e.key === 'Enter' && send()}
+                    />
+                    <button className="chat-send-btn" onClick={send}>Send</button>
                 </div>
             </div>
 
