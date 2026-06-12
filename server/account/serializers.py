@@ -73,14 +73,22 @@ class UserProfileOutputSerializer(serializers.ModelSerializer):
 # expose to other users
 class PublicUserSerializer(serializers.ModelSerializer):
     avatar = serializers.SerializerMethodField()
+    is_online = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ["id", "username", "avatar"]
+        fields = ["id", "username", "avatar", "is_online"]
 
     def get_avatar(self, user):
         return user.profile.avatar_url(self.context.get("request"))
+    
+    def get_is_online(self, user):
+        precomputed = self.context.get("online_user_ids")
+        if precomputed is not None:
+            return user.id in precomputed
 
+        from social.presence import PresenceRegistry
+        return PresenceRegistry.is_online(user.id)
 
 class UserProfileAvatarInputSerializer(serializers.Serializer):
     avatar = serializers.ImageField()

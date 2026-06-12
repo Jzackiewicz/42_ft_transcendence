@@ -31,6 +31,7 @@ from .services import (
     remove_friend,
     send_friend_request,
 )
+from social.presence import PresenceRegistry
 
 # from .services import
 
@@ -177,9 +178,13 @@ class FriendListApi(APIView):
         description="List the authenticated user's friends.",
     )
     def get(self, request):
-        friends = get_friends(user=request.user)
+        friends = list(get_friends(user=request.user))
+
+        friend_ids = [f.friend_id for f in friends]
+        online = PresenceRegistry.online_user_ids(friend_ids)
+
         output = FriendshipOutputSerializer(
-            friends, many=True, context={"request": request}
+            friends, many=True, context={"request": request, "online_user_ids": online }
         )
         return Response(output.data, status=status.HTTP_200_OK)
     
