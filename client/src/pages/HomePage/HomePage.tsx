@@ -1,11 +1,13 @@
 import BlinkingSpaceBGDiv from '../../components/BlinkingSpaceBGDiv'
-import { useHomePage } from './useHomePage'
 import AccountHeader from './SubviewsHomePage/AccountHeader/AccountHeader'
 import FriendsView from './SubviewsHomePage/FriendsView/FriendsView'
-import StatsView from './SubviewsHomePage/StatsView/StatsView'
 import ChatContainer from './SubviewsHomePage/ChatContainer/ChatContainer'
-import { FriendsProvider } from '../../context/FriendsListContext'
+import SolarSystem from './SubviewsHomePage/Solar/SolarSystem'
+
 import './HomePage.css'
+
+import { useHomePage } from './useHomePage'
+import { FriendsProvider } from '../../context/FriendsListContext'
 
 export function HomePage() {
     const {
@@ -61,7 +63,7 @@ export function HomePage() {
 
                 <div className="account-grid">
                     <FriendsView />
-                    <StatsView />
+                    <SolarSystem />
 
                     <div className="account-grid-chat">
                         <ChatContainer />

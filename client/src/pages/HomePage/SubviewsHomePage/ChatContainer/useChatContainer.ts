@@ -15,7 +15,12 @@ export function useChatContainer() {
     const [messages, setMessages] = useState<ChatMessage[]>([])
     const socketRef = useRef<WebSocket | null>(null)
 
-    const selectedFriend = friendsList.find(f => f.friend.id === activeId) ?? friendsList[0]
+    // const selectedFriend = friendsList.find(f => f.friend.id === activeId) ?? friendsList[0]
+
+    useEffect(() => {
+        if (activeId === 0 && friendsList.length > 0)
+            setActiveId(friendsList[0].friend.id)
+    }, [friendsList])
 
     useEffect(() => {
         if (!user || !activeId)
@@ -43,5 +48,5 @@ export function useChatContainer() {
         setActiveId(id)
     }
 
-    return { friendsList, selectedFriend, activeId, messages, myUsername: user?.username ?? '', handleChooseTab, handleSend }
+    return { friendsList, activeId, messages, myUsername: user?.username ?? '', handleChooseTab, handleSend }
 }
