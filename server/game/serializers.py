@@ -21,9 +21,11 @@ class GameSessionOutputSerializer(serializers.ModelSerializer):
 		fields = ['session_uuid', 'current_status', 'max_players', 'created_at']
 
 class SessionPlayerOutputSerializer(serializers.ModelSerializer):
+	user_id = serializers.IntegerField(read_only=True, allow_null=True)
+
 	class Meta:
 		model = SessionPlayer
-		fields = ['id', 'display_name', 'seat_number', 'lives', 'points', 'player_type']
+		fields = ['id', 'display_name', 'seat_number', 'lives', 'points', 'player_type', 'user_id']
 
 
 class SubmitAnswerPayloadSerializer(StrictSerializer):
@@ -38,10 +40,11 @@ class NominatePlayerPayloadSerializer(StrictSerializer):
 class PlayerSnapshotSerializer(serializers.ModelSerializer):
 	is_alive = serializers.BooleanField(read_only=True)
 	is_online = serializers.SerializerMethodField()
+	user_id = serializers.IntegerField(read_only=True, allow_null=True)
 	
 	class Meta:
 		model = SessionPlayer
-		fields = ['id', 'display_name', 'seat_number', 'lives', 'points', 'answered_count', 'is_alive', 'total_answer_time_ms', 'is_online']
+		fields = ['id', 'display_name', 'seat_number', 'lives', 'points', 'answered_count', 'is_alive', 'total_answer_time_ms', 'is_online', 'user_id', 'avatar']
 
 	def get_is_online(self, obj: SessionPlayer) -> bool:
 		return obj.disconnected_at is None
