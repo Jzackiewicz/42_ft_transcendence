@@ -96,7 +96,7 @@ export function GamePage() {
     };
 
     const { sessionUuid, errorMsg, setErrorMsg } = connection;
-    const { gameState, gameStarted, timeLeft, hostPlayerId, isSpectator } = sessionState;
+    const { gameState, gameStarted, timeLeft, hostPlayerId, isSpectator, currentPlayerObj } = sessionState;
 
     return (
         <div className="game-page-container">
@@ -140,7 +140,7 @@ export function GamePage() {
                                 <PlayerTile
                                     key={player.id}
                                     player={player}
-                                    isCurrentUser={player.display_name === user?.username}
+                                    isCurrentUser={player.id === currentPlayerObj?.id || (player.user_id !== null && player.user_id !== undefined && player.user_id === user?.id)}
                                     isPlayerHost={player.id === hostPlayerId}
                                     isPlayerActive={player.id === gameState.current_player}
                                     isPlayerNominator={player.id === gameState.last_correct_player}
