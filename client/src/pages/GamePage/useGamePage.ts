@@ -13,6 +13,7 @@ export interface Player {
     is_online: boolean;
     total_answer_time_ms?: number;
     user_id?: number | null;
+    avatar?: string | null;
 }
 
 export interface Question {
