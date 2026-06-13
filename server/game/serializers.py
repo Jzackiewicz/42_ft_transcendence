@@ -41,13 +41,23 @@ class PlayerSnapshotSerializer(serializers.ModelSerializer):
 	is_alive = serializers.BooleanField(read_only=True)
 	is_online = serializers.SerializerMethodField()
 	user_id = serializers.IntegerField(read_only=True, allow_null=True)
+	avatar = serializers.SerializerMethodField()
 	
 	class Meta:
 		model = SessionPlayer
-		fields = ['id', 'display_name', 'seat_number', 'lives', 'points', 'answered_count', 'is_alive', 'total_answer_time_ms', 'is_online', 'user_id', 'avatar']
+		fields = [
+			'id', 'display_name', 'seat_number', 'lives', 'points',
+			'answered_count', 'is_alive', 'total_answer_time_ms',
+			'is_online', 'user_id', 'avatar'
+		]
 
 	def get_is_online(self, obj: SessionPlayer) -> bool:
 		return obj.disconnected_at is None
+
+	def get_avatar(self, obj: SessionPlayer) -> str | None:
+		if obj.user and hasattr(obj.user, 'profile'):
+			return obj.user.profile.avatar_url(self.context.get('request'))
+		return None
 
 class QuestionSnapshotSerializer(serializers.ModelSerializer):
 	class Meta:
