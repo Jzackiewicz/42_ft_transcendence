@@ -1,0 +1,182 @@
+[
+  {
+    "model": "game.question",
+    "pk": 1,
+    "fields": {
+      "question_text": "What is 2 + 2?",
+      "correct_answer": "4",
+      "category": "math"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 2,
+    "fields": {
+      "question_text": "What is the capital of Poland?",
+      "correct_answer": "Warsaw",
+      "category": "geography"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 3,
+    "fields": {
+      "question_text": "What is the capital of France?",
+      "correct_answer": "Paris",
+      "category": "geography"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 4,
+    "fields": {
+      "question_text": "What is the color of the sky on a clear day?",
+      "correct_answer": "blue",
+      "category": "general"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 5,
+    "fields": {
+      "question_text": "What is the largest ocean on Earth?",
+      "correct_answer": "Pacific",
+      "category": "geography"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 6,
+    "fields": {
+      "question_text": "How many days are in a leap year?",
+      "correct_answer": "366",
+      "category": "general"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 7,
+    "fields": {
+      "question_text": "What is the capital of Germany?",
+      "correct_answer": "Berlin",
+      "category": "geography"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 8,
+    "fields": {
+      "question_text": "What is the capital of the United Kingdom?",
+      "correct_answer": "London",
+      "category": "geography"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 9,
+    "fields": {
+      "question_text": "How many legs does a spider have?",
+      "correct_answer": "8",
+      "category": "animals"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 10,
+    "fields": {
+      "question_text": "What planet is closest to the Sun?",
+      "correct_answer": "Mercury",
+      "category": "science"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 11,
+    "fields": {
+      "question_text": "What is the capital of Italy?",
+      "correct_answer": "Rome",
+      "category": "geography"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 12,
+    "fields": {
+      "question_text": "What is the capital of Spain?",
+      "correct_answer": "Madrid",
+      "category": "geography"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 13,
+    "fields": {
+      "question_text": "What gas do humans need to breathe to live?",
+      "correct_answer": "oxygen",
+      "category": "science"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 14,
+    "fields": {
+      "question_text": "What is 5 + 5?",
+      "correct_answer": "10",
+      "category": "math"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 15,
+    "fields": {
+      "question_text": "Who is the most handsome man alive?",
+      "correct_answer": "Damian Bozic",
+      "category": "general"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 16,
+    "fields": {
+      "question_text": "What chemical formula represents water?",
+      "correct_answer": "h2o",
+      "category": "science"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 17,
+    "fields": {
+      "question_text": "What is the capital of Japan?",
+      "correct_answer": "Tokyo",
+      "category": "geography"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 18,
+    "fields": {
+      "question_text": "How many hours are in a day?",
+      "correct_answer": "24",
+      "category": "general"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 19,
+    "fields": {
+      "question_text": "What is the largest planet in our solar system?",
+      "correct_answer": "Jupiter",
+      "category": "science"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 20,
+    "fields": {
+      "question_text": "What is the currency of the United States?",
+      "correct_answer": "dollar",
+      "category": "general"
+    }
+  }
+]
