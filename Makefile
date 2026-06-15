@@ -39,6 +39,8 @@ up:
 	sleep 5
 	@echo "Creating superuser if not exists (Production)..."
 	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(PROD_PROJECT) exec -e DJANGO_SUPERUSER_PASSWORD=$(DJANGO_SUPERUSER_PASSWORD) api python manage.py createsuperuser --noinput || true
+	@echo "Seeding questions (Production)..."
+	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(PROD_PROJECT) exec api python manage.py seed-questions || true
 
 # Stop the stack
 down:
@@ -98,6 +100,8 @@ dev-up: dev-venv client-install
 	sleep 5
 	@echo "Creating superuser if not exists (Dev)..."
 	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) exec -e DJANGO_SUPERUSER_PASSWORD=$(DJANGO_SUPERUSER_PASSWORD) api python manage.py createsuperuser --noinput || true
+	@echo "Seeding questions (Dev)..."
+	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) exec api python manage.py seed-questions || true
 
 dev-shell: dev-up
 	@echo "Opening Django shell locally..."
