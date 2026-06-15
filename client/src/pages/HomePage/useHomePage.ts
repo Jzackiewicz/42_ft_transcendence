@@ -15,8 +15,11 @@ export function useHomePage() {
             await logout()
             setUser(null)
             navigate('/login')
-        } catch (error) {
-            console.error('Logout failed:', error)
+        } catch (error: any) {
+            navigate('/error', { state: {
+                code: error?.response?.status ?? 500,
+                message: 'Logout failed. Please try again.',
+            }})
         }
     }
 
@@ -24,8 +27,11 @@ export function useHomePage() {
         try {
             const data = await createLobby()
             navigate('/lobby', { state: { sessionUuid: data.session_uuid } })
-        } catch (error) {
-            console.error('Error while creating lobby:', error)
+        } catch (error: any) {
+            navigate('/error', { state: {
+                code: error?.response?.status ?? 500,
+                message: 'Failed to create a lobby. Please try again.',
+            }})
         }
     }
 
@@ -35,8 +41,14 @@ export function useHomePage() {
             await joinLobby(joinUuid)
             setShowJoinModal(false)
             navigate('/lobby', { state: { sessionUuid: joinUuid } })
-        } catch (error) {
-            console.error('Error while joining lobby:', error)
+        } catch (error: any) {
+            const message = error?.response?.data?.error?.[0]
+                ?? error?.response?.data?.detail
+                ?? 'Failed to join lobby. Check the UUID and try again.'
+            navigate('/error', { state: {
+                code: error?.response?.status ?? 500,
+                message,
+            }})
         }
     }
 
