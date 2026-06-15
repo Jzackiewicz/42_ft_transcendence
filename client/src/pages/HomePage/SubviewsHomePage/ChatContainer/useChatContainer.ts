@@ -15,8 +15,6 @@ export function useChatContainer() {
     const [messages, setMessages] = useState<ChatMessage[]>([])
     const socketRef = useRef<WebSocket | null>(null)
 
-    // const selectedFriend = friendsList.find(f => f.friend.id === activeId) ?? friendsList[0]
-
     useEffect(() => {
         if (activeId === 0 && friendsList.length > 0)
             setActiveId(friendsList[0].friend.id)
@@ -26,6 +24,8 @@ export function useChatContainer() {
         if (!user || !activeId)
             return
 
+        let isCurrent = true
+
         const roomName = getRoomName(user.id, activeId)
         socketRef.current?.close()
         socketRef.current = createChatSocket(roomName)
@@ -34,8 +34,14 @@ export function useChatContainer() {
             if (msg.message) setMessages(prev => [...prev, msg])
         }
 
-        getChatHistory(roomName).then(data => setMessages(data))
-        return () => { socketRef.current?.close() }
+        getChatHistory(roomName).then(data => {
+            if (isCurrent) setMessages(data)
+        })
+
+        return () => {
+            isCurrent = false
+            socketRef.current?.close()
+        }
     }, [activeId, user])
 
     const handleSend = (text: string) => {
