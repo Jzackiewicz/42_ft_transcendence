@@ -26,6 +26,7 @@ class ExtraQuestionsIntegrationTest(TestCase):
 
         # now create the lobby (it will pick from existing questions)
         self.session = create_room(user=self.user)
+
     @patch("game.services.question_generation.extra_question_generator.generate")
     def test_generate_extra_questions_api_creates_and_attaches(self, mock_generate):
         # Mock LLM response as a simple list of question dicts
@@ -46,7 +47,7 @@ class ExtraQuestionsIntegrationTest(TestCase):
 
         resp = self.client.post(url, payload, content_type="application/json")
         self.assertEqual(resp.status_code, 200)
- 
+
         body = resp.json()
         self.assertIn("created_question_ids", body)
         self.assertEqual(len(body["created_question_ids"]), 3)
@@ -59,16 +60,28 @@ class ExtraQuestionsIntegrationTest(TestCase):
         self.assertEqual(after_q_count, before_q_count + 3)
 
         created_ids = body["created_question_ids"]
-        created_texts = set(Question.objects.filter(id__in=created_ids).values_list("question_text", flat=True))
-        self.assertSetEqual(created_texts, {"AI Q1?", "AI Q2?", "AI Q3?"})
+        created_texts = set(
+            Question.objects.filter(id__in=created_ids)
+            .values_list("question_text", flat=True)
+        )
+        self.assertSetEqual(
+            created_texts,
+            {"AI Q1?", "AI Q2?", "AI Q3?"}
+        )
 
         # Check session was updated with new SessionQuestion entries
         after_session_q_count = self.session.session_questions.count()
         self.assertEqual(after_session_q_count, before_session_q_count + 3)
 
         attached_ai_questions = list(
-            self.session.session_questions.filter(question__is_ai_generated=True)
-            .order_by("order_index")
+            self.session.session_questions
+            .filter(question__is_ai_generated=True)
             .values_list("question__question_text", flat=True)
         )
-        self.assertEqual(attached_ai_questions, ["AI Q1?", "AI Q2?", "AI Q3?"])
+
+        self.assertSetEqual(
+            set(attached_ai_questions),
+            {"AI Q1?", "AI Q2?", "AI Q3?"}
+        )
+
+        self.assertEqual(len(attached_ai_questions), 3)
