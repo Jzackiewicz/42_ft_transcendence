@@ -27,7 +27,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         getMe().then(data => {
-            setUser(data ?? null)
+            setUser(data?.user ?? null)
         })
     }, [])
 
