@@ -3,7 +3,7 @@ from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.db import database_sync_to_async
 from .serializers import ChatMessageSerializer
 from .services import create_chat_message
-from .presence import PresenceRegistry
+from account.presence import PresenceRegistry
 
 
 PRESENCE_GROUP = "presence"

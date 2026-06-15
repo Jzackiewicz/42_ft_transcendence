@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from social.presence import PresenceRegistry
+from account.presence import PresenceRegistry
 
 
 class PresenceRegistryTests(TestCase):

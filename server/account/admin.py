@@ -12,6 +12,5 @@ class CustomUserAdmin(UserAdmin):
 
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ['user', 'is_online']
-    list_filter = ['is_online']
+    list_display = ['user']
     search_fields = ['user__username', 'user__email']

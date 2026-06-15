@@ -20,7 +20,7 @@ from django.contrib.auth import authenticate, login, logout
 from .permissions import IsSelfOrReadOnly, IsAnonymous
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
-from social.presence import PresenceRegistry
+from .presence import PresenceRegistry
 
 from .selectors import (
     user_get_by_id,

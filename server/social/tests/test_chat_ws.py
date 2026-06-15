@@ -19,7 +19,7 @@ User = get_user_model()
 # integration/staging tests.
 APPLICATION = AuthMiddlewareStack(URLRouter(websocket_urlpatterns))
 
-from social.presence import PresenceRegistry
+from account.presence import PresenceRegistry
 
 
 async def _drain_initial_presence(communicator):
@@ -177,6 +177,16 @@ class ChatConsumerTests(TransactionTestCase):
         await _drain_initial_presence(communicator)
 
         await communicator.send_json_to({"bad_key": "Failed"})
+        response = await communicator.receive_json_from()
+
+        # The consumer responds with a structured validation error and keeps
+        # the socket open so the client can recover without reconnecting.
+        self.assertEqual(response.get("error"), "Invalid message format.")
+        self.assertIn("message", response.get("details", {}))
+        # No follow-up broadcast — the bad payload must not be echoed to the room.
+        self.assertTrue(await communicator.receive_nothing())
+
+        await communicator.disconnect()
 
     async def test_message_too_long(self):
         """Messages exceeding 500 characters return a validation error."""
@@ -185,6 +195,14 @@ class ChatConsumerTests(TransactionTestCase):
         await _drain_initial_presence(communicator)
 
         await communicator.send_json_to({"message": "A" * 501})
+        response = await communicator.receive_json_from()
+
+        self.assertEqual(response.get("error"), "Invalid message format.")
+        # The 'message' field error specifically — not, say, a generic schema error.
+        self.assertIn("message", response.get("details", {}))
+        self.assertTrue(await communicator.receive_nothing())
+
+        await communicator.disconnect()
 
 
 # ---------------------------------------------------------------------------

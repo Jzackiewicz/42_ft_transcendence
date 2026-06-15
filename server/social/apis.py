@@ -31,7 +31,7 @@ from .services import (
     remove_friend,
     send_friend_request,
 )
-from social.presence import PresenceRegistry
+from account.presence import PresenceRegistry
 
 # from .services import
 
