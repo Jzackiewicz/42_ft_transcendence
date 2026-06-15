@@ -17,7 +17,8 @@ export function GamePage() {
         connection,
         gameActions,
         sessionState,
-        lobbySettings
+        isAiQuestionsRequested,
+        onRequestAiQuestions
     } = useGamePage();
 
     // Dynamic game states renderer
@@ -32,7 +33,8 @@ export function GamePage() {
                         isHost={isHost}
                         playersCount={gameState.players.length}
                         onStartGame={gameActions.startGame}
-                        lobbySettings={lobbySettings}
+                        isAiQuestionsRequested={isAiQuestionsRequested}
+                        onRequestAiQuestions={onRequestAiQuestions}
                     />
                 );
             }

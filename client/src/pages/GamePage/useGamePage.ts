@@ -11,7 +11,6 @@ export interface Player {
     answered_count: number;
     is_alive: boolean;
     is_online: boolean;
-    player_type?: 'human' | 'bot';
     total_answer_time_ms?: number;
 }
 
@@ -87,17 +86,8 @@ export function useGamePage() {
 
     const [timeLeft, setTimeLeft] = useState<number | null>(null);
 
-    // Lobby settings states
-    const [questionCount, setQuestionCount] = useState<number>(20);
-    const [answerTimeLimitMs, setAnswerTimeLimitMs] = useState<number>(20000);
-
-    // Derive activeGameState that merges customized settings
-    const activeGameState: GameSnapshot | null = gameState ? {
-        ...gameState,
-        answer_time_limit_ms: answerTimeLimitMs,
-        total_questions_count: questionCount,
-        players: gameState.players.map(p => ({ ...p, player_type: p.player_type || 'human' }))
-    } : null;
+    // activeGameState directly uses gameState as player_type is removed
+    const activeGameState: GameSnapshot | null = gameState;
 
 
 
@@ -240,35 +230,15 @@ export function useGamePage() {
         return () => disconnect(); // calling a destructor
     }, []); // Happens only once
 
-    const updateSettings = (questions: number, timeLimitSec: number) => {
-        setQuestionCount(questions);
-        setAnswerTimeLimitMs(timeLimitSec * 1000);
-    };
-
-    const addAiBot = () => {
-        // No-op for now (backend integration in separate issue #84)
-    };
-
-    const removeAiBot = () => {
-        // No-op for now (backend integration in separate issue #84)
-    };
-
     const requestAiQuestions = () => {
         // No-op for now (backend integration in separate issue #82)
     };
+    const [isAiQuestionsRequested, setIsAiQuestionsRequested] = useState(false);
 
-    const lobbySettings = {
-        questionCount,
-        answerTimeLimitMs,
-        hasBotPlayer: activeGameState?.players.some(p => p.player_type === 'bot') ?? false,
-        canAddBot: (activeGameState?.players.length ?? 0) < 5,
-        aiQuestionsRequested: false,
-        onUpdateSettings: updateSettings,
-        onAddBot: addAiBot,
-        onRemoveBot: removeAiBot,
-        onRequestAiQuestions: requestAiQuestions
+    const handleRequestAiQuestions = () => {
+        requestAiQuestions();
+        setIsAiQuestionsRequested(true);
     };
-
     const leaveGame = () => {
         sendAction('leave_game');
         disconnect();
@@ -306,11 +276,11 @@ export function useGamePage() {
         isGameOver,
         sortedPlayers
     };
-
     return {
         connection,
         gameActions,
         sessionState,
-        lobbySettings
+        isAiQuestionsRequested,
+        onRequestAiQuestions: handleRequestAiQuestions
     };
 }
