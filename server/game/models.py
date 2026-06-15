@@ -162,6 +162,7 @@ class SessionPlayer(models.Model):
 	points = models.IntegerField(default=0)
 	answered_count = models.PositiveIntegerField(default=0)
 	total_answer_time_ms = models.PositiveIntegerField(default=0)
+	disconnected_at = models.DateTimeField(null=True, blank=True)
 
 	class Meta:
 		ordering = ["session_id", "seat_number"]

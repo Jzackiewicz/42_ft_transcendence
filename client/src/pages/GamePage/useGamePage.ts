@@ -10,6 +10,7 @@ export interface Player {
     points: number;
     answered_count: number;
     is_alive: boolean;
+    is_online: boolean;
     player_type?: 'human' | 'bot';
     total_answer_time_ms?: number;
 }
@@ -45,6 +46,7 @@ export interface GameSnapshot {
     session_uuid: string;
     current_status: GameStatus;
     current_player: number | null;
+    host_player: number | null;
     last_correct_player: number | null;
     last_nominated_player: number | null;
     players: Player[];
@@ -67,8 +69,8 @@ export function useGamePage() {
     const location = useLocation();
     const navigate = useNavigate();
     
-    // Priority: 1. State from navigation, 2. Persisted UUID from Context/LocalStorage
-    const initialUuid = location.state?.sessionUuid || activeSessionUuid || '';
+    // Priority: 1. Persisted UUID from Context/LocalStorage, 2. State from navigation
+    const initialUuid = activeSessionUuid || location.state?.sessionUuid || '';
 
     const [sessionUuid, setSessionUuid] = useState<string>(initialUuid);
 
@@ -80,6 +82,7 @@ export function useGamePage() {
     const [messages, setMessages] = useState<string[]>([]);
     const [isConnected, setIsConnected] = useState<boolean>(false);
     const [gameState, setGameState] = useState<GameSnapshot | null>(null);
+    const [myPlayerId, setMyPlayerId] = useState<number | null>(null);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
     const [timeLeft, setTimeLeft] = useState<number | null>(null);
@@ -101,10 +104,14 @@ export function useGamePage() {
     const eligiblePlayers = activeGameState?.players.filter(p => p.is_alive) || [];
 
     // Helper computations
-    const currentPlayerObj = activeGameState?.players.find(p => p.display_name === user?.username);
+    const currentPlayerObj = myPlayerId !== null
+        ? activeGameState?.players.find(p => p.id === myPlayerId)
+        : activeGameState?.players.find(p => p.display_name === user?.username);
     const sortedPlayers = [...(activeGameState?.players || [])].sort((a, b) => a.id - b.id);
-    const isHost = sortedPlayers.length > 0 && currentPlayerObj !== undefined && (sortedPlayers[0].id === currentPlayerObj.id);
-    const hostPlayerId = sortedPlayers.length > 0 ? sortedPlayers[0].id : null;
+    const isHost = activeGameState !== null &&
+        ((myPlayerId !== null && activeGameState.host_player === myPlayerId) ||
+         (myPlayerId === null && sortedPlayers.length > 0 && currentPlayerObj !== undefined && sortedPlayers[0].id === currentPlayerObj.id));
+    const hostPlayerId = activeGameState?.host_player ?? (sortedPlayers.length > 0 ? sortedPlayers[0].id : null);
     const gameStarted = activeGameState !== null && activeGameState.current_status !== GameStatus.LOBBY;
     const isGameOver = activeGameState !== null && activeGameState.current_status === GameStatus.GAME_OVER;
 
@@ -146,18 +153,9 @@ export function useGamePage() {
     }, [activeGameState?.current_status, activeGameState?.turn_deadline_at, activeGameState?.nomination_deadline_at]);
 
     const wsRef = useRef<WebSocket | null>(null);
-    const closeTimeoutRef = useRef<any>(null);
 
     const connectToLobby = () => {
         if (!sessionUuid) return;
-
-        if (closeTimeoutRef.current) {
-            clearTimeout(closeTimeoutRef.current);
-            closeTimeoutRef.current = null;
-            if (wsRef.current && (wsRef.current.readyState === WebSocket.CONNECTING || wsRef.current.readyState === WebSocket.OPEN)) {
-                return;
-            }
-        }
 
         if (wsRef.current) {
             wsRef.current.close();
@@ -178,6 +176,9 @@ export function useGamePage() {
             setMessages(prev => [...prev, `[Server]: ${event.data}`]);
             try {
                 const data = JSON.parse(event.data);
+                if (data.your_player_id !== undefined) {
+                    setMyPlayerId(data.your_player_id);
+                }
                 if (data.snapshot) {
                     setGameState(data.snapshot as GameSnapshot);
                     setErrorMsg(null);
@@ -226,18 +227,9 @@ export function useGamePage() {
     };
 
     const disconnect = () => {
-        if (closeTimeoutRef.current) {
-            clearTimeout(closeTimeoutRef.current);
-            closeTimeoutRef.current = null;
-        }
         if (wsRef.current) {
-            closeTimeoutRef.current = setTimeout(() => {
-                if (wsRef.current) {
-                    wsRef.current.close();
-                    wsRef.current = null;
-                }
-                closeTimeoutRef.current = null;
-            }, 100);
+            wsRef.current.close();
+            wsRef.current = null;
         }
     };
 
@@ -278,6 +270,7 @@ export function useGamePage() {
     };
 
     const leaveGame = () => {
+        sendAction('leave_game');
         disconnect();
         setSessionUuid('');
         setActiveSessionUuid(null);
