@@ -196,5 +196,41 @@
       "correct_answer": "Iron",
       "category": "science"
     }
+  },
+  {
+    "model": "game.question",
+    "pk": 23,
+    "fields": {
+      "question_text": "What is the common name of the chemical compound with the formula NaCl?",
+      "correct_answer": "Salt | Table salt | Sodium chloride",
+      "category": "science"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 24,
+    "fields": {
+      "question_text": "Which chemical element is the primary component of diamond?",
+      "correct_answer": "Carbon | C",
+      "category": "science"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 25,
+    "fields": {
+      "question_text": "Name any country that shares a land border with the United Kingdom.",
+      "correct_answer": "Ireland | Spain | Cyprus",
+      "category": "geography"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 26,
+    "fields": {
+      "question_text": "Which continent or geographic region is represented by the green ring on the Olympic flag?",
+      "correct_answer": "Australia | Oceania | Australia and Oceania",
+      "category": "sports"
+    }
   }
 ]
