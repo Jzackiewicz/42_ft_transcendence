@@ -4,7 +4,7 @@
     "pk": 1,
     "fields": {
       "question_text": "Which religion forbids eating beef?",
-      "correct_answer": "Hinduism | Hindu",
+      "correct_answer": "Hinduism | Hindu | Jainism | Jain",
       "category": "general"
     }
   },
