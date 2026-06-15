@@ -26,5 +26,8 @@ python manage.py migrate --noinput
 echo "Collecting static files..."
 python manage.py collectstatic --noinput
 
+echo "Cleaning up stuck active game sessions..."
+python manage.py cleanup_sessions || true
+
 # Execute the main command (Daphne)
 exec "$@"

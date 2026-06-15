@@ -42,10 +42,14 @@ class GenerateExtraQuestionsPayloadSerializer(StrictSerializer):
 
 class PlayerSnapshotSerializer(serializers.ModelSerializer):
 	is_alive = serializers.BooleanField(read_only=True)
+	is_online = serializers.SerializerMethodField()
 	
 	class Meta:
 		model = SessionPlayer
-		fields = ['id', 'display_name', 'seat_number', 'lives', 'points', 'answered_count', 'is_alive', 'total_answer_time_ms']
+		fields = ['id', 'display_name', 'seat_number', 'lives', 'points', 'answered_count', 'is_alive', 'total_answer_time_ms', 'is_online']
+
+	def get_is_online(self, obj: SessionPlayer) -> bool:
+		return obj.disconnected_at is None
 
 class QuestionSnapshotSerializer(serializers.ModelSerializer):
 	class Meta:
@@ -89,7 +93,7 @@ class GameStateSnapshotSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = GameSession
 		fields = [
-			'session_uuid', 'current_status', 'current_player', 'last_correct_player',
+			'session_uuid', 'current_status', 'host_player', 'current_player', 'last_correct_player',
 			'last_nominated_player', 'players', 'current_question', 'current_attempt',
 			'answer_time_limit_ms', 'winner', 'end_reason', 'question_asked_count',
 			'total_questions_count',

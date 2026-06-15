@@ -60,3 +60,16 @@
     color: #ff5252;
     font-weight: bold;
 }
+
+.player-tile.offline {
+    opacity: 0.6;
+    border-style: dashed;
+    border-color: #ff5722;
+}
+
+.player-offline-label {
+    margin-top: 5px;
+    font-size: 11px;
+    color: #ff5722;
+    font-weight: bold;
+}

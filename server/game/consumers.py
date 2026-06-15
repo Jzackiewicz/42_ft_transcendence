@@ -3,6 +3,7 @@ from channels.db import database_sync_to_async
 from django.core.exceptions import ValidationError
 from .services.game_flow.game_action_handler import GameActionHandler, GameActionRequest, GameAction
 from .services.game_flow.timer_manager import GameTimerManager
+from .services.game_flow.lifecycle import reconnect_player
 from .selectors.lobby_selectors import verify_player_in_session
 from .selectors.game_flow_selectors import get_game_snapshot
 from .serializers import SubmitAnswerPayloadSerializer, NominatePlayerPayloadSerializer
@@ -28,6 +29,10 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 		)
 		await self.accept()
 		
+		await database_sync_to_async(reconnect_player)(self.session_player_id)
+		
+		handler = GameActionHandler()
+		await database_sync_to_async(handler.sync_game_disconnections)(self.session_id)
 		snapshot = await database_sync_to_async(get_game_snapshot)(self.session_id)
 		await self.channel_layer.group_send(
 			self.room_group_name,
@@ -59,6 +64,7 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 					GameTimerManager.cancel(self.session_id)
 					return
 
+				await database_sync_to_async(handler.sync_game_disconnections)(self.session_id)
 				snapshot = await database_sync_to_async(get_game_snapshot)(self.session_id)
 				await self.channel_layer.group_send(
 					self.room_group_name,
@@ -105,6 +111,12 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 			handler = GameActionHandler()
 			result = await database_sync_to_async(handler.handle_action)(request)
 
+			if result.session_deleted:
+				GameTimerManager.cancel(self.session_id)
+				await self.close()
+				return
+
+			await database_sync_to_async(handler.sync_game_disconnections)(self.session_id)
 			snapshot = await database_sync_to_async(get_game_snapshot)(self.session_id)
 			await self.channel_layer.group_send(
 				self.room_group_name,

@@ -26,14 +26,15 @@ export function PlayerTile({
     const tileClasses = [
         'player-tile',
         isPlayerActive ? 'active' : '',
-        !is_alive ? 'eliminated' : ''
+        !is_alive ? 'eliminated' : '',
+        !player.is_online ? 'offline' : ''
     ].filter(Boolean).join(' ');
 
     return (
         <div className={tileClasses}>
             <div className="player-tile-header">
                 <span className={is_alive ? 'player-name-alive' : 'player-name-dead'}>
-                    {player.player_type === 'bot' ? '🤖' : '👤'} {display_name} {isCurrentUser && '(You)'}
+                    👤 {display_name} {isCurrentUser && '(You)'}
                 </span>
                 <span className="player-role-badges">
                     {isPlayerHost && <span title="Lobby Host">👑</span>}
@@ -48,6 +49,11 @@ export function PlayerTile({
             {!is_alive && (
                 <div className="player-eliminated-label">
                     💀 ELIMINATED
+                </div>
+            )}
+            {player.is_online === false && is_alive && (
+                <div className="player-offline-label">
+                    📡 DISCONNECTED
                 </div>
             )}
         </div>
