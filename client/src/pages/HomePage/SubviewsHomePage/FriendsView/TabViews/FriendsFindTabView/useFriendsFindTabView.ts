@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { searchFriends, sendFriendRequest } from '../../../../../../api/socialsWrapper'
+import { useFriendsContext } from '../../../../../../context/FriendsListContext'
 
 interface RequestStatus {
     type: 'success' | 'error'
@@ -7,6 +8,7 @@ interface RequestStatus {
 }
 
 export function useFriendsFindTabView() {
+    const { refresh } = useFriendsContext()
     const [searchQuery, setSearchQuery] = useState('')
     const [friends, setFriends] = useState<any[]>([])
     const [status, setStatus] = useState<RequestStatus | null>(null)
@@ -14,34 +16,33 @@ export function useFriendsFindTabView() {
 
     useEffect(() => {
         if (searchQuery.length >= 2) {
-            searchFriends(searchQuery).then(setFriends)
+            searchFriends(searchQuery).then(results => setFriends(results))
         } else {
             setFriends([])
         }
     }, [searchQuery])
 
-    useEffect(() => () => { if (timerRef.current) clearTimeout(timerRef.current) }, [])
-
-    function showStatus(s: RequestStatus) {
-        if (timerRef.current) clearTimeout(timerRef.current)
-        setStatus(s)
+    function showStatus(type: 'success' | 'error', message: string) {
+        clearTimeout(timerRef.current ?? undefined)
+        setStatus({ type, message })
         timerRef.current = setTimeout(() => setStatus(null), 3000)
     }
 
     const handleSendRequest = async (username: string) => {
         const user = friends.find(f => f.username === username)
         if (!user) {
-            showStatus({ type: 'error', message: 'Select a user from the list first' })
+            showStatus('error', 'Select a user from the list first')
             return
         }
         try {
             await sendFriendRequest(user.id)
-            showStatus({ type: 'success', message: `Request sent to ${user.username}!` })
+            refresh()
+            showStatus('success', `Request sent to ${user.username}!`)
         } catch (error: any) {
             const msg = error?.response?.data?.error?.[0]
                 ?? error?.response?.data?.detail
                 ?? 'Failed to send request'
-            showStatus({ type: 'error', message: msg })
+            showStatus('error', msg)
         }
     }
 
