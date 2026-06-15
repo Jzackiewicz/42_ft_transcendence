@@ -2,10 +2,11 @@ import { useFriendsListTabView } from './useFriendsListTabView'
 import './FriendsListTabView.css'
 
 function FriendsListTabView() {
-    const { friendsList, handleRemove } = useFriendsListTabView()
+    const { friendsList, handleRemove, error } = useFriendsListTabView()
 
     return (
         <div className="friends-scroll">
+            {error && <span className="tab-error">{error}</span>}
             <div className="friends-grid">
                 {friendsList.map((f) => (
                     <div key={f.friend.id} className="friend-item">

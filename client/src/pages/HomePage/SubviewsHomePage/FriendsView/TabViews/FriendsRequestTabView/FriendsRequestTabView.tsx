@@ -3,14 +3,15 @@ import './FriendsRequestTabView.css'
 
 function FriendsRequestTabView() {
     const { incomingRequestsList, outgoingRequestsList,
-            loading,
+            loading, error,
             handleAccept, handleDecline, handleCancel } = useFriendsRequestTabView()
 
-    if (loading) 
+    if (loading)
         return <span className="friends-empty">Loading...</span>
 
     return (
         <div className="friends-request-list">
+            {error && <span className="tab-error">{error}</span>}
             {incomingRequestsList.length === 0 && outgoingRequestsList.length === 0 && (
                 <span className="friends-empty">No pending requests</span>
             )}
