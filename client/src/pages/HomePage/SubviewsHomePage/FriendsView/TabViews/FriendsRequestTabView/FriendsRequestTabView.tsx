@@ -3,7 +3,11 @@ import './FriendsRequestTabView.css'
 
 function FriendsRequestTabView() {
     const { incomingRequestsList, outgoingRequestsList,
+            loading,
             handleAccept, handleDecline, handleCancel } = useFriendsRequestTabView()
+
+    if (loading) 
+        return <span className="friends-empty">Loading...</span>
 
     return (
         <div className="friends-request-list">

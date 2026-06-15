@@ -36,6 +36,27 @@
 
 .find-btn:hover { box-shadow: 0 0 16px rgba(0, 229, 255, 0.4); }
 
+.find-status {
+    display: block;
+    margin-top: 8px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-family: var(--fb);
+    font-size: var(--font-sm);
+}
+
+.find-status--success {
+    background: rgba(0, 229, 100, 0.12);
+    color: #00e564;
+    border: 1px solid rgba(0, 229, 100, 0.25);
+}
+
+.find-status--error {
+    background: rgba(255, 80, 80, 0.12);
+    color: #ff5050;
+    border: 1px solid rgba(255, 80, 80, 0.25);
+}
+
 .find-results {
     display: flex;
     flex-direction: column;

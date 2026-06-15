@@ -2,7 +2,7 @@ import { useFriendsFindTabView } from './useFriendsFindTabView'
 import './FriendsFindTabView.css'
 
 function FriendsFindTabView() {
-    const { searchQuery, setSearchQuery, handleSendRequest, friends } = useFriendsFindTabView()
+    const { searchQuery, setSearchQuery, handleSendRequest, friends, status } = useFriendsFindTabView()
 
     return (
         <div className="friends-find">
@@ -18,6 +18,11 @@ function FriendsFindTabView() {
                     Send Request
                 </button>
             </div>
+            {status && (
+                <span className={`find-status find-status--${status.type}`}>
+                    {status.message}
+                </span>
+            )}
             <div className="friends-scroll">
                 <div className="find-results">
                     {friends.map(user => (
