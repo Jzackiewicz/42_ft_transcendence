@@ -60,7 +60,6 @@ class GenerateExtraQuestionsApi(APIView):
 		request=GenerateExtraQuestionsPayloadSerializer,
 		responses={
 			200: GenerateExtraQuestionsResponseSerializer,
-			429: OpenApiTypes.OBJECT,
 		},
 		description="Generate extra questions for a lobby (host only)."
 	)
@@ -78,7 +77,7 @@ class GenerateExtraQuestionsApi(APIView):
 			return Response(output_serializer.data, status=status.HTTP_200_OK)
 		except ValidationError as e:
 			return Response({"error": list(e.messages)}, status=status.HTTP_400_BAD_REQUEST)
-		except ValidationError:
+		except LookupError:
 			return Response({"error": "Room not found"}, status=status.HTTP_404_NOT_FOUND)
 		except RuntimeError as e:
 			return Response({"error": str(e)}, status=status.HTTP_502_BAD_GATEWAY)
