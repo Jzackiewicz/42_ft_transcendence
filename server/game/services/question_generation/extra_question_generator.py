@@ -1,17 +1,15 @@
 import json
-import os
-from pathlib import Path
-from dotenv import load_dotenv
-from google import genai
-import time
 import random
-from django.db.models import Q
-from django.db import transaction, IntegrityError
+import time
+
+from dotenv import load_dotenv
+from django.db import transaction
 from django.db.models import Max
+from google import genai
 from pydantic import BaseModel
-from game.models import GameSession, Question, SessionQuestion
+
 from core.settings import LLM_API_KEY, LLM_MODEL
-from game.serializers import GameSessionOutputSerializer, SessionPlayerOutputSerializer, GenerateExtraQuestionsPayloadSerializer, GenerateExtraQuestionsResponseSerializer
+from game.models import GameSession, Question, SessionQuestion
 
 LLM_SYSTEM_INSTRUCTION = """You must respond using the JSON format only with each section containing a 'category', 'question', and 'answer' field.
 The answer field must be an array of possible answers to the question, and the question field must be a string containing the question itself.
@@ -83,48 +81,94 @@ def build_prompt(lobby_id, n_questions_to_generate):
 		"Do not duplicate existing questions. "
 		"Return JSON array: question, answers, category."
 	)
-
+@transaction.atomic
 def persist_generated_questions(session, generated):
-	created_question_ids = []
+    session = GameSession.objects.select_for_update().get(pk=session.pk)
 
-	max_index = session.session_questions.aggregate(
-		Max("order_index")
-	)["order_index__max"]
-	next_index = 0 if max_index is None else max_index + 1
-	to_create = []
-	for item in generated:
-		q_text = item.question
-		ans = item.answers[0] if item.answers else None
-		category = item.category
-		if not q_text or not ans:
-			continue
-		q_obj, created = Question.objects.get_or_create(
-			question_text=q_text,
-			defaults={
-				"correct_answer": ans,
-				"category": category,
-				"is_ai_generated": True,
-			},
-		)
-		if not created and not q_obj.is_ai_generated:
-			q_obj.is_ai_generated = True
-			q_obj.save(update_fields=["is_ai_generated"])
-		if not SessionQuestion.objects.filter(
-			session=session,
-			question=q_obj,
-		).exists():
-			to_create.append(
-				SessionQuestion(
-					session=session,
-					question=q_obj,
-					order_index=next_index,
-				)
-			)
-			next_index += 1
-			created_question_ids.append(q_obj.id)
-	if to_create:
-		SessionQuestion.objects.bulk_create(to_create)
-	return created_question_ids
+    unique_generated = []
+    seen_text = set()
+    for item in generated:
+        q_text = item.question
+        ans = item.answers[0] if item.answers else None
+        category = item.category
+        if not q_text or not ans:
+            continue
+        if q_text not in seen_text:
+            seen_text.add(q_text)
+            unique_generated.append((q_text, ans, category))
+
+    if not unique_generated:
+        return []
+
+    q_texts = [x[0] for x in unique_generated]
+    existing_questions = {
+        q.question_text: q
+        for q in Question.objects.filter(question_text__in=q_texts)
+    }
+
+    questions_to_create = []
+    questions_to_update = []
+    question_map = {}
+
+    for q_text, ans, category in unique_generated:
+        if q_text in existing_questions:
+            q_obj = existing_questions[q_text]
+            if not q_obj.is_ai_generated:
+                q_obj.is_ai_generated = True
+                questions_to_update.append(q_obj)
+            question_map[q_text] = q_obj
+        else:
+            q_obj = Question(
+                question_text=q_text,
+                correct_answer=ans,
+                category=category,
+                is_ai_generated=True
+            )
+            questions_to_create.append(q_obj)
+
+    if questions_to_create:
+        Question.objects.bulk_create(questions_to_create)
+        newly_created = Question.objects.filter(
+            question_text__in=[q.question_text for q in questions_to_create]
+        )
+        for q in newly_created:
+            question_map[q.question_text] = q
+
+    if questions_to_update:
+        Question.objects.bulk_update(questions_to_update, ["is_ai_generated"])
+
+    existing_session_q_ids = set(
+        SessionQuestion.objects.filter(session=session)
+        .values_list("question_id", flat=True)
+    )
+
+    max_index = session.session_questions.aggregate(Max("order_index"))["order_index__max"]
+    next_index = 0 if max_index is None else max_index + 1
+
+    to_create = []
+    created_question_ids = []
+
+    random.shuffle(unique_generated)
+
+    for q_text, _, _ in unique_generated:
+        q_obj = question_map.get(q_text)
+        if not q_obj:
+            continue
+        if q_obj.id not in existing_session_q_ids:
+            to_create.append(
+                SessionQuestion(
+                    session=session,
+                    question=q_obj,
+                    order_index=next_index,
+                )
+            )
+            next_index += 1
+            created_question_ids.append(q_obj.id)
+
+    if to_create:
+        SessionQuestion.objects.bulk_create(to_create)
+
+    return created_question_ids
 
 def generate_extra_questions(lobby_id, n_questions_to_generate):
 	load_dotenv(dotenv_path="../../../.env")
@@ -142,4 +186,3 @@ def generate_extra_questions(lobby_id, n_questions_to_generate):
 
 	created_question_ids = persist_generated_questions(session, generated)
 	return {"created_question_ids": created_question_ids}
-	
