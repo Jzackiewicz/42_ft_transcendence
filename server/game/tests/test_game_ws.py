@@ -1147,7 +1147,7 @@ class GameConsumerTests(TransactionTestCase):
 		await database_sync_to_async(SessionQuestion.objects.create)(session=self.session, question=q3, order_index=2)
 
 		self.session.answer_time_limit_ms = 100
-		self.session.nomination_time_limit_ms = 100
+		self.session.nomination_time_limit_ms = 5000
 		self.session.evaluation_time_limit_ms = 100
 		await database_sync_to_async(self.session.save)()
 
@@ -1199,6 +1199,12 @@ class GameConsumerTests(TransactionTestCase):
 		
 		session = await database_sync_to_async(lambda: GameSession.objects.get(id=self.session.id))()
 		self.assertEqual(session.current_status, GameSession.Status.NOMINATION)
+
+		def _set_next_evaluation_limit():
+			s = GameSession.objects.get(id=self.session.id)
+			s.evaluation_time_limit_ms = 5000
+			s.save()
+		await database_sync_to_async(_set_next_evaluation_limit)()
 
 		nominator_id = session.last_correct_player_id
 		nominator_comm = comm1 if nominator_id == self.player.id else (comm2 if nominator_id == self.player2.id else comm3)
