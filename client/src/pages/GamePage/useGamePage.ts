@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useUser } from '../../context/UserContext';
 
 export interface Player {
     id: number;
@@ -9,6 +10,8 @@ export interface Player {
     points: number;
     answered_count: number;
     is_alive: boolean;
+    player_type?: 'human' | 'bot';
+    total_answer_time_ms?: number;
 }
 
 export interface Question {
@@ -20,32 +23,128 @@ export interface Question {
     order_index: number;
 }
 
+export enum GameStatus {
+    LOBBY = 'lobby',
+    ANSWERING = 'answering',
+    EVALUATION = 'evaluation',
+    NOMINATION = 'nomination',
+    GAME_OVER = 'game_over'
+}
+
+export interface AnswerAttempt {
+    id: number;
+    answer_text: string | null;
+    is_timeout: boolean;
+    is_correct: boolean | null;
+    evaluation_status: string;
+    correct_answer?: string;
+    player: number; // player ID
+}
+
 export interface GameSnapshot {
     session_uuid: string;
-    current_status: string; // 'LOBBY', 'ANSWERING', 'EVALUATION', 'NOMINATION', 'GAME_OVER' etc.
+    current_status: GameStatus;
     current_player: number | null;
     last_correct_player: number | null;
     last_nominated_player: number | null;
     players: Player[];
     current_question: Question | null;
+    current_attempt: AnswerAttempt | null;
     answer_time_limit_ms: number;
     winner: number | null;
     end_reason: string | null;
     question_asked_count: number;
     total_questions_count: number;
+    current_attempt_started_at?: string | null;
+    turn_deadline_at?: string | null;
+    nomination_deadline_at?: string | null;
 }
 
 export function useGamePage() {
+    const { user, activeSessionUuid, setActiveSessionUuid } = useUser();
+
     // Retrieve data passed from another page (e.g. from HomePage)
     const location = useLocation();
-    const initialUuid = location.state?.sessionUuid || '';
+    const navigate = useNavigate();
+    
+    // Priority: 1. State from navigation, 2. Persisted UUID from Context/LocalStorage
+    const initialUuid = location.state?.sessionUuid || activeSessionUuid || '';
 
     const [sessionUuid, setSessionUuid] = useState<string>(initialUuid);
+
+    useEffect(() => {
+        if (sessionUuid) {
+            setActiveSessionUuid(sessionUuid);
+        }
+    }, [sessionUuid, setActiveSessionUuid]);
     const [messages, setMessages] = useState<string[]>([]);
     const [isConnected, setIsConnected] = useState<boolean>(false);
     const [gameState, setGameState] = useState<GameSnapshot | null>(null);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
-    
+
+    const [timeLeft, setTimeLeft] = useState<number | null>(null);
+
+    // Lobby settings states
+    const [questionCount, setQuestionCount] = useState<number>(20);
+    const [answerTimeLimitMs, setAnswerTimeLimitMs] = useState<number>(20000);
+
+    // Derive activeGameState that merges customized settings
+    const activeGameState: GameSnapshot | null = gameState ? {
+        ...gameState,
+        answer_time_limit_ms: answerTimeLimitMs,
+        total_questions_count: questionCount,
+        players: gameState.players.map(p => ({ ...p, player_type: p.player_type || 'human' }))
+    } : null;
+
+
+
+    const eligiblePlayers = activeGameState?.players.filter(p => p.is_alive) || [];
+
+    // Helper computations
+    const currentPlayerObj = activeGameState?.players.find(p => p.display_name === user?.username);
+    const sortedPlayers = [...(activeGameState?.players || [])].sort((a, b) => a.id - b.id);
+    const isHost = sortedPlayers.length > 0 && currentPlayerObj !== undefined && (sortedPlayers[0].id === currentPlayerObj.id);
+    const hostPlayerId = sortedPlayers.length > 0 ? sortedPlayers[0].id : null;
+    const gameStarted = activeGameState !== null && activeGameState.current_status !== GameStatus.LOBBY;
+    const isGameOver = activeGameState !== null && activeGameState.current_status === GameStatus.GAME_OVER;
+
+
+
+    // Timer effect synchronizing with server deadline
+    useEffect(() => {
+        if (!activeGameState) {
+            setTimeLeft(null);
+            return;
+        }
+
+        let deadlineStr: string | null | undefined = null;
+
+        if (activeGameState.current_status === GameStatus.ANSWERING) {
+            deadlineStr = activeGameState.turn_deadline_at;
+        } else if (activeGameState.current_status === GameStatus.NOMINATION) {
+            deadlineStr = activeGameState.nomination_deadline_at;
+        }
+
+        if (!deadlineStr) {
+            setTimeLeft(null);
+            return;
+        }
+
+        const deadline = new Date(deadlineStr).getTime();
+
+        const updateTimer = () => {
+            const now = new Date().getTime();
+            const diff = deadline - now;
+            const secondsLeft = Math.max(0, Math.ceil(diff / 1000));
+            setTimeLeft(secondsLeft);
+        };
+
+        updateTimer();
+        const intervalId = setInterval(updateTimer, 200);
+
+        return () => clearInterval(intervalId);
+    }, [activeGameState?.current_status, activeGameState?.turn_deadline_at, activeGameState?.nomination_deadline_at]);
+
     const wsRef = useRef<WebSocket | null>(null);
     const closeTimeoutRef = useRef<any>(null);
 
@@ -80,7 +179,7 @@ export function useGamePage() {
             try {
                 const data = JSON.parse(event.data);
                 if (data.snapshot) {
-                    setGameState(data.snapshot);
+                    setGameState(data.snapshot as GameSnapshot);
                     setErrorMsg(null);
                 } else if (data.type === 'error' || data.error) {
                     setErrorMsg(data.message || data.error || 'Unknown error occurred');
@@ -149,18 +248,76 @@ export function useGamePage() {
         return () => disconnect(); // calling a destructor
     }, []); // Happens only once
 
-    return {
+    const updateSettings = (questions: number, timeLimitSec: number) => {
+        setQuestionCount(questions);
+        setAnswerTimeLimitMs(timeLimitSec * 1000);
+    };
+
+    const addAiBot = () => {
+        // No-op for now (backend integration in separate issue #84)
+    };
+
+    const removeAiBot = () => {
+        // No-op for now (backend integration in separate issue #84)
+    };
+
+    const requestAiQuestions = () => {
+        // No-op for now (backend integration in separate issue #82)
+    };
+
+    const lobbySettings = {
+        questionCount,
+        answerTimeLimitMs,
+        hasBotPlayer: activeGameState?.players.some(p => p.player_type === 'bot') ?? false,
+        canAddBot: (activeGameState?.players.length ?? 0) < 5,
+        aiQuestionsRequested: false,
+        onUpdateSettings: updateSettings,
+        onAddBot: addAiBot,
+        onRemoveBot: removeAiBot,
+        onRequestAiQuestions: requestAiQuestions
+    };
+
+    const leaveGame = () => {
+        disconnect();
+        setSessionUuid('');
+        setActiveSessionUuid(null);
+        navigate('/home');
+    };
+
+    const connection = {
         sessionUuid,
         setSessionUuid,
         messages,
         isConnected,
-        gameState,
         errorMsg,
         setErrorMsg,
+        connect: connectToLobby,
+        disconnect,
+        leaveGame
+    };
+
+    const gameActions = {
         startGame,
         submitAnswer,
-        nominatePlayer,
-        connectToLobby,
-        disconnect
+        nominatePlayer
+    };
+
+    const sessionState = {
+        gameState: activeGameState,
+        eligiblePlayers,
+        timeLeft,
+        currentPlayerObj,
+        isHost,
+        hostPlayerId,
+        gameStarted,
+        isGameOver,
+        sortedPlayers
+    };
+
+    return {
+        connection,
+        gameActions,
+        sessionState,
+        lobbySettings
     };
 }

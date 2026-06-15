@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from .models import Question
-from .models import GameSession, SessionPlayer, SessionQuestion
+from .models import GameSession, SessionPlayer, SessionQuestion, AnswerAttempt
 
 
 class StrictSerializer(serializers.Serializer):
@@ -40,7 +40,7 @@ class PlayerSnapshotSerializer(serializers.ModelSerializer):
 	
 	class Meta:
 		model = SessionPlayer
-		fields = ['id', 'display_name', 'seat_number', 'lives', 'points', 'answered_count', 'is_alive']
+		fields = ['id', 'display_name', 'seat_number', 'lives', 'points', 'answered_count', 'is_alive', 'total_answer_time_ms']
 
 class QuestionSnapshotSerializer(serializers.ModelSerializer):
 	class Meta:
@@ -54,9 +54,31 @@ class SessionQuestionSnapshotSerializer(serializers.ModelSerializer):
 		model = SessionQuestion
 		fields = ['id', 'question', 'order_index']
 
+
+class AnswerAttemptSnapshotSerializer(serializers.ModelSerializer):
+	correct_answer = serializers.SerializerMethodField()
+	player = serializers.PrimaryKeyRelatedField(read_only=True)
+
+	class Meta:
+		model = AnswerAttempt
+		fields = [
+			'id', 'answer_text', 'is_timeout', 'is_correct',
+			'evaluation_status', 'correct_answer', 'player', 'evaluated_at'
+		]
+
+	def get_correct_answer(self, obj: AnswerAttempt) -> str | None:
+		if (
+			obj.evaluation_status == AnswerAttempt.EvaluationStatus.EVALUATED
+			and obj.session.current_status == GameSession.Status.EVALUATION
+		):
+			return obj.session_question.question.correct_answer
+		return None
+
+
 class GameStateSnapshotSerializer(serializers.ModelSerializer):
 	players = PlayerSnapshotSerializer(source='session_players', many=True)
 	current_question = SessionQuestionSnapshotSerializer()
+	current_attempt = AnswerAttemptSnapshotSerializer()
 	total_questions_count = serializers.SerializerMethodField()
 
 	class Meta:

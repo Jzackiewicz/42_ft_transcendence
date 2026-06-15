@@ -1,13 +1,11 @@
-import asyncio
-from datetime import datetime
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.db import database_sync_to_async
 from django.core.exceptions import ValidationError
 from .services.game_flow.game_action_handler import GameActionHandler, GameActionRequest, GameAction
+from .services.game_flow.timer_manager import GameTimerManager
 from .selectors.lobby_selectors import verify_player_in_session
 from .selectors.game_flow_selectors import get_game_snapshot
 from .serializers import SubmitAnswerPayloadSerializer, NominatePlayerPayloadSerializer
-from .models import GameSession
 
 class GameConsumer(AsyncJsonWebsocketConsumer):
 	async def connect(self):
@@ -58,6 +56,7 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 				result = await database_sync_to_async(handler.handle_action)(request)
 
 				if result.session_deleted:
+					GameTimerManager.cancel(self.session_id)
 					return
 
 				snapshot = await database_sync_to_async(get_game_snapshot)(self.session_id)
@@ -69,6 +68,8 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 						'snapshot': snapshot
 					}
 				)
+
+				self._schedule_timer(result)
 			except ValidationError:
 				pass
 
@@ -113,6 +114,8 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 					'snapshot': snapshot
 				}
 			)
+
+			self._schedule_timer(result)
 		except ValidationError as e:
 			await self.send_json({
 				'type': 'error',
@@ -120,74 +123,17 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 			})
 
 	async def game_state_update(self, event):
-		snapshot = event['snapshot']
 		await self.send_json({
 			'type': 'game_state_update',
 			'action': event['action'],
 			'your_player_id': self.session_player_id,
-			'snapshot': snapshot
+			'snapshot': event['snapshot']
 		})
 
-		current_status = snapshot.get('current_status')
-		if current_status == GameSession.Status.ANSWERING:
-			self._schedule_timeout(snapshot)
-		else:
-			self._cancel_timeout()
-
-	def _schedule_timeout(self, snapshot):
-		attempt_id = snapshot.get('current_attempt')
-		deadline_at = snapshot.get('turn_deadline_at')
-
-		if not attempt_id or not deadline_at:
-			self._cancel_timeout()
+	def _schedule_timer(self, result):
+		"""Schedule or cancel a timer based on the handler result."""
+		if not result.timer_data:
+			GameTimerManager.cancel(self.session_id)
 			return
 
-		current_attempt_id = getattr(self, 'timeout_attempt_id', None)
-		timeout_task = getattr(self, 'timeout_task', None)
-		if current_attempt_id == attempt_id and timeout_task and not timeout_task.done():
-			return
-
-		self._cancel_timeout()
-		self.timeout_attempt_id = attempt_id
-		self.timeout_task = asyncio.create_task(
-			self._force_timeout(attempt_id, deadline_at)
-		)
-
-	def _cancel_timeout(self):
-		timeout_task = getattr(self, 'timeout_task', None)
-		if timeout_task and not timeout_task.done():
-			timeout_task.cancel()
-		self.timeout_attempt_id = None
-
-	async def _force_timeout(self, attempt_id, deadline_at):
-		deadline = datetime.fromisoformat(deadline_at)
-		now = datetime.now(deadline.tzinfo) if deadline.tzinfo else datetime.now()
-		sleep_seconds = max((deadline - now).total_seconds(), 0)
-
-		await asyncio.sleep(sleep_seconds + 0.05)
-		
-		try:
-			is_current_attempt = await database_sync_to_async(
-				lambda sid, aid: GameSession.objects.filter(
-					id=sid,
-					current_attempt_id=aid,
-					current_status=GameSession.Status.ANSWERING,
-				).exists()
-			)(self.session_id, attempt_id)
-			if not is_current_attempt:
-				return
-
-			handler = GameActionHandler()
-			result = await database_sync_to_async(handler.handle_timeout)(self.session_id)
-
-			snapshot = await database_sync_to_async(get_game_snapshot)(self.session_id)
-			await self.channel_layer.group_send(
-				self.room_group_name,
-				{
-					'type': 'game_state_update',
-					'action': result.action,
-					'snapshot': snapshot
-				}
-			)
-		except ValidationError:
-			pass
+		GameTimerManager.schedule(self.session_id, result.timer_data, self.room_group_name)

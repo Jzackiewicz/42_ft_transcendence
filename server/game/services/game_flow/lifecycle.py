@@ -2,6 +2,8 @@ from game.models import GameSession, AnswerAttempt, SessionPlayer, Question, Ses
 from django.utils import timezone
 from .guards import require_status, require_enough_questions_in_db
 from django.core.exceptions import ValidationError
+from django.conf import settings
+import random
 
 
 def set_end_game_stats(session: GameSession) -> None:
@@ -25,13 +27,18 @@ def set_end_game_stats(session: GameSession) -> None:
 	session.current_attempt = None
 	session.save()
 
-def assign_random_questions_to_session(session: GameSession, amount: int = 10) -> None:
+def assign_random_questions_to_session(session: GameSession) -> None:
 	if session.session_questions.exists():
 		return
 
-	require_enough_questions_in_db(amount)
+	limit = getattr(settings, 'QUESTIONS_PER_SESSION', 10)
 
-	questions = list(Question.objects.order_by('?')[:amount])
+	require_enough_questions_in_db(limit)
+
+	all_ids = list(Question.objects.values_list('id', flat=True))
+	sampled_ids = random.sample(all_ids, limit)
+	questions = list(Question.objects.filter(id__in=sampled_ids))
+	random.shuffle(questions)
 
 	session_questions = [
 		SessionQuestion(session=session, question=q, order_index=i)
@@ -67,11 +74,10 @@ def submit_answer_attempt(session: GameSession, attempt: AnswerAttempt, answer_t
 	attempt.save()
 
 def handle_evaluate_timeout(session: GameSession, attempt: AnswerAttempt) -> None:
-	elapsed = timezone.now() - attempt.started_at
-	answer_time_ms = max(int(elapsed.total_seconds() * 1000), 0)
-	if answer_time_ms < session.answer_time_limit_ms:
-		raise ValidationError("Timeout has not elapsed yet")
-	submit_answer_attempt(session, attempt, None)
+	attempt.answer_time_ms = session.answer_time_limit_ms
+	attempt.is_timeout = True
+	attempt.answer_text = None
+	attempt.save()
 
 
 def assign_next_question(session: GameSession) -> None:

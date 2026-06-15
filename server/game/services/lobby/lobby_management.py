@@ -3,6 +3,7 @@ from django.db.models import Max
 from game.models import GameSession, SessionPlayer
 from game.selectors.lobby_selectors import get_room_by_uuid
 from .guards import check_can_create_room, check_can_join_room, check_can_destroy_room
+from game.services.game_flow.lifecycle import assign_random_questions_to_session
 
 
 def create_room(*, user) -> GameSession:
@@ -23,6 +24,8 @@ def create_room(*, user) -> GameSession:
         
         session.host_player = player
         session.save(update_fields=['host_player'])
+        
+        assign_random_questions_to_session(session)
         
     return session
 

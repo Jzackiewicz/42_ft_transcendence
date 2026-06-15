@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from game.models import GameSession, SessionPlayer
 from .game_service import GameService
 from django.db import transaction
@@ -28,6 +30,7 @@ class GameActionResult:
 	status: str | None
 	action: str
 	session_deleted: bool = False
+	timer_data: dict | None = None
 
 class GameActionHandler:
 	@transaction.atomic
@@ -67,19 +70,55 @@ class GameActionHandler:
 			status=None if is_deleted else session.current_status,
 			action=request.action,
 			session_deleted=is_deleted,
+			timer_data=None if is_deleted else self._build_timer_data(session),
 		)
 	
 	@transaction.atomic
-	def handle_timeout(self, session_id: int) -> GameActionResult:
+	def handle_timer_timeout(self, session_id: int, action: str) -> GameActionResult:
 		session = self._get_session(session_id=session_id)
 		service = GameService(session)
-		service.evaluate_timeout()
+
+		if action == "evaluate_timeout":
+			service.evaluate_timeout()
+		elif action == "handle_evaluation_finish":
+			service.resolve_evaluation()
+		elif action == "nomination_timeout":
+			service.nominate_timeout()
+		else:
+			raise ValidationError(f"Unsupported timer action: {action}")
+
 		session.refresh_from_db()
 		return GameActionResult(
 			session_id=session.id,
 			status=session.current_status,
-			action="evaluate_timeout",
+			action=action,
+			timer_data=self._build_timer_data(session),
 		)
+
+
+	@staticmethod
+	def _build_timer_data(session: GameSession) -> dict | None:
+		attempt = session.current_attempt
+
+		if session.current_status == GameSession.Status.ANSWERING and attempt and attempt.started_at:
+			start_time = attempt.started_at
+			limit_ms = session.answer_time_limit_ms
+			timer_type = 'answer_timeout'
+		elif session.current_status == GameSession.Status.EVALUATION and attempt and attempt.evaluated_at:
+			start_time = attempt.evaluated_at
+			limit_ms = session.evaluation_time_limit_ms
+			timer_type = 'evaluation_finish'
+		elif session.current_status == GameSession.Status.NOMINATION and session.nomination_started_at:
+			start_time = session.nomination_started_at
+			limit_ms = session.nomination_time_limit_ms
+			timer_type = 'nomination_timeout'
+		else:
+			return None
+
+		return {
+			'type': timer_type,
+			'deadline_at': start_time + timedelta(milliseconds=limit_ms),
+		}
 
 	@staticmethod
 	def _get_session(*, session_id: int) -> GameSession:

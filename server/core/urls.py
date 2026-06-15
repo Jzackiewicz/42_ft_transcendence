@@ -18,11 +18,15 @@ from django.contrib import admin
 from django.urls import path, include
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
-urlpatterns = [
-    path('admin/', admin.site.urls),
+api_urlpatterns = [
     path('account/', include('account.urls')),
     path('game/', include('game.urls')),
     path('social/', include('social.urls')),
-    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
-    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger'),
+    path('schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger'),
+]
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('api/', include(api_urlpatterns)),
 ]

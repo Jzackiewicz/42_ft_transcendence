@@ -28,8 +28,7 @@ from .lifecycle import (
 	handle_disconnect_in_lobby,
 	handle_disconnect_in_answering,
 	handle_disconnect_in_nomination,
-	handle_evaluate_timeout,
-	assign_random_questions_to_session
+	handle_evaluate_timeout
 )
 
 from .answers import (
@@ -78,9 +77,12 @@ class GameService:
 		self.session.save()
 		
 		if self.session.current_status == GameSession.Status.GAME_OVER:
-			require_status(self.session, GameSession.Status.GAME_OVER)
 			set_end_game_stats(self.session)
 			return
+
+		if self.session.current_status == GameSession.Status.NOMINATION:
+			self.session.nomination_started_at = timezone.now()
+			self.session.save()
 
 		if should_fallback:
 			self._no_last_correct_player_fallback()
@@ -100,7 +102,7 @@ class GameService:
 
 		if self.session.current_status == GameSession.Status.EVALUATION:
 			apply_answer_verdict(self.session)
-			self._advance_after_evaluation()
+			self.resolve_evaluation()
 		elif self.session.current_status == GameSession.Status.NOMINATION:
 			if handle_disconnect_in_nomination(self.session, actor):
 				self._start_answering_turn()
@@ -110,7 +112,6 @@ class GameService:
 		require_actor_is_host(self.session, actor, "start the game")
 		require_minimum_players(self.session)
 		
-		assign_random_questions_to_session(self.session, amount=10)
 		require_questions_exist(self.session)
 		
 		starting_player = get_random_alive_player(self.session)
@@ -141,6 +142,15 @@ class GameService:
 		self.session.save()
 		self._start_answering_turn()
 
+	def nominate_timeout(self) -> None:
+		require_status(self.session, GameSession.Status.NOMINATION)
+		target = get_random_alive_player(self.session)
+		self.session.last_nominated_player = target
+		self.session.current_player = target
+		self.session.fsm.nominate_player()
+		self.session.save()
+		self._start_answering_turn()
+
 	def submit_player_answer(self, actor: SessionPlayer | None, answer: str | None) -> None:
 		require_status(self.session, GameSession.Status.ANSWERING)
 		require_actor_is_current_player(self.session, actor, "submit answer")
@@ -152,7 +162,7 @@ class GameService:
 
 		self.session.fsm.submit_answer()
 		self.session.save()
-		self.evaluate_answer()
+		self.start_evaluation()
 
 	def evaluate_timeout(self) -> None:
 		require_status(self.session, GameSession.Status.ANSWERING)
@@ -160,12 +170,18 @@ class GameService:
 		handle_evaluate_timeout(self.session, attempt)
 		self.session.fsm.submit_answer()
 		self.session.save()
-		self.evaluate_answer()
+		self.start_evaluation()
 
-	def evaluate_answer(self) -> None:
+	def start_evaluation(self) -> None:
 		require_status(self.session, GameSession.Status.EVALUATION)
 		evaluate_current_attempt(self.session)
 		apply_answer_verdict(self.session)
+		self.session.save()
+
+	def resolve_evaluation(self) -> None:
+		require_status(self.session, GameSession.Status.EVALUATION)
+		self.session.current_attempt = None
+		self.session.save()
 		self._advance_after_evaluation()
 
 	def	disconnect_player(self, actor: SessionPlayer | None) -> None:
