@@ -4,7 +4,7 @@
     "pk": 1,
     "fields": {
       "question_text": "Which religion forbids eating beef?",
-      "correct_answer": "Hinduism",
+      "correct_answer": "Hinduism | Hindu",
       "category": "general"
     }
   },
@@ -40,7 +40,7 @@
     "pk": 5,
     "fields": {
       "question_text": "Which basketball player is the only person to win both an Olympic gold medal and an Oscar?",
-      "correct_answer": "Kobe Bryant",
+      "correct_answer": "Kobe Bryant | Kobe",
       "category": "sports"
     }
   },
@@ -49,7 +49,7 @@
     "pk": 6,
     "fields": {
       "question_text": "Which company created the Unreal Engine game engine?",
-      "correct_answer": "Epic Games",
+      "correct_answer": "Epic Games | Epic",
       "category": "technology"
     }
   },
@@ -66,8 +66,8 @@
     "model": "game.question",
     "pk": 8,
     "fields": {
-      "question_text": "Who was the longest-reigning British monarch?",
-      "correct_answer": "Queen Elizabeth II",
+      "question_text": "Who was the longest-reigning queen in British history?",
+      "correct_answer": "Queen Elizabeth II | Elizabeth II | Elizabeth 2 | Queen Elizabeth 2",
       "category": "history"
     }
   },
@@ -85,7 +85,7 @@
     "pk": 10,
     "fields": {
       "question_text": "Which female pilot became the first to fly solo across the Atlantic Ocean in 1932?",
-      "correct_answer": "Amelia Earhart",
+      "correct_answer": "Amelia Earhart | Earhart",
       "category": "history"
     }
   },
@@ -94,7 +94,7 @@
     "pk": 11,
     "fields": {
       "question_text": "What was the name of the sheep that became the first mammal cloned from an adult cell?",
-      "correct_answer": "Dolly",
+      "correct_answer": "Dolly | Dolly the sheep | Sheep Dolly",
       "category": "science"
     }
   },
@@ -103,7 +103,7 @@
     "pk": 12,
     "fields": {
       "question_text": "What is the longest river in Great Britain?",
-      "correct_answer": "Severn",
+      "correct_answer": "Severn | River Severn",
       "category": "geography"
     }
   },
@@ -121,7 +121,7 @@
     "pk": 14,
     "fields": {
       "question_text": "How many players participate in a game of bridge?",
-      "correct_answer": "4",
+      "correct_answer": "4 | four",
       "category": "general"
     }
   },
@@ -157,7 +157,7 @@
     "pk": 18,
     "fields": {
       "question_text": "What is the longest river in France?",
-      "correct_answer": "Loire",
+      "correct_answer": "Loire | River Loire | Loire River",
       "category": "geography"
     }
   },
@@ -175,7 +175,7 @@
     "pk": 20,
     "fields": {
       "question_text": "Who formulated the three laws of motion that form the basis of classical mechanics?",
-      "correct_answer": "Isaac Newton",
+      "correct_answer": "Isaac Newton | Newton",
       "category": "science"
     }
   },
