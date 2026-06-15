@@ -1,4 +1,5 @@
 import { useFriendsListTabView } from './useFriendsListTabView'
+import InlineError from '../../../../../../components/InlineError'
 import './FriendsListTabView.css'
 
 function FriendsListTabView() {
@@ -6,7 +7,7 @@ function FriendsListTabView() {
 
     return (
         <div className="friends-scroll">
-            {error && <span className="tab-error">{error}</span>}
+            <InlineError message={error} />
             <div className="friends-grid">
                 {friendsList.map((f) => (
                     <div key={f.friend.id} className="friend-item">
