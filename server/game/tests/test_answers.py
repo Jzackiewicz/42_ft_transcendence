@@ -63,53 +63,40 @@ class AnswerCorrectnessTests(TestCase):
 		attempt = self._create_attempt(correct_answer="Paris", player_answer="Paris", is_timeout=True)
 		self.assertFalse(check_answer_correctness(attempt))
 
-	def test_short_answers_must_match_exactly(self):
-		# Short (len <= 3) correct answer: "4"
-		attempt = self._create_attempt(correct_answer="4", player_answer="4")
+	def test_strict_matching(self):
+		# Correct: "Warsaw"
+		attempt = self._create_attempt(correct_answer="Warsaw", player_answer="warsaw")
 		self.assertTrue(check_answer_correctness(attempt))
 
-		attempt = self._create_attempt(correct_answer="4", player_answer="5")
+		# Case-insensitivity and spacing normalized
+		attempt = self._create_attempt(correct_answer="  Warsaw  ", player_answer="warsaw")
+		self.assertTrue(check_answer_correctness(attempt))
+
+		# Typo should fail under strict matching
+		attempt = self._create_attempt(correct_answer="Warsaw", player_answer="wasraw")
 		self.assertFalse(check_answer_correctness(attempt))
 
-		# Short (len <= 3) correct answer: "yes"
-		attempt = self._create_attempt(correct_answer="yes", player_answer="yes")
+		# Roman numerals must match exactly
+		attempt = self._create_attempt(correct_answer="Elizabeth II", player_answer="Elizabeth II")
 		self.assertTrue(check_answer_correctness(attempt))
 
-		attempt = self._create_attempt(correct_answer="yes", player_answer="ye")
+		attempt = self._create_attempt(correct_answer="Elizabeth II", player_answer="Elizabeth 2")
 		self.assertFalse(check_answer_correctness(attempt))
 
-	def test_medium_answers_similarity_threshold(self):
-		# Medium (4 <= len <= 6) correct answer: "Paris" (len = 5)
-		# Exact match
-		attempt = self._create_attempt(correct_answer="Paris", player_answer="paris")
+	def test_alternative_answers(self):
+		# Alternatives: "Dolly | Dolly the sheep | Sheep Dolly"
+		# Dolly (passes)
+		attempt = self._create_attempt(correct_answer="Dolly | Dolly the sheep | Sheep Dolly", player_answer="Dolly")
 		self.assertTrue(check_answer_correctness(attempt))
 
-		# 1 character typo: "pari" (len 4), ratio = 2*4/9 = 0.888 >= 0.85 (Passes)
-		attempt = self._create_attempt(correct_answer="Paris", player_answer="pari")
+		# Dolly the sheep (passes)
+		attempt = self._create_attempt(correct_answer="Dolly | Dolly the sheep | Sheep Dolly", player_answer="Dolly the sheep")
 		self.assertTrue(check_answer_correctness(attempt))
 
-		# 1 extra char typo: "pariss" (len 6), ratio = 2*5/11 = 0.909 >= 0.85 (Passes)
-		attempt = self._create_attempt(correct_answer="Paris", player_answer="pariss")
+		# Sheep Dolly (passes)
+		attempt = self._create_attempt(correct_answer="Dolly | Dolly the sheep | Sheep Dolly", player_answer="Sheep Dolly")
 		self.assertTrue(check_answer_correctness(attempt))
 
-		# Too many typos: "parks" (len 5), ratio = 2*3/10 = 0.60 < 0.85 (Fails)
-		attempt = self._create_attempt(correct_answer="Paris", player_answer="parks")
-		self.assertFalse(check_answer_correctness(attempt))
-
-	def test_long_answers_similarity_threshold(self):
-		# Long (len > 6) correct answer: "Washington" (len = 10)
-		# Exact match after normalization
-		attempt = self._create_attempt(correct_answer="Washington", player_answer="  washington  ")
-		self.assertTrue(check_answer_correctness(attempt))
-
-		# Typo: "wahsington" (ratio = 2*9/20 = 0.90 >= 0.80) -> Passes
-		attempt = self._create_attempt(correct_answer="Washington", player_answer="wahsington")
-		self.assertTrue(check_answer_correctness(attempt))
-
-		# Typo: "washinton" (ratio = 2*9/19 = 0.947 >= 0.80) -> Passes
-		attempt = self._create_attempt(correct_answer="Washington", player_answer="washinton")
-		self.assertTrue(check_answer_correctness(attempt))
-
-		# Too many differences: "washingmaching" (ratio = 2*7/24 = 0.583 < 0.80) -> Fails
-		attempt = self._create_attempt(correct_answer="Washington", player_answer="washingmaching")
+		# Dolly the ship (fails due to strict matching)
+		attempt = self._create_attempt(correct_answer="Dolly | Dolly the sheep | Sheep Dolly", player_answer="Dolly the ship")
 		self.assertFalse(check_answer_correctness(attempt))

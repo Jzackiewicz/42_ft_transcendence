@@ -1,6 +1,5 @@
 import unicodedata
 import re
-import difflib
 from game.models import GameSession, SessionPlayer, AnswerAttempt
 from django.utils import timezone
 from .guards import (
@@ -26,43 +25,27 @@ def normalize_string(text: str) -> str:
 	return text
 
 
+def check_single_answer_match(correct_answer: str, player_submission: str) -> bool:
+	normalized_answer = normalize_string(correct_answer)
+	normalized_submission = normalize_string(player_submission)
+	return normalized_answer == normalized_submission
+
+
 def check_answer_correctness(attempt: AnswerAttempt) -> bool:
-	"""
-	Evaluates if the player's answer matches the correct answer using fuzzy matching.
-	Requires an exact match (after normalization) for short answers (<= 3 chars),
-	and applies length-based similarity thresholds (SequenceMatcher ratio) for longer answers.
-	"""
 	if attempt.is_timeout:
 		return False
 	
 	question = attempt.session_question.question
-	correct_answer = question.correct_answer or ""
+	correct_answer_raw = question.correct_answer or ""
 	player_submission = attempt.answer_text or ""
 
-	normalized_answer = normalize_string(correct_answer)
-	normalized_submission = normalize_string(player_submission)
+	# Split possible correct answers by '|'
+	alternatives = [alt.strip() for alt in correct_answer_raw.split("|")]
 
-	if not normalized_answer:
-		return not normalized_submission
-
-	if normalized_answer == normalized_submission:
-		return True
-
-	correct_len = len(normalized_answer)
-	if correct_len <= 3:
-		return False
-	
-	similarity = difflib.SequenceMatcher(None, normalized_answer, normalized_submission).ratio()
-	
-	if correct_len <= 6:
-		return similarity >= 0.85
-	else:
-		return similarity >= 0.80
+	return any(check_single_answer_match(alt, player_submission) for alt in alternatives)
 
 
-
-
-def apply_correct_answer_effects(session: GameSession,attempt: AnswerAttempt) -> None:
+def apply_correct_answer_effects(session: GameSession, attempt: AnswerAttempt) -> None:
 	player = attempt.player
 	if session.last_correct_player_id == player.id:
 		player.points += 20
@@ -73,6 +56,7 @@ def apply_correct_answer_effects(session: GameSession,attempt: AnswerAttempt) ->
 	player.save()
 	session.last_correct_player = player
 
+
 def apply_wrong_answer_effects(attempt: AnswerAttempt) -> None:
 	player = attempt.player
 	if player.lives > 0:
@@ -82,7 +66,7 @@ def apply_wrong_answer_effects(attempt: AnswerAttempt) -> None:
 	player.save()
 
 
-def	evaluate_current_attempt(session: GameSession) -> None:
+def evaluate_current_attempt(session: GameSession) -> None:
 	require_current_attempt(session)
 	attempt = session.current_attempt
 	
@@ -90,6 +74,7 @@ def	evaluate_current_attempt(session: GameSession) -> None:
 	attempt.evaluation_status = AnswerAttempt.EvaluationStatus.EVALUATED
 	attempt.evaluated_at = timezone.now()
 	attempt.save()
+
 
 def apply_answer_verdict(session: GameSession) -> None:
 	require_current_attempt(session)
@@ -100,5 +85,3 @@ def apply_answer_verdict(session: GameSession) -> None:
 		apply_correct_answer_effects(session, attempt)
 	else:
 		apply_wrong_answer_effects(attempt)
-
-	
