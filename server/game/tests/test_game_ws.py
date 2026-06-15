@@ -396,6 +396,27 @@ class GameConsumerTests(TransactionTestCase):
 
 		await communicator.disconnect()
 
+		# Session should still exist because they disconnected gracefully
+		session_exists = await database_sync_to_async(
+			GameSession.objects.filter(id=self.session.id).exists
+		)()
+		self.assertTrue(session_exists)
+
+		# Fast forward disconnected_at past the grace period
+		from django.utils import timezone
+		from datetime import timedelta
+		from django.conf import settings
+		grace_limit = timezone.now() - timedelta(seconds=settings.DISCONNECT_GRACE_PERIOD_S + 1)
+		await database_sync_to_async(
+			lambda: SessionPlayer.objects.filter(id=self.player.id).update(disconnected_at=grace_limit)
+		)()
+
+		# Expire players
+		from game.services.game_flow.game_action_handler import GameActionHandler
+		handler = GameActionHandler()
+		await database_sync_to_async(handler.sync_game_disconnections)(self.session.id)
+
+		# Session should now be deleted
 		session_exists = await database_sync_to_async(
 			GameSession.objects.filter(id=self.session.id).exists
 		)()
@@ -700,6 +721,13 @@ class GameConsumerTests(TransactionTestCase):
 		await comm2.receive_json_from()
 
 		await comm1.disconnect()
+
+		# Receive the disconnect broadcast on comm2
+		disc_msg = await comm2.receive_json_from()
+		self.assertEqual(disc_msg["type"], "game_state_update")
+		self.assertEqual(disc_msg["action"], "disconnect")
+		players = {p["id"]: p for p in disc_msg["snapshot"]["players"]}
+		self.assertFalse(players[self.player.id]["is_online"])
 		
 		# Reconnect the same user and receive state immediately
 		comm1_new = WebsocketCommunicator(
@@ -707,9 +735,20 @@ class GameConsumerTests(TransactionTestCase):
 		)
 		connected, _ = await comm1_new.connect()
 		self.assertTrue(connected)
+		
+		# comm1_new receives state sync on connect
 		res = await comm1_new.receive_json_from()
 		self.assertEqual(res["type"], "game_state_update")
-		self.assertIn("snapshot", res)
+		self.assertEqual(res["action"], "player_connected")
+		players_new = {p["id"]: p for p in res["snapshot"]["players"]}
+		self.assertTrue(players_new[self.player.id]["is_online"])
+
+		# comm2 receives player_connected broadcast
+		conn_msg = await comm2.receive_json_from()
+		self.assertEqual(conn_msg["type"], "game_state_update")
+		self.assertEqual(conn_msg["action"], "player_connected")
+		players_conn = {p["id"]: p for p in conn_msg["snapshot"]["players"]}
+		self.assertTrue(players_conn[self.player.id]["is_online"])
 		
 		await comm1_new.disconnect()
 		await comm2.disconnect()
@@ -918,11 +957,69 @@ class GameConsumerTests(TransactionTestCase):
 		self.assertEqual(response["type"], "game_state_update")
 		self.assertEqual(response["action"], GameAction.DISCONNECT)
 
+		# Host should NOT be transferred immediately because it's graceful
+		host_player_id = await database_sync_to_async(
+			lambda: GameSession.objects.get(id=self.session.id).host_player_id
+		)()
+		self.assertEqual(host_player_id, self.player.id)
+
+		# Fast forward disconnected_at past the grace period
+		from django.utils import timezone
+		from datetime import timedelta
+		from django.conf import settings
+		grace_limit = timezone.now() - timedelta(seconds=settings.DISCONNECT_GRACE_PERIOD_S + 1)
+		await database_sync_to_async(
+			lambda: SessionPlayer.objects.filter(id=self.player.id).update(disconnected_at=grace_limit)
+		)()
+
+		# Expire players (simulating another event/sync)
+		from game.services.game_flow.game_action_handler import GameActionHandler
+		handler = GameActionHandler()
+		await database_sync_to_async(handler.sync_game_disconnections)(self.session.id)
+
+		# Host should now be transferred
 		host_player_id = await database_sync_to_async(
 			lambda: GameSession.objects.get(id=self.session.id).host_player_id
 		)()
 		self.assertEqual(host_player_id, self.player2.id)
 		
+		await comm2.disconnect()
+
+	async def test_player_explicit_leave_game_removes_immediately(self):
+		headers1 = [(b'cookie', f'sessionid={self.cookie}'.encode('ascii'))]
+		comm1 = WebsocketCommunicator(
+			self.application, f"/ws/game/{self.session.session_uuid}/", headers=headers1
+		)
+		await comm1.connect()
+		await comm1.receive_json_from()
+		
+		headers2 = [(b'cookie', f'sessionid={self.cookie2}'.encode('ascii'))]
+		comm2 = WebsocketCommunicator(
+			self.application, f"/ws/game/{self.session.session_uuid}/", headers=headers2
+		)
+		await comm2.connect()
+		await comm1.receive_json_from()
+		await comm2.receive_json_from()
+
+		# comm1 (host) explicitly leaves
+		await comm1.send_json_to({"action": GameAction.LEAVE_GAME})
+		
+		# comm2 receives update immediately
+		response = await comm2.receive_json_from()
+		self.assertEqual(response["type"], "game_state_update")
+		self.assertEqual(response["action"], GameAction.LEAVE_GAME)
+
+		# Host should be transferred immediately
+		host_player_id = await database_sync_to_async(
+			lambda: GameSession.objects.get(id=self.session.id).host_player_id
+		)()
+		self.assertEqual(host_player_id, self.player2.id)
+
+		# Player 1 should be deleted immediately (not in players snapshot list)
+		players_in_snapshot = [p["id"] for p in response["snapshot"]["players"]]
+		self.assertNotIn(self.player.id, players_in_snapshot)
+		
+		await comm1.disconnect()
 		await comm2.disconnect()
 
 	async def test_websocket_full_game_to_game_over(self):
