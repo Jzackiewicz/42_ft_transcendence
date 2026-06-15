@@ -96,7 +96,9 @@ class GameService:
 		if actor.seat_number is None:
 			return
 
-		if self.session.current_status == GameSession.Status.ANSWERING:
+		status_before = self.session.current_status
+
+		if status_before == GameSession.Status.ANSWERING:
 			handle_disconnect_in_answering(self.session, actor)
 
 		actor.lives = 0
@@ -107,8 +109,9 @@ class GameService:
 			return
 
 		if self.session.current_status == GameSession.Status.EVALUATION:
-			apply_answer_verdict(self.session)
-			self.resolve_evaluation()
+			if status_before == GameSession.Status.ANSWERING:
+				apply_answer_verdict(self.session)
+				self.resolve_evaluation()
 		elif self.session.current_status == GameSession.Status.NOMINATION:
 			if handle_disconnect_in_nomination(self.session, actor):
 				self._start_answering_turn()
@@ -220,7 +223,8 @@ class GameService:
 		grace_limit = timezone.now() - timedelta(seconds=settings.DISCONNECT_GRACE_PERIOD_S)
 		expired_players = list(self.session.session_players.filter(
 			disconnected_at__isnull=False,
-			disconnected_at__lte=grace_limit
+			disconnected_at__lte=grace_limit,
+			lives__gt=0
 		))
 
 		for player in expired_players:
