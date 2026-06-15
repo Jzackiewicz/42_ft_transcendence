@@ -43,3 +43,7 @@ def check_can_destroy_room(*, session: GameSession, user) -> None:
 		raise ValidationError("Only the host can destroy the room.")
 	if session.current_status != GameSession.Status.LOBBY:
 		raise ValidationError("Cannot destroy a game that is already in progress.")
+
+def check_room_is_not_over(*, session: GameSession) -> None:
+	if session.current_status == GameSession.Status.GAME_OVER:
+		raise ValidationError("Cannot join a game that has already ended.")
