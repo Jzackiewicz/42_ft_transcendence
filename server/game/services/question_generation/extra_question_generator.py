@@ -7,6 +7,7 @@ from django.db import transaction
 from django.db.models import Max
 from google import genai
 from pydantic import BaseModel
+from google.genai.errors import APIError
 
 from core.settings import LLM_API_KEY, LLM_MODEL
 from game.models import GameSession, Question, SessionQuestion
@@ -171,7 +172,6 @@ def persist_generated_questions(session, generated):
     return created_question_ids
 
 def generate_extra_questions(lobby_id, n_questions_to_generate):
-	load_dotenv(dotenv_path="../../../.env")
 	session = GameSession.objects.filter(session_uuid=lobby_id).first()
 	if session is None:
 		raise RuntimeError(f"Lobby not found: {lobby_id}")
