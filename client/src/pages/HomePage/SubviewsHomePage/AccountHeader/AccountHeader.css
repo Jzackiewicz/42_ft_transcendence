@@ -1,0 +1,78 @@
+.account-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 22px 28px;
+    border-radius: 14px;
+    background: var(--panel);
+    border: 1px solid var(--pb);
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+}
+
+.account-header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--cyan), var(--magenta), transparent);
+}
+
+.account-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--cyan), #0088aa);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--fd);
+    font-size: 26px;
+    font-weight: 700;
+    color: #000;
+    border: 3px solid rgba(0, 229, 255, 0.4);
+    box-shadow: 0 0 24px rgba(0, 229, 255, 0.3);
+    flex-shrink: 0;
+}
+
+.account-info { flex: 1; }
+
+.account-name {
+    font-family: var(--fd);
+    font-size: 26px;
+    font-weight: 700;
+}
+
+.account-email {
+    font-size: var(--font-sm);
+    color: var(--dim);
+    margin-top: 3px;
+}
+
+.account-badges {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.badge {
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.badge.human {
+    background: rgba(0, 229, 255, 0.1);
+    border: 1px solid rgba(0, 229, 255, 0.25);
+    color: var(--cyan);
+}
+
+.badge.joined {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--pb);
+    color: var(--dim);
+}

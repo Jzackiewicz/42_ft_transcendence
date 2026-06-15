@@ -1,11 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react"
 import { getMe } from "../api/authWrapper"
+import { User } from "../types/User"
 
-interface User {
-    id: number
-    username: string
-    email: string
-}
 
 interface UserContextType {
     user: User | null | undefined //user 
