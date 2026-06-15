@@ -227,13 +227,20 @@ if not REDIS_URL:
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {"hosts": [REDIS_URL]},
+        "CONFIG": {
+            "hosts": [
+                {
+                    "address": REDIS_URL,
+                    "socket_timeout": 20,
+                    "socket_keepalive": True,
+                }
+            ],
+        },
     }
 }
 
-# ---- Game Settings ----
-DISCONNECT_GRACE_PERIOD_S = int(os.getenv("DISCONNECT_GRACE_PERIOD_S", "30"))
 QUESTIONS_PER_SESSION = int(os.getenv("QUESTIONS_PER_SESSION", "10"))
+DISCONNECT_GRACE_PERIOD_S = int(os.getenv("DISCONNECT_GRACE_PERIOD_S", "30"))
 ANSWER_TIME_LIMIT_MS = int(os.getenv("ANSWER_TIME_LIMIT_MS", "20000"))
 EVALUATION_TIME_LIMIT_MS = int(os.getenv("EVALUATION_TIME_LIMIT_MS", "3000"))
 NOMINATION_TIME_LIMIT_MS = int(os.getenv("NOMINATION_TIME_LIMIT_MS", "10000"))
