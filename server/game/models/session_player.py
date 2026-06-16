@@ -38,6 +38,7 @@ class SessionPlayer(models.Model):
 	answered_count = models.PositiveIntegerField(default=0)
 	total_answer_time_ms = models.PositiveIntegerField(default=0)
 	disconnected_at = models.DateTimeField(null=True, blank=True)
+	active_connections = models.PositiveIntegerField(default=0)
 
 	class Meta:
 		ordering = ["session_id", "seat_number"]

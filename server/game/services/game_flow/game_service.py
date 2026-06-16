@@ -1,6 +1,7 @@
 from datetime import timedelta
 from django.conf import settings
 from django.utils import timezone
+from django.db import transaction
 from game.models import GameSession, SessionPlayer
 
 from .guards import (
@@ -96,7 +97,9 @@ class GameService:
 		if actor.seat_number is None:
 			return
 
-		if self.session.current_status == GameSession.Status.ANSWERING:
+		status_before = self.session.current_status
+
+		if status_before == GameSession.Status.ANSWERING:
 			handle_disconnect_in_answering(self.session, actor)
 
 		actor.lives = 0
@@ -108,8 +111,9 @@ class GameService:
 			return
 
 		if self.session.current_status == GameSession.Status.EVALUATION:
-			apply_answer_verdict(self.session)
-			self.resolve_evaluation()
+			if status_before == GameSession.Status.ANSWERING:
+				apply_answer_verdict(self.session)
+				self.resolve_evaluation()
 		elif self.session.current_status == GameSession.Status.NOMINATION:
 			if handle_disconnect_in_nomination(self.session, actor):
 				self._start_answering_turn()
@@ -197,8 +201,19 @@ class GameService:
 		if self.session.current_status == GameSession.Status.GAME_OVER:
 			return
 		
-		actor.disconnected_at = timezone.now()
-		actor.save(update_fields=['disconnected_at'])
+		if actor.seat_number is None:
+			actor.delete()
+			return
+
+		with transaction.atomic():
+			player = SessionPlayer.objects.select_for_update().get(id=actor.id)
+			if player.active_connections > 0:
+				player.active_connections -= 1
+			
+			if player.active_connections == 0:
+				player.disconnected_at = timezone.now()
+			
+			player.save(update_fields=['active_connections', 'disconnected_at'])
 
 	def leave_game(self, actor: SessionPlayer | None) -> None:
 		require_action_actor(actor, "leave game")
@@ -221,16 +236,15 @@ class GameService:
 		grace_limit = timezone.now() - timedelta(seconds=settings.DISCONNECT_GRACE_PERIOD_S)
 		expired_players = list(self.session.session_players.filter(
 			disconnected_at__isnull=False,
-			disconnected_at__lte=grace_limit
+			disconnected_at__lte=grace_limit,
+			lives__gt=0
 		))
 
 		for player in expired_players:
 			if self.session.current_status == GameSession.Status.GAME_OVER:
 				break
 			
-			if player.seat_number is None:
-				player.delete()
-			elif self.session.current_status == GameSession.Status.LOBBY:
+			if self.session.current_status == GameSession.Status.LOBBY:
 				handle_disconnect_in_lobby(self.session, player)
 			else:
 				self._handle_active_game_disconnect(player)
