@@ -72,11 +72,3 @@ def profile_clear_avatar(*, profile: UserProfile) -> UserProfile:
     profile.avatar = None
     profile.save(update_fields=["avatar"])
     return profile
-
-
-def profile_set_online_status(*, profile: UserProfile, is_online: bool) -> UserProfile:
-    profile.is_online = is_online
-    profile.save(update_fields=["is_online"])
-    return profile
-
-

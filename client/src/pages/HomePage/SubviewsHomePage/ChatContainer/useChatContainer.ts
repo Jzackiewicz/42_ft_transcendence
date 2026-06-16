@@ -4,6 +4,16 @@ import { useUser } from '../../../../context/UserContext'
 import { ChatMessage } from '../../../../types/Message'
 import { getChatHistory, createChatSocket } from '../../../../api/socialsWrapper'
 
+function hasNoFriends(friendsList: { friend: { id: number } }[]): boolean {
+    var friendsAreEmpty: boolean
+    if (friendsList.length == 0) {
+        friendsAreEmpty = true
+    } else {
+        friendsAreEmpty = false
+    }
+    return friendsAreEmpty
+}
+
 function getRoomName(myId: number, friendId: number): string {
     return `dm_${Math.min(myId, friendId)}_${Math.max(myId, friendId)}`
 }
@@ -54,5 +64,7 @@ export function useChatContainer() {
         setActiveId(id)
     }
 
-    return { friendsList, activeId, messages, myUsername: user?.username ?? '', handleChooseTab, handleSend }
+    const noFriends = hasNoFriends(friendsList)
+
+    return { friendsList, activeId, messages, myUsername: user?.username ?? '', noFriends, handleChooseTab, handleSend }
 }

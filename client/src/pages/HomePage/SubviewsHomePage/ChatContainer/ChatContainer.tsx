@@ -3,12 +3,30 @@ import { useChatContainer } from './useChatContainer'
 import './ChatContainer.css'
 
 function ChatContainer() {
-    const { friendsList, activeId, messages, myUsername, handleChooseTab, handleSend } = useChatContainer()
+    const { friendsList, activeId, messages, myUsername, noFriends, handleChooseTab, handleSend } = useChatContainer()
     const [draft, setDraft] = useState('')
 
     const send = () => {
         handleSend(draft)
         setDraft('')
+    }
+
+    let sendBtnLabel
+    if (draft.length === 500) {
+        sendBtnLabel = 'max 500 chars'
+    } else {
+        sendBtnLabel = 'Send'
+    }
+
+    let chatContent
+    if (noFriends) {
+        chatContent = <div className="chat-empty">Add Friends to message</div>
+    } else {
+        chatContent = messages.filter(msg => msg.message).map((msg, i) => (
+            <div key={i} className={`chat-bubble-row ${msg.sender_username === myUsername ? 'me' : 'friend'}`}>
+                <div className="chat-bubble">{msg.message}</div>
+            </div>
+        ))
     }
 
     return (
@@ -32,14 +50,9 @@ function ChatContainer() {
             {/* ── Thread ── */}
             <div className="chat-thread">
                 <div className="chat-messages">
-                    {messages.filter(msg => msg.message).map((msg, i) => (
-                        <div key={i} className={`chat-bubble-row ${msg.sender_username === myUsername ? 'me' : 'friend'}`}>
-                            <div className="chat-bubble">{msg.message}</div>
-                            {/* <div className="chat-ts">{msg.timestamp}</div> */}
-                        </div>
-                    ))}
+                    {chatContent}
                 </div>
-                
+
             {/* ── Input ── */}
                 <div className="chat-input-row">
                     <input
@@ -47,15 +60,16 @@ function ChatContainer() {
                         placeholder="Message…"
                         value={draft}
                         maxLength={500}
+                        disabled={noFriends}
                         onChange={e => setDraft(e.target.value)}
                         onKeyDown={e => e.key === 'Enter' && send()}
                     />
                     <button
                         className="chat-send-btn"
                         onClick={send}
-                        disabled={draft.length === 500}
+                        disabled={noFriends || draft.length === 500}
                     >
-                        {draft.length === 500 ? 'max 500 chars' : 'Send'}
+                        {sendBtnLabel}
                     </button>
                 </div>
             </div>

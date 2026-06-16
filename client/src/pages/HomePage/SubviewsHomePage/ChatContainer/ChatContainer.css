@@ -171,6 +171,19 @@
 
 .chat-bubble-row.friend .chat-ts { text-align: left; }
 
+/* ── EMPTY STATE ────────────────────────────────────────────────── */
+.chat-empty {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--fd);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--dim);
+    text-align: center;
+}
+
 /* ── INPUT ──────────────────────────────────────────────────────── */
 .chat-input-row {
     display: flex;
