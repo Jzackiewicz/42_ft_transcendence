@@ -200,6 +200,10 @@ class GameService:
 		if self.session.current_status == GameSession.Status.GAME_OVER:
 			return
 		
+		if actor.seat_number is None:
+			actor.delete()
+			return
+		
 		actor.disconnected_at = timezone.now()
 		actor.save(update_fields=['disconnected_at'])
 
@@ -232,9 +236,7 @@ class GameService:
 			if self.session.current_status == GameSession.Status.GAME_OVER:
 				break
 			
-			if player.seat_number is None:
-				player.delete()
-			elif self.session.current_status == GameSession.Status.LOBBY:
+			if self.session.current_status == GameSession.Status.LOBBY:
 				handle_disconnect_in_lobby(self.session, player)
 			else:
 				self._handle_active_game_disconnect(player)
