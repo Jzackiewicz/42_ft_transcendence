@@ -760,6 +760,49 @@ class GameConsumerTests(TransactionTestCase):
 		await comm1_new.disconnect()
 		await comm2.disconnect()
 
+	async def test_websocket_multi_tab_connection_tracking(self):
+		headers1 = [(b'cookie', f'sessionid={self.cookie}'.encode('ascii'))]
+		
+		# Tab 1 connects
+		comm1_tab1 = WebsocketCommunicator(
+			self.application, f"/ws/game/{self.session.session_uuid}/", headers=headers1
+		)
+		await comm1_tab1.connect()
+		await comm1_tab1.receive_json_from()
+
+		# Tab 2 connects
+		comm1_tab2 = WebsocketCommunicator(
+			self.application, f"/ws/game/{self.session.session_uuid}/", headers=headers1
+		)
+		await comm1_tab2.connect()
+		await comm1_tab2.receive_json_from()
+		
+		# Verify active_connections is 2 and disconnected_at is None
+		player = await database_sync_to_async(SessionPlayer.objects.get)(id=self.player.id)
+		self.assertEqual(player.active_connections, 2)
+		self.assertIsNone(player.disconnected_at)
+
+		# Disconnect Tab 1
+		await comm1_tab1.disconnect()
+		
+		# Wait briefly for DB update
+		import asyncio
+		await asyncio.sleep(0.1)
+
+		# Verify active_connections is 1 and player is still online
+		player = await database_sync_to_async(SessionPlayer.objects.get)(id=self.player.id)
+		self.assertEqual(player.active_connections, 1)
+		self.assertIsNone(player.disconnected_at)
+
+		# Disconnect Tab 2
+		await comm1_tab2.disconnect()
+		await asyncio.sleep(0.1)
+
+		# Verify active_connections is 0 and disconnected_at is set
+		player = await database_sync_to_async(SessionPlayer.objects.get)(id=self.player.id)
+		self.assertEqual(player.active_connections, 0)
+		self.assertIsNotNone(player.disconnected_at)
+
 	async def test_non_host_cannot_start_game(self):
 		headers = [(b'cookie', f'sessionid={self.cookie2}'.encode('ascii'))]
 		communicator = WebsocketCommunicator(

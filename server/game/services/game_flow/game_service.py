@@ -1,6 +1,7 @@
 from datetime import timedelta
 from django.conf import settings
 from django.utils import timezone
+from django.db import transaction
 from game.models import GameSession, SessionPlayer
 
 from .guards import (
@@ -203,9 +204,16 @@ class GameService:
 		if actor.seat_number is None:
 			actor.delete()
 			return
-		
-		actor.disconnected_at = timezone.now()
-		actor.save(update_fields=['disconnected_at'])
+
+		with transaction.atomic():
+			player = SessionPlayer.objects.select_for_update().get(id=actor.id)
+			if player.active_connections > 0:
+				player.active_connections -= 1
+			
+			if player.active_connections == 0:
+				player.disconnected_at = timezone.now()
+			
+			player.save(update_fields=['active_connections', 'disconnected_at'])
 
 	def leave_game(self, actor: SessionPlayer | None) -> None:
 		require_action_actor(actor, "leave game")
