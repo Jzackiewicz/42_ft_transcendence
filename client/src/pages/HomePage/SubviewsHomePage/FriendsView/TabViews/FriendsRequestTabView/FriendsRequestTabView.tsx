@@ -1,12 +1,18 @@
 import { useFriendsRequestTabView, FriendRequest } from './useFriendsRequestTabView'
+import InlineError from '../../../../../../components/InlineError'
 import './FriendsRequestTabView.css'
 
 function FriendsRequestTabView() {
     const { incomingRequestsList, outgoingRequestsList,
+            loading, error,
             handleAccept, handleDecline, handleCancel } = useFriendsRequestTabView()
+
+    if (loading)
+        return <span className="friends-empty">Loading...</span>
 
     return (
         <div className="friends-request-list">
+            <InlineError message={error} />
             {incomingRequestsList.length === 0 && outgoingRequestsList.length === 0 && (
                 <span className="friends-empty">No pending requests</span>
             )}

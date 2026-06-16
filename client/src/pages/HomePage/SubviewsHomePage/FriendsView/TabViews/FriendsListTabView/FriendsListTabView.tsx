@@ -1,11 +1,13 @@
 import { useFriendsListTabView } from './useFriendsListTabView'
+import InlineError from '../../../../../../components/InlineError'
 import './FriendsListTabView.css'
 
 function FriendsListTabView() {
-    const { friendsList, handleRemove } = useFriendsListTabView()
+    const { friendsList, handleRemove, error } = useFriendsListTabView()
 
     return (
         <div className="friends-scroll">
+            <InlineError message={error} />
             <div className="friends-grid">
                 {friendsList.map((f) => (
                     <div key={f.friend.id} className="friend-item">

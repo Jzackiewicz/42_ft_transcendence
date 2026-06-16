@@ -14,3 +14,9 @@ export interface Friendship {
     friend: PublicUser
     created_at: string
 }
+
+export interface FriendRequest {
+    id: number
+    from_user: PublicUser
+    to_user: PublicUser
+}
