@@ -10,6 +10,8 @@ import { ErrorPage } from './pages/ErrorPage/ErrorPage.tsx'
 import { UserProvider } from './context/UserContext.tsx'
 import { ProtectedRoute, PublicOnlyRoute, SessionProtectedRoute, RootRedirect } from './components/NavGuards.tsx'
 
+import './index.css'
+
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
 	<React.StrictMode>
