@@ -37,6 +37,11 @@ class NominatePlayerPayloadSerializer(StrictSerializer):
 	target_player_id = serializers.IntegerField(required=True)
 
 
+class GenerateExtraQuestionsPayloadSerializer(StrictSerializer):
+	session_uuid = serializers.UUIDField(required=True)
+	n_questions_to_generate = serializers.IntegerField(required=False, default=10, min_value=1, max_value=50)
+
+
 class PlayerSnapshotSerializer(serializers.ModelSerializer):
 	is_alive = serializers.BooleanField(read_only=True)
 	is_online = serializers.SerializerMethodField()
@@ -126,3 +131,8 @@ class UserGameStatsSerializer(serializers.Serializer):
 	avg_answer_time_seconds = serializers.FloatField()
 
 
+
+class GenerateExtraQuestionsResponseSerializer(serializers.Serializer):
+    created_question_ids = serializers.ListField(
+        child=serializers.IntegerField()
+    )

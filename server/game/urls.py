@@ -6,4 +6,5 @@ urlpatterns = [
 	path('lobby/join/<uuid:session_uuid>/', apis.RoomJoinApi.as_view(), name='room-join'),
 	path('lobby/destroy/<uuid:session_uuid>/', apis.RoomDestroyApi.as_view(), name='room-destroy'),
 	path('users/<int:user_id>/stats/', apis.UserGameStatsApi.as_view(), name='user-game-stats'),
+	path('generate_extra_questions/', apis.GenerateExtraQuestionsApi.as_view(), name='generate-extra-questions'),
 ]
