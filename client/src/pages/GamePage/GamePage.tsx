@@ -96,7 +96,7 @@ export function GamePage() {
     };
 
     const { sessionUuid, errorMsg, setErrorMsg } = connection;
-    const { gameState, gameStarted, timeLeft, hostPlayerId } = sessionState;
+    const { gameState, gameStarted, timeLeft, hostPlayerId, isSpectator } = sessionState;
 
     return (
         <div className="game-page-container">
@@ -108,6 +108,13 @@ export function GamePage() {
                     <button onClick={connection.leaveGame} className="btn-leave">Leave Game</button>
                 </div>
             </div>
+
+            {/* Spectator Mode Warning Banner */}
+            {isSpectator && (
+                <div className="spectator-banner">
+                    👁️ SPECTATOR MODE — You are watching this match.
+                </div>
+            )}
 
             {/* Error Banner */}
             {errorMsg && (

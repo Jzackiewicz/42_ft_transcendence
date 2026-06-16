@@ -1,6 +1,8 @@
 from game.models import GameSession, AnswerAttempt, SessionPlayer, Question, SessionQuestion
 from django.utils import timezone
+from django.db import transaction
 from .guards import require_status, require_enough_questions_in_db
+from .player_selection import get_new_host_player
 from django.core.exceptions import ValidationError
 from django.conf import settings
 import random
@@ -102,7 +104,7 @@ def handle_disconnect_in_lobby(session: GameSession, actor: SessionPlayer) -> No
 	actor.delete()
 
 	if is_host:
-		next_host = session.session_players.order_by('id').first()
+		next_host = get_new_host_player(session)
 		if next_host:
 			session.host_player = next_host
 			session.save(update_fields=['host_player'])
@@ -135,4 +137,8 @@ def handle_disconnect_in_nomination(session: GameSession, actor: SessionPlayer) 
 	return False
 
 def reconnect_player(player_id: int) -> None:
-	SessionPlayer.objects.filter(id=player_id).update(disconnected_at=None)
+	with transaction.atomic():
+		player = SessionPlayer.objects.select_for_update().get(id=player_id)
+		player.active_connections += 1
+		player.disconnected_at = None
+		player.save(update_fields=['active_connections', 'disconnected_at'])

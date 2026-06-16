@@ -100,9 +100,35 @@ class GameActionHandler:
 		)
 
 	@transaction.atomic
-	def sync_game_disconnections(self, session_id: int) -> None:
-		session = self._get_session(session_id=session_id)
+	def sync_game_disconnections(self, session_id: int) -> GameActionResult:
+		session = GameSession.objects.filter(id=session_id).select_for_update().first()
+		if not session:
+			return GameActionResult(
+				session_id=session_id,
+				status=None,
+				action="sync_disconnections",
+				session_deleted=True,
+			)
+
 		GameService(session).expire_disconnected_players()
+
+		# Check if the session was deleted during player expiration
+		is_deleted = not GameSession.objects.filter(id=session_id).exists()
+		if is_deleted:
+			return GameActionResult(
+				session_id=session_id,
+				status=None,
+				action="sync_disconnections",
+				session_deleted=True,
+			)
+
+		session.refresh_from_db()
+		return GameActionResult(
+			session_id=session_id,
+			status=session.current_status,
+			action="sync_disconnections",
+			timer_data=self._build_timer_data(session),
+		)
 
 	@staticmethod
 	def _build_timer_data(session: GameSession) -> dict | None:
