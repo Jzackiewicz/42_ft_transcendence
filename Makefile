@@ -131,6 +131,7 @@ dev-down:
 	HTTP_EXPOSED_PORT=$(DEV_HTTP_EXPOSED_PORT) \
 	HTTPS_EXPOSED_PORT=$(DEV_HTTPS_EXPOSED_PORT) \
 	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) down
+	rm -rf client/test-results client/playwright-report client/blob-report
 
 # Stop and wipe dev volumes (Isolated from production)
 dev-clean: check_clean
