@@ -51,7 +51,8 @@ export async function getChatHistory(room_name: string) {
     return res.data
 }
 
-// change socket 5173 on prod socket
 export function createChatSocket(roomName: string): WebSocket {
-    return new WebSocket(`ws://localhost:5173/ws/chat/${roomName}/`)
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
+    const host = window.location.host
+    return new WebSocket(`${protocol}//${host}/ws/chat/${roomName}/`)
 }
