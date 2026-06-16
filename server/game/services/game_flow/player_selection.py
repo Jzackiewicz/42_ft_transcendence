@@ -23,4 +23,4 @@ def get_next_alive_player(
 	return alive_players[0]
 
 def get_new_host_player(session: GameSession) -> SessionPlayer | None:
-	return session.session_players.order_by('id').first()
+	return session.session_players.filter(seat_number__isnull=False).order_by('id').first()

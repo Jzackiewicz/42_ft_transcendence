@@ -49,6 +49,7 @@ export interface GameSnapshot {
     last_correct_player: number | null;
     last_nominated_player: number | null;
     players: Player[];
+    is_spectator?: boolean;
     current_question: Question | null;
     current_attempt: AnswerAttempt | null;
     answer_time_limit_ms: number;
@@ -68,7 +69,6 @@ export function useGamePage() {
     const location = useLocation();
     const navigate = useNavigate();
     
-    // Priority: 1. State from navigation, 2. Persisted UUID from Context/LocalStorage
     const initialUuid = location.state?.sessionUuid || activeSessionUuid || '';
 
     const [sessionUuid, setSessionUuid] = useState<string>(initialUuid);
@@ -143,18 +143,9 @@ export function useGamePage() {
     }, [activeGameState?.current_status, activeGameState?.turn_deadline_at, activeGameState?.nomination_deadline_at]);
 
     const wsRef = useRef<WebSocket | null>(null);
-    const closeTimeoutRef = useRef<any>(null);
 
     const connectToLobby = () => {
         if (!sessionUuid) return;
-
-        if (closeTimeoutRef.current) {
-            clearTimeout(closeTimeoutRef.current);
-            closeTimeoutRef.current = null;
-            if (wsRef.current && (wsRef.current.readyState === WebSocket.CONNECTING || wsRef.current.readyState === WebSocket.OPEN)) {
-                return;
-            }
-        }
 
         if (wsRef.current) {
             wsRef.current.close();
@@ -226,18 +217,9 @@ export function useGamePage() {
     };
 
     const disconnect = () => {
-        if (closeTimeoutRef.current) {
-            clearTimeout(closeTimeoutRef.current);
-            closeTimeoutRef.current = null;
-        }
         if (wsRef.current) {
-            closeTimeoutRef.current = setTimeout(() => {
-                if (wsRef.current) {
-                    wsRef.current.close();
-                    wsRef.current = null;
-                }
-                closeTimeoutRef.current = null;
-            }, 100);
+            wsRef.current.close();
+            wsRef.current = null;
         }
     };
 
@@ -258,6 +240,7 @@ export function useGamePage() {
         setIsAiQuestionsRequested(true);
     };
     const leaveGame = () => {
+        sendAction('leave_game');
         disconnect();
         setSessionUuid('');
         setActiveSessionUuid(null);
@@ -287,6 +270,7 @@ export function useGamePage() {
         eligiblePlayers,
         timeLeft,
         currentPlayerObj,
+        isSpectator: activeGameState?.is_spectator ?? false,
         isHost,
         hostPlayerId,
         gameStarted,

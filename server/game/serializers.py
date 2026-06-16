@@ -36,6 +36,11 @@ class NominatePlayerPayloadSerializer(StrictSerializer):
 	target_player_id = serializers.IntegerField(required=True)
 
 
+class GenerateExtraQuestionsPayloadSerializer(StrictSerializer):
+	session_uuid = serializers.UUIDField(required=True)
+	n_questions_to_generate = serializers.IntegerField(required=False, default=10, min_value=1, max_value=50)
+
+
 class PlayerSnapshotSerializer(serializers.ModelSerializer):
 	is_alive = serializers.BooleanField(read_only=True)
 	is_online = serializers.SerializerMethodField()
@@ -89,7 +94,7 @@ class AnswerAttemptSnapshotSerializer(serializers.ModelSerializer):
 
 
 class GameStateSnapshotSerializer(serializers.ModelSerializer):
-	players = PlayerSnapshotSerializer(source='session_players', many=True)
+	players = serializers.SerializerMethodField()
 	current_question = SessionQuestionSnapshotSerializer()
 	current_attempt = AnswerAttemptSnapshotSerializer()
 	total_questions_count = serializers.SerializerMethodField()
@@ -103,5 +108,14 @@ class GameStateSnapshotSerializer(serializers.ModelSerializer):
 			'total_questions_count',
 		]
 
+	def get_players(self, obj: GameSession):
+		players = [p for p in obj.session_players.all() if p.seat_number is not None]
+		return PlayerSnapshotSerializer(players, many=True).data
+
 	def get_total_questions_count(self, obj: GameSession) -> int:
 		return obj.session_questions.count()
+
+class GenerateExtraQuestionsResponseSerializer(serializers.Serializer):
+    created_question_ids = serializers.ListField(
+        child=serializers.IntegerField()
+    )
