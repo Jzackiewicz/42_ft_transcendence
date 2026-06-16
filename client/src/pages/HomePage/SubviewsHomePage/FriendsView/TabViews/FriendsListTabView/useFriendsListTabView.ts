@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { deleteFromFriends } from '../../../../../../api/socialsWrapper'
 import { useFriendsContext } from '../../../../../../context/FriendsListContext'
 
@@ -6,6 +6,10 @@ export function useFriendsListTabView() {
     const { friendsList, refresh } = useFriendsContext()
     const [error, setError] = useState<string | null>(null)
     const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+    useEffect(() => {
+        refresh()
+    }, [])
 
     const handleRemove = async (userId: number) => {
         try {

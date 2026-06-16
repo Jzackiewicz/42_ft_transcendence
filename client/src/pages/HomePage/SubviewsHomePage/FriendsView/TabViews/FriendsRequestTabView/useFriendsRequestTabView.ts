@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { acceptFriendRequest, declineFriendRequest, cancelMyFriendRequest } from '../../../../../../api/socialsWrapper'
 import { useFriendsContext } from '../../../../../../context/FriendsListContext'
 import { FriendRequest } from '../../../../../../types/User'
@@ -10,6 +10,10 @@ export function useFriendsRequestTabView() {
     const [error, setError] = useState<string | null>(null)
     const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
+    useEffect( () => {
+        refresh()
+    }, [])
+    
     function showError() {
         clearTimeout(timerRef.current ?? undefined)
         setError('Error during update, try one more time')
