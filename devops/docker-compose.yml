@@ -67,6 +67,10 @@ services:
       dockerfile: devops/nginx/Dockerfile
     env_file:
       - ../.env
+    environment:
+      - HTTP_EXPOSED_PORT=${HTTP_EXPOSED_PORT:-8080}
+      - HTTPS_EXPOSED_PORT=${HTTPS_EXPOSED_PORT:-8443}
+      - DEBUG=${DEBUG:-True}
     ports:
       - "${HTTP_EXPOSED_PORT:-8080}:80"
       - "${HTTPS_EXPOSED_PORT:-8443}:443"

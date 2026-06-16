@@ -131,6 +131,7 @@ dev-down:
 	HTTP_EXPOSED_PORT=$(DEV_HTTP_EXPOSED_PORT) \
 	HTTPS_EXPOSED_PORT=$(DEV_HTTPS_EXPOSED_PORT) \
 	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) down
+	rm -rf client/test-results client/playwright-report client/blob-report
 
 # Stop and wipe dev volumes (Isolated from production)
 dev-clean: check_clean
@@ -205,4 +206,9 @@ fclean: check_fclean clean dev-clean
 
 re: clean up
 
-.PHONY: all up down restart re clean check_clean check_fclean logs dev-logs ps fclean migrate dev-up dev-migrate dev-down dev-clean dev-runserver dev-test dev-createsuperuser dev-shell dev-venv client-install dev-client client-build dev-proxy dev-seed
+# Run frontend tests
+client-test: client-install
+	@echo "Running frontend tests..."
+	cd client && npm run test:e2e
+
+.PHONY: all up down restart re clean check_clean check_fclean logs dev-logs ps fclean migrate dev-up dev-migrate dev-down dev-clean dev-runserver dev-test dev-createsuperuser dev-shell dev-venv client-install dev-client client-build dev-proxy dev-seed client-test
