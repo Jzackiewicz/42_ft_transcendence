@@ -63,6 +63,13 @@ class GameConsumerTests(TransactionTestCase):
 
 		self.application = AuthMiddlewareStack(URLRouter(websocket_urlpatterns))
 
+	def tearDown(self):
+		from channels.layers import get_channel_layer
+		channel_layer = get_channel_layer()
+		if hasattr(channel_layer, 'receive_clean_locks'):
+			channel_layer.receive_clean_locks.locks.clear()
+		super().tearDown()
+
 	async def test_connect_success(self):
 		headers = [(b'cookie', f'sessionid={self.cookie}'.encode('ascii'))]
 		communicator = WebsocketCommunicator(
@@ -753,6 +760,49 @@ class GameConsumerTests(TransactionTestCase):
 		await comm1_new.disconnect()
 		await comm2.disconnect()
 
+	async def test_websocket_multi_tab_connection_tracking(self):
+		headers1 = [(b'cookie', f'sessionid={self.cookie}'.encode('ascii'))]
+		
+		# Tab 1 connects
+		comm1_tab1 = WebsocketCommunicator(
+			self.application, f"/ws/game/{self.session.session_uuid}/", headers=headers1
+		)
+		await comm1_tab1.connect()
+		await comm1_tab1.receive_json_from()
+
+		# Tab 2 connects
+		comm1_tab2 = WebsocketCommunicator(
+			self.application, f"/ws/game/{self.session.session_uuid}/", headers=headers1
+		)
+		await comm1_tab2.connect()
+		await comm1_tab2.receive_json_from()
+		
+		# Verify active_connections is 2 and disconnected_at is None
+		player = await database_sync_to_async(SessionPlayer.objects.get)(id=self.player.id)
+		self.assertEqual(player.active_connections, 2)
+		self.assertIsNone(player.disconnected_at)
+
+		# Disconnect Tab 1
+		await comm1_tab1.disconnect()
+		
+		# Wait briefly for DB update
+		import asyncio
+		await asyncio.sleep(0.1)
+
+		# Verify active_connections is 1 and player is still online
+		player = await database_sync_to_async(SessionPlayer.objects.get)(id=self.player.id)
+		self.assertEqual(player.active_connections, 1)
+		self.assertIsNone(player.disconnected_at)
+
+		# Disconnect Tab 2
+		await comm1_tab2.disconnect()
+		await asyncio.sleep(0.1)
+
+		# Verify active_connections is 0 and disconnected_at is set
+		player = await database_sync_to_async(SessionPlayer.objects.get)(id=self.player.id)
+		self.assertEqual(player.active_connections, 0)
+		self.assertIsNotNone(player.disconnected_at)
+
 	async def test_non_host_cannot_start_game(self):
 		headers = [(b'cookie', f'sessionid={self.cookie2}'.encode('ascii'))]
 		communicator = WebsocketCommunicator(
@@ -1127,3 +1177,101 @@ class GameConsumerTests(TransactionTestCase):
 		response = await communicator.receive_json_from()
 		self.assertEqual(response["type"], "error")
 		await communicator.disconnect()
+
+	async def test_nomination_freeze_bug_reproduction(self):
+		import asyncio
+		from django.utils import timezone
+		from datetime import timedelta
+		from django.conf import settings
+
+		q2 = await database_sync_to_async(Question.objects.create)(question_text="Second?", correct_answer="yes")
+		await database_sync_to_async(SessionQuestion.objects.create)(session=self.session, question=q2, order_index=1)
+		q3 = await database_sync_to_async(Question.objects.create)(question_text="Third?", correct_answer="yes")
+		await database_sync_to_async(SessionQuestion.objects.create)(session=self.session, question=q3, order_index=2)
+
+		self.session.answer_time_limit_ms = 100
+		self.session.nomination_time_limit_ms = 5000
+		self.session.evaluation_time_limit_ms = 100
+		await database_sync_to_async(self.session.save)()
+
+		user3 = await database_sync_to_async(User.objects.create_user)(
+			username="testuser3", password="password", email="testuser3@test.com"
+		)
+		player3 = await database_sync_to_async(SessionPlayer.objects.create)(
+			session=self.session, user=user3, display_name="Player 3", seat_number=3
+		)
+
+		headers1 = [(b'cookie', f'sessionid={self.cookie}'.encode('ascii'))]
+		comm1 = WebsocketCommunicator(self.application, f"/ws/game/{self.session.session_uuid}/", headers=headers1)
+		await comm1.connect()
+		await comm1.receive_json_from()
+
+		headers2 = [(b'cookie', f'sessionid={self.cookie2}'.encode('ascii'))]
+		comm2 = WebsocketCommunicator(self.application, f"/ws/game/{self.session.session_uuid}/", headers=headers2)
+		await comm2.connect()
+		await comm1.receive_json_from()
+		await comm2.receive_json_from()
+
+		client3 = Client()
+		await database_sync_to_async(client3.force_login)(user3)
+		cookie3 = client3.cookies.get('sessionid').value
+		headers3 = [(b'cookie', f'sessionid={cookie3}'.encode('ascii'))]
+		comm3 = WebsocketCommunicator(self.application, f"/ws/game/{self.session.session_uuid}/", headers=headers3)
+		await comm3.connect()
+		await comm1.receive_json_from()
+		await comm2.receive_json_from()
+		await comm3.receive_json_from()
+
+		await comm1.send_json_to({"action": GameAction.START_GAME})
+		res_start = await comm1.receive_json_from()
+		await comm2.receive_json_from()
+		await comm3.receive_json_from()
+
+		current_player_id = res_start["snapshot"]["current_player"]
+		current_comm = comm1 if current_player_id == self.player.id else (comm2 if current_player_id == self.player2.id else comm3)
+
+		await current_comm.send_json_to({
+			"action": GameAction.SUBMIT_ANSWER,
+			"payload": {"answer": "yes"}
+		})
+		await comm1.receive_json_from()
+		await comm2.receive_json_from()
+		await comm3.receive_json_from()
+
+		await asyncio.sleep(0.2)
+		
+		session = await database_sync_to_async(lambda: GameSession.objects.get(id=self.session.id))()
+		self.assertEqual(session.current_status, GameSession.Status.NOMINATION)
+
+		def _set_next_evaluation_limit():
+			s = GameSession.objects.get(id=self.session.id)
+			s.evaluation_time_limit_ms = 5000
+			s.save()
+		await database_sync_to_async(_set_next_evaluation_limit)()
+
+		nominator_id = session.last_correct_player_id
+		nominator_comm = comm1 if nominator_id == self.player.id else (comm2 if nominator_id == self.player2.id else comm3)
+		nominator_user = self.user if nominator_id == self.player.id else (self.user2 if nominator_id == self.player2.id else user3)
+
+		await nominator_comm.disconnect()
+
+		def _expire_nominator():
+			n = SessionPlayer.objects.get(session_id=self.session.id, user=nominator_user)
+			n.disconnected_at = timezone.now() - timedelta(seconds=settings.DISCONNECT_GRACE_PERIOD_S + 1)
+			n.save()
+		await database_sync_to_async(_expire_nominator)()
+
+		other_comm = comm2 if nominator_comm != comm2 else comm3
+		await other_comm.disconnect()
+
+		await asyncio.sleep(0.5)
+
+		session = await database_sync_to_async(lambda: GameSession.objects.get(id=self.session.id))()
+		self.assertEqual(session.current_status, GameSession.Status.EVALUATION)
+
+		if nominator_comm != comm1 and other_comm != comm1:
+			await comm1.disconnect()
+		if nominator_comm != comm2 and other_comm != comm2:
+			await comm2.disconnect()
+		if nominator_comm != comm3 and other_comm != comm3:
+			await comm3.disconnect()

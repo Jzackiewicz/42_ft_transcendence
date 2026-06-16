@@ -31,13 +31,14 @@ class SessionPlayer(models.Model):
 
 	display_name = models.CharField(max_length=100)
 
-	seat_number = models.PositiveIntegerField()
+	seat_number = models.PositiveIntegerField(null=True, blank=True)
 
 	lives = models.PositiveIntegerField(default=DEFAULT_LIVES)
 	points = models.IntegerField(default=0)
 	answered_count = models.PositiveIntegerField(default=0)
 	total_answer_time_ms = models.PositiveIntegerField(default=0)
 	disconnected_at = models.DateTimeField(null=True, blank=True)
+	active_connections = models.PositiveIntegerField(default=0)
 
 	class Meta:
 		ordering = ["session_id", "seat_number"]
