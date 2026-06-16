@@ -100,7 +100,8 @@ class GameService:
 			handle_disconnect_in_answering(self.session, actor)
 
 		actor.lives = 0
-		actor.save(update_fields=['lives'])
+		actor.disconnected_at = timezone.now()
+		actor.save(update_fields=['lives', 'disconnected_at'])
 
 		if self.session.is_game_over():
 			cancel_game(self.session)

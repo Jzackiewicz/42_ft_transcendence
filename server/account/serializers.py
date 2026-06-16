@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
 from .models import UserProfile
+from .presence import PresenceRegistry
 
 # ---------------------------------------------------------------------------
 # User serializers
@@ -64,23 +65,34 @@ class UserUpdateInputSerializer(serializers.Serializer):
 # me
 class UserProfileOutputSerializer(serializers.ModelSerializer):
     user = UserOutputSerializer(read_only=True)
+    is_online = serializers.SerializerMethodField()
 
     class Meta:
         model = UserProfile
         fields = ["id", "user", "avatar", "is_online"]
 
+    def get_is_online(self, profile):
+        # Source of truth is the in-process registry — same as PublicUserSerializer.
+        return PresenceRegistry.is_online(profile.user_id)
+
 
 # expose to other users
 class PublicUserSerializer(serializers.ModelSerializer):
     avatar = serializers.SerializerMethodField()
+    is_online = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ["id", "username", "avatar"]
+        fields = ["id", "username", "avatar", "is_online"]
 
     def get_avatar(self, user):
         return user.profile.avatar_url(self.context.get("request"))
-
+    
+    def get_is_online(self, user):
+        precomputed = self.context.get("online_user_ids")
+        if precomputed is not None:
+            return user.id in precomputed
+        return PresenceRegistry.is_online(user.id)
 
 class UserProfileAvatarInputSerializer(serializers.Serializer):
     avatar = serializers.ImageField()
