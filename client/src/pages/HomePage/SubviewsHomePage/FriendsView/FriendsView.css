@@ -1,0 +1,113 @@
+/* ── CARD HEIGHT ─────────────────────────────────────────────────── */
+.friends-view {
+    height: 300px;
+    overflow: hidden;
+}
+
+.friends-view > *:last-child {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ── TAB BAR ─────────────────────────────────────────────────────── */
+.friends-tabs {
+    display: flex;
+    gap: 8px;
+}
+
+.friends-tab {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--pb);
+    background: transparent;
+    color: var(--dim);
+    font-family: var(--fb);
+    font-size: var(--font-xs);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.friends-tab:hover {
+    color: var(--text);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.friends-tab.active {
+    background: rgba(0, 229, 255, 0.1);
+    border-color: var(--cyan);
+    color: var(--cyan);
+}
+
+/* ── BADGES ──────────────────────────────────────────────────────── */
+.tab-badge {
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 9px;
+    background: rgba(255, 255, 255, 0.12);
+    font-size: 10px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tab-badge--alert {
+    background: var(--magenta);
+    color: #fff;
+}
+
+/* ── SHARED (used by both list and requests tabs) ────────────────── */
+.friend-avatar {
+    position: relative;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--cyan), var(--magenta));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--fd);
+    font-size: 14px;
+    font-weight: 700;
+    color: #000;
+    flex-shrink: 0;
+}
+
+.friend-dot {
+    position: absolute;
+    bottom: 1px;
+    right: 1px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    border: 2px solid var(--panel);
+}
+
+.friend-dot.online  { background: #4ade80; }
+.friend-dot.offline { background: var(--dim); }
+
+.friend-name {
+    flex: 1;
+    font-family: var(--fb);
+    font-size: var(--font-sm);
+    color: var(--text);
+}
+
+.friends-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.friends-scroll::-webkit-scrollbar { width: 4px; }
+.friends-scroll::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+}
