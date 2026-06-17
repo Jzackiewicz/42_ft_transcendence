@@ -3,10 +3,11 @@
 # 42_ft_transcendence
 
 ## 🟥Description🟥 ```overview & clear name```
-**QUIZSENDENCE** is a **Game Show Webapp** that lets you and your friends take part in a gameshow based off <Game_Show_Name>.
+**QUIZSENDENCE** is a **Game Show Webapp** that lets you and your friends take part in a gameshow based off Fifteen to One.
 
 ### Key features ```key features```
-- Login - <Fill_In>
+- Online Multiplayer
+- AI expanded questions
 - <Fill_In>
 
 ### How to win?
@@ -144,7 +145,7 @@ I also explored using Github Copilot to assist me with writing code. I was pleas
 
 ### 🟦 Technical Stack ```frontend stack & framework, backend stack & framework, database system and why it was chosen, any other significant technologies or libraries, justification for major techncal choices```
 - **Frontend technologies and frameworks** - <Fill_In>
-- **Backend techonlogies and frameworks** - <Fill_In>
+- **Backend technologies and frameworks** - <Fill_In>
 - **Database system and why it was chosen** - <Fill_In>
 - **Any other significant technologies or libraries** - <Fill_In>
 - **Justification for major techinical choices** - <Fill_In>
@@ -188,3 +189,20 @@ I also explored using Github Copilot to assist me with writing code. I was pleas
 **Total Points = <total_count>**
 
 ### ⬜️ Individual Contributions ```Detailed breakdown of what each team member contributed, specific features, modules, or components implemented by each person. any challenges faced and how they were overcome.```
+
+#### dbozic
+**AI and RAG SPIKE**
+
+**The AI based Question Expander**
+
+**Peer Review**
+
+**The README.md**
+
+#### itykhono
+
+#### jzackiew
+
+#### mamichal
+
+#### mbudkevi
