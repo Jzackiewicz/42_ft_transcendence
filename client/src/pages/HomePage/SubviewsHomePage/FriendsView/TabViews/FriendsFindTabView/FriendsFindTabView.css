@@ -1,0 +1,78 @@
+.find-row {
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.find-input {
+    flex: 1;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--pb);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text);
+    font-family: var(--fb);
+    font-size: var(--font-sm);
+    outline: none;
+    transition: border-color 0.15s;
+}
+
+.find-input::placeholder { color: var(--dim); }
+.find-input:focus { border-color: var(--cyan); }
+
+.find-btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    background: var(--cyan);
+    color: #000;
+    font-family: var(--fb);
+    font-size: var(--font-sm);
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: box-shadow 0.2s;
+}
+
+.find-btn:hover { box-shadow: 0 0 16px rgba(0, 229, 255, 0.4); }
+
+.find-status {
+    display: block;
+    margin-top: 8px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-family: var(--fb);
+    font-size: var(--font-sm);
+}
+
+.find-status--success {
+    background: rgba(0, 229, 100, 0.12);
+    color: #00e564;
+    border: 1px solid rgba(0, 229, 100, 0.25);
+}
+
+.find-status--error {
+    background: rgba(255, 80, 80, 0.12);
+    color: #ff5050;
+    border: 1px solid rgba(255, 80, 80, 0.25);
+}
+
+.find-results {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    border: 1px solid var(--pb);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.find-result-item {
+    padding: 8px 14px;
+    color: var(--text);
+    font-family: var(--fb);
+    font-size: var(--font-sm);
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.find-result-item:hover { background: rgba(255, 255, 255, 0.07); }
