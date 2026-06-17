@@ -15,6 +15,24 @@
     border-color: rgba(255, 255, 255, 0.12);
 }
 
+.player-tile.clickable {
+    cursor: pointer;
+    border-color: var(--theme-border, rgba(124, 77, 255, 0.4));
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+.player-tile.clickable:hover {
+    background-color: var(--theme-border, rgba(124, 77, 255, 0.15));
+    border-color: var(--theme-accent, #a37eff);
+    box-shadow: 0 0 20px var(--theme-glow, rgba(124, 77, 255, 0.5));
+    transform: translateY(-2px);
+}
+
+.player-tile.clickable:hover .player-name-alive {
+    color: #ffffff;
+    text-shadow: 0 0 8px var(--theme-accent, rgba(124, 77, 255, 0.8));
+}
+
 .player-tile.active {
     border-color: var(--cyan);
     background-color: rgba(0, 229, 255, 0.04);

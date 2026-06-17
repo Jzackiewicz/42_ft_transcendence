@@ -7,6 +7,8 @@ interface PlayerTileProps {
     isPlayerHost: boolean;
     isPlayerActive: boolean;
     isPlayerNominator: boolean;
+    isClickable?: boolean;
+    onClick?: () => void;
 }
 
 export function PlayerTile({
@@ -14,7 +16,9 @@ export function PlayerTile({
     isCurrentUser,
     isPlayerHost,
     isPlayerActive,
-    isPlayerNominator
+    isPlayerNominator,
+    isClickable = false,
+    onClick
 }: PlayerTileProps) {
     const { display_name, lives, points, is_alive } = player;
 
@@ -28,11 +32,12 @@ export function PlayerTile({
         isPlayerActive ? 'active' : '',
         isCurrentUser ? 'current-user' : '',
         !is_alive ? 'eliminated' : '',
-        !player.is_online ? 'offline' : ''
+        !player.is_online ? 'offline' : '',
+        isClickable ? 'clickable' : ''
     ].filter(Boolean).join(' ');
 
     return (
-        <div className={tileClasses}>
+        <div className={tileClasses} onClick={isClickable ? onClick : undefined}>
             <div className="player-tile-header">
                 <div className="player-tile-user-info">
                     {player.avatar ? (

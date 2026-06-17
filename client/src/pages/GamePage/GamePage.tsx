@@ -98,7 +98,7 @@ export function GamePage() {
     };
 
     const { sessionUuid, errorMsg, setErrorMsg } = connection;
-    const { gameState, gameStarted, timeLeft, hostPlayerId, isSpectator, currentPlayerObj } = sessionState;
+    const { gameState, gameStarted, timeLeft, hostPlayerId, isSpectator, currentPlayerObj, eligiblePlayers } = sessionState;
 
     return (
         <div className={`game-page-container phase-${gameState?.current_status || 'none'}`}>
@@ -139,16 +139,25 @@ export function GamePage() {
                         <div className="game-sidebar section-card">
                             <h3 className="game-sidebar-title section-title">Players</h3>
                             <div className="game-players-list">
-                                {gameState.players.map((player) => (
-                                    <PlayerTile
-                                        key={player.id}
-                                        player={player}
-                                        isCurrentUser={player.id === currentPlayerObj?.id || (player.user_id !== null && player.user_id !== undefined && player.user_id === user?.id)}
-                                        isPlayerHost={player.id === hostPlayerId}
-                                        isPlayerActive={player.id === gameState.current_player}
-                                        isPlayerNominator={player.id === gameState.last_correct_player}
-                                    />
-                                ))}
+                                {gameState.players.map((player) => {
+                                    const isCurrentNominator = gameState.last_correct_player === currentPlayerObj?.id;
+                                    const isInNominationPhase = gameState.current_status === GameStatus.NOMINATION;
+                                    const isEligible = eligiblePlayers.some(p => p.id === player.id);
+                                    const isClickable = isInNominationPhase && isCurrentNominator && isEligible;
+
+                                    return (
+                                        <PlayerTile
+                                            key={player.id}
+                                            player={player}
+                                            isCurrentUser={player.id === currentPlayerObj?.id || (player.user_id !== null && player.user_id !== undefined && player.user_id === user?.id)}
+                                            isPlayerHost={player.id === hostPlayerId}
+                                            isPlayerActive={player.id === gameState.current_player}
+                                            isPlayerNominator={player.id === gameState.last_correct_player}
+                                            isClickable={isClickable}
+                                            onClick={() => gameActions.nominatePlayer(player.id)}
+                                        />
+                                    );
+                                })}
                             </div>
                         </div>
 
