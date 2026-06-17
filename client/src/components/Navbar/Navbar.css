@@ -100,27 +100,6 @@
     flex: 1;
 }
 
-.app-nav-btn {
-    padding: 7px 18px;
-    border-radius: var(--radius-sm);
-    border: none;
-    background: var(--cyan);
-    color: #000;
-    font-family: var(--fb);
-    font-size: var(--font-sm);
-    font-weight: 700;
-    cursor: pointer;
-    transition: box-shadow 0.2s, transform 0.1s;
-}
-
-.app-nav-btn:hover {
-    box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
-}
-
-.app-nav-btn:active {
-    transform: scale(0.98);
-}
-
 /* ── RESPONSIVENESS ─────────────────────────────────────────────── */
 @media (max-width: 600px) {
     .app-nav {
@@ -143,7 +122,7 @@
         font-size: var(--font-sm);
         margin-left: 0;
     }
-    .app-nav-btn {
+    .app-btn {
         padding: 6px 12px;
         font-size: var(--font-xs);
     }

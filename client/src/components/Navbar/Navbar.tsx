@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Button } from '../Button/Button';
 import './Navbar.css';
 
 interface NavbarProps {
@@ -39,9 +40,9 @@ export function Navbar({ sessionUuid, actionButtonText, onActionButtonClick }: N
                 </div>
             )}
 
-            <button className="app-nav-btn" onClick={onActionButtonClick}>
+            <Button onClick={onActionButtonClick}>
                 {actionButtonText}
-            </button>
+            </Button>
         </nav>
     );
 }
