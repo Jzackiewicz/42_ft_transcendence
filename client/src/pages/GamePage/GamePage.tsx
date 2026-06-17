@@ -161,12 +161,17 @@ export function GamePage() {
                                 {gameState.current_status === GameStatus.EVALUATION && "ANSWER REVEAL"}
                                 {gameState.current_status === GameStatus.GAME_OVER && "GAME OVER"}
                             </h3>
-                            {/* Question & Timer HUD if the game has started */}
-                            {gameStarted && (
+                            {/* Question & Timer HUD */}
+                            {gameState.current_status !== GameStatus.GAME_OVER && (
                                 <GameHUD
                                     questionAskedCount={gameState.question_asked_count}
                                     totalQuestionsCount={gameState.total_questions_count}
                                     timeLeft={timeLeft}
+                                    timeLimitSeconds={gameState.answer_time_limit_ms / 1000}
+                                    nominationTimeLimitSeconds={gameState.nomination_time_limit_ms / 1000}
+                                    maxPlayers={gameState.max_players}
+                                    isLobby={gameState.current_status === GameStatus.LOBBY}
+                                    isEvaluation={gameState.current_status === GameStatus.EVALUATION}
                                 />
                             )}
                             {renderActiveView()}
