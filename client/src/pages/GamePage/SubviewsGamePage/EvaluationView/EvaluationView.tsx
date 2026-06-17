@@ -38,7 +38,6 @@ export function EvaluationView({
 
     return (
         <div className={`evaluation-view-container ${statusClass}`}>
-            <h2>Evaluation Phase</h2>
             
             <div className="eval-question-info">
                 <span className="eval-category">[{category}]</span>

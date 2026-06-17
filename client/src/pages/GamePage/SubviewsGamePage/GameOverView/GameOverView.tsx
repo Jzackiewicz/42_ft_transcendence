@@ -46,7 +46,6 @@ export function GameOverView({ winnerId, winnerName, endReason, players, onRetur
 
     return (
         <div className="game-over-container">
-            <h2 className="game-over-title">Game Over!</h2>
 
             <div className="game-over-winner-card">
                 <div className="game-over-winner-name">

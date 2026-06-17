@@ -18,7 +18,6 @@ export function LobbyView({
 }: LobbyViewProps) {
     return (
         <div className="lobby-view-container">
-            <h2>Lobby</h2>
             
             {isHost ? (
                 <div>

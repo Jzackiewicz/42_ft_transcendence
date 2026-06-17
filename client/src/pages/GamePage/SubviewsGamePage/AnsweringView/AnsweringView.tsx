@@ -26,7 +26,6 @@ export function AnsweringView({
 
     return (
         <div className="answering-view-container">
-            <h2>Answering Phase</h2>
             
             <div className="answering-question-box">
                 <div className="answering-category">

@@ -136,8 +136,8 @@ export function GamePage() {
                     <div className="game-main-layout">
 
                         {/* Players List Sidebar (Always Visible) */}
-                        <div className="game-sidebar">
-                            <h3 className="game-sidebar-title">Players</h3>
+                        <div className="game-sidebar section-card">
+                            <h3 className="game-sidebar-title section-title">Players</h3>
                             <div className="game-players-list">
                                 {gameState.players.map((player) => (
                                     <PlayerTile
@@ -153,7 +153,14 @@ export function GamePage() {
                         </div>
 
                         {/* Active State View Component */}
-                        <div className="game-active-area">
+                        <div className="game-active-area section-card">
+                            <h3 className="game-active-title section-title">
+                                {gameState.current_status === GameStatus.LOBBY && "LOBBY"}
+                                {gameState.current_status === GameStatus.ANSWERING && "ANSWER TO THE QUESTION"}
+                                {gameState.current_status === GameStatus.NOMINATION && "NOMINATE NEXT PLAYER"}
+                                {gameState.current_status === GameStatus.EVALUATION && "ANSWER REVEAL"}
+                                {gameState.current_status === GameStatus.GAME_OVER && "GAME OVER"}
+                            </h3>
                             {/* Question & Timer HUD if the game has started */}
                             {gameStarted && (
                                 <GameHUD

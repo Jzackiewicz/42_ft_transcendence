@@ -35,7 +35,6 @@ export function NominationView({
 
     return (
         <div className="nomination-view-container">
-            <h2>Nomination Phase</h2>
 
             {isCurrentNominator ? (
                 <div className="nomination-active-prompt">
