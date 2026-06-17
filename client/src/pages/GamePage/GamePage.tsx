@@ -8,6 +8,8 @@ import { EvaluationView } from './SubviewsGamePage/EvaluationView/EvaluationView
 import { GameOverView } from './SubviewsGamePage/GameOverView/GameOverView';
 import { PlayerTile } from './SubviewsGamePage/PlayerTile/PlayerTile';
 import { GameHUD } from './SubviewsGamePage/GameHUD/GameHUD';
+import BlinkingSpaceBGDiv from '../../components/BlinkingSpaceBGDiv';
+import { Navbar } from '../../components/Navbar/Navbar';
 import './GamePage.css';
 
 export function GamePage() {
@@ -100,75 +102,77 @@ export function GamePage() {
 
     return (
         <div className="game-page-container">
-            {/* Top Bar (Session Code & Leave Button) */}
-            <div className="game-top-bar">
-                <h1>Quizscendence</h1>
-                <div className="game-top-bar-right">
-                    <div><strong>SESSION CODE:</strong> {sessionUuid || 'None'}</div>
-                    <button onClick={connection.leaveGame} className="btn-leave">Leave Game</button>
-                </div>
-            </div>
+            <BlinkingSpaceBGDiv />
 
-            {/* Spectator Mode Warning Banner */}
-            {isSpectator && (
-                <div className="spectator-banner">
-                    👁️ SPECTATOR MODE — You are watching this match.
-                </div>
-            )}
+            {/* ── Nav ── */}
+            <Navbar 
+                sessionUuid={sessionUuid}
+                actionButtonText="Leave Game"
+                onActionButtonClick={connection.leaveGame}
+            />
 
-            {/* Error Banner */}
-            {errorMsg && (
-                <div className="game-error-banner">
-                    <span><strong>Error:</strong> {errorMsg}</span>
-                    <button 
-                        onClick={() => setErrorMsg(null)} 
-                        className="btn-error-close"
-                    >
-                        &times;
-                    </button>
-                </div>
-            )}
+            <div className="game-page-content">
+                {/* Spectator Mode Warning Banner */}
+                {isSpectator && (
+                    <div className="spectator-banner">
+                        👁️ SPECTATOR MODE — You are watching this match.
+                    </div>
+                )}
 
-            {gameState ? (
-                <div className="game-main-layout">
-                    
-                    {/* Players List Sidebar (Always Visible) */}
-                    <div className="game-sidebar">
-                        <h3 className="game-sidebar-title">Players</h3>
-                        <div className="game-players-list">
-                            {gameState.players.map((player) => (
-                                <PlayerTile
-                                    key={player.id}
-                                    player={player}
-                                    isCurrentUser={player.id === currentPlayerObj?.id || (player.user_id !== null && player.user_id !== undefined && player.user_id === user?.id)}
-                                    isPlayerHost={player.id === hostPlayerId}
-                                    isPlayerActive={player.id === gameState.current_player}
-                                    isPlayerNominator={player.id === gameState.last_correct_player}
-                                />
-                            ))}
+                {/* Error Banner */}
+                {errorMsg && (
+                    <div className="game-error-banner">
+                        <span><strong>Error:</strong> {errorMsg}</span>
+                        <button 
+                            onClick={() => setErrorMsg(null)} 
+                            className="btn-error-close"
+                        >
+                            &times;
+                        </button>
+                    </div>
+                )}
+
+                {gameState ? (
+                    <div className="game-main-layout">
+                        
+                        {/* Players List Sidebar (Always Visible) */}
+                        <div className="game-sidebar">
+                            <h3 className="game-sidebar-title">Players</h3>
+                            <div className="game-players-list">
+                                {gameState.players.map((player) => (
+                                    <PlayerTile
+                                        key={player.id}
+                                        player={player}
+                                        isCurrentUser={player.id === currentPlayerObj?.id || (player.user_id !== null && player.user_id !== undefined && player.user_id === user?.id)}
+                                        isPlayerHost={player.id === hostPlayerId}
+                                        isPlayerActive={player.id === gameState.current_player}
+                                        isPlayerNominator={player.id === gameState.last_correct_player}
+                                    />
+                                ))}
+                            </div>
                         </div>
-                    </div>
 
-                    {/* Active State View Component */}
-                    <div className="game-active-area">
-                        {/* Question & Timer HUD if the game has started */}
-                        {gameStarted && (
-                            <GameHUD
-                                questionAskedCount={gameState.question_asked_count}
-                                totalQuestionsCount={gameState.total_questions_count}
-                                timeLeft={timeLeft}
-                            />
-                        )}
-                        {renderActiveView()}
-                    </div>
+                        {/* Active State View Component */}
+                        <div className="game-active-area">
+                            {/* Question & Timer HUD if the game has started */}
+                            {gameStarted && (
+                                <GameHUD
+                                    questionAskedCount={gameState.question_asked_count}
+                                    totalQuestionsCount={gameState.total_questions_count}
+                                    timeLeft={timeLeft}
+                                />
+                            )}
+                            {renderActiveView()}
+                        </div>
 
-                </div>
-            ) : (
-                <div className="game-loading-banner">
-                    <h3>Waiting for Game Snapshot...</h3>
-                    <p>Connection established. Awaiting state from the server...</p>
-                </div>
-            )}
+                    </div>
+                ) : (
+                    <div className="game-loading-banner">
+                        <h3>Waiting for Game Snapshot...</h3>
+                        <p>Connection established. Awaiting state from the server...</p>
+                    </div>
+                )}
+            </div>
         </div>
     );
 }

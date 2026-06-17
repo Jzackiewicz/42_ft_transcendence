@@ -3,6 +3,7 @@ import AccountHeader from './SubviewsHomePage/AccountHeader/AccountHeader'
 import FriendsView from './SubviewsHomePage/FriendsView/FriendsView'
 import ChatContainer from './SubviewsHomePage/ChatContainer/ChatContainer'
 import SolarSystem from './SubviewsHomePage/Solar/SolarSystem'
+import { Navbar } from '../../components/Navbar/Navbar'
 
 import './HomePage.css'
 
@@ -25,11 +26,10 @@ export function HomePage() {
             <BlinkingSpaceBGDiv />
 
             {/* ── Nav ── */}
-            <nav className="home-nav">
-                <div className="home-nav-logo"><span className="logo-quiz">QUIZ</span>SENDENCE</div>
-                <div className="home-nav-space" />
-                <button className="home-nav-play" onClick={handleLogout}>Logout</button>
-            </nav>
+            <Navbar 
+                actionButtonText="Logout"
+                onActionButtonClick={handleLogout}
+            />
 
             {/* ── Join modal ── */}
             {showJoinModal && (
