@@ -16,7 +16,7 @@ from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from drf_spectacular.utils import extend_schema
 from drf_spectacular.types import OpenApiTypes
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, get_user_model
 from .permissions import IsSelfOrReadOnly, IsAnonymous
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
@@ -45,6 +45,7 @@ from .services import (
     profile_clear_avatar,
 )
 
+User = get_user_model()
 
 # ---------------------------------------------------------------------------
 # User endpoints
@@ -254,26 +255,26 @@ class UserLoginApi(APIView):
         description="Login",
     )
     def post(self, request):
-        # validate incoming data
+        # validate input
         input_serializer = UserLoginInputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
 
-        # verify credentials, return None if wrong
-        user = authenticate(
-            request,
-            username=input_serializer.validated_data["username"],
-            password=input_serializer.validated_data["password"],
-        )
+        identifier = input_serializer.validated_data["identifier"]
+        password = input_serializer.validated_data["password"]
 
-        if user is None:
+        if "@" in identifier:
+            user = User.objects.filter(email__iexact=identifier).first()
+        else:
+            user = User.objects.filter(username__iexact=identifier).first()
+
+        if user is None or not user.is_active or not user.check_password(password):
+            User().set_password(password)
             return Response(
                 {"detail": "Invalid credentials."},
                 status=status.HTTP_401_UNAUTHORIZED,
             )
 
-        # mark user as logged in & remember for future requests
         login(request, user)
-
         return Response(UserOutputSerializer(user).data, status=status.HTTP_200_OK)
 
 
