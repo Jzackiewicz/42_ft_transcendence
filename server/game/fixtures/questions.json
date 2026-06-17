@@ -1,0 +1,236 @@
+[
+  {
+    "model": "game.question",
+    "pk": 1,
+    "fields": {
+      "question_text": "Which religion forbids eating beef?",
+      "correct_answer": "Hinduism | Hindu | Jainism | Jain",
+      "category": "general"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 2,
+    "fields": {
+      "question_text": "Which technology is named after King Harald, the 10th-century ruler of Denmark and Norway?",
+      "correct_answer": "Bluetooth",
+      "category": "technology"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 3,
+    "fields": {
+      "question_text": "Which of the 50 US states joined the union last?",
+      "correct_answer": "Hawaii",
+      "category": "geography"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 4,
+    "fields": {
+      "question_text": "Which country declared independence in 2008, making it the youngest in Europe?",
+      "correct_answer": "Kosovo",
+      "category": "geography"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 5,
+    "fields": {
+      "question_text": "Which basketball player is the only person to win both an Olympic gold medal and an Oscar?",
+      "correct_answer": "Kobe Bryant | Kobe",
+      "category": "sports"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 6,
+    "fields": {
+      "question_text": "Which company created the Unreal Engine game engine?",
+      "correct_answer": "Epic Games | Epic",
+      "category": "technology"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 7,
+    "fields": {
+      "question_text": "What is the term for the spontaneous emission of radiation by unstable atomic nuclei?",
+      "correct_answer": "Radioactivity",
+      "category": "science"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 8,
+    "fields": {
+      "question_text": "Who was the longest-reigning queen in British history?",
+      "correct_answer": "Queen Elizabeth II | Elizabeth II | Elizabeth 2 | Queen Elizabeth 2",
+      "category": "history"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 9,
+    "fields": {
+      "question_text": "How many countries are member states of the United Nations?",
+      "correct_answer": "193",
+      "category": "general"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 10,
+    "fields": {
+      "question_text": "Which female pilot became the first to fly solo across the Atlantic Ocean in 1932?",
+      "correct_answer": "Amelia Earhart | Earhart",
+      "category": "history"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 11,
+    "fields": {
+      "question_text": "What was the name of the sheep that became the first mammal cloned from an adult cell?",
+      "correct_answer": "Dolly | Dolly the sheep | Sheep Dolly",
+      "category": "science"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 12,
+    "fields": {
+      "question_text": "What is the longest river in Great Britain?",
+      "correct_answer": "Severn | River Severn",
+      "category": "geography"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 13,
+    "fields": {
+      "question_text": "Which programming language was named after a type of coffee from an Indonesian island?",
+      "correct_answer": "Java",
+      "category": "technology"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 14,
+    "fields": {
+      "question_text": "How many players participate in a game of bridge?",
+      "correct_answer": "4 | four",
+      "category": "general"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 15,
+    "fields": {
+      "question_text": "What term is used for the region of Northwest Africa that includes Morocco, Algeria, and Tunisia?",
+      "correct_answer": "Maghreb",
+      "category": "geography"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 16,
+    "fields": {
+      "question_text": "Which planet is home to Olympus Mons, the tallest volcano in the Solar System?",
+      "correct_answer": "Mars",
+      "category": "science"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 17,
+    "fields": {
+      "question_text": "In which field did Winston Churchill receive the Nobel Prize in 1953?",
+      "correct_answer": "Literature",
+      "category": "history"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 18,
+    "fields": {
+      "question_text": "What is the longest river in France?",
+      "correct_answer": "Loire | River Loire | Loire River",
+      "category": "geography"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 19,
+    "fields": {
+      "question_text": "Which operating system uses a penguin named Tux as its mascot?",
+      "correct_answer": "Linux",
+      "category": "technology"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 20,
+    "fields": {
+      "question_text": "Who formulated the three laws of motion that form the basis of classical mechanics?",
+      "correct_answer": "Isaac Newton | Newton",
+      "category": "science"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 21,
+    "fields": {
+      "question_text": "What word does the letter 'G' stand for in '5G' mobile technology?",
+      "correct_answer": "Generation",
+      "category": "technology"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 22,
+    "fields": {
+      "question_text": "Which chemical element with the symbol Fe is the main component of steel?",
+      "correct_answer": "Iron",
+      "category": "science"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 23,
+    "fields": {
+      "question_text": "What is the common name of the chemical compound with the formula NaCl?",
+      "correct_answer": "Salt | Table salt | Sodium chloride",
+      "category": "science"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 24,
+    "fields": {
+      "question_text": "Which chemical element is the primary component of diamond?",
+      "correct_answer": "Carbon | C",
+      "category": "science"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 25,
+    "fields": {
+      "question_text": "Name any country that shares a land border with the United Kingdom.",
+      "correct_answer": "Ireland | Spain | Cyprus",
+      "category": "geography"
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 26,
+    "fields": {
+      "question_text": "Which continent or geographic region is represented by the green ring on the Olympic flag?",
+      "correct_answer": "Australia | Oceania | Australia and Oceania",
+      "category": "sports"
+    }
+  }
+]

@@ -1022,6 +1022,56 @@ class GameStateSnapshotTests(TestCase):
 		self.assertEqual(data["current_attempt"]["correct_answer"], "4")
 		self.assertEqual(data["current_attempt"]["evaluation_status"], "evaluated")
 
+	def test_snapshot_evaluation_phase_reveals_matched_alternative_on_success(self):
+		self.q1.correct_answer = "Hinduism | Hindu | Jainism | Jain"
+		self.q1.save()
+
+		self.session.current_status = GameSession.Status.EVALUATION
+		attempt = AnswerAttempt.objects.create(
+			session=self.session,
+			player=self.p1,
+			session_question=self.sq1,
+			answer_text="Jain",
+			is_correct=True,
+			evaluation_status=AnswerAttempt.EvaluationStatus.EVALUATED,
+			started_at=timezone.now(),
+			evaluated_at=timezone.now(),
+		)
+		self.session.current_attempt = attempt
+		self.session.save()
+
+		serializer = GameStateSnapshotSerializer(self.session)
+		data = serializer.data
+
+		self.assertEqual(data["current_status"], "evaluation")
+		self.assertIsNotNone(data["current_attempt"])
+		self.assertEqual(data["current_attempt"]["correct_answer"], "Jain")
+
+	def test_snapshot_evaluation_phase_reveals_first_alternative_on_failure(self):
+		self.q1.correct_answer = "Hinduism | Hindu | Jainism | Jain"
+		self.q1.save()
+
+		self.session.current_status = GameSession.Status.EVALUATION
+		attempt = AnswerAttempt.objects.create(
+			session=self.session,
+			player=self.p1,
+			session_question=self.sq1,
+			answer_text="wrong answer",
+			is_correct=False,
+			evaluation_status=AnswerAttempt.EvaluationStatus.EVALUATED,
+			started_at=timezone.now(),
+			evaluated_at=timezone.now(),
+		)
+		self.session.current_attempt = attempt
+		self.session.save()
+
+		serializer = GameStateSnapshotSerializer(self.session)
+		data = serializer.data
+
+		self.assertEqual(data["current_status"], "evaluation")
+		self.assertIsNotNone(data["current_attempt"])
+		self.assertEqual(data["current_attempt"]["correct_answer"], "Hinduism")
+
 	def test_snapshot_other_phase_with_evaluated_attempt_hides_correct_answer(self):
 		# Safe measure: even if evaluation_status is EVALUATED, if state is not EVALUATION, hide correct answer
 		self.session.current_status = GameSession.Status.NOMINATION

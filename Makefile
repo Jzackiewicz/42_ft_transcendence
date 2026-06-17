@@ -39,8 +39,9 @@ up:
 	sleep 5
 	@echo "Creating superuser if not exists (Production)..."
 	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(PROD_PROJECT) exec -e DJANGO_SUPERUSER_PASSWORD=$(DJANGO_SUPERUSER_PASSWORD) api python manage.py createsuperuser --noinput || true
-	@echo "Seeding questions (Production)..."
-	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(PROD_PROJECT) exec api python manage.py seed-questions || true
+	@echo "Seeding database (Production)..."
+	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(PROD_PROJECT) exec api python manage.py loaddata questions || true
+
 
 # Stop the stack
 down:
@@ -76,6 +77,11 @@ migrate:
 	@echo "Running migrations (Production)..."
 	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(PROD_PROJECT) exec api python manage.py migrate
 
+# Seed database in production stack
+seed:
+	@echo "Seeding database (Production)..."
+	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(PROD_PROJECT) exec api python manage.py loaddata questions
+
 # Create and setup virtual environment
 dev-venv:
 	@if [ ! -d ".venv" ]; then \
@@ -100,8 +106,9 @@ dev-up: dev-venv client-install
 	sleep 5
 	@echo "Creating superuser if not exists (Dev)..."
 	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) exec -e DJANGO_SUPERUSER_PASSWORD=$(DJANGO_SUPERUSER_PASSWORD) api python manage.py createsuperuser --noinput || true
-	@echo "Seeding questions (Dev)..."
-	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) exec api python manage.py seed-questions || true
+	@echo "Seeding database (Dev)..."
+	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) exec api python manage.py loaddata questions || true
+
 
 dev-shell: dev-up
 	@echo "Opening Django shell locally..."
@@ -119,7 +126,7 @@ dev-migrate: dev-up
 # Seed questions locally
 dev-seed: dev-up
 	@echo "Seeding questions locally (Dev)..."
-	cd server && DB_HOST=127.0.0.1 DB_PORT=$(DEV_DB_EXPOSED_PORT) REDIS_HOST=127.0.0.1 REDIS_PORT=$(DEV_REDIS_EXPOSED_PORT) $(VENV_PYTHON) manage.py seed-questions
+	cd server && DB_HOST=127.0.0.1 DB_PORT=$(DEV_DB_EXPOSED_PORT) REDIS_HOST=127.0.0.1 REDIS_PORT=$(DEV_REDIS_EXPOSED_PORT) $(VENV_PYTHON) manage.py loaddata questions
 
 
 # Stop only DB and Redis
@@ -211,4 +218,4 @@ client-test: client-install
 	@echo "Running frontend tests..."
 	cd client && npm run test:e2e
 
-.PHONY: all up down restart re clean check_clean check_fclean logs dev-logs ps fclean migrate dev-up dev-migrate dev-down dev-clean dev-runserver dev-test dev-createsuperuser dev-shell dev-venv client-install dev-client client-build dev-proxy dev-seed client-test
+.PHONY: all up down restart re clean check_clean check_fclean logs dev-logs ps fclean migrate dev-up dev-migrate dev-down dev-clean dev-runserver dev-test dev-createsuperuser dev-shell dev-venv client-install dev-client client-build dev-proxy dev-seed client-test seed
