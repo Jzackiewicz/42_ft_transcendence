@@ -1,26 +1,5 @@
 .evaluation-view-container {
-    padding: 20px;
-    border-radius: 4px;
-    background-color: #000;
     color: #fff;
-    margin-bottom: 20px;
-}
-
-/* Minimal dashed border color overrides based on verdict */
-.evaluation-view-container.eval-correct {
-    border: 1px dashed #4caf50;
-}
-
-.evaluation-view-container.eval-wrong {
-    border: 1px dashed #f44336;
-}
-
-.evaluation-view-container.eval-timeout {
-    border: 1px dashed #ff9800;
-}
-
-.evaluation-view-container.eval-pending {
-    border: 1px dashed #555;
 }
 
 .eval-question-info {

@@ -3,14 +3,12 @@
     justify-content: space-between;
     align-items: center;
     gap: 15px;
-    margin-bottom: 20px;
-    padding: 12px 18px;
-    background-color: #000;
-    border: 1px solid #444;
-    border-left: 4px solid #8f9eff;
-    border-radius: 4px;
+    margin-bottom: 8px;
+    padding: 0 0 16px 0;
+    border-bottom: 1px solid var(--border);
     color: #fff;
     box-sizing: border-box;
+    width: 100%;
 }
 
 .hud-progress,

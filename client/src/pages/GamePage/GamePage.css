@@ -23,15 +23,17 @@
 }
 
 .game-error-banner {
-    color: #ff8a80;
-    background-color: #3b0000;
-    border: 1px solid #d32f2f;
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 4px;
+    color: var(--text);
+    background: rgba(255, 23, 68, 0.08);
+    border: 1px solid rgba(255, 23, 68, 0.2);
+    padding: 14px 20px;
+    border-radius: var(--radius-sm);
     display: flex;
     justify-content: space-between;
     align-items: center;
+    font-family: var(--fb);
+    font-size: var(--font-sm);
+    box-shadow: 0 0 15px rgba(255, 23, 68, 0.1);
 }
 
 .btn-error-close {
@@ -39,29 +41,27 @@
     border: none;
     font-size: 20px;
     cursor: pointer;
-    color: #ff8a80;
+    color: var(--red);
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+.btn-error-close:hover {
+    opacity: 1;
 }
 
 .game-main-layout {
     display: flex;
-    gap: 20px;
+    gap: 28px;
     flex-wrap: wrap;
+    align-items: stretch;
 }
 
 .game-sidebar {
     flex: 1 1 280px;
     min-width: 250px;
-    border: 1px solid #444;
-    padding: 15px;
-    border-radius: 4px;
-    background-color: #000;
 }
 
-.game-sidebar-title {
-    margin: 0 0 15px 0;
-    border-bottom: 1px solid #444;
-    padding-bottom: 8px;
-}
 
 .game-players-list {
     display: flex;
@@ -72,36 +72,60 @@
 .game-active-area {
     flex: 2 1 500px;
     min-width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
 }
 
 .game-question-counter {
-    margin-bottom: 15px;
-    padding: 10px;
-    background-color: #000;
-    border-radius: 4px;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: var(--radius-sm);
     font-weight: bold;
-    color: #8f9eff;
-    border: 1px solid #444;
-    border-left: 4px solid #3f51b5;
+    color: var(--cyan);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--cyan);
+    font-family: var(--fb);
+    font-size: var(--font-sm);
+    letter-spacing: 0.5px;
 }
 
 .game-loading-banner {
-    margin: 20px 0;
-    padding: 20px;
-    border: 1px dashed #444;
+    background: var(--panel);
+    border: 1px dashed var(--pb);
+    border-radius: 14px;
+    padding: 40px;
     text-align: center;
-    background-color: #000;
+    font-family: var(--fb);
+    color: var(--dim);
+    backdrop-filter: blur(10px);
+}
+
+.game-loading-banner h3 {
+    font-family: var(--fd);
+    font-size: var(--font-2xl);
+    color: var(--cyan);
+    margin: 0 0 12px 0;
+    letter-spacing: 0.5px;
+}
+
+.game-loading-banner p {
+    margin: 0;
+    font-size: var(--font-md);
 }
 
 .spectator-banner {
-    background: linear-gradient(135deg, #4a154b, #2c0e2d);
-    color: #f7a4ff;
-    border: 1px solid #7b2cbf;
-    padding: 12px;
-    margin-bottom: 20px;
-    border-radius: 4px;
-    font-weight: bold;
+    background: rgba(124, 77, 255, 0.08);
+    color: var(--violet);
+    border: 1px solid rgba(124, 77, 255, 0.2);
+    padding: 14px 20px;
+    border-radius: var(--radius-sm);
+    font-family: var(--fb);
+    font-size: var(--font-sm);
+    font-weight: 700;
     text-align: center;
-    box-shadow: 0 0 10px rgba(123, 44, 191, 0.3);
     letter-spacing: 1px;
+    box-shadow: 0 0 15px rgba(124, 77, 255, 0.1);
 }
+
+
