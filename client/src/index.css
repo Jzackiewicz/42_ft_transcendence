@@ -82,3 +82,29 @@ body {
         opacity: 0.2;
     }
 }
+
+/* ── SHARED UTILITIES / COMPONENTS ───────────────────────────────── */
+.section-card {
+    background: var(--panel);
+    border: 1px solid var(--pb);
+    border-radius: 14px;
+    padding: 24px 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    backdrop-filter: blur(10px);
+}
+
+.section-title {
+    font-family: var(--fd);
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--text);
+    margin: 0;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
