@@ -31,7 +31,7 @@ export function GamePage() {
         switch (gameState.current_status) {
             case GameStatus.LOBBY: {
                 return (
-                    <LobbyView 
+                    <LobbyView
                         isHost={isHost}
                         playersCount={gameState.players.length}
                         onStartGame={gameActions.startGame}
@@ -42,7 +42,7 @@ export function GamePage() {
             }
             case GameStatus.ANSWERING: {
                 return (
-                    <AnsweringView 
+                    <AnsweringView
                         questionText={gameState.current_question?.question?.question_text || ''}
                         category={gameState.current_question?.question?.category || ''}
                         isCurrentAnswering={gameState.current_player === currentPlayerObj?.id}
@@ -53,7 +53,7 @@ export function GamePage() {
             }
             case GameStatus.NOMINATION: {
                 return (
-                    <NominationView 
+                    <NominationView
                         isCurrentNominator={gameState.last_correct_player === currentPlayerObj?.id}
                         nominatorName={gameState.players.find(p => p.id === gameState.last_correct_player)?.display_name || 'Someone'}
                         eligiblePlayers={eligiblePlayers}
@@ -65,7 +65,7 @@ export function GamePage() {
                 const attempt = gameState.current_attempt;
                 const activePlayer = gameState.players.find(p => p.id === attempt?.player);
                 return (
-                    <EvaluationView 
+                    <EvaluationView
                         answerText={attempt?.answer_text || null}
                         correctAnswer={attempt?.correct_answer || ''}
                         playerName={activePlayer?.display_name || 'Unknown'}
@@ -78,7 +78,7 @@ export function GamePage() {
             }
             case GameStatus.GAME_OVER: {
                 return (
-                    <GameOverView 
+                    <GameOverView
                         winnerId={gameState.winner}
                         winnerName={gameState.players.find(p => p.id === gameState.winner)?.display_name || ''}
                         endReason={gameState.end_reason || ''}
@@ -105,7 +105,7 @@ export function GamePage() {
             <BlinkingSpaceBGDiv />
 
             {/* ── Nav ── */}
-            <Navbar 
+            <Navbar
                 sessionUuid={sessionUuid}
                 actionButtonText="Leave Game"
                 onActionButtonClick={connection.leaveGame}
@@ -123,8 +123,8 @@ export function GamePage() {
                 {errorMsg && (
                     <div className="game-error-banner">
                         <span><strong>Error:</strong> {errorMsg}</span>
-                        <button 
-                            onClick={() => setErrorMsg(null)} 
+                        <button
+                            onClick={() => setErrorMsg(null)}
                             className="btn-error-close"
                         >
                             &times;
@@ -134,7 +134,7 @@ export function GamePage() {
 
                 {gameState ? (
                     <div className="game-main-layout">
-                        
+
                         {/* Players List Sidebar (Always Visible) */}
                         <div className="game-sidebar">
                             <h3 className="game-sidebar-title">Players</h3>

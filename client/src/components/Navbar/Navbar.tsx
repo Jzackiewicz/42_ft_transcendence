@@ -22,11 +22,11 @@ export function Navbar({ sessionUuid, actionButtonText, onActionButtonClick }: N
             <div className="app-nav-logo">
                 <span className="logo-quiz">QUIZ</span>SENDENCE
             </div>
-            
+
             <div className="app-nav-space" />
-            
+
             {sessionUuid && (
-                <div 
+                <div
                     className={`app-session-code ${copied ? 'copied' : ''}`}
                     onClick={handleCopy}
                     title="Click to copy session code"
@@ -38,7 +38,7 @@ export function Navbar({ sessionUuid, actionButtonText, onActionButtonClick }: N
                     </span>
                 </div>
             )}
-            
+
             <button className="app-nav-btn" onClick={onActionButtonClick}>
                 {actionButtonText}
             </button>

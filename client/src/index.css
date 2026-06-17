@@ -2,44 +2,44 @@
 
 /* ── DESIGN TOKENS ─────────────────────────────────────────────── */
 :root {
-  --fd: 'Rajdhani', sans-serif;
-  --fb: 'Space Grotesk', sans-serif;
-  --bg:      #05050f;
-  --bg2:     #08081c;
-  --bg3:     #0d0d24;
-  --panel:   rgba(255,255,255,0.035);
-  --pb:      rgba(255,255,255,0.08);
-  --cyan:    #00e5ff;
-  --tr-cyan: rgba(0,229,255,0.12);
-  --cyan-light-shadow: rgba(0,229,255,0.4);
-  --cyan-shadowed: rgba(0,229,255,0.2);
-  --magenta: #e040fb;
-  --gold:    #ffc400;
-  --green:   #00e676;
-  --red:     #ff1744;
-  --violet:  #7c4dff;
-  --text:    #eeeef8;
-  --dim:     rgba(238,238,248,0.45);
-  --placeholder: rgba(238,238,248,0.25);
-  --border:  rgba(255,255,255,0.08);
+    --fd: 'Rajdhani', sans-serif;
+    --fb: 'Space Grotesk', sans-serif;
+    --bg: #05050f;
+    --bg2: #08081c;
+    --bg3: #0d0d24;
+    --panel: rgba(255, 255, 255, 0.035);
+    --pb: rgba(255, 255, 255, 0.08);
+    --cyan: #00e5ff;
+    --tr-cyan: rgba(0, 229, 255, 0.12);
+    --cyan-light-shadow: rgba(0, 229, 255, 0.4);
+    --cyan-shadowed: rgba(0, 229, 255, 0.2);
+    --magenta: #e040fb;
+    --gold: #ffc400;
+    --green: #00e676;
+    --red: #ff1744;
+    --violet: #7c4dff;
+    --text: #eeeef8;
+    --dim: rgba(238, 238, 248, 0.45);
+    --placeholder: rgba(238, 238, 248, 0.25);
+    --border: rgba(255, 255, 255, 0.08);
 
-  --gradient-deg: 135deg;
-  --auth-container-height: 600px;
-  --spacing-xs: 4px;
-  --spacing-sm: 6px;
-  --spacing-md: 8px;
-  --spacing-lg: 14px;
-  --spacing-xl: 16px;
-  --spacing-2xl: 24px;
-  --spacing-3xl: 40px;
-  --radius-sm: 8px;
-  --radius-md: 10px;
-  --font-xs: 11px;
-  --font-sm: 13px;
-  --font-md: 14px;
-  --font-lg: 15px;
-  --font-xl: 18px;
-  --font-2xl: 26px;
+    --gradient-deg: 135deg;
+    --auth-container-height: 600px;
+    --spacing-xs: 4px;
+    --spacing-sm: 6px;
+    --spacing-md: 8px;
+    --spacing-lg: 14px;
+    --spacing-xl: 16px;
+    --spacing-2xl: 24px;
+    --spacing-3xl: 40px;
+    --radius-sm: 8px;
+    --radius-md: 10px;
+    --font-xs: 11px;
+    --font-sm: 13px;
+    --font-md: 14px;
+    --font-lg: 15px;
+    --font-xl: 18px;
+    --font-2xl: 26px;
 }
 
 /* ── GLOBAL ─────────────────────────────────────────────────────── */
@@ -72,6 +72,13 @@ body {
 }
 
 @keyframes blink {
-    0%, 100% { opacity: 1; }
-    85%      { opacity: 0.2; }
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    85% {
+        opacity: 0.2;
+    }
 }
