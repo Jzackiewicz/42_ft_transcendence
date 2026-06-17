@@ -201,7 +201,14 @@ class UserProfileAvatarApi(APIView):
     permission_classes = [IsSelfOrReadOnly]
 
     @extend_schema(
-        request=UserProfileAvatarInputSerializer,
+        request={
+            'multipart/form-data': {
+                'type': 'object',
+                'properties': {
+                    'avatar': {'type': 'string', 'format': 'binary'},
+                },
+            }
+        },
         responses={200: UserProfileOutputSerializer},
         description="Upload or replace the avatar for a user profile.",
     )

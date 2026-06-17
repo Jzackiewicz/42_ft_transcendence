@@ -31,7 +31,7 @@ def get_game_snapshot(session_id: int) -> dict:
 	session = GameSession.objects.select_related(
 		'current_attempt', 'current_question__question'
 	).prefetch_related(
-		'session_players'
+		'session_players__user__profile'
 	).get(id=session_id)
 	
 	snapshot = dict(GameStateSnapshotSerializer(session).data)
