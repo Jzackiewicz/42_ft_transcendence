@@ -100,3 +100,16 @@
     text-align: center;
     background-color: #000;
 }
+
+.spectator-banner {
+    background: linear-gradient(135deg, #4a154b, #2c0e2d);
+    color: #f7a4ff;
+    border: 1px solid #7b2cbf;
+    padding: 12px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    font-weight: bold;
+    text-align: center;
+    box-shadow: 0 0 10px rgba(123, 44, 191, 0.3);
+    letter-spacing: 1px;
+}

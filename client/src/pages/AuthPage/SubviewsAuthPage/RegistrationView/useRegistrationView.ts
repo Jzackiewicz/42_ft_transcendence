@@ -74,15 +74,13 @@ export function useRegistrationView(onSuccess: () => void) {
                 setUser(result)
                 onSuccess()
             }
-        } catch (error) {
-            //internal catch is needed only for proper error displaying
-            if (error instanceof Error) {
-                try {
-                    const parsed = JSON.parse(error.message)
-                    setErrors({ generalErr: parsed.detail ?? error.message })
-                } catch {
-                    setErrors({ generalErr: error.message })
-                }
+        } catch (error: any) {
+            const data = error?.response?.data
+            if (data) {
+                const message = data.detail ?? data.username?.[0] ?? data.email?.[0] ?? data.password?.[0] ?? JSON.stringify(data)
+                setErrors({ generalErr: message })
+            } else if (error instanceof Error) {
+                setErrors({ generalErr: error.message })
             }
         }
     }

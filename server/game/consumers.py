@@ -12,7 +12,7 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 	async def connect(self):
 		self.session_uuid = self.scope['url_route']['kwargs']['session_uuid']
 		
-		self.session_id, self.session_player_id = await database_sync_to_async(verify_player_in_session)(
+		self.session_id, self.session_player_id, self.is_spectator = await database_sync_to_async(verify_player_in_session)(
 			session_uuid=self.session_uuid, 
 			user=self.scope['user']
 		)
@@ -32,7 +32,11 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 		await database_sync_to_async(reconnect_player)(self.session_player_id)
 		
 		handler = GameActionHandler()
-		await database_sync_to_async(handler.sync_game_disconnections)(self.session_id)
+		sync_result = await database_sync_to_async(handler.sync_game_disconnections)(self.session_id)
+		if sync_result.session_deleted:
+			await self.close()
+			return
+
 		snapshot = await database_sync_to_async(get_game_snapshot)(self.session_id)
 		await self.channel_layer.group_send(
 			self.room_group_name,
@@ -42,6 +46,7 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 				'snapshot': snapshot
 			}
 		)
+		self._schedule_timer(sync_result)
 
 	async def disconnect(self, close_code):
 		if hasattr(self, 'room_group_name'):
@@ -64,7 +69,11 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 					GameTimerManager.cancel(self.session_id)
 					return
 
-				await database_sync_to_async(handler.sync_game_disconnections)(self.session_id)
+				sync_result = await database_sync_to_async(handler.sync_game_disconnections)(self.session_id)
+				if sync_result.session_deleted:
+					GameTimerManager.cancel(self.session_id)
+					return
+
 				snapshot = await database_sync_to_async(get_game_snapshot)(self.session_id)
 				await self.channel_layer.group_send(
 					self.room_group_name,
@@ -75,7 +84,7 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 					}
 				)
 
-				self._schedule_timer(result)
+				self._schedule_timer(sync_result)
 			except ValidationError:
 				pass
 
@@ -116,7 +125,12 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 				await self.close()
 				return
 
-			await database_sync_to_async(handler.sync_game_disconnections)(self.session_id)
+			sync_result = await database_sync_to_async(handler.sync_game_disconnections)(self.session_id)
+			if sync_result.session_deleted:
+				GameTimerManager.cancel(self.session_id)
+				await self.close()
+				return
+
 			snapshot = await database_sync_to_async(get_game_snapshot)(self.session_id)
 			await self.channel_layer.group_send(
 				self.room_group_name,
@@ -127,7 +141,7 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 				}
 			)
 
-			self._schedule_timer(result)
+			self._schedule_timer(sync_result)
 		except ValidationError as e:
 			await self.send_json({
 				'type': 'error',
@@ -135,11 +149,13 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 			})
 
 	async def game_state_update(self, event):
+		snapshot = dict(event['snapshot'])
+		snapshot['is_spectator'] = self.is_spectator
 		await self.send_json({
 			'type': 'game_state_update',
 			'action': event['action'],
 			'your_player_id': self.session_player_id,
-			'snapshot': event['snapshot']
+			'snapshot': snapshot
 		})
 
 	def _schedule_timer(self, result):

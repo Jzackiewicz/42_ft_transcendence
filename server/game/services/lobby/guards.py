@@ -10,7 +10,10 @@ def _has_active_session(user, exclude_session_id: int | None = None) -> bool:
 	if not user.is_authenticated:
 		return False
 			
-	qs = SessionPlayer.objects.filter(user=user).exclude(
+	qs = SessionPlayer.objects.filter(
+		user=user,
+		seat_number__isnull=False
+	).exclude(
 		session__current_status=GameSession.Status.GAME_OVER
 	)
 	if exclude_session_id is not None:
@@ -28,16 +31,20 @@ def check_can_create_room(*, user) -> None:
 	if _has_active_session(user):
 		raise ValidationError("Cannot create a new room while active in another game.")
 
-def check_can_join_room(*, session: GameSession, user) -> None:
+def check_can_join_as_spectator(*, session: GameSession, user) -> None:
 	if not user.is_authenticated:
 		raise ValidationError("User must be authenticated to join a room.")
 	if not session:
 		raise Exception("Room not found")
 	if _has_active_session(user, exclude_session_id=session.id):
 		raise ValidationError("Cannot join another room while active in a game.")
+
+def check_can_join_room(*, session: GameSession, user) -> None:
+	check_can_join_as_spectator(session=session, user=user)
 	if session.current_status != GameSession.Status.LOBBY:
 		raise ValidationError("Cannot join a game that has already started or ended.")
-	if session.session_players.count() >= session.max_players:
+	active_players = session.session_players.filter(seat_number__isnull=False).count()
+	if active_players >= session.max_players:
 		raise ValidationError("Room is already full.")
 
 def check_can_destroy_room(*, session: GameSession, user) -> None:

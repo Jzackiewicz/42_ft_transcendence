@@ -227,10 +227,18 @@ if not REDIS_URL:
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {"hosts": [REDIS_URL]},
+        "CONFIG": {
+            "hosts": [
+                {
+                    "address": REDIS_URL,
+                    "socket_timeout": None,
+                    "socket_connect_timeout": 5,
+                    "socket_keepalive": True,
+                }
+            ],
+        },
     }
 }
-# ---- Game Settings ----
 
 #Rate-limiting for extra_question_generation
 EXTRA_QUESTION_GENERATION_MAX_PER_HOUR = 5
