@@ -8,6 +8,67 @@
     font-family: var(--fb);
 }
 
+/* ── PHASE THEMES ──────────────────────────────────────────────── */
+.game-page-container.phase-lobby {
+    --theme-accent: var(--cyan);
+    --theme-border: rgba(0, 229, 255, 0.18);
+    --theme-glow: rgba(0, 229, 255, 0.05);
+}
+
+.game-page-container.phase-answering {
+    --theme-accent: var(--magenta);
+    --theme-border: rgba(224, 64, 251, 0.18);
+    --theme-glow: rgba(224, 64, 251, 0.05);
+}
+
+.game-page-container.phase-nomination {
+    --theme-accent: var(--violet);
+    --theme-border: rgba(124, 77, 255, 0.18);
+    --theme-glow: rgba(124, 77, 255, 0.05);
+}
+
+.game-page-container.phase-evaluation {
+    --theme-accent: var(--gold);
+    --theme-border: rgba(255, 196, 0, 0.18);
+    --theme-glow: rgba(255, 196, 0, 0.05);
+}
+
+.game-page-container.phase-game_over {
+    --theme-accent: var(--magenta);
+    --theme-border: rgba(224, 64, 251, 0.18);
+    --theme-glow: rgba(224, 64, 251, 0.05);
+}
+
+/* Apply themes to cards and headers */
+.game-page-container .section-card {
+    border-color: var(--theme-border, var(--pb));
+    box-shadow: 0 0 20px var(--theme-glow, transparent);
+    transition: border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+.game-page-container .section-title {
+    border-color: var(--theme-border, var(--border));
+    color: var(--theme-accent, var(--text));
+    transition: color 0.4s ease, border-color 0.4s ease;
+}
+
+/* Apply themes to GameHUD */
+.game-page-container .hud-item {
+    border-color: var(--theme-border, var(--border));
+    transition: all 0.4s ease;
+}
+
+.game-page-container .hud-item:hover {
+    border-color: var(--theme-accent);
+    box-shadow: 0 0 12px var(--theme-glow);
+}
+
+.game-page-container .hud-value {
+    color: var(--theme-accent);
+    text-shadow: 0 0 8px var(--theme-glow);
+    transition: color 0.4s ease, text-shadow 0.4s ease;
+}
+
 /* ── MAIN CONTENT WRAPPER ────────────────────────────────────────── */
 .game-page-content {
     flex: 1;

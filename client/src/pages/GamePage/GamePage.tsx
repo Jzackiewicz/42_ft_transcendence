@@ -101,7 +101,7 @@ export function GamePage() {
     const { gameState, gameStarted, timeLeft, hostPlayerId, isSpectator, currentPlayerObj } = sessionState;
 
     return (
-        <div className="game-page-container">
+        <div className={`game-page-container phase-${gameState?.current_status || 'none'}`}>
             <BlinkingSpaceBGDiv />
 
             {/* ── Nav ── */}

@@ -68,12 +68,6 @@
     font-weight: 400;
 }
 
-/* Timer styles */
-.hud-timer .hud-value {
-    color: var(--green);
-    font-weight: 700;
-    text-shadow: 0 0 8px rgba(0, 230, 118, 0.35);
-}
 
 /* Alert styles for low time */
 .hud-item.hud-timer.warning {
