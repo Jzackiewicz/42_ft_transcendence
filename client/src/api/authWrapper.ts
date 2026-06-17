@@ -29,3 +29,7 @@ export async function getMe() {
 		return null;
 	}
 }
+
+export function googleOAuthLogin() {
+	window.location.href = '/api/account/oauth/google/login/';
+}

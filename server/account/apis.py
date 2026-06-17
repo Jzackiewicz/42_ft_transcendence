@@ -18,6 +18,10 @@ from drf_spectacular.utils import extend_schema
 from drf_spectacular.types import OpenApiTypes
 from django.contrib.auth import authenticate, login, logout
 from .permissions import IsSelfOrReadOnly, IsAnonymous
+from django.contrib.auth import login as django_login
+from django.core.signing import TimestampSigner, BadSignature, SignatureExpired
+from django.http import HttpResponseRedirect
+from django.conf import settings
 
 from .selectors import (
     user_get_by_id,
@@ -41,6 +45,14 @@ from .services import (
     profile_update_avatar,
     profile_clear_avatar,
 )
+from .services_oauth import (
+    build_authorize_url,
+    exchange_code_for_id_token,
+    get_link_or_create_user,
+)
+
+OAUTH_STATE_COOKIE = "oauth_google_state"
+OAUTH_STATE_MAX_AGE_SECONDS = 600
 
 
 # ---------------------------------------------------------------------------
@@ -288,3 +300,70 @@ class UserLogoutApi(APIView):
     def post(self, request):
         logout(request)
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+
+class GoogleOAuthLoginApi(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        authorize_url, state, code_verifier = build_authorize_url()
+        signer = TimestampSigner()
+        signed = signer.sign(f"{state}:{code_verifier}")
+
+        response = HttpResponseRedirect(authorize_url)
+        response.set_cookie(
+            OAUTH_STATE_COOKIE,
+            signed,
+            max_age=OAUTH_STATE_MAX_AGE_SECONDS,
+            httponly=True,
+            secure=not settings.DEBUG,
+            samesite="Lax",
+            path="/api/account/oauth/google/",  # scope to OAuth endpoints only, not sent on unrelated requests
+        )
+        return response
+
+
+class GoogleOAuthCallbackApi(APIView):
+    # handle google's redirect back to us.
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        # google attaches error=access_denied if the user hits "cancel"
+        error = request.GET.get("error")
+        if error:
+            return HttpResponseRedirect(f"/login?oauth_error={error}")
+
+        signed = request.COOKIES.get(OAUTH_STATE_COOKIE)
+        state = request.GET.get("state")
+        code = request.GET.get("code")
+
+        if not signed or not state or not code:
+            return HttpResponseRedirect("/login?oauth_error=missing_params")
+
+        # verify the cookie is ours and hasn't expired
+        signer = TimestampSigner()
+        try:
+            unsigned = signer.unsign(signed, max_age=OAUTH_STATE_MAX_AGE_SECONDS)
+        except (BadSignature, SignatureExpired):
+            return HttpResponseRedirect("/login?oauth_error=invalid_state")
+
+        # state in the cookie must equal the state google sent back
+        expected_state, code_verifier = unsigned.split(":", 1)
+        if state != expected_state:
+            return HttpResponseRedirect("/login?oauth_error=state_mismatch")
+
+        # exchange code for token
+        # return user
+        try:
+            claims = exchange_code_for_id_token(code, code_verifier)
+            user = get_link_or_create_user(claims)
+        except ValidationError as e:
+            return HttpResponseRedirect(
+                f"/login?oauth_error={list(e.messages)[0]}"
+            )
+
+        login(request, user)
+
+        response = HttpResponseRedirect("/home")
+        response.delete_cookie(OAUTH_STATE_COOKIE, path="/api/account/oauth/google/")
+        return response
