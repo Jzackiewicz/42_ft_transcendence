@@ -8,35 +8,38 @@ import { GamePage } from './pages/GamePage/GamePage.tsx'
 import { ErrorPage } from './pages/ErrorPage/ErrorPage.tsx'
 
 import { UserProvider } from './context/UserContext.tsx'
+import { PresenceProvider } from './context/PresenceContext.tsx'
 import { ProtectedRoute, PublicOnlyRoute, SessionProtectedRoute, RootRedirect } from './components/NavGuards.tsx'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
 	<React.StrictMode>
 		<UserProvider>
-			<BrowserRouter>
-				<Routes>
-					<Route path="/" element={<RootRedirect />} />
-					<Route path="/login" element={
-						<PublicOnlyRoute>
-							<AuthPage />
-						</PublicOnlyRoute>
-					} />
-					<Route path="/home" element={
-						<ProtectedRoute>
-							<HomePage />
-						</ProtectedRoute>
-					} />
-					<Route path="/lobby" element={
-						<ProtectedRoute>
-							<SessionProtectedRoute>
-								<GamePage />
-							</SessionProtectedRoute>
-						</ProtectedRoute>
-					} />
-					<Route path="/error" element={<ErrorPage />} />
-					<Route path="*" element={<Navigate to="/error" replace />} />
-				</Routes>
-			</BrowserRouter>
+			<PresenceProvider>
+				<BrowserRouter>
+					<Routes>
+						<Route path="/" element={<RootRedirect />} />
+						<Route path="/login" element={
+							<PublicOnlyRoute>
+								<AuthPage />
+							</PublicOnlyRoute>
+						} />
+						<Route path="/home" element={
+							<ProtectedRoute>
+								<HomePage />
+							</ProtectedRoute>
+						} />
+						<Route path="/lobby" element={
+							<ProtectedRoute>
+								<SessionProtectedRoute>
+									<GamePage />
+								</SessionProtectedRoute>
+							</ProtectedRoute>
+						} />
+						<Route path="/error" element={<ErrorPage />} />
+						<Route path="*" element={<Navigate to="/error" replace />} />
+					</Routes>
+				</BrowserRouter>
+			</PresenceProvider>
 		</UserProvider>
 	</React.StrictMode>,
 )

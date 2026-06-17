@@ -8,6 +8,7 @@ export interface PublicUser {
     id: number
     username: string
     avatar: string | null
+    is_online: boolean
 }
 
 export interface Friendship {

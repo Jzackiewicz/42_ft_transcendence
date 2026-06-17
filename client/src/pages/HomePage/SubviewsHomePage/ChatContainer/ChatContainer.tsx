@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useChatContainer } from './useChatContainer'
+import { OnlineIndicator } from '../../../../components/OnlineIndicator'
 import './ChatContainer.css'
 
 function ChatContainer() {
@@ -40,6 +41,7 @@ function ChatContainer() {
                         <div key={f.friend.id} className={`friend-item ${f.friend.id === activeId ? 'active' : ''}`} onClick={() => handleChooseTab(f.friend.id)}>
                             <div className="friend-avatar">
                                 {(f.friend.username ?? '?')[0].toUpperCase()}
+                                <OnlineIndicator userId={f.friend.id} />
                             </div>
                             <span className="friend-name">{f.friend.username}</span>
                         </div>
