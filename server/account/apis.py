@@ -23,6 +23,9 @@ from django.core.signing import TimestampSigner, BadSignature, SignatureExpired
 from django.core.exceptions import ValidationError
 from django.http import HttpResponseRedirect
 from django.conf import settings
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
+from .presence import PresenceRegistry
 
 from .selectors import (
     user_get_by_id,
@@ -299,7 +302,15 @@ class UserLogoutApi(APIView):
         description="Log the current user out and clear the session.",
     )
     def post(self, request):
+        user_id = request.user.id
         logout(request)
+        PresenceRegistry.clear_user(user_id)
+
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            "presence",
+            {"type": "presence.update", "user_id": user_id, "is_online": False},
+        )
         return Response(status=status.HTTP_204_NO_CONTENT)
     
 

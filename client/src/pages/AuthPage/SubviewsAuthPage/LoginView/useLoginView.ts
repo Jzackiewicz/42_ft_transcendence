@@ -40,10 +40,10 @@ export function useLoginView(onSuccess: () => void) {
             const result = await login(username, password)
             setUser(result)
             onSuccess()
-        } catch (error) {
-            if (error instanceof Error) {
-                setErrors({ generalErr: error.message })
-            }
+        } catch (error: any) {
+            const data = error?.response?.data
+            const message = data?.detail ?? data?.non_field_errors?.[0] ?? error?.message ?? 'Login failed'
+            setErrors({ generalErr: message })
         }
     }
 

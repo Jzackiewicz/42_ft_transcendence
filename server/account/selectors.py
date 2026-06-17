@@ -43,8 +43,3 @@ def profile_get_by_username(*, username: str) -> UserProfile:
 
 def profile_list() -> QuerySet:
     return UserProfile.objects.all()
-
-
-def profile_list_online() -> QuerySet:
-    return UserProfile.objects.filter(is_online=True)
-
