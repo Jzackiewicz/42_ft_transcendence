@@ -7,7 +7,7 @@ function FriendsRequestTabView() {
             loading, error,
             handleAccept, handleDecline, handleCancel } = useFriendsRequestTabView()
 
-    if (loading)
+    if (loading && incomingRequestsList.length === 0 && outgoingRequestsList.length === 0)
         return <span className="friends-empty">Loading...</span>
 
     return (

@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from .models import Question
 from .models import GameSession, SessionPlayer, SessionQuestion, AnswerAttempt
+from game.services.game_flow.answers import normalize_string
 
 
 class StrictSerializer(serializers.Serializer):
@@ -93,7 +94,15 @@ class AnswerAttemptSnapshotSerializer(serializers.ModelSerializer):
 			obj.evaluation_status == AnswerAttempt.EvaluationStatus.EVALUATED
 			and obj.session.current_status == GameSession.Status.EVALUATION
 		):
-			return obj.session_question.question.correct_answer
+			correct_answer = obj.session_question.question.correct_answer
+			if correct_answer:
+				alternatives = [alt.strip() for alt in correct_answer.split('|')]
+				if obj.is_correct and obj.answer_text:
+					normalized_submission = normalize_string(obj.answer_text)
+					for alt in alternatives:
+						if normalize_string(alt) == normalized_submission:
+							return alt
+				return alternatives[0]
 		return None
 
 
@@ -119,7 +128,6 @@ class GameStateSnapshotSerializer(serializers.ModelSerializer):
 	def get_total_questions_count(self, obj: GameSession) -> int:
 		return obj.session_questions.count()
 
-
 class UserGameStatsSerializer(serializers.Serializer):
 	games_played = serializers.IntegerField()
 	wins = serializers.IntegerField()
@@ -131,8 +139,7 @@ class UserGameStatsSerializer(serializers.Serializer):
 	avg_answer_time_seconds = serializers.FloatField()
 
 
-
 class GenerateExtraQuestionsResponseSerializer(serializers.Serializer):
-    created_question_ids = serializers.ListField(
-        child=serializers.IntegerField()
-    )
+	created_question_ids = serializers.ListField(
+		child=serializers.IntegerField()
+	)

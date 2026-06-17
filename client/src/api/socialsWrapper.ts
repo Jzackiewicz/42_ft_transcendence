@@ -46,12 +46,13 @@ export async function deleteFromFriends(userId: number) {
 }
 
 
-export async function getChatHistory(room_name: string) {
-    const res = await apiClient.get(`/social/chat/${room_name}/history/`)
+export async function getChatHistory(room_name: string, offset: number = 0) {
+    const res = await apiClient.get(`/social/chat/${room_name}/history/`, { params: { offset } })
     return res.data
 }
 
-// change socket 5173 on prod socket
 export function createChatSocket(roomName: string): WebSocket {
-    return new WebSocket(`ws://localhost:5173/ws/chat/${roomName}/`)
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
+    const host = window.location.host
+    return new WebSocket(`${protocol}//${host}/ws/chat/${roomName}/`)
 }
