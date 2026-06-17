@@ -18,7 +18,6 @@ function AccountHeader({ username, email, setShowJoinModal, handleCreateLobby }:
                 <div className="account-email">{email}</div>
                 <div className="account-badges">
                     <span className="badge human">Human</span>
-                    <span className="badge joined">Player</span>
                 </div>
             </div>
             <button className="home-nav-join" onClick={() => setShowJoinModal(true)}>⟶ Join Game</button>
