@@ -26,6 +26,7 @@ export function PlayerTile({
     const tileClasses = [
         'player-tile',
         isPlayerActive ? 'active' : '',
+        isCurrentUser ? 'current-user' : '',
         !is_alive ? 'eliminated' : '',
         !player.is_online ? 'offline' : ''
     ].filter(Boolean).join(' ');
@@ -48,14 +49,20 @@ export function PlayerTile({
                     </span>
                 </div>
                 <span className="player-role-badges">
-                    {isPlayerHost && <span title="Lobby Host">👑</span>}
-                    {isPlayerActive && <span title="Answering Turn" className="player-role-active">⚡</span>}
-                    {isPlayerNominator && <span title="Has Nomination Rights" className="player-role-nominator">🎯</span>}
+                    {isPlayerHost && <span className="badge badge-host" title="Lobby Host">Host</span>}
+                    {isPlayerActive && <span className="badge badge-answering" title="Answering Turn">Answering</span>}
+                    {isPlayerNominator && <span className="badge badge-nominator" title="Has Nomination Rights">Nominator</span>}
                 </span>
             </div>
-            <div className="player-stats-row">
-                <div>Lives: {hearts}</div>
-                <div>Points: <strong>{points}</strong></div>
+            <div className="player-stats">
+                <div className="player-stat-item">
+                    <span className="stat-label">Lives</span>
+                    <span className="stat-hearts">{hearts}</span>
+                </div>
+                <div className="player-stat-item">
+                    <span className="stat-label">Points</span>
+                    <span className="stat-points">{points}</span>
+                </div>
             </div>
             {!is_alive && (
                 <div className="player-eliminated-label">
