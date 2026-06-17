@@ -59,7 +59,7 @@ export function GameHUD({
                     </div>
 
                     {timeLeft !== null && (
-                        <div className={`hud-item hud-timer ${timeLeft <= 5 ? 'warning' : ''}`}>
+                        <div className={`hud-item hud-timer ${(timeLeft <= 5 && !isEvaluation) ? 'warning' : ''}`}>
                             <span className="hud-label">{isEvaluation ? 'TIME TO NEXT STAGE' : 'TIME LEFT'}</span>
                             <strong className="hud-value">{timeLeft}s</strong>
                         </div>
