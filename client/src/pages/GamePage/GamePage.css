@@ -22,15 +22,15 @@
 }
 
 .game-page-container.phase-nomination {
-    --theme-accent: var(--violet);
-    --theme-border: rgba(124, 77, 255, 0.18);
-    --theme-glow: rgba(124, 77, 255, 0.05);
-}
-
-.game-page-container.phase-evaluation {
     --theme-accent: var(--gold);
     --theme-border: rgba(255, 196, 0, 0.18);
     --theme-glow: rgba(255, 196, 0, 0.05);
+}
+
+.game-page-container.phase-evaluation {
+    --theme-accent: var(--violet);
+    --theme-border: rgba(124, 77, 255, 0.18);
+    --theme-glow: rgba(124, 77, 255, 0.05);
 }
 
 .game-page-container.phase-game_over {
