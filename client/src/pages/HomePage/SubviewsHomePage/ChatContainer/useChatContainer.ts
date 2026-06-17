@@ -4,6 +4,8 @@ import { useUser } from '../../../../context/UserContext'
 import { ChatMessage } from '../../../../types/Message'
 import { getChatHistory, createChatSocket } from '../../../../api/socialsWrapper'
 
+const PAGE_SIZE = 50
+
 function hasNoFriends(friendsList: { friend: { id: number } }[]): boolean {
     var friendsAreEmpty: boolean
     if (friendsList.length == 0) {
@@ -23,7 +25,13 @@ export function useChatContainer() {
     const { user } = useUser()
     const [activeId, setActiveId] = useState<number>(0)
     const [messages, setMessages] = useState<ChatMessage[]>([])
+    const [offset, setOffset] = useState<number>(0)
+    const [hasMore, setHasMore] = useState<boolean>(true)
+    const [loadingOlder, setLoadingOlder] = useState<boolean>(false)
+
     const socketRef = useRef<WebSocket | null>(null)
+    const messagesRef = useRef<HTMLDivElement | null>(null)
+    const shouldScrollRef = useRef<boolean>(true)
 
     useEffect(() => {
         if (activeId === 0 && friendsList.length > 0)
@@ -35,17 +43,28 @@ export function useChatContainer() {
             return
 
         let isCurrent = true
+        setMessages([])
+        setOffset(0)
+        setHasMore(true)
+        shouldScrollRef.current = true
 
         const roomName = getRoomName(user.id, activeId)
         socketRef.current?.close()
         socketRef.current = createChatSocket(roomName)
         socketRef.current.onmessage = (event) => {
             const msg: ChatMessage = JSON.parse(event.data)
-            if (msg.message) setMessages(prev => [...prev, msg])
+            if (msg.message) {
+                shouldScrollRef.current = true
+                setMessages(prev => [...prev, msg])
+            }
         }
 
-        getChatHistory(roomName).then(data => {
-            if (isCurrent) setMessages(data)
+        getChatHistory(roomName, 0).then(data => {
+            if (isCurrent) {
+                setMessages(data)
+                setOffset(data.length)
+                setHasMore(data.length === PAGE_SIZE)
+            }
         })
 
         return () => {
@@ -53,6 +72,47 @@ export function useChatContainer() {
             socketRef.current?.close()
         }
     }, [activeId, user])
+
+    // auto-scroll to bottom when new messages arrive
+    useEffect(() => {
+        if (shouldScrollRef.current && messagesRef.current && messages.length > 0) {
+            messagesRef.current.scrollTop = messagesRef.current.scrollHeight
+            shouldScrollRef.current = false
+        }
+    }, [messages])
+
+    const loadOlderMessages = () => {
+        if (!user || !activeId || loadingOlder || !hasMore)
+            return
+
+        const roomName = getRoomName(user.id, activeId)
+        const container = messagesRef.current
+        const scrollHeightBefore = container?.scrollHeight ?? 0
+
+        setLoadingOlder(true)
+        getChatHistory(roomName, offset).then(data => {
+            if (data.length === 0) {
+                setHasMore(false)
+            } else {
+                setMessages(prev => [...data, ...prev])
+                setOffset(prev => prev + data.length)
+                setHasMore(data.length === PAGE_SIZE)
+
+                // restore scroll position so user doesn't jump to top
+                requestAnimationFrame(() => {
+                    if (container) {
+                        container.scrollTop = container.scrollHeight - scrollHeightBefore
+                    }
+                })
+            }
+        }).finally(() => setLoadingOlder(false))
+    }
+
+    const handleScroll = () => {
+        if (messagesRef.current && messagesRef.current.scrollTop === 0) {
+            loadOlderMessages()
+        }
+    }
 
     const handleSend = (text: string) => {
         if (!socketRef.current || !text.trim()) return
@@ -66,5 +126,9 @@ export function useChatContainer() {
 
     const noFriends = hasNoFriends(friendsList)
 
-    return { friendsList, activeId, messages, myUsername: user?.username ?? '', noFriends, handleChooseTab, handleSend }
+    return {
+        sidebar: { friendsList, activeId, noFriends, handleChooseTab },
+        thread:  { messages, myUsername: user?.username ?? '', messagesRef, loadingOlder, hasMore, handleScroll },
+        input:   { handleSend }
+    }
 }

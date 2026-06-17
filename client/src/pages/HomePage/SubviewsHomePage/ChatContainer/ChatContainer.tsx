@@ -3,11 +3,11 @@ import { useChatContainer } from './useChatContainer'
 import './ChatContainer.css'
 
 function ChatContainer() {
-    const { friendsList, activeId, messages, myUsername, noFriends, handleChooseTab, handleSend } = useChatContainer()
+    const { sidebar, thread, input } = useChatContainer()
     const [draft, setDraft] = useState('')
 
     const send = () => {
-        handleSend(draft)
+        input.handleSend(draft)
         setDraft('')
     }
 
@@ -19,11 +19,11 @@ function ChatContainer() {
     }
 
     let chatContent
-    if (noFriends) {
+    if (sidebar.noFriends) {
         chatContent = <div className="chat-empty">Add Friends to message</div>
     } else {
-        chatContent = messages.filter(msg => msg.message).map((msg, i) => (
-            <div key={i} className={`chat-bubble-row ${msg.sender_username === myUsername ? 'me' : 'friend'}`}>
+        chatContent = thread.messages.filter(msg => msg.message).map((msg, i) => (
+            <div key={i} className={`chat-bubble-row ${msg.sender_username === thread.myUsername ? 'me' : 'friend'}`}>
                 <div className="chat-bubble">{msg.message}</div>
             </div>
         ))
@@ -36,8 +36,8 @@ function ChatContainer() {
             <div className="chat-sidebar">
                 <div className="chat-sidebar-title">Messages</div>
                 <div className="chat-conv-list">
-                    {friendsList.map((f) => (
-                        <div key={f.friend.id} className={`friend-item ${f.friend.id === activeId ? 'active' : ''}`} onClick={() => handleChooseTab(f.friend.id)}>
+                    {sidebar.friendsList.map((f) => (
+                        <div key={f.friend.id} className={`friend-item ${f.friend.id === sidebar.activeId ? 'active' : ''}`} onClick={() => sidebar.handleChooseTab(f.friend.id)}>
                             <div className="friend-avatar">
                                 {(f.friend.username ?? '?')[0].toUpperCase()}
                             </div>
@@ -49,7 +49,8 @@ function ChatContainer() {
 
             {/* ── Thread ── */}
             <div className="chat-thread">
-                <div className="chat-messages">
+                <div className="chat-messages" ref={thread.messagesRef} onScroll={thread.handleScroll}>
+                    {thread.hasMore && thread.loadingOlder && <div className="chat-load-older">Loading…</div>}
                     {chatContent}
                 </div>
 
@@ -60,14 +61,14 @@ function ChatContainer() {
                         placeholder="Message…"
                         value={draft}
                         maxLength={500}
-                        disabled={noFriends}
+                        disabled={sidebar.noFriends}
                         onChange={e => setDraft(e.target.value)}
                         onKeyDown={e => e.key === 'Enter' && send()}
                     />
                     <button
                         className="chat-send-btn"
                         onClick={send}
-                        disabled={noFriends || draft.length === 500}
+                        disabled={sidebar.noFriends || draft.length === 500}
                     >
                         {sendBtnLabel}
                     </button>
