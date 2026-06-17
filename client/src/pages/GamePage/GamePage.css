@@ -128,4 +128,34 @@
     box-shadow: 0 0 15px rgba(124, 77, 255, 0.1);
 }
 
+/* ── RESPONSIVENESS ─────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .game-page-content {
+        padding: 16px;
+        gap: 16px;
+    }
+    
+    .game-main-layout {
+        flex-direction: column;
+        gap: 16px;
+    }
+    
+    .game-sidebar {
+        order: 2; /* Put players list at the bottom */
+        flex: none;
+        width: 100%;
+    }
+    
+    .game-active-area {
+        order: 1; /* Put active game area at the top */
+        flex: none;
+        width: 100%;
+    }
+    
+    .game-loading-banner {
+        padding: 24px 16px;
+    }
+}
+
+
 

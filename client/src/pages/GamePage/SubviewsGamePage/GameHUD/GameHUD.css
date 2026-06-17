@@ -68,14 +68,14 @@
     .game-hud-container {
         flex-direction: column;
         align-items: flex-start;
-        gap: 8px;
-        padding: 10px 14px;
+        gap: 10px;
+        padding: 0 0 16px 0;
     }
     
     .hud-timer {
         width: 100%;
         justify-content: space-between;
-        border-top: 1px solid #222;
+        border-top: 1px dashed var(--border);
         padding-top: 8px;
     }
 }
