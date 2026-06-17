@@ -13,24 +13,6 @@
     font-weight: bold;
 }
 
-.lobby-btn {
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #000;
-    color: #fff;
-    border: 1px solid #444;
-}
-
-.lobby-btn:disabled {
-    cursor: not-allowed;
-    color: #666;
-    border-color: #222;
-}
-
-.lobby-btn:enabled {
-    cursor: pointer;
-}
-
 .lobby-actions-row {
     display: flex;
     justify-content: space-between;

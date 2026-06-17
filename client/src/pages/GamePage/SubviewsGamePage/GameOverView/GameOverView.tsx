@@ -1,5 +1,6 @@
 import React from 'react';
 import { Player } from '../../useGamePage';
+import { Button } from '../../../../components/Button/Button';
 import './GameOverView.css';
 
 interface GameOverViewProps {
@@ -89,12 +90,11 @@ export function GameOverView({ winnerId, winnerName, endReason, players, onRetur
             </table>
 
             <div className="game-over-actions">
-                <button 
+                <Button 
                     onClick={onReturnToHome}
-                    className="btn-game-over-home"
                 >
                     Return to Home
-                </button>
+                </Button>
             </div>
         </div>
     );

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Button } from '../../../../components/Button/Button';
 import './AnsweringView.css';
 
 interface AnsweringViewProps {
@@ -50,9 +51,9 @@ export function AnsweringView({
                             autoFocus
                             className="answering-input"
                         />
-                        <button type="submit" className="btn-answer-submit">
+                        <Button type="submit">
                             Submit
-                        </button>
+                        </Button>
                     </form>
                 </div>
             ) : (

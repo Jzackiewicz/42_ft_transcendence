@@ -26,15 +26,6 @@
     border: 1px solid #444;
 }
 
-.btn-nominate {
-    padding: 8px 16px;
-    font-size: 16px;
-    cursor: pointer;
-    background-color: #000;
-    color: #fff;
-    border: 1px solid #444;
-}
-
 .nomination-spectator-waiting {
     margin-top: 10px;
     color: #aaa;

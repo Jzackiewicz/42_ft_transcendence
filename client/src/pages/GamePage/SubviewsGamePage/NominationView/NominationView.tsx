@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Player } from '../../useGamePage';
+import { Button } from '../../../../components/Button/Button';
 import './NominationView.css';
 
 interface NominationViewProps {
@@ -53,13 +54,12 @@ export function NominationView({
                                 </option>
                             ))}
                         </select>
-                        <button
+                        <Button
                             onClick={handleSubmit}
                             disabled={!localSelectedId}
-                            className="btn-nominate"
                         >
                             Nominate
-                        </button>
+                        </Button>
                     </div>
                 </div>
             ) : (
