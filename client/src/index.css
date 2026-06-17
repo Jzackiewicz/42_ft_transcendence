@@ -108,3 +108,35 @@ body {
     align-items: center;
     gap: 8px;
 }
+
+/* ── BADGES ──────────────────────────────────────────────────────── */
+.badge {
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.badge.badge-host {
+    background: rgba(255, 196, 0, 0.08);
+    border: 1px solid rgba(255, 196, 0, 0.2);
+    color: var(--gold);
+}
+
+.badge.badge-answering {
+    background: rgba(0, 229, 255, 0.08);
+    border: 1px solid rgba(0, 229, 255, 0.2);
+    color: var(--cyan);
+}
+
+.badge.badge-nominator {
+    background: rgba(124, 77, 255, 0.08);
+    border: 1px solid rgba(124, 77, 255, 0.2);
+    color: var(--violet);
+}
