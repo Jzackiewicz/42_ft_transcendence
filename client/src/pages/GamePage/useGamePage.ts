@@ -12,6 +12,8 @@ export interface Player {
     is_alive: boolean;
     is_online: boolean;
     total_answer_time_ms?: number;
+    user_id?: number | null;
+    avatar?: string | null;
 }
 
 export interface Question {
@@ -96,7 +98,7 @@ export function useGamePage() {
     // Helper computations
     const currentPlayerObj = myPlayerId !== null
         ? activeGameState?.players.find(p => p.id === myPlayerId)
-        : activeGameState?.players.find(p => p.display_name === user?.username);
+        : activeGameState?.players.find(p => p.user_id !== null && p.user_id && p.user_id === user?.id);
     const sortedPlayers = [...(activeGameState?.players || [])].sort((a, b) => a.id - b.id);
     const isHost = activeGameState !== null &&
         ((myPlayerId !== null && activeGameState.host_player === myPlayerId) ||

@@ -6,17 +6,16 @@ from game.services.question_generation.extra_question_generator import generate_
 from .guards import (
     check_can_create_room,
     check_can_join_room,
+    check_can_join_as_spectator,
     check_can_destroy_room,
     check_can_generate_extra_questions,
     reserve_extra_question_generation_quota,
     release_extra_question_generation_quota,
     check_room_is_not_over,
-    check_can_join_as_spectator,
 )
 from game.services.game_flow.lifecycle import handle_disconnect_in_lobby, assign_random_questions_to_session
 from game.services.game_flow.game_action_handler import GameActionHandler
 from game.services.game_flow.game_service import GameService
-
 
 def _cleanup_and_sync_other_sessions(user, exclude_session_id: int | None = None) -> None:
     if not user or not user.is_authenticated:
