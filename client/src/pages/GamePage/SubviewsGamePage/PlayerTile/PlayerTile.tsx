@@ -33,9 +33,20 @@ export function PlayerTile({
     return (
         <div className={tileClasses}>
             <div className="player-tile-header">
-                <span className={is_alive ? 'player-name-alive' : 'player-name-dead'}>
-                    👤 {display_name} {isCurrentUser && '(You)'}
-                </span>
+                <div className="player-tile-user-info">
+                    {player.avatar ? (
+                        <img 
+                            src={player.avatar} 
+                            alt={`${display_name}'s avatar`} 
+                            className="player-tile-avatar"
+                        />
+                    ) : (
+                        <span className="player-tile-avatar-placeholder">👤</span>
+                    )}
+                    <span className={is_alive ? 'player-name-alive' : 'player-name-dead'}>
+                        {display_name} {isCurrentUser && '(You)'}
+                    </span>
+                </div>
                 <span className="player-role-badges">
                     {isPlayerHost && <span title="Lobby Host">👑</span>}
                     {isPlayerActive && <span title="Answering Turn" className="player-role-active">⚡</span>}

@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from .models import Question
 from .models import GameSession, SessionPlayer, SessionQuestion, AnswerAttempt
+from game.services.game_flow.answers import normalize_string
 
 
 class StrictSerializer(serializers.Serializer):
@@ -21,9 +22,11 @@ class GameSessionOutputSerializer(serializers.ModelSerializer):
 		fields = ['session_uuid', 'current_status', 'max_players', 'created_at']
 
 class SessionPlayerOutputSerializer(serializers.ModelSerializer):
+	user_id = serializers.IntegerField(read_only=True, allow_null=True)
+
 	class Meta:
 		model = SessionPlayer
-		fields = ['id', 'display_name', 'seat_number', 'lives', 'points', 'player_type']
+		fields = ['id', 'display_name', 'seat_number', 'lives', 'points', 'player_type', 'user_id']
 
 
 class SubmitAnswerPayloadSerializer(StrictSerializer):
@@ -43,13 +46,24 @@ class GenerateExtraQuestionsPayloadSerializer(StrictSerializer):
 class PlayerSnapshotSerializer(serializers.ModelSerializer):
 	is_alive = serializers.BooleanField(read_only=True)
 	is_online = serializers.SerializerMethodField()
+	user_id = serializers.IntegerField(read_only=True, allow_null=True)
+	avatar = serializers.SerializerMethodField()
 	
 	class Meta:
 		model = SessionPlayer
-		fields = ['id', 'display_name', 'seat_number', 'lives', 'points', 'answered_count', 'is_alive', 'total_answer_time_ms', 'is_online']
+		fields = [
+			'id', 'display_name', 'seat_number', 'lives', 'points',
+			'answered_count', 'is_alive', 'total_answer_time_ms',
+			'is_online', 'user_id', 'avatar'
+		]
 
 	def get_is_online(self, obj: SessionPlayer) -> bool:
 		return obj.disconnected_at is None
+
+	def get_avatar(self, obj: SessionPlayer) -> str | None:
+		if obj.user and hasattr(obj.user, 'profile'):
+			return obj.user.profile.avatar_url(self.context.get('request'))
+		return None
 
 class QuestionSnapshotSerializer(serializers.ModelSerializer):
 	class Meta:
@@ -80,7 +94,15 @@ class AnswerAttemptSnapshotSerializer(serializers.ModelSerializer):
 			obj.evaluation_status == AnswerAttempt.EvaluationStatus.EVALUATED
 			and obj.session.current_status == GameSession.Status.EVALUATION
 		):
-			return obj.session_question.question.correct_answer
+			correct_answer = obj.session_question.question.correct_answer
+			if correct_answer:
+				alternatives = [alt.strip() for alt in correct_answer.split('|')]
+				if obj.is_correct and obj.answer_text:
+					normalized_submission = normalize_string(obj.answer_text)
+					for alt in alternatives:
+						if normalize_string(alt) == normalized_submission:
+							return alt
+				return alternatives[0]
 		return None
 
 
@@ -110,3 +132,16 @@ class GenerateExtraQuestionsResponseSerializer(serializers.Serializer):
     created_question_ids = serializers.ListField(
         child=serializers.IntegerField()
     )
+
+
+class UserGameStatsSerializer(serializers.Serializer):
+	games_played = serializers.IntegerField()
+	wins = serializers.IntegerField()
+	win_rate = serializers.FloatField()
+	avg_score = serializers.FloatField()
+	total_points = serializers.IntegerField()
+	highest_score = serializers.IntegerField()
+	correct_rate = serializers.FloatField()
+	avg_answer_time_seconds = serializers.FloatField()
+
+
