@@ -43,8 +43,8 @@ def generate(client, model, prompt):
                 },
             )
             return response.parsed
-        except LLMApiException as e:
-            if e.status_code in RETRY_STATUS_CODES:
+        except APIError as e:
+            if e.code in RETRY_STATUS_CODES:
                 delay = min(2 ** attempt, 30) + random.random()
                 time.sleep(delay)
                 continue
