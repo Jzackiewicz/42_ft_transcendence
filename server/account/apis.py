@@ -58,7 +58,6 @@ from .services_oauth import (
 OAUTH_STATE_COOKIE = "oauth_google_state"
 OAUTH_STATE_MAX_AGE_SECONDS = 600
 
-
 # ---------------------------------------------------------------------------
 # User endpoints
 # ---------------------------------------------------------------------------
@@ -274,14 +273,13 @@ class UserLoginApi(APIView):
         description="Login",
     )
     def post(self, request):
-        # validate incoming data
+        # validate input
         input_serializer = UserLoginInputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
 
-        # verify credentials, return None if wrong
         user = authenticate(
             request,
-            username=input_serializer.validated_data["username"],
+            username=input_serializer.validated_data["identifier"],
             password=input_serializer.validated_data["password"],
         )
 
@@ -291,11 +289,8 @@ class UserLoginApi(APIView):
                 status=status.HTTP_401_UNAUTHORIZED,
             )
 
-        # mark user as logged in & remember for future requests
         login(request, user)
-
         return Response(UserOutputSerializer(user).data, status=status.HTTP_200_OK)
-
 
 class UserLogoutApi(APIView):
     permission_classes = [IsAuthenticated]

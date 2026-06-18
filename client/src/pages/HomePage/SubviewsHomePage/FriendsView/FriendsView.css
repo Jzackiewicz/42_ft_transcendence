@@ -80,18 +80,18 @@
     flex-shrink: 0;
 }
 
-.friend-dot {
+.friend-avatar .presence-dot {
     position: absolute;
-    bottom: 1px;
+    top: 1px;
     right: 1px;
-    width: 9px;
-    height: 9px;
-    border-radius: 50%;
-    border: 2px solid var(--panel);
+    width: 6px;
+    height: 6px;
+    margin: 0;
+    border: 1px solid var(--panel);
 }
 
-.friend-dot.online  { background: #4ade80; }
-.friend-dot.offline { background: var(--dim); }
+.friend-avatar .presence-dot.online  { background: #22c55e; }
+.friend-avatar .presence-dot.offline { background: #4b5563; }
 
 .friend-name {
     flex: 1;

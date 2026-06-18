@@ -10,7 +10,7 @@ test.describe('Authentication Page', () => {
 		// Wait for content to appear (UserContext might take a moment to fetch /me)
 		await expect(page.locator('.auth-title')).toBeVisible({ timeout: 10000 });
 		await expect(page.locator('.auth-title')).toHaveText('Welcome back');
-		await expect(page.getByPlaceholder('Enter your username')).toBeVisible();
+		await expect(page.getByPlaceholder('Enter your email or username')).toBeVisible();
 		await expect(page.getByPlaceholder('Enter your password')).toBeVisible();
 	});
 
