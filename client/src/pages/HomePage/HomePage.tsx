@@ -70,13 +70,6 @@ export function HomePage() {
                     </div>
                 </div>
             </main>
-
-            {/* ── Footer ── */}
-            <footer className="home-footer">
-                <a className="home-footer-link" href="/privacy-policy">Privacy Policy</a>
-                <span className="home-footer-sep" />
-                <a className="home-footer-link" href="/terms-of-use">Terms of Use</a>
-            </footer>
         </div>
         </FriendsProvider>
     )
