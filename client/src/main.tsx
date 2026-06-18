@@ -49,6 +49,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 						<Footer />
 					</div>
 				</BrowserRouter>
+			</PresenceProvider>
 		</UserProvider>
 	</React.StrictMode>,
 )
