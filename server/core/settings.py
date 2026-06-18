@@ -239,6 +239,10 @@ CHANNEL_LAYERS = {
         },
     }
 }
+AUTHENTICATION_BACKENDS = [
+    "account.authentication.EmailOrUsernameBackend",
+    "django.contrib.auth.backends.ModelBackend",
+]
 
 CACHES = {
     "default": {
