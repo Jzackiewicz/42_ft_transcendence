@@ -227,6 +227,38 @@ if not REDIS_URL:
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {"hosts": [REDIS_URL]},
+        "CONFIG": {
+            "hosts": [
+                {
+                    "address": REDIS_URL,
+                    "socket_timeout": None,
+                    "socket_connect_timeout": 5,
+                    "socket_keepalive": True,
+                }
+            ],
+        },
     }
 }
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": REDIS_URL,
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
+    }
+}
+
+# ---- Game Settings ----
+QUESTIONS_PER_SESSION = int(os.getenv("QUESTIONS_PER_SESSION", "10"))
+DISCONNECT_GRACE_PERIOD_S = int(os.getenv("DISCONNECT_GRACE_PERIOD_S", "30"))
+ANSWER_TIME_LIMIT_MS = int(os.getenv("ANSWER_TIME_LIMIT_MS", "20000"))
+EVALUATION_TIME_LIMIT_MS = int(os.getenv("EVALUATION_TIME_LIMIT_MS", "3000"))
+NOMINATION_TIME_LIMIT_MS = int(os.getenv("NOMINATION_TIME_LIMIT_MS", "10000"))
+
+# Rate-limiting for extra_question_generation
+EXTRA_QUESTION_GENERATION_MAX_PER_HOUR = 5
+EXTRA_QUESTION_GENERATION_CACHE_TIMEOUT_SECONDS = 60 * 60
+
+LLM_API_KEY = os.getenv("LLM_API_KEY", "ci-dummy-key-for-testing")
+LLM_MODEL = os.getenv("LLM_MODEL", "gemini-3.1-flash-lite")

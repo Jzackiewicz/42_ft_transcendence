@@ -16,7 +16,7 @@ class User(AbstractUser):
     def __str__(self) -> str:
         return self.username
 
-# person (avatar, online, friends etc)
+# person (avatar, friends etc)
 class UserProfile(models.Model):
 
     user = models.OneToOneField(
@@ -25,7 +25,6 @@ class UserProfile(models.Model):
         related_name='profile',
     )
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
-    is_online = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = 'User Profile'

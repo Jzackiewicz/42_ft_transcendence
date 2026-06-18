@@ -1,4 +1,7 @@
+from datetime import timedelta
+from django.conf import settings
 from django.utils import timezone
+from django.db import transaction
 from game.models import GameSession, SessionPlayer
 
 from .guards import (
@@ -28,8 +31,7 @@ from .lifecycle import (
 	handle_disconnect_in_lobby,
 	handle_disconnect_in_answering,
 	handle_disconnect_in_nomination,
-	handle_evaluate_timeout,
-	assign_random_questions_to_session
+	handle_evaluate_timeout
 )
 
 from .answers import (
@@ -39,7 +41,8 @@ from .answers import (
 
 from .player_selection import (
 	get_next_alive_player, 
-	get_random_alive_player
+	get_random_alive_player,
+	get_new_host_player
 )
 
 
@@ -78,9 +81,12 @@ class GameService:
 		self.session.save()
 		
 		if self.session.current_status == GameSession.Status.GAME_OVER:
-			require_status(self.session, GameSession.Status.GAME_OVER)
 			set_end_game_stats(self.session)
 			return
+
+		if self.session.current_status == GameSession.Status.NOMINATION:
+			self.session.nomination_started_at = timezone.now()
+			self.session.save()
 
 		if should_fallback:
 			self._no_last_correct_player_fallback()
@@ -88,19 +94,26 @@ class GameService:
 			self._start_answering_turn()
 
 	def _handle_active_game_disconnect(self, actor: SessionPlayer) -> None:
-		if self.session.current_status == GameSession.Status.ANSWERING:
+		if actor.seat_number is None:
+			return
+
+		status_before = self.session.current_status
+
+		if status_before == GameSession.Status.ANSWERING:
 			handle_disconnect_in_answering(self.session, actor)
 
 		actor.lives = 0
-		actor.save(update_fields=['lives'])
+		actor.disconnected_at = timezone.now()
+		actor.save(update_fields=['lives', 'disconnected_at'])
 
 		if self.session.is_game_over():
 			cancel_game(self.session)
 			return
 
 		if self.session.current_status == GameSession.Status.EVALUATION:
-			apply_answer_verdict(self.session)
-			self._advance_after_evaluation()
+			if status_before == GameSession.Status.ANSWERING:
+				apply_answer_verdict(self.session)
+				self.resolve_evaluation()
 		elif self.session.current_status == GameSession.Status.NOMINATION:
 			if handle_disconnect_in_nomination(self.session, actor):
 				self._start_answering_turn()
@@ -110,7 +123,6 @@ class GameService:
 		require_actor_is_host(self.session, actor, "start the game")
 		require_minimum_players(self.session)
 		
-		assign_random_questions_to_session(self.session, amount=10)
 		require_questions_exist(self.session)
 		
 		starting_player = get_random_alive_player(self.session)
@@ -141,6 +153,15 @@ class GameService:
 		self.session.save()
 		self._start_answering_turn()
 
+	def nominate_timeout(self) -> None:
+		require_status(self.session, GameSession.Status.NOMINATION)
+		target = get_random_alive_player(self.session)
+		self.session.last_nominated_player = target
+		self.session.current_player = target
+		self.session.fsm.nominate_player()
+		self.session.save()
+		self._start_answering_turn()
+
 	def submit_player_answer(self, actor: SessionPlayer | None, answer: str | None) -> None:
 		require_status(self.session, GameSession.Status.ANSWERING)
 		require_actor_is_current_player(self.session, actor, "submit answer")
@@ -152,7 +173,7 @@ class GameService:
 
 		self.session.fsm.submit_answer()
 		self.session.save()
-		self.evaluate_answer()
+		self.start_evaluation()
 
 	def evaluate_timeout(self) -> None:
 		require_status(self.session, GameSession.Status.ANSWERING)
@@ -160,20 +181,70 @@ class GameService:
 		handle_evaluate_timeout(self.session, attempt)
 		self.session.fsm.submit_answer()
 		self.session.save()
-		self.evaluate_answer()
+		self.start_evaluation()
 
-	def evaluate_answer(self) -> None:
+	def start_evaluation(self) -> None:
 		require_status(self.session, GameSession.Status.EVALUATION)
 		evaluate_current_attempt(self.session)
 		apply_answer_verdict(self.session)
+		self.session.save()
+
+	def resolve_evaluation(self) -> None:
+		require_status(self.session, GameSession.Status.EVALUATION)
+		self.session.current_attempt = None
+		self.session.save()
 		self._advance_after_evaluation()
 
 	def	disconnect_player(self, actor: SessionPlayer | None) -> None:
 		require_action_actor(actor, "disconnect")
 		
+		if self.session.current_status == GameSession.Status.GAME_OVER:
+			return
+		
+		if actor.seat_number is None:
+			actor.delete()
+			return
+
+		with transaction.atomic():
+			player = SessionPlayer.objects.select_for_update().get(id=actor.id)
+			if player.active_connections > 0:
+				player.active_connections -= 1
+			
+			if player.active_connections == 0:
+				player.disconnected_at = timezone.now()
+			
+			player.save(update_fields=['active_connections', 'disconnected_at'])
+
+	def leave_game(self, actor: SessionPlayer | None) -> None:
+		require_action_actor(actor, "leave game")
+		
+		if actor.seat_number is None:
+			actor.delete()
+			return
+
 		if self.session.current_status == GameSession.Status.LOBBY:
 			handle_disconnect_in_lobby(self.session, actor)
 		elif self.session.current_status == GameSession.Status.GAME_OVER:
 			return
 		else:
 			self._handle_active_game_disconnect(actor)
+
+	def expire_disconnected_players(self) -> None:
+		if self.session.current_status == GameSession.Status.GAME_OVER:
+			return
+
+		grace_limit = timezone.now() - timedelta(seconds=settings.DISCONNECT_GRACE_PERIOD_S)
+		expired_players = list(self.session.session_players.filter(
+			disconnected_at__isnull=False,
+			disconnected_at__lte=grace_limit,
+			lives__gt=0
+		))
+
+		for player in expired_players:
+			if self.session.current_status == GameSession.Status.GAME_OVER:
+				break
+			
+			if self.session.current_status == GameSession.Status.LOBBY:
+				handle_disconnect_in_lobby(self.session, player)
+			else:
+				self._handle_active_game_disconnect(player)

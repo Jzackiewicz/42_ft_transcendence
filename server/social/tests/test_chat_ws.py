@@ -19,6 +19,21 @@ User = get_user_model()
 # integration/staging tests.
 APPLICATION = AuthMiddlewareStack(URLRouter(websocket_urlpatterns))
 
+from account.presence import PresenceRegistry
+
+
+async def _drain_initial_presence(communicator):
+    """
+    Every authenticated connect() broadcasts a presence.update to the
+    'presence' group, which the connecting consumer is part of — so the very
+    first message a freshly-connected test client receives is its own
+    'I'm online' event. Drain it before asserting on subsequent traffic.
+    """
+    msg = await communicator.receive_json_from()
+    assert msg.get("type") == "presence.update", f"expected presence.update, got {msg}"
+    assert msg["user_id"] is not None
+    assert msg["is_online"] is True
+
 
 async def _make_auth_communicator(user, path="/ws/chat/test_room/"):
     """
@@ -45,6 +60,11 @@ async def _make_auth_communicator(user, path="/ws/chat/test_room/"):
 
 class ChatAuthTests(TransactionTestCase):
     """Verify that ChatConsumer enforces authentication at connect time."""
+
+    def setUp(self):
+        # In-memory registry is process-global; clear between tests so state
+        # from one test doesn't leak into the next.
+        PresenceRegistry._connections.clear()
 
     async def test_anonymous_connection_closed_with_4001(self):
         """
@@ -77,7 +97,9 @@ class ChatAuthTests(TransactionTestCase):
         connected, _ = await communicator.connect()
         self.assertTrue(connected)
 
-        # No immediate close frame — connection stays open.
+        # The presence feature emits one presence.update on connect; drain it
+        # before asserting that no further unsolicited messages arrive.
+        await _drain_initial_presence(communicator)
         self.assertTrue(await communicator.receive_nothing())
 
         await communicator.disconnect()
@@ -92,6 +114,7 @@ class ChatAuthTests(TransactionTestCase):
         )
         communicator = await _make_auth_communicator(user)
         await communicator.connect()
+        await _drain_initial_presence(communicator)
 
         await communicator.send_json_to({"message": "hello room"})
         response = await communicator.receive_json_from()
@@ -125,6 +148,7 @@ class ChatConsumerTests(TransactionTestCase):
         # Sync setUp is required — Django's test runner calls setUp() without
         # await even when test methods are async. Since this runs on the main
         # thread (not a worker), a plain ORM call works fine here.
+        PresenceRegistry._connections.clear()
         self.user = User.objects.create_user(username="testuser", password="pass")
 
     async def _communicator(self, path="/ws/chat/test_room/"):
@@ -135,6 +159,7 @@ class ChatConsumerTests(TransactionTestCase):
         communicator = await self._communicator()
         connected, _ = await communicator.connect()
         self.assertTrue(connected)
+        await _drain_initial_presence(communicator)
 
         await communicator.send_json_to({"message": "Halo halo dupa123!"})
         response = await communicator.receive_json_from()
@@ -149,13 +174,17 @@ class ChatConsumerTests(TransactionTestCase):
         """Missing 'message' key returns an error payload, connection stays open."""
         communicator = await self._communicator()
         await communicator.connect()
+        await _drain_initial_presence(communicator)
 
         await communicator.send_json_to({"bad_key": "Failed"})
         response = await communicator.receive_json_from()
 
-        self.assertIn("error", response)
-        self.assertEqual(response["error"], "Invalid message format.")
-        self.assertIn("details", response)
+        # The consumer responds with a structured validation error and keeps
+        # the socket open so the client can recover without reconnecting.
+        self.assertEqual(response.get("error"), "Invalid message format.")
+        self.assertIn("message", response.get("details", {}))
+        # No follow-up broadcast — the bad payload must not be echoed to the room.
+        self.assertTrue(await communicator.receive_nothing())
 
         await communicator.disconnect()
 
@@ -163,13 +192,15 @@ class ChatConsumerTests(TransactionTestCase):
         """Messages exceeding 500 characters return a validation error."""
         communicator = await self._communicator()
         await communicator.connect()
+        await _drain_initial_presence(communicator)
 
         await communicator.send_json_to({"message": "A" * 501})
         response = await communicator.receive_json_from()
 
-        self.assertIn("error", response)
-        self.assertEqual(response["error"], "Invalid message format.")
-        self.assertIn("message", response["details"])
+        self.assertEqual(response.get("error"), "Invalid message format.")
+        # The 'message' field error specifically — not, say, a generic schema error.
+        self.assertIn("message", response.get("details", {}))
+        self.assertTrue(await communicator.receive_nothing())
 
         await communicator.disconnect()
 

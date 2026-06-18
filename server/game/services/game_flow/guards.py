@@ -8,7 +8,7 @@ def require_status(session: GameSession, expected_status: str) -> None:
 
 
 def require_minimum_players(session: GameSession) -> None:
-	if session.session_players.count() < 2:
+	if session.session_players.filter(seat_number__isnull=False).count() < 2:
 		raise ValidationError("Cannot start game with fewer than 2 players")
 
 
@@ -17,12 +17,12 @@ def require_questions_exist(session: GameSession) -> None:
 		raise ValidationError("Cannot start game without questions")
 
 
-def require_enough_questions_in_db(amount: int) -> None:
+def require_enough_questions_in_db(limit: int) -> None:
 	available = Question.objects.count()
 	if available == 0:
 		raise ValidationError("Cannot start game without questions in the database.")
-	if available < amount:
-		raise ValidationError(f"Not enough questions. Required: {amount}, available: {available}.")
+	if available < limit:
+		raise ValidationError(f"Not enough questions. Required: {limit}, available: {available}.")
 
 
 def require_starting_player(player: SessionPlayer | None) -> None:
@@ -31,6 +31,8 @@ def require_starting_player(player: SessionPlayer | None) -> None:
 
 
 def require_player_alive(player: SessionPlayer, action: str) -> None:
+	if player.seat_number is None:
+		raise ValidationError(f"Cannot {action} a spectator")
 	if player.lives <= 0:
 		raise ValidationError(f"Cannot {action} a dead player")
 

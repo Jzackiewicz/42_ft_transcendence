@@ -1,30 +1,38 @@
 import { createContext, useContext, useState, useEffect } from "react"
 import { getMe } from "../api/authWrapper"
+import { User } from "../types/User"
 
-interface User {
-    id: number
-    username: string
-    email: string
-}
 
 interface UserContextType {
     user: User | null | undefined //user 
     setUser: (user: User | null) => void
+    activeSessionUuid: string | null
+    setActiveSessionUuid: (uuid: string | null) => void
 }
 
 const UserContext = createContext<UserContextType | null>(null)
 
 export function UserProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null | undefined>(undefined)
+    const [activeSessionUuid, setActiveSessionUuidState] = useState<string | null>(localStorage.getItem('activeSessionUuid'))
+
+    const setActiveSessionUuid = (uuid: string | null) => {
+        if (uuid) {
+            localStorage.setItem('activeSessionUuid', uuid)
+        } else {
+            localStorage.removeItem('activeSessionUuid')
+        }
+        setActiveSessionUuidState(uuid)
+    }
 
     useEffect(() => {
         getMe().then(data => {
-            setUser(data ?? null)
+            setUser(data?.user ?? null)
         })
     }, [])
 
     return (
-        <UserContext.Provider value={{ user, setUser }}>
+        <UserContext.Provider value={{ user, setUser, activeSessionUuid, setActiveSessionUuid }}>
             {children}
         </UserContext.Provider>
     )
