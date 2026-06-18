@@ -11,42 +11,45 @@ import { Footer } from './components/Footer.tsx'
 import { ErrorPage } from './pages/ErrorPage/ErrorPage.tsx'
 
 import { UserProvider } from './context/UserContext.tsx'
+import { PresenceProvider } from './context/PresenceContext.tsx'
 import { ProtectedRoute, PublicOnlyRoute, SessionProtectedRoute, RootRedirect } from './components/NavGuards.tsx'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
 	<React.StrictMode>
 		<UserProvider>
-			<BrowserRouter>
-				<div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-					<main style={{ flex: 1 }}>
-						<Routes>
-							<Route path="/" element={<RootRedirect />} />
-							<Route path="/login" element={
-								<PublicOnlyRoute>
-									<AuthPage />
-								</PublicOnlyRoute>
-							} />
-							<Route path="/privacy" element={<PrivacyPolicyPage />} />
-							<Route path="/terms" element={<TermsOfServicePage />} />
-							<Route path="/home" element={
-								<ProtectedRoute>
-									<HomePage />
-								</ProtectedRoute>
-							} />
-							<Route path="/lobby" element={
-								<ProtectedRoute>
-									<SessionProtectedRoute>
-										<GamePage />
-									</SessionProtectedRoute>
-								</ProtectedRoute>
-							} />
-							<Route path="/error" element={<ErrorPage />} />
-							<Route path="*" element={<Navigate to="/error" replace />} />
-						</Routes>
-					</main>
-					<Footer />
-				</div>
-			</BrowserRouter>
+			<PresenceProvider>
+				<BrowserRouter>
+					<div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+						<main style={{ flex: 1 }}>
+							<Routes>
+								<Route path="/" element={<RootRedirect />} />
+								<Route path="/login" element={
+									<PublicOnlyRoute>
+										<AuthPage />
+									</PublicOnlyRoute>
+								} />
+								<Route path="/privacy" element={<PrivacyPolicyPage />} />
+								<Route path="/terms" element={<TermsOfServicePage />} />
+								<Route path="/home" element={
+									<ProtectedRoute>
+										<HomePage />
+									</ProtectedRoute>
+								} />
+								<Route path="/lobby" element={
+									<ProtectedRoute>
+										<SessionProtectedRoute>
+											<GamePage />
+										</SessionProtectedRoute>
+									</ProtectedRoute>
+								} />
+								<Route path="/error" element={<ErrorPage />} />
+								<Route path="*" element={<Navigate to="/error" replace />} />
+							</Routes>
+						</main>
+						<Footer />
+					</div>
+				</BrowserRouter>
+			</PresenceProvider>
 		</UserProvider>
 	</React.StrictMode>,
 )
