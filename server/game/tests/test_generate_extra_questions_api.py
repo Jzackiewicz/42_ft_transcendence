@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
-from game.models import GameSession, SessionPlayer
+from game.models import GameSession, SessionPlayer, Question, SessionQuestion
 from game.serializers import GameSessionOutputSerializer, SessionPlayerOutputSerializer, GenerateExtraQuestionsPayloadSerializer, GenerateExtraQuestionsResponseSerializer
 
 User = get_user_model()
@@ -28,42 +28,27 @@ class TestGenerateExtraQuestionsApi(APITestCase):
 		self.session.host_player = host_sp
 		self.session.save()
 
+	def _add_questions(self, real=0, ai=0, session=None):
+		"""Attach ``real`` non-AI and ``ai`` AI-generated questions to the session."""
+		session = session or self.session
+		start = session.session_questions.count()
+		for i in range(real + ai):
+			question = Question.objects.create(
+				question_text=f"Q{start + i}-{uuid.uuid4()}?",
+				correct_answer="A",
+				category="general",
+				is_ai_generated=(i >= real),
+			)
+			SessionQuestion.objects.create(
+				session=session,
+				question=question,
+				order_index=start + i,
+			)
+
 	@patch("game.services.lobby.lobby_management.generate_extra_questions")
-	def test_generate_extra_questions_success(self, mock_generate):
+	def test_generates_half_of_real_questions(self, mock_generate):
 		mock_generate.return_value = {"created_question_ids": [123]}
-
-		url = reverse("generate-extra-questions")
-		self.client.force_authenticate(user=self.host)
-		response = self.client.post(
-			url,
-			{"session_uuid": str(self.session.session_uuid), "n_questions_to_generate": 3},
-			format="json",
-		)
-
-		self.assertEqual(response.status_code, status.HTTP_200_OK)
-		self.assertEqual(response.data, mock_generate.return_value)
-		mock_generate.assert_called_once_with(
-			self.session.session_uuid,
-			3,
-		)
-
-	@patch("game.services.lobby.lobby_management.generate_extra_questions")
-	def test_generate_extra_questions_rejects_more_than_50(self, mock_generate):
-		url = reverse("generate-extra-questions")
-		self.client.force_authenticate(user=self.host)
-		response = self.client.post(
-			url,
-			{"session_uuid": str(self.session.session_uuid), "n_questions_to_generate": 51},
-			format="json",
-		)
-
-		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-		self.assertIn("n_questions_to_generate", response.data)
-		mock_generate.assert_not_called()
-
-	@patch("game.services.lobby.lobby_management.generate_extra_questions")
-	def test_generate_extra_questions_uses_default_amount(self, mock_generate):
-		mock_generate.return_value = {"created_question_ids": []}
+		self._add_questions(real=10)
 
 		url = reverse("generate-extra-questions")
 		self.client.force_authenticate(user=self.host)
@@ -74,13 +59,77 @@ class TestGenerateExtraQuestionsApi(APITestCase):
 		)
 
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
-		mock_generate.assert_called_once_with(
-			self.session.session_uuid,
-			10,
+		self.assertEqual(response.data, mock_generate.return_value)
+		# 50% of 10 real questions = 5
+		mock_generate.assert_called_once_with(self.session.session_uuid, 5)
+
+	@patch("game.services.lobby.lobby_management.generate_extra_questions")
+	def test_rounds_half_up(self, mock_generate):
+		mock_generate.return_value = {"created_question_ids": []}
+		self._add_questions(real=7)
+
+		url = reverse("generate-extra-questions")
+		self.client.force_authenticate(user=self.host)
+		response = self.client.post(
+			url,
+			{"session_uuid": str(self.session.session_uuid)},
+			format="json",
 		)
+
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		# 50% of 7 = 3.5, rounded up = 4
+		mock_generate.assert_called_once_with(self.session.session_uuid, 4)
+
+	@patch("game.services.lobby.lobby_management.generate_extra_questions")
+	def test_ai_questions_excluded_from_base(self, mock_generate):
+		mock_generate.return_value = {"created_question_ids": []}
+		self._add_questions(real=10, ai=8)
+
+		url = reverse("generate-extra-questions")
+		self.client.force_authenticate(user=self.host)
+		response = self.client.post(
+			url,
+			{"session_uuid": str(self.session.session_uuid)},
+			format="json",
+		)
+
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		# Only the 10 real questions count toward the base: 50% = 5
+		mock_generate.assert_called_once_with(self.session.session_uuid, 5)
+
+	@patch("game.services.lobby.lobby_management.generate_extra_questions")
+	def test_no_real_questions_skips_generation(self, mock_generate):
+		url = reverse("generate-extra-questions")
+		self.client.force_authenticate(user=self.host)
+		response = self.client.post(
+			url,
+			{"session_uuid": str(self.session.session_uuid)},
+			format="json",
+		)
+
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(response.data, {"created_question_ids": []})
+		mock_generate.assert_not_called()
+
+	@patch("game.services.lobby.lobby_management.generate_extra_questions")
+	def test_rejects_unknown_payload_field(self, mock_generate):
+		self._add_questions(real=10)
+
+		url = reverse("generate-extra-questions")
+		self.client.force_authenticate(user=self.host)
+		response = self.client.post(
+			url,
+			{"session_uuid": str(self.session.session_uuid), "n_questions_to_generate": 3},
+			format="json",
+		)
+
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+		mock_generate.assert_not_called()
 
 	@patch("game.services.lobby.lobby_management.generate_extra_questions")
 	def test_generate_extra_questions_rejects_non_host(self, mock_generate):
+		self._add_questions(real=10)
+
 		url = reverse("generate-extra-questions")
 		self.client.force_authenticate(user=self.player)
 		response = self.client.post(
@@ -106,6 +155,7 @@ class TestGenerateExtraQuestionsApi(APITestCase):
 
 	@patch("game.services.lobby.lobby_management.generate_extra_questions")
 	def test_generate_extra_questions_rejects_started_room(self, mock_generate):
+		self._add_questions(real=10)
 		self.session.current_status = GameSession.Status.ANSWERING
 		self.session.save()
 
@@ -124,6 +174,8 @@ class TestGenerateExtraQuestionsApi(APITestCase):
 	@patch("game.services.lobby.lobby_management.generate_extra_questions")
 	def test_generate_extra_questions_is_limited_per_user_per_hour(self, mock_generate):
 		mock_generate.return_value = {"created_question_ids": [1]}
+		self._add_questions(real=10)
+
 		url = reverse("generate-extra-questions")
 		self.client.force_authenticate(user=self.host)
 
@@ -150,16 +202,14 @@ class TestGenerateExtraQuestionsApi(APITestCase):
 		mock_generate.return_value = {
 			"created_question_ids": [1, 2, 3]
 		}
+		self._add_questions(real=10)
 
 		url = reverse("generate-extra-questions")
 		self.client.force_authenticate(user=self.host)
 
 		response = self.client.post(
 			url,
-			{
-				"session_uuid": str(self.session.session_uuid),
-				"n_questions_to_generate": 3,
-			},
+			{"session_uuid": str(self.session.session_uuid)},
 			format="json",
 		)
 
@@ -170,7 +220,4 @@ class TestGenerateExtraQuestionsApi(APITestCase):
 		)
 		self.assertTrue(serializer.is_valid(), serializer.errors)
 
-		mock_generate.assert_called_once_with(
-			self.session.session_uuid,
-			3,
-		)
+		mock_generate.assert_called_once_with(self.session.session_uuid, 5)

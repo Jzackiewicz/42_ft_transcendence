@@ -92,7 +92,6 @@ class GenerateExtraQuestionsApi(APIView):
 			data = generate_extra_questions_for_room(
 				session_uuid=serializer.validated_data["session_uuid"],
 				user=request.user,
-				n_questions_to_generate=serializer.validated_data["n_questions_to_generate"],
 			)
 			output_serializer = GenerateExtraQuestionsResponseSerializer(data=data)
 			output_serializer.is_valid(raise_exception=True)

@@ -39,7 +39,6 @@ class ExtraQuestionsIntegrationTest(TestCase):
         url = reverse("generate-extra-questions")
         payload = {
             "session_uuid": str(self.session.session_uuid),
-            "n_questions_to_generate": 3,
         }
 
         before_q_count = Question.objects.filter(is_ai_generated=True).count()

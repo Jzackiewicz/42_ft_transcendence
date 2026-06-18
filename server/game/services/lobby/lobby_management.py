@@ -112,10 +112,20 @@ def destroy_room(*, session_uuid: str, user) -> None:
     session.delete()
 
 
-def generate_extra_questions_for_room(*, session_uuid: str, user, n_questions_to_generate: int = 10):
+def generate_extra_questions_for_room(*, session_uuid: str, user):
     session = get_room_by_uuid(session_uuid=session_uuid)
 
     check_can_generate_extra_questions(session=session, user=user)
+
+    # Generate 50% of the room's real (non-AI) question count
+    real_questions_count = session.session_questions.filter(
+        question__is_ai_generated=False
+    ).count()
+    n_questions_to_generate = (real_questions_count + 1) // 2
+
+    if n_questions_to_generate == 0:
+        return {"created_question_ids": []}
+
     reserve_extra_question_generation_quota(user=user)
     try:
         result = generate_extra_questions(session.session_uuid, n_questions_to_generate)
