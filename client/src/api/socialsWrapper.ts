@@ -46,8 +46,8 @@ export async function deleteFromFriends(userId: number) {
 }
 
 
-export async function getChatHistory(room_name: string) {
-    const res = await apiClient.get(`/social/chat/${room_name}/history/`)
+export async function getChatHistory(room_name: string, offset: number = 0) {
+    const res = await apiClient.get(`/social/chat/${room_name}/history/`, { params: { offset } })
     return res.data
 }
 

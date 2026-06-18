@@ -73,3 +73,31 @@
     color: #ff5722;
     font-weight: bold;
 }
+
+.player-tile-user-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.player-tile-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #555;
+}
+
+.player-tile-avatar-placeholder {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #333;
+    font-size: 16px;
+    color: #ccc;
+    border: 1px solid #555;
+}
+
