@@ -97,3 +97,38 @@ class UserProfileMeTest(APITestCase):
     def test_profile_me_endpoint_delete_unauthenticated(self):
         response = self.client.delete(reverse("profile-me"))
         self.assertEqual(response.status_code, 401)
+
+    def test_profile_me_endpoint_patch_duplicate_username_different_case(self):
+        User.objects.create_user(
+            username="otheruser", password="otherpassword", email="other@example.com"
+        )
+        self.client.login(username="profileuser", password="profilepassword")
+        payload = {"username": "OTHERUSER"}
+        response = self.client.patch(
+            reverse("profile-me"), data=payload, content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("username", response.data)
+
+
+    def test_profile_me_endpoint_patch_duplicate_email_different_case(self):
+        User.objects.create_user(
+            username="otheruser", password="otherpassword", email="other@example.com"
+        )
+        self.client.login(username="profileuser", password="profilepassword")
+        payload = {"email": "OTHER@EXAMPLE.COM"}
+        response = self.client.patch(
+            reverse("profile-me"), data=payload, content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("email", response.data)
+
+
+    def test_profile_me_endpoint_patch_rejects_at_sign_in_username(self):
+        self.client.login(username="profileuser", password="profilepassword")
+        payload = {"username": "alice@bar.com"}
+        response = self.client.patch(
+            reverse("profile-me"), data=payload, content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("username", response.data)
