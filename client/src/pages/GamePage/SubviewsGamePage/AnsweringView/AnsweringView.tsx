@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Button } from '../../../../components/Button/Button';
 import './AnsweringView.css';
 
+const ANSWER_MAX_LENGTH = 30;
+
 interface AnsweringViewProps {
     questionText: string;
     category: string;
@@ -18,6 +20,7 @@ export function AnsweringView({
     onSubmitAnswer
 }: AnsweringViewProps) {
     const [localAnswerText, setLocalAnswerText] = useState('');
+    const atLimit = localAnswerText.length >= ANSWER_MAX_LENGTH;
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -48,6 +51,7 @@ export function AnsweringView({
                             value={localAnswerText}
                             onChange={(e) => setLocalAnswerText(e.target.value)}
                             placeholder="Type your answer..."
+                            maxLength={ANSWER_MAX_LENGTH}
                             autoFocus
                             className="answering-input"
                         />
@@ -55,6 +59,11 @@ export function AnsweringView({
                             Submit
                         </Button>
                     </form>
+                    {atLimit && (
+                        <div className="answering-char-limit">
+                            Character limit reached ({ANSWER_MAX_LENGTH})
+                        </div>
+                    )}
                 </div>
             ) : (
                 <div className="answering-spectator-waiting">
