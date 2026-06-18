@@ -21,9 +21,11 @@ export function AnsweringView({
 }: AnsweringViewProps) {
     const [localAnswerText, setLocalAnswerText] = useState('');
     const atLimit = localAnswerText.length >= ANSWER_MAX_LENGTH;
+    const isEmpty = localAnswerText.trim() === '';
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        if (isEmpty) return;
         onSubmitAnswer(localAnswerText);
         setLocalAnswerText('');
     };
@@ -55,7 +57,7 @@ export function AnsweringView({
                             autoFocus
                             className="answering-input"
                         />
-                        <Button type="submit">
+                        <Button type="submit" disabled={isEmpty}>
                             Submit
                         </Button>
                     </form>
