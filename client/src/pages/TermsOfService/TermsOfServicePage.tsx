@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import BlinkingSpaceBGDiv from '../../components/BlinkingSpaceBGDiv';
 import './TermsOfService.css';
 
@@ -7,6 +8,9 @@ export function TermsOfServicePage() {
 		<div className="static-page-container">
 			<BlinkingSpaceBGDiv />
 			<div className="static-page-content">
+				<Link to="/" className="back-button">
+					← Go Back
+				</Link>
 				<h1>Terms of Service</h1>
 				<p className="last-updated">Last Updated: June 2026</p>
 

@@ -64,3 +64,26 @@
     color: rgba(238, 238, 248, 0.45);
     margin-bottom: 40px;
 }
+
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    border: 1px solid rgba(0, 229, 255, 0.3);
+    color: #00e5ff;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    text-decoration: none;
+    margin-bottom: 24px;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.back-button:hover {
+    background: rgba(0, 229, 255, 0.1);
+    border-color: #00e5ff;
+    transform: translateX(-4px);
+}
