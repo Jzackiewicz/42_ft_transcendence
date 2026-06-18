@@ -181,6 +181,7 @@ export function GamePage() {
                                     maxPlayers={gameState.max_players}
                                     isLobby={gameState.current_status === GameStatus.LOBBY}
                                     isEvaluation={gameState.current_status === GameStatus.EVALUATION}
+                                    isNomination={gameState.current_status === GameStatus.NOMINATION}
                                 />
                             )}
                             {renderActiveView()}

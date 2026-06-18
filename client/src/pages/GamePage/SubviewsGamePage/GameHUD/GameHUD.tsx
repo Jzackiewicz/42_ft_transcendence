@@ -10,18 +10,25 @@ interface GameHUDProps {
     maxPlayers?: number;
     isLobby?: boolean;
     isEvaluation?: boolean;
+    isNomination?: boolean;
 }
 
-export function GameHUD({ 
-    questionAskedCount, 
-    totalQuestionsCount, 
-    timeLeft, 
-    timeLimitSeconds, 
+export function GameHUD({
+    questionAskedCount,
+    totalQuestionsCount,
+    timeLeft,
+    timeLimitSeconds,
     nominationTimeLimitSeconds,
     maxPlayers,
     isLobby = false,
-    isEvaluation = false
+    isEvaluation = false,
+    isNomination = false
 }: GameHUDProps) {
+    const timerLabel = isEvaluation
+        ? 'TIME TO NEXT STAGE'
+        : isNomination
+            ? 'RANDOM PICK IN'
+            : 'TIMEOUT IN';
     return (
         <div className="game-hud-container">
             {isLobby ? (
@@ -60,7 +67,7 @@ export function GameHUD({
 
                     {timeLeft !== null && (
                         <div className={`hud-item hud-timer ${(timeLeft <= 5 && !isEvaluation) ? 'warning' : ''}`}>
-                            <span className="hud-label">{isEvaluation ? 'TIME TO NEXT STAGE' : 'TIME LEFT'}</span>
+                            <span className="hud-label">{timerLabel}</span>
                             <strong className="hud-value">{timeLeft}s</strong>
                         </div>
                     )}
