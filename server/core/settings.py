@@ -239,6 +239,19 @@ CHANNEL_LAYERS = {
         },
     }
 }
+
+AUTHENTICATION_BACKENDS = [
+    "account.authentication.EmailOrUsernameBackend",
+    "django.contrib.auth.backends.ModelBackend",
+]
+
+#Rate-limiting for extra_question_generation
+EXTRA_QUESTION_GENERATION_MAX_PER_HOUR = 5
+EXTRA_QUESTION_GENERATION_CACHE_TIMEOUT_SECONDS = 60 * 60
+
+LLM_API_KEY = os.getenv("LLM_API_KEY", "ci-dummy-key-for-testing")
+LLM_MODEL = os.getenv("LLM_MODEL", "gemini-3.1-flash-lite")
+
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
