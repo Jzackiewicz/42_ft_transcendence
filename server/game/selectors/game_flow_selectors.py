@@ -1,5 +1,5 @@
 from datetime import timedelta
-
+from django.utils import timezone
 from game.models import GameSession
 from game.serializers import GameStateSnapshotSerializer
 
@@ -44,6 +44,7 @@ def get_game_snapshot(session_id: int) -> dict:
 	
 	snapshot = dict(GameStateSnapshotSerializer(session).data)
 	snapshot.update(_get_deadlines_data(session))
+	snapshot['server_time'] = timezone.now().isoformat()
 
 	return snapshot
 

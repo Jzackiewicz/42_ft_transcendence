@@ -65,6 +65,7 @@ export interface GameSnapshot {
     turn_deadline_at?: string | null;
     nomination_deadline_at?: string | null;
     evaluation_deadline_at?: string | null;
+    server_time?: string | null;
 }
 
 export function useGamePage() {
@@ -90,6 +91,7 @@ export function useGamePage() {
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
     const [timeLeft, setTimeLeft] = useState<number | null>(null);
+    const serverTimeOffsetRef = useRef<number>(0);
 
     // activeGameState directly uses gameState as player_type is removed
     const activeGameState: GameSnapshot | null = gameState;
@@ -137,7 +139,7 @@ export function useGamePage() {
         const deadline = new Date(deadlineStr).getTime();
 
         const updateTimer = () => {
-            const now = new Date().getTime();
+            const now = Date.now() + serverTimeOffsetRef.current;
             const diff = deadline - now;
             const secondsLeft = Math.max(0, Math.ceil(diff / 1000));
             setTimeLeft(secondsLeft);
@@ -177,7 +179,12 @@ export function useGamePage() {
                     setMyPlayerId(data.your_player_id);
                 }
                 if (data.snapshot) {
-                    setGameState(data.snapshot as GameSnapshot);
+                    const snapshot = data.snapshot as GameSnapshot;
+                    if (snapshot.server_time) {
+                        serverTimeOffsetRef.current =
+                            new Date(snapshot.server_time).getTime() - Date.now();
+                    }
+                    setGameState(snapshot);
                     setErrorMsg(null);
                 } else if (data.type === 'error' || data.error) {
                     setErrorMsg(data.message || data.error || 'Unknown error occurred');
