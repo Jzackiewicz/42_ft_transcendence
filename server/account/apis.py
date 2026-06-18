@@ -42,21 +42,30 @@ from .serializers import (
     UserLoginInputSerializer,
     UserReauthSerializer,
 )
-from .services import (
+from .services.profiles import (
     user_create,
     user_update_basic_info,
     user_soft_delete,
     profile_update_avatar,
     profile_clear_avatar,
 )
-from .services_oauth import (
+from .services.oauth_google import (
     build_authorize_url,
     exchange_code_for_id_token,
     get_link_or_create_user,
+    OAuthErrorCode,
+    OAUTH_STATE_COOKIE,
+    OAUTH_STATE_MAX_AGE_SECONDS,
+    OAUTH_COOKIE_PATH,
 )
 
-OAUTH_STATE_COOKIE = "oauth_google_state"
-OAUTH_STATE_MAX_AGE_SECONDS = 600
+
+def _oauth_error_redirect(code: str) -> HttpResponseRedirect:
+    """All OAuth failure paths funnel through here so the SPA sees a
+    consistent shape: /login?oauth_error=<stable_code>. Never echo Google's
+    raw error string or an exception message — they're noisy and can hint
+    at server config."""
+    return HttpResponseRedirect(f"/login?oauth_error={code}")
 
 # ---------------------------------------------------------------------------
 # User endpoints
@@ -321,6 +330,7 @@ class GoogleOAuthLoginApi(APIView):
 
     def get(self, request):
         authorize_url, state, code_verifier = build_authorize_url()
+
         signer = TimestampSigner()
         signed = signer.sign(f"{state}:{code_verifier}")
 
@@ -332,52 +342,53 @@ class GoogleOAuthLoginApi(APIView):
             httponly=True,
             secure=not settings.DEBUG,
             samesite="Lax",
-            path="/api/account/oauth/google/",  # scope to OAuth endpoints only, not sent on unrelated requests
+            path=OAUTH_COOKIE_PATH,
         )
         return response
 
 
 class GoogleOAuthCallbackApi(APIView):
-    # handle google's redirect back to us.
     permission_classes = [AllowAny]
 
     def get(self, request):
-        # google attaches error=access_denied if the user hits "cancel"
-        error = request.GET.get("error")
-        if error:
-            return HttpResponseRedirect(f"/login?oauth_error={error}")
+        google_error = request.GET.get("error")
+        if google_error:
+            code = (
+                OAuthErrorCode.CANCELLED
+                if google_error == "access_denied"
+                else OAuthErrorCode.SERVER_ERROR
+            )
+            return _oauth_error_redirect(code)
 
         signed = request.COOKIES.get(OAUTH_STATE_COOKIE)
         state = request.GET.get("state")
         code = request.GET.get("code")
 
         if not signed or not state or not code:
-            return HttpResponseRedirect("/login?oauth_error=missing_params")
+            return _oauth_error_redirect(OAuthErrorCode.MISSING_PARAMS)
 
-        # verify the cookie is ours and hasn't expired
         signer = TimestampSigner()
         try:
             unsigned = signer.unsign(signed, max_age=OAUTH_STATE_MAX_AGE_SECONDS)
         except (BadSignature, SignatureExpired):
-            return HttpResponseRedirect("/login?oauth_error=invalid_state")
+            return _oauth_error_redirect(OAuthErrorCode.INVALID_STATE)
 
-        # state in the cookie must equal the state google sent back
+        # CSRF check: state in cookie must equal state Google echoed back.
         expected_state, code_verifier = unsigned.split(":", 1)
         if state != expected_state:
-            return HttpResponseRedirect("/login?oauth_error=state_mismatch")
+            return _oauth_error_redirect(OAuthErrorCode.STATE_MISMATCH)
 
-        # exchange code for token
-        # return user
         try:
             claims = exchange_code_for_id_token(code, code_verifier)
             user = get_link_or_create_user(claims)
         except ValidationError as e:
-            return HttpResponseRedirect(
-                f"/login?oauth_error={list(e.messages)[0]}"
-            )
+            return _oauth_error_redirect(list(e.messages)[0])
+        except Exception:
+            return _oauth_error_redirect(OAuthErrorCode.SERVER_ERROR)
 
-        login(request, user)
+        login(request, user, backend="django.contrib.auth.backends.ModelBackend")
 
         response = HttpResponseRedirect("/home")
-        response.delete_cookie(OAUTH_STATE_COOKIE, path="/api/account/oauth/google/")
+        # clean up used state cookie so it can't be replayed
+        response.delete_cookie(OAUTH_STATE_COOKIE, path=OAUTH_COOKIE_PATH)
         return response

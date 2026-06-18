@@ -19,13 +19,29 @@ GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token"
 OAUTH_SCOPES = "openid email profile"
 
 
+OAUTH_STATE_COOKIE = "oauth_google_state"
+OAUTH_STATE_MAX_AGE_SECONDS = 600
+OAUTH_COOKIE_PATH = "/api/account/oauth/google/"
+
+
+class OAuthErrorCode:
+    CANCELLED = "cancelled"
+    MISSING_PARAMS = "missing_params" # missing code/state/cookie on callback
+    INVALID_STATE = "invalid_state" # cookie signature or expiry failed
+    STATE_MISMATCH = "state_mismatch" # cookie state != query state (CSRF guard)
+    EMAIL_NOT_VERIFIED = "email_not_verified"
+    EXCHANGE_FAILED = "exchange_failed"
+    SERVER_ERROR = "server_error" # any other unexpected error
+
+
 def _b64url(raw: bytes) -> str:
-    # URL-safe base64 with padding stripped (PKCE requires this exact format)
+    """URL-safe base64 with padding stripped (PKCE requires this exact format)"""
     return base64.urlsafe_b64encode(raw).rstrip(b"=").decode("ascii")
 
 
 def build_authorize_url() -> tuple[str, str, str]:
-    # Returns (authorize_url, state, code_verifier).
+    # returns (authorize_url, state, code_verifier).
+
     state = secrets.token_urlsafe(32)
     code_verifier = secrets.token_urlsafe(64)
     code_challenge = _b64url(hashlib.sha256(code_verifier.encode("ascii")).digest())
@@ -48,7 +64,8 @@ def build_authorize_url() -> tuple[str, str, str]:
 
 
 def exchange_code_for_id_token(code: str, code_verifier: str) -> dict:
-    # Exchange an authorization code for tokens, then verify the ID token
+    # trade the authorization code for tokens then verify the id token
+
     resp = requests.post(
         GOOGLE_TOKEN_URL,
         data={
@@ -62,45 +79,35 @@ def exchange_code_for_id_token(code: str, code_verifier: str) -> dict:
         timeout=10,
     )
     if resp.status_code != 200:
-        raise ValidationError(f"Token exchange failed: HTTP {resp.status_code}")
+        raise ValidationError(OAuthErrorCode.EXCHANGE_FAILED)
 
     payload = resp.json()
     id_token_jwt = payload.get("id_token")
     if not id_token_jwt:
-        raise ValidationError("Google did not return an id_token")
+        raise ValidationError(OAuthErrorCode.EXCHANGE_FAILED)
 
-    # ask Google's auth lib to verify token
     try:
         claims = id_token.verify_oauth2_token(
             id_token_jwt,
             google_requests.Request(),
             settings.GOOGLE_OAUTH_CLIENT_ID,
         )
-    except ValueError as e:
-        raise ValidationError(f"ID token verification failed: {e}")
+    except ValueError:
+        raise ValidationError(OAuthErrorCode.EXCHANGE_FAILED)
 
     if not claims.get("email_verified"):
-        raise ValidationError("Google did not verify this email — refusing login")
+        raise ValidationError(OAuthErrorCode.EMAIL_NOT_VERIFIED)
 
     return claims
 
 
 @transaction.atomic
 def get_link_or_create_user(claims: dict) -> User:
-    """
-      1. returning user - if a SocialAccount(provider=google, uid=sub)
-         exists, return its linked Django user
-      2. email link — else if a user exists with the same email, link them
-         by creating a new SocialAccount row. Now they can sign in either
-         via password or Google.
-      3. new user — else create a new user with a unique username (from the Google profile name)
-        Set an unusable password
-    """
     sub = claims["sub"]
     email = claims["email"]
     name = claims.get("name") or email.split("@")[0]
 
-    # Case 1: returning user
+    # case 1: returning user
     existing_link = (
         SocialAccount.objects
         .filter(provider=SocialAccount.PROVIDER_GOOGLE, uid=sub)
@@ -110,7 +117,7 @@ def get_link_or_create_user(claims: dict) -> User:
     if existing_link:
         return existing_link.user
 
-    # Case 2: link to existing local account by email
+    # case 2: link to existing local account by email
     user = User.objects.filter(email=email).first()
     if user:
         SocialAccount.objects.create(
@@ -120,7 +127,7 @@ def get_link_or_create_user(claims: dict) -> User:
         )
         return user
 
-    # Case 3: create a brand new account
+    # case 3: create new account
     base_username = "".join(c for c in name if c.isalnum())[:140] or f"google_{sub[:8]}"
     username = base_username
     suffix = 1
