@@ -9,6 +9,17 @@ export async function joinLobby(joinUuid: string) {
     await apiClient.post(`/game/lobby/join/${joinUuid}/`);
 }
 
+export async function generateExtraQuestions(sessionUuid: string, nQuestionsToGenerate: number = 10) {
+    // skipGlobalErrorRedirect: a failed LLM call returns 502, which we want to
+    // surface inline in the lobby instead of triggering the global /error redirect.
+    const res = await apiClient.post(
+        '/game/generate_extra_questions/',
+        { session_uuid: sessionUuid, n_questions_to_generate: nQuestionsToGenerate },
+        { skipGlobalErrorRedirect: true } as any,
+    );
+    return res.data;
+}
+
 // ws: — plain WebSocket (like http://)
 // wss: — secure WebSocket (like https://)
 export function connectGameSocket(sessionUuid: string): WebSocket {
