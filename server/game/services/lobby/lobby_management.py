@@ -2,6 +2,7 @@ from django.db import transaction
 from django.db.models import Max
 from game.models import GameSession, SessionPlayer
 from game.selectors.lobby_selectors import get_room_by_uuid
+from game.selectors.game_flow_selectors import get_game_snapshot
 from game.services.question_generation.extra_question_generator import generate_extra_questions
 from .guards import (
     check_can_create_room,
@@ -13,6 +14,7 @@ from .guards import (
     release_extra_question_generation_quota,
     check_room_is_not_over,
 )
+from game.services.game_flow.broadcast import broadcast_snapshot_sync
 from game.services.game_flow.lifecycle import handle_disconnect_in_lobby, assign_random_questions_to_session
 from game.services.game_flow.game_action_handler import GameActionHandler
 from game.services.game_flow.game_service import GameService
@@ -116,7 +118,18 @@ def generate_extra_questions_for_room(*, session_uuid: str, user, n_questions_to
     check_can_generate_extra_questions(session=session, user=user)
     reserve_extra_question_generation_quota(user=user)
     try:
-        return generate_extra_questions(session.session_uuid, n_questions_to_generate)
+        result = generate_extra_questions(session.session_uuid, n_questions_to_generate)
     except Exception:
         release_extra_question_generation_quota(user=user)
         raise
+
+    _broadcast_questions_update(session)
+    return result
+
+
+def _broadcast_questions_update(session: GameSession) -> None:
+    try:
+        snapshot = get_game_snapshot(session.id)
+        broadcast_snapshot_sync(session.id, "extra_questions_generated", snapshot)
+    except Exception:
+        pass
