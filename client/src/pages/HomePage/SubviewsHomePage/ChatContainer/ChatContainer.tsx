@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useChatContainer } from './useChatContainer'
+import UserAvatar from '../../../../components/UserAvatar'
 import './ChatContainer.css'
 
 function ChatContainer() {
@@ -38,9 +39,7 @@ function ChatContainer() {
                 <div className="chat-conv-list">
                     {sidebar.friendsList.map((f) => (
                         <div key={f.friend.id} className={`friend-item ${f.friend.id === sidebar.activeId ? 'active' : ''}`} onClick={() => sidebar.handleChooseTab(f.friend.id)}>
-                            <div className="friend-avatar">
-                                {(f.friend.username ?? '?')[0].toUpperCase()}
-                            </div>
+                            <UserAvatar username={f.friend.username} avatar={f.friend.avatar} />
                             <span className="friend-name">{f.friend.username}</span>
                         </div>
                     ))}

@@ -1,5 +1,6 @@
 import { useFriendsListTabView } from './useFriendsListTabView'
 import InlineError from '../../../../../../components/InlineError'
+import UserAvatar from '../../../../../../components/UserAvatar'
 import './FriendsListTabView.css'
 
 function FriendsListTabView() {
@@ -11,10 +12,7 @@ function FriendsListTabView() {
             <div className="friends-grid">
                 {friendsList.map((f) => (
                     <div key={f.friend.id} className="friend-item">
-                        <div className="friend-avatar">
-                            {(f.friend.username ?? '?')[0].toUpperCase()}
-                            {/* <span className={`friend-dot ${f.online ? 'online' : 'offline'}`} /> */}
-                        </div>
+                        <UserAvatar username={f.friend.username} avatar={f.friend.avatar} />
                         <span className="friend-name">{f.friend.username}</span>
                         <button className="friend-remove" onClick={() => handleRemove(f.friend.id)}>Remove</button>
                     </div>

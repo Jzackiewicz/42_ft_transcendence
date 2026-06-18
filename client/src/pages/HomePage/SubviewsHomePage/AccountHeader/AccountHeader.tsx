@@ -1,26 +1,107 @@
+import { User } from '../../../../types/User'
+import { useAccountHeader } from './useAccountHeader'
 import './AccountHeader.css'
 
 interface AccountHeaderProps {
-    username: string
-    email: string
+    user: User | null | undefined
+    setUser: (u: User | null) => void
     setShowJoinModal: (bool: boolean) => void
     handleCreateLobby: () => void
 }
 
-function AccountHeader({ username, email, setShowJoinModal, handleCreateLobby }: AccountHeaderProps) {
-    const initial = username[0]?.toUpperCase() ?? '?'
+function AccountHeader({ user, setUser, setShowJoinModal, handleCreateLobby }: AccountHeaderProps) {
+    const {
+        editingField, editValue, setEditValue, error,
+        startEdit, cancelEdit, confirmEdit,
+        fileInputRef, handleAvatarClick, handleAvatarChange,
+    } = useAccountHeader(user, setUser)
+
+    const initial = user?.username?.[0]?.toUpperCase() ?? '?'
+
+    let avatarContent
+    if (user?.avatar) {
+        avatarContent = <img src={user.avatar} alt="avatar" className="account-avatar-img" />
+    } else {
+        avatarContent = initial
+    }
+
+    let usernameField
+    if (editingField === 'username') {
+        usernameField = (
+            <>
+                <input
+                    className="account-edit-input"
+                    value={editValue}
+                    onChange={e => setEditValue(e.target.value)}
+                    onKeyDown={e => { if (e.key === 'Enter') confirmEdit(); if (e.key === 'Escape') cancelEdit() }}
+                    autoFocus
+                />
+                <button className="edit-btn confirm-btn" onClick={confirmEdit}>✓</button>
+                <button className="edit-btn cancel-btn" onClick={cancelEdit}>✕</button>
+            </>
+        )
+    } else {
+        usernameField = (
+            <>
+                <div className="account-name">{user?.username}</div>
+                <button className="edit-btn" onClick={() => startEdit('username')} title="Edit username">✎</button>
+            </>
+        )
+    }
+
+    let emailField
+    if (editingField === 'email') {
+        emailField = (
+            <>
+                <input
+                    className="account-edit-input account-edit-input--sm"
+                    value={editValue}
+                    onChange={e => setEditValue(e.target.value)}
+                    onKeyDown={e => { if (e.key === 'Enter') confirmEdit(); if (e.key === 'Escape') cancelEdit() }}
+                    autoFocus
+                />
+                <button className="edit-btn confirm-btn" onClick={confirmEdit}>✓</button>
+                <button className="edit-btn cancel-btn" onClick={cancelEdit}>✕</button>
+            </>
+        )
+    } else {
+        emailField = (
+            <>
+                <div className="account-email">{user?.email}</div>
+                <button className="edit-btn edit-btn--sm" onClick={() => startEdit('email')} title="Edit email">✎</button>
+            </>
+        )
+    }
+
+    let errorMessage
+    if (error) {
+        errorMessage = <div className="account-edit-error">{error}</div>
+    }
 
     return (
         <div className="account-header">
-            <div className="account-avatar">{initial}</div>
+            <div className="account-avatar-wrapper">
+                <div className="account-avatar">{avatarContent}</div>
+                <button className="edit-btn avatar-edit-btn" onClick={handleAvatarClick} title="Change avatar">✎</button>
+                <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                    onChange={handleAvatarChange}
+                />
+            </div>
+
             <div className="account-info">
-                <div className="account-name">{username}</div>
-                <div className="account-email">{email}</div>
+                <div className="account-field-row">{usernameField}</div>
+                <div className="account-field-row">{emailField}</div>
+                {errorMessage}
                 <div className="account-badges">
                     <span className="badge human">Human</span>
                 </div>
             </div>
-            <button className="home-nav-join" onClick={() => setShowJoinModal(true)}> Join Game</button>
+
+            <button className="home-nav-join" onClick={() => setShowJoinModal(true)}>Join Game</button>
             <button className="home-nav-play" onClick={handleCreateLobby}>▶ Play Now</button>
         </div>
     )

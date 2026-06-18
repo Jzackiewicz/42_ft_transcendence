@@ -29,3 +29,17 @@ export async function getMe() {
 		return null;
 	}
 }
+
+export async function patchMe(fields: { username?: string; email?: string }) {
+	const res = await apiClient.patch('/account/profiles/me/', fields);
+	return res.data;
+}
+
+export async function uploadAvatar(userId: number, file: File) {
+	const formData = new FormData();
+	formData.append('avatar', file);
+	const res = await apiClient.post(`/account/profiles/${userId}/avatar/`, formData, {
+		headers: { 'Content-Type': 'multipart/form-data' },
+	});
+	return res.data;
+}

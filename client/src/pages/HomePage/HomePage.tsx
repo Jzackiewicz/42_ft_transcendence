@@ -12,6 +12,7 @@ import { FriendsProvider } from '../../context/FriendsListContext'
 export function HomePage() {
     const {
         user,
+        setUser,
         handleLogout,
         handleCreateLobby,
         handleJoinLobby,
@@ -55,8 +56,8 @@ export function HomePage() {
             {/* ── Main ── */}
             <main className="home-content">
                 <AccountHeader
-                    username={user?.username ?? ''}
-                    email={user?.email ?? ''}
+                    user={user}
+                    setUser={setUser}
                     setShowJoinModal={setShowJoinModal}
                     handleCreateLobby={handleCreateLobby}
                 />
