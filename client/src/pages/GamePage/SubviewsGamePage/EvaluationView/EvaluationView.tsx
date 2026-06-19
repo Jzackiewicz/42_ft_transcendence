@@ -1,4 +1,5 @@
 import React from 'react';
+import { QuestionBadges } from '../QuestionBadges/QuestionBadges';
 import './EvaluationView.css';
 
 interface EvaluationViewProps {
@@ -9,6 +10,8 @@ interface EvaluationViewProps {
     isTimeout: boolean;
     questionText: string;
     category: string;
+    isAiGenerated: boolean;
+    isVerified: boolean;
 }
 
 export function EvaluationView({
@@ -18,7 +21,9 @@ export function EvaluationView({
     isCorrect,
     isTimeout,
     questionText,
-    category
+    category,
+    isAiGenerated,
+    isVerified
 }: EvaluationViewProps) {
     let statusClass = 'eval-pending';
     let statusText = '⏳ EVALUATING... (TODO)';
@@ -40,7 +45,10 @@ export function EvaluationView({
         <div className={`evaluation-view-container ${statusClass}`}>
             
             <div className="eval-question-info">
-                <span className="eval-category">[{category}]</span>
+                <div className="eval-question-meta">
+                    <span className="eval-category">[{category}]</span>
+                    <QuestionBadges isAiGenerated={isAiGenerated} isVerified={isVerified} />
+                </div>
                 <p className="eval-question-text">{questionText}</p>
             </div>
 

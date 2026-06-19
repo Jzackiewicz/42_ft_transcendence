@@ -11,7 +11,7 @@ from rest_framework.test import APITestCase
 
 from game.models import GameSession, Question, SessionPlayer, SessionQuestion
 from game.selectors.game_flow_selectors import get_game_snapshot
-from game.serializers import GenerateExtraQuestionsResponseSerializer
+from game.serializers import GenerateExtraQuestionsResponseSerializer, QuestionSnapshotSerializer
 from game.services.lobby.lobby_management import create_room
 from game.services.question_generation.extra_question_generator import (
     GeneratedQuestion,
@@ -28,6 +28,24 @@ def _client_returning(parsed):
     client = MagicMock()
     client.models.generate_content.return_value = MagicMock(parsed=parsed)
     return client
+
+
+class QuestionSnapshotSerializerTest(SimpleTestCase):
+    """The question snapshot must expose the AI/verified flags for the UI badges."""
+
+    def test_includes_ai_and_verified_flags(self):
+        question = Question(
+            question_text="Q?", correct_answer="A", category="c",
+            is_ai_generated=True, is_verified=False,
+        )
+        data = QuestionSnapshotSerializer(question).data
+
+        self.assertEqual(
+            set(data.keys()),
+            {"question_text", "category", "is_ai_generated", "is_verified"},
+        )
+        self.assertTrue(data["is_ai_generated"])
+        self.assertFalse(data["is_verified"])
 
 
 class GenerateParsingTest(SimpleTestCase):
