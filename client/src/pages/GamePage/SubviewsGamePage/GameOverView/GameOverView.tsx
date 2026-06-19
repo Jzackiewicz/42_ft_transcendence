@@ -1,4 +1,3 @@
-import React from 'react';
 import { Player } from '../../useGamePage';
 import { Button } from '../../../../components/Button/Button';
 import './GameOverView.css';

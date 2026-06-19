@@ -1,4 +1,3 @@
-import React from 'react';
 import { useGamePage, GameStatus } from './useGamePage';
 import { useUser } from '../../context/UserContext';
 import { LobbyView } from './SubviewsGamePage/LobbyView/LobbyView';

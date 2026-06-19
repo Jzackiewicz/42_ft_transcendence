@@ -13,9 +13,8 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from drf_spectacular.utils import extend_schema
-from drf_spectacular.types import OpenApiTypes
 from django.contrib.auth import authenticate, login, logout
 from .permissions import IsSelfOrReadOnly, IsAnonymous
 from django.contrib.auth import login as django_login

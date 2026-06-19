@@ -2,12 +2,10 @@ import json
 import random
 import time
 
-from dotenv import load_dotenv
 from django.db import transaction
 from django.db.models import Max
 from google import genai
 from pydantic import BaseModel
-from google.genai.errors import APIError
 
 from core.settings import LLM_API_KEY, LLM_MODEL
 from game.models import GameSession, Question, SessionQuestion

@@ -3,7 +3,6 @@ from django.utils import timezone
 from django.db import transaction
 from .guards import require_status, require_enough_questions_in_db
 from .player_selection import get_new_host_player
-from django.core.exceptions import ValidationError
 from django.conf import settings
 import random
 
