@@ -24,10 +24,18 @@ export function useAccountHeader(user: User | null | undefined, setUser: (u: Use
         if (!editingField || !user) return
         try {
             const updated = await patchMe({ [editingField]: editValue })
-            setUser({ ...user, ...updated.user, avatar: updated.avatar ?? user.avatar })
+            setUser({
+                id:       updated.user.id       ?? user.id,
+                username: updated.user.username ?? user.username,
+                email:    updated.user.email    ?? user.email,
+                avatar:   updated.avatar        ?? user.avatar,
+            })
             setEditingField(null)
         } catch (e: any) {
-            setError(e?.response?.data?.detail ?? 'Update failed.')
+            const data = e?.response?.data
+            const firstField = Object.values(data ?? {})[0]
+            const message = data?.detail ?? (Array.isArray(firstField) ? firstField[0] : null) ?? 'Update failed.'
+            setError(message)
         }
     }
 
@@ -38,7 +46,12 @@ export function useAccountHeader(user: User | null | undefined, setUser: (u: Use
         if (!file || !user) return
         try {
             const updated = await uploadAvatar(user.id, file)
-            setUser({ ...user, avatar: updated.avatar ?? user.avatar })
+            setUser({
+                id:       updated.user.id       ?? user.id,
+                username: updated.user.username ?? user.username,
+                email:    updated.user.email    ?? user.email,
+                avatar:   updated.avatar        ?? user.avatar,
+            })
         } catch (e: any) {
             setError(e?.response?.data?.detail ?? 'Avatar upload failed.')
         }

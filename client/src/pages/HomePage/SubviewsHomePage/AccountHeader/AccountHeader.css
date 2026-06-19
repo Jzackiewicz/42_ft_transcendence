@@ -145,7 +145,7 @@
 
 .account-edit-error {
     font-size: 11px;
-    color: var(--magenta);
+    color: #ff5050;
     margin-top: 4px;
 }
 
