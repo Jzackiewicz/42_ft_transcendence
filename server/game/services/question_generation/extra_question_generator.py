@@ -19,6 +19,7 @@ Questions must not include the word "and" or "type" or "while".
 Questions must give the full context of the question, and must not rely on the category field to give context to the question.
 If a question can have multiple answers, create a very extensive list of answers for that question.
 If the answer can have nicknames of itself, create a very extensive list out of answers that include the nickname and the actual name.
+Always include every reasonable way a person might phrase the same answer: numbers written as both digits and words (e.g. "4" and "four"), Roman numerals and their spelled-out and digit forms (e.g. "Elizabeth II", "Elizabeth 2", "Elizabeth the Second"), names with and without titles or articles (e.g. "Newton", "Isaac Newton", "Sir Isaac Newton"; "Severn", "River Severn"), and chemical symbols alongside element names (e.g. "Iron", "Fe").
 You must generate an appropriate catagory name for each question, and the catagory name must be relevant to the question and answer.
 The catagory name must be a single word or phrase that is relevant to the question and answer, and it must not be a generic term like "general" or "miscellaneous".
 If you are not 100% sure about an answer, don't include it."""
@@ -92,10 +93,11 @@ def persist_generated_questions(session, generated):
     seen_text = set()
     for item in generated:
         q_text = item.question
-        ans = item.answers[0] if item.answers else None
         category = item.category
-        if not q_text or not ans:
+        answer_variants = list(dict.fromkeys(a.strip() for a in (item.answers or []) if a and a.strip()))
+        if not q_text or not answer_variants:
             continue
+        ans = " | ".join(answer_variants)
         if q_text not in seen_text:
             seen_text.add(q_text)
             unique_generated.append((q_text, ans, category))
