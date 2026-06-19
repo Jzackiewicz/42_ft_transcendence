@@ -2,7 +2,6 @@ import json
 import random
 import time
 
-from dotenv import load_dotenv
 from django.db import transaction
 from django.db.models import Max
 from google import genai
@@ -26,9 +25,9 @@ If you are not 100% sure about an answer, don't include it."""
 RETRY_STATUS_CODES = {429, 500, 502, 503, 504}
 
 class GeneratedQuestion(BaseModel):
-	category: str
-	question: str
-	answers: list[str]
+    category: str
+    question: str
+    answers: list[str]
 
 def generate(client, model, prompt):
     for attempt in range(5):
@@ -52,36 +51,36 @@ def generate(client, model, prompt):
     raise RuntimeError("Maximum retries exceeded.")
 
 def load_lobby_questions(lobby_id):
-	"""Takes a lobby ID and returns a data object containing the questions, their answers, and a category for each question."""
-	lobby = GameSession.objects.filter(session_uuid=lobby_id).first()
-	if lobby is None:
-		raise RuntimeError(f"Lobby not found: {lobby_id}")
-	questions_data = [
-		{
-			"category": session_question.question.category,
-			"question": session_question.question.question_text,
-			"answers": [session_question.question.correct_answer],
-		}
-		for session_question in lobby.session_questions.select_related("question").order_by("order_index")
-	]
-	return questions_data
+    """Takes a lobby ID and returns a data object containing the questions, their answers, and a category for each question."""
+    lobby = GameSession.objects.filter(session_uuid=lobby_id).first()
+    if lobby is None:
+        raise RuntimeError(f"Lobby not found: {lobby_id}")
+    questions_data = [
+        {
+            "category": session_question.question.category,
+            "question": session_question.question.question_text,
+            "answers": [session_question.question.correct_answer],
+        }
+        for session_question in lobby.session_questions.select_related("question").order_by("order_index")
+    ]
+    return questions_data
 
 def build_prompt(lobby_id, n_questions_to_generate):
-	questions_data = load_lobby_questions(lobby_id)
+    questions_data = load_lobby_questions(lobby_id)
 
-	if not questions_data:
-		return (
-			f"Generate {n_questions_to_generate} general knowledge questions. "
-			"The questions must not be duplicates. "
-			"Return JSON array: question, answers, category."
-		)
+    if not questions_data:
+        return (
+            f"Generate {n_questions_to_generate} general knowledge questions. "
+            "The questions must not be duplicates. "
+            "Return JSON array: question, answers, category."
+        )
 
-	return (
-		f"Generate {n_questions_to_generate} questions based on: "
-		f"{json.dumps(questions_data)}. "
-		"Do not duplicate existing questions. "
-		"Return JSON array: question, answers, category."
-	)
+    return (
+        f"Generate {n_questions_to_generate} questions based on: "
+        f"{json.dumps(questions_data)}. "
+        "Do not duplicate existing questions. "
+        "Return JSON array: question, answers, category."
+    )
 @transaction.atomic
 def persist_generated_questions(session, generated):
     session = GameSession.objects.select_for_update().get(pk=session.pk)
@@ -172,17 +171,17 @@ def persist_generated_questions(session, generated):
     return created_question_ids
 
 def generate_extra_questions(lobby_id, n_questions_to_generate):
-	session = GameSession.objects.filter(session_uuid=lobby_id).first()
-	if session is None:
-		raise RuntimeError(f"Lobby not found: {lobby_id}")
-		
-	client = genai.Client(api_key=LLM_API_KEY)
-	prompt = build_prompt(lobby_id, n_questions_to_generate)
-	generated = generate(
-		client,
-		LLM_MODEL,
-		prompt,
-	)
+    session = GameSession.objects.filter(session_uuid=lobby_id).first()
+    if session is None:
+        raise RuntimeError(f"Lobby not found: {lobby_id}")
+        
+    client = genai.Client(api_key=LLM_API_KEY)
+    prompt = build_prompt(lobby_id, n_questions_to_generate)
+    generated = generate(
+        client,
+        LLM_MODEL,
+        prompt,
+    )
 
-	created_question_ids = persist_generated_questions(session, generated)
-	return {"created_question_ids": created_question_ids}
+    created_question_ids = persist_generated_questions(session, generated)
+    return {"created_question_ids": created_question_ids}
