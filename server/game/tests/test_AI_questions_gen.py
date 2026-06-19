@@ -342,6 +342,35 @@ class GenerateExtraQuestionsApiTest(APITestCase):
         self.assertIn("extra_questions_generated", snapshot)
         self.assertFalse(snapshot["extra_questions_generated"])
 
+    def test_snapshot_generated_count_excludes_verified_questions(self):
+        order = 0
+
+        def attach(count, **flags):
+            nonlocal order
+            for _ in range(count):
+                question = Question.objects.create(
+                    question_text=f"Q{order}-{uuid.uuid4()}?",
+                    correct_answer="A", category="general", **flags,
+                )
+                SessionQuestion.objects.create(session=self.session, question=question, order_index=order)
+                order += 1
+
+        attach(10, is_verified=True)                          # prefetched (real, verified)
+        attach(1, is_ai_generated=True, is_verified=True)     # inherited verified-AI (prefetched)
+        attach(3, is_ai_generated=True, is_verified=False)    # freshly generated this session
+
+        snapshot = get_game_snapshot(self.session.id)
+
+        self.assertEqual(snapshot["total_questions_count"], 14)
+        # Only the unverified AI questions count as "generated"...
+        self.assertEqual(snapshot["generated_questions_count"], 3)
+        # ...even though the AI total (including the inherited verified one) is 4.
+        self.assertEqual(snapshot["ai_questions_count"], 4)
+        # Prefetched base shown in the HUD = total - generated.
+        self.assertEqual(
+            snapshot["total_questions_count"] - snapshot["generated_questions_count"], 11
+        )
+
     @patch("game.services.lobby.lobby_management.generate_extra_questions")
     def test_is_limited_per_user_per_hour(self, mock_generate):
         mock_generate.return_value = {"created_question_ids": [1]}
