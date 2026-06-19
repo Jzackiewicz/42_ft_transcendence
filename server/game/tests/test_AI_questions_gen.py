@@ -77,6 +77,32 @@ class PersistGeneratedQuestionsGuardTest(TestCase):
         # All variants kept (trimmed + deduplicated), joined with '|'.
         self.assertEqual(question.correct_answer, "Isaac Newton | Newton | Sir Isaac Newton")
 
+    @patch("game.services.question_generation.extra_question_generator.random.shuffle")
+    def test_generation_reshuffles_whole_session_order(self, mock_shuffle):
+        # Existing questions occupy order_index 0..3.
+        for i in range(4):
+            question = Question.objects.create(
+                question_text=f"Real {i}?", correct_answer="A", category="general",
+            )
+            SessionQuestion.objects.create(session=self.session, question=question, order_index=i)
+
+        # Deterministic "shuffle": reverse the list in place.
+        mock_shuffle.side_effect = lambda items: items.reverse()
+        generated = [
+            GeneratedQuestion(question="AI A?", answers=["a"], category="c"),
+            GeneratedQuestion(question="AI B?", answers=["b"], category="c"),
+        ]
+
+        persist_generated_questions(self.session, generated)
+
+        ordered = list(self.session.session_questions.order_by("order_index").select_related("question"))
+        # The order stays a contiguous 0..N-1 sequence (unique constraint holds).
+        self.assertEqual([sq.order_index for sq in ordered], [0, 1, 2, 3, 4, 5])
+        # With a reversing shuffle, the two newly added AI questions land at the
+        # front — proving the whole set was reordered, not just appended.
+        ai_positions = sorted(sq.order_index for sq in ordered if sq.question.is_ai_generated)
+        self.assertEqual(ai_positions, [0, 1])
+
 
 class GenerateExtraQuestionsUnparseableTest(TestCase):
     """An unparseable LLM response must yield an empty result, not a crash."""

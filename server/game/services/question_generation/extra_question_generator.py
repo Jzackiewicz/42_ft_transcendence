@@ -153,8 +153,6 @@ def persist_generated_questions(session, generated):
     to_create = []
     created_question_ids = []
 
-    random.shuffle(unique_generated)
-
     for q_text, _, _ in unique_generated:
         q_obj = question_map.get(q_text)
         if not q_obj:
@@ -172,8 +170,25 @@ def persist_generated_questions(session, generated):
 
     if to_create:
         SessionQuestion.objects.bulk_create(to_create)
+        reshuffle_session_question_order(session)
 
     return created_question_ids
+
+
+def reshuffle_session_question_order(session):
+    session_questions = list(session.session_questions.all())
+    count = len(session_questions)
+    if count < 2:
+        return
+
+    for offset, sq in enumerate(session_questions):
+        sq.order_index = count + offset
+    SessionQuestion.objects.bulk_update(session_questions, ["order_index"])
+
+    random.shuffle(session_questions)
+    for index, sq in enumerate(session_questions):
+        sq.order_index = index
+    SessionQuestion.objects.bulk_update(session_questions, ["order_index"])
 
 def generate_extra_questions(lobby_id, n_questions_to_generate):
     session = GameSession.objects.filter(session_uuid=lobby_id).first()
