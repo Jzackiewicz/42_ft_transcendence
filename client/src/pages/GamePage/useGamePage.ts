@@ -67,6 +67,8 @@ export interface GameSnapshot {
     evaluation_deadline_at?: string | null;
 }
 
+const RECONNECT_SCHEDULE_MS = [1000, 2000, 4000, 8000, 16000, 30000];
+
 export function useGamePage() {
     const { user, activeSessionUuid, setActiveSessionUuid } = useUser();
 
@@ -150,13 +152,27 @@ export function useGamePage() {
     }, [activeGameState?.current_status, activeGameState?.turn_deadline_at, activeGameState?.nomination_deadline_at, activeGameState?.evaluation_deadline_at]);
 
     const wsRef = useRef<WebSocket | null>(null);
+    const reconnectAttemptRef = useRef(0);
+    const reconnectTimerRef = useRef<number | null>(null);
+    const manuallyClosedRef = useRef(false);
+
+    const clearReconnectTimer = () => {
+        if (reconnectTimerRef.current !== null) {
+            clearTimeout(reconnectTimerRef.current);
+            reconnectTimerRef.current = null;
+        }
+    };
 
     const connectToLobby = () => {
         if (!sessionUuid) return;
 
         if (wsRef.current) {
+            wsRef.current.onclose = null;
             wsRef.current.close();
         }
+
+        clearReconnectTimer();
+        manuallyClosedRef.current = false;
 
         // Connect through Vite proxy
         const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
@@ -164,6 +180,7 @@ export function useGamePage() {
         const ws = new WebSocket(wsUrl);
 
         ws.onopen = () => {
+            reconnectAttemptRef.current = 0;
             setIsConnected(true);
             setMessages(prev => [...prev, `[System]: Connected to session ${sessionUuid}`]);
             setErrorMsg(null);
@@ -187,9 +204,23 @@ export function useGamePage() {
             }
         };
 
-        ws.onclose = () => {
+        ws.onclose = (event) => {
             setIsConnected(false);
             setMessages(prev => [...prev, `[System]: Disconnected`]);
+
+            if (manuallyClosedRef.current || event.code === 1000) {
+                return;
+            }
+
+            const idx = Math.min(reconnectAttemptRef.current, RECONNECT_SCHEDULE_MS.length - 1);
+            const delay = RECONNECT_SCHEDULE_MS[idx];
+            reconnectAttemptRef.current += 1;
+
+            setMessages(prev => [...prev, `[System]: Reconnecting in ${delay / 1000}s...`]);
+            reconnectTimerRef.current = window.setTimeout(() => {
+                reconnectTimerRef.current = null;
+                connectToLobby();
+            }, delay);
         };
 
         ws.onerror = (error) => {
@@ -224,7 +255,10 @@ export function useGamePage() {
     };
 
     const disconnect = () => {
+        manuallyClosedRef.current = true;
+        clearReconnectTimer();
         if (wsRef.current) {
+            wsRef.current.onclose = null;
             wsRef.current.close();
             wsRef.current = null;
         }
