@@ -58,7 +58,7 @@ class UserListApi(APIView):
     )
     def get(self, request):
         users = user_list()
-        output_serializer = UserOutputSerializer(users, many=True)
+        output_serializer = UserOutputSerializer(users, many=True, context={"request": request})
         return Response(output_serializer.data, status=status.HTTP_200_OK)
 
 
@@ -72,7 +72,7 @@ class UserDetailApi(APIView):
     )
     def get(self, request, user_id: int):
         user = user_get_by_id(user_id=user_id)
-        output_serializer = UserOutputSerializer(user)
+        output_serializer = UserOutputSerializer(user, context={"request": request})
         return Response(output_serializer.data, status=status.HTTP_200_OK)
 
 
@@ -98,7 +98,7 @@ class UserProfileMeApi(APIView):
     @method_decorator(ensure_csrf_cookie)
     def get(self, request):
         profile = profile_get_by_user_id(user_id=request.user.id)
-        output_serializer = UserProfileOutputSerializer(profile)
+        output_serializer = UserProfileOutputSerializer(profile, context={"request": request})
         return Response(output_serializer.data)
 
     @extend_schema(
@@ -120,7 +120,7 @@ class UserProfileMeApi(APIView):
             user=request.user, **input_serializer.validated_data
         )
 
-        output_serializer = UserProfileOutputSerializer(user.profile)
+        output_serializer = UserProfileOutputSerializer(user.profile, context={"request": request})
         return Response(output_serializer.data, status=status.HTTP_200_OK)
 
     @extend_schema(
@@ -167,7 +167,7 @@ class UserProfileListApi(APIView):
     )
     def get(self, request):
         profiles = profile_list()
-        output_serializer = UserProfileOutputSerializer(profiles, many=True)
+        output_serializer = UserProfileOutputSerializer(profiles, many=True, context={"request": request})
         return Response(output_serializer.data, status=status.HTTP_200_OK)
 
 
@@ -179,7 +179,7 @@ class UserProfileDetailApi(APIView):
     )
     def get(self, request, user_id: int):
         profile = profile_get_by_user_id(user_id=user_id)
-        output_serializer = UserProfileOutputSerializer(profile)
+        output_serializer = UserProfileOutputSerializer(profile, context={"request": request})
         return Response(output_serializer.data, status=status.HTTP_200_OK)
 
 
@@ -208,7 +208,7 @@ class UserProfileAvatarApi(APIView):
             profile=profile, **input_serializer.validated_data
         )
 
-        output_serializer = UserProfileOutputSerializer(profile)
+        output_serializer = UserProfileOutputSerializer(profile, context={"request": request})
         return Response(output_serializer.data, status=status.HTTP_200_OK)
 
     @extend_schema(
@@ -244,7 +244,7 @@ class UserRegisterApi(APIView):
 
         user = user_create(**input_serializer.validated_data)
 
-        output_serializer = UserOutputSerializer(user)
+        output_serializer = UserOutputSerializer(user, context={"request": request})
         return Response(output_serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -277,7 +277,7 @@ class UserLoginApi(APIView):
             )
 
         login(request, user)
-        return Response(UserOutputSerializer(user).data, status=status.HTTP_200_OK)
+        return Response(UserOutputSerializer(user, context={"request": request}).data, status=status.HTTP_200_OK)
 
 class UserLogoutApi(APIView):
     permission_classes = [IsAuthenticated]
