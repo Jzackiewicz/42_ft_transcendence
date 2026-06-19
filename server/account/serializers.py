@@ -40,6 +40,13 @@ class UserOutputSerializer(serializers.ModelSerializer):
         model = User
         fields = ["id", "username", "email"]
 
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        request = self.context.get("request")
+        if request and request.user.is_authenticated and request.user != instance:
+            ret.pop("email", None)
+        return ret
+
 
 class UserUpdateInputSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=150, required=False)
