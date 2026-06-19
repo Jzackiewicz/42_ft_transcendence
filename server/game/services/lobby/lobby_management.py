@@ -133,6 +133,9 @@ def generate_extra_questions_for_room(*, session_uuid: str, user):
         release_extra_question_generation_quota(user=user)
         raise
 
+    session.extra_questions_generated = True
+    session.save(update_fields=["extra_questions_generated"])
+
     _broadcast_questions_update(session)
     return result
 

@@ -119,6 +119,7 @@ class GameStateSnapshotSerializer(serializers.ModelSerializer):
 			'last_nominated_player', 'players', 'current_question', 'current_attempt',
 			'answer_time_limit_ms', 'nomination_time_limit_ms', 'max_players', 'winner', 'end_reason',
 			'question_asked_count', 'total_questions_count', 'ai_questions_count',
+			'extra_questions_generated',
 		]
 
 	def get_players(self, obj: GameSession):
