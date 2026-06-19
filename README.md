@@ -169,22 +169,98 @@ I also explored using Github Copilot to assist me with writing code. I was pleas
 **<Feature>** - <Description> - **Made by:** <Person(s)>.
 
 ### 🟧 Modules ```List all chosen modules, point calculation, justification for each choice, how each module was implented, which team members did what```
-**Complete list of chosen modules:**
-**<Module>** - **<Minor/Major>** - **People Involved: <People_Involved>**
+### Complete list of chosen modules:
+
+## 🌐 Web
+
+### Major - Use a framework for both the frontend and backend
+
+- **People Involved: Everyone**
+- We used **Django** as our backend framework and **React** as our frontend framework.
+- **Why this module?** - **Django** was chosen for its great out of the box capabilities like the **Django ORM** which allowed us to get an additional minor module. It allowed us to use **Redis** for caching and channels (WebSockets) with ease. <Add_onto_this_if_you_want>
+
+### Major - Implement real-time features using WebSockets or similar technology.
+
+- **People Involved: <People_Involved>**
 - <How_the_module_was_implemented>.
 - **Why this module?** - <Why_this_module_was_chosen>.
 
-**<Module>** - **<Minor/Major>** - **People Involved: <People_Involved>**
+### Major - Allow users to interact with other users.
+
+- **People Involved: <People_Involved>**
+- We have a /home/ page where once logged in a user can look for users, <NOT_YET_IMPLEMENTED view their profiles>, add or remove friends and message with them live. <NOT_YET_IMPLEMENTED During live games players can chat with each other using a lobby sized live chat.>
+- **Why this module?** - This module fit very well considering the aspect of the game. The idea of players interacting mid match then adding each other after the match to discuss the game or organise another one is a logical one.
+
+### Minor - Use an ORM for the database.
+
+- **People Involved: <People_Involved>**
 - <How_the_module_was_implemented>.
 - **Why this module?** - <Why_this_module_was_chosen>.
 
-**<Module>** - **<Minor/Major>** - **People Involved: <People_Involved>**
+## 💠 Accessibility and Internationalization
+
+### Minor - Support for additional browsers.
+
+- **People Involved: <People_Involved>**
 - <How_the_module_was_implemented>.
 - **Why this module?** - <Why_this_module_was_chosen>.
 
-**<Module>** - **<Minor/Major>** - **People Involved: <People_Involved>**
+## 👥 User Management
+
+### Major - Standard user management and authentication.
+
+- **People Involved: <People_Involved>**
 - <How_the_module_was_implemented>.
 - **Why this module?** - <Why_this_module_was_chosen>.
+
+### Minor - Implement remote authentication with OAuth 2.0
+
+- **People Involved: <People_Involved>**
+- <How_the_module_was_implemented>.
+- **Why this module?** - <Why_this_module_was_chosen>.
+
+## 🔮 Gaming and user experience
+
+### Major - Implement a complete web-based game where users can play against each other.
+
+- **People Involved: <People_Involved>**
+- <How_the_module_was_implemented>.
+- **Why this module?** - <Why_this_module_was_chosen>.
+
+### Major - Remote players — Enable two players on separate computers to play the same game in real-time
+
+- **People Involved: <People_Involved>**
+- <How_the_module_was_implemented>.
+- **Why this module?** - <Why_this_module_was_chosen>.
+
+### Major - Multiplayer game (more than two players)
+
+- **People Involved: <People_Involved>**
+- <How_the_module_was_implemented>.
+- **Why this module?** - <Why_this_module_was_chosen>.
+
+### Minor - Implement spectator mode for games.
+
+- **People Involved: <People_Involved>**
+- <How_the_module_was_implemented>.
+- **Why this module?** - <Why_this_module_was_chosen>.
+
+## 🔮 Artificial Intelligence
+
+### Major Module of Choice - <Question_Expander>.
+
+- **People Involved: dbozic, jzackiew**
+- <How_the_module_was_implemented>.
+- **Why this module?** - We chose this module as it is a core concept of our game; AI generated questions. It also opened up the possibility of implementing RAG (Retrieval Based Generation) which could have been an additional Major Module.
+
+- **What technical challenges it addresses** - <Fill_in>
+
+- **How it adds value to your project** - <Fill_in>
+
+- **Why it deserves Major module status (2 points).** - This module greatly resembles the module **"Major Module: Implement a complete LLM system interface"**. Below is a list of the requirements of the original module next to the counter part.
+  + **Original:** Generate text and/or images based on user input.<br> **Counterpart:** Generate Questions with their answers and catagories based on the current lobbies question pool.
+  + **Original:** Handle streaming responces properly. <br> **Counterpart:** Handle updating a game sessions question base as well as implementing persistence for future use of the generated questions.
+  + **Original:** Implement error handling and rate limiting. <br>**Counterpart:** Implement error handling and rate limiting.
 
 **Total Points = <total_count>**
 
