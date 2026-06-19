@@ -12,12 +12,13 @@ User = get_user_model()
 class TestRoomCreateApi(APITestCase):
 	def setUp(self):
 		self.user = User.objects.create_user(username="testuser", email="test@test.com", password="password")
-		# Seed questions so that room creation succeeds
+		# Seed verified questions so that room creation succeeds
 		for i in range(10):
 			Question.objects.create(
 				question_text=f"Question {i}?",
 				correct_answer="Yes",
-				category="general"
+				category="general",
+				is_verified=True
 			)
 
 	def test_create_room_success(self):
@@ -45,7 +46,8 @@ class TestRoomCreateApi(APITestCase):
 			Question.objects.create(
 				question_text=f"Question {i}?",
 				correct_answer="Yes",
-				category="general"
+				category="general",
+				is_verified=True
 			)
 		url = reverse('room-create')
 		self.client.force_authenticate(user=self.user)
