@@ -41,7 +41,7 @@ def generate(client, model, prompt):
                     "response_schema": list[GeneratedQuestion],
                 },
             )
-            return response.parsed
+            return response.parsed or []
         except APIError as e:
             if e.code in RETRY_STATUS_CODES:
                 delay = min(2 ** attempt, 30) + random.random()
@@ -83,6 +83,9 @@ def build_prompt(lobby_id, n_questions_to_generate):
     )
 @transaction.atomic
 def persist_generated_questions(session, generated):
+    if not generated:
+        return []
+
     session = GameSession.objects.select_for_update().get(pk=session.pk)
 
     unique_generated = []
