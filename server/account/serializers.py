@@ -108,6 +108,12 @@ class PublicUserSerializer(serializers.ModelSerializer):
 class UserProfileAvatarInputSerializer(serializers.Serializer):
     avatar = serializers.ImageField()
 
+    def validate_avatar(self, value):
+        max_size = 2 * 1024 * 1024 # 2MB
+        if value.size > max_size:
+            raise serializers.ValidationError("Avatar file size must be under 2MB.")
+        return value
+
 
 # ---------------------------------------------------------------------------
 # Login serializer
