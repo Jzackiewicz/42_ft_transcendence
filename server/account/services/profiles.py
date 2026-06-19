@@ -1,17 +1,22 @@
-from datetime import datetime
-from django.contrib.auth import get_user_model
-from .models import UserProfile
+"""
+User and UserProfile write-side operations (the "C", "U", "D" of CRUD).
 
-# ---------------------------------------------------------------------------
-# User services
-# CRUD
-# ---------------------------------------------------------------------------
+Reads belong in selectors.py, not here.
+"""
+from django.contrib.auth import get_user_model
+
+from account.models import UserProfile
 
 User = get_user_model()
 
 
+# ---------------------------------------------------------------------------
+# User services
+# ---------------------------------------------------------------------------
+
+
 def user_create(*, username: str, email: str, password: str) -> User:
-    """Create and return a new user. Hashing password. UserProfile is created via signal."""
+    """Create and return a new user. Hashes password. UserProfile is created via signal."""
     return User.objects.create_user(
         username=username,
         email=email,
@@ -43,10 +48,7 @@ def user_update_basic_info(
     return user
 
 
-# TODO: add another fields to delete is neccesary
-# First/Last Name if provided
-# Also delete the profile avatar form storage
-# set unusable password and so on
+# TODO: extend with first/last name and avatar storage cleanup when those fields exist.
 def user_soft_delete(*, user: User) -> User:
     user.username = f"deleted_{user.id}"
     user.email = f"deleted_{user.id}@deleted.com"
