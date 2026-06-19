@@ -85,7 +85,6 @@ export function useGamePage() {
             setActiveSessionUuid(sessionUuid);
         }
     }, [sessionUuid, setActiveSessionUuid]);
-    const [messages, setMessages] = useState<string[]>([]);
     const [isConnected, setIsConnected] = useState<boolean>(false);
     const [gameState, setGameState] = useState<GameSnapshot | null>(null);
     const [myPlayerId, setMyPlayerId] = useState<number | null>(null);
@@ -182,12 +181,10 @@ export function useGamePage() {
         ws.onopen = () => {
             reconnectAttemptRef.current = 0;
             setIsConnected(true);
-            setMessages(prev => [...prev, `[System]: Connected to session ${sessionUuid}`]);
             setErrorMsg(null);
         };
 
         ws.onmessage = (event) => {
-            setMessages(prev => [...prev, `[Server]: ${event.data}`]);
             try {
                 const data = JSON.parse(event.data);
                 if (data.your_player_id !== undefined) {
@@ -206,7 +203,6 @@ export function useGamePage() {
 
         ws.onclose = (event) => {
             setIsConnected(false);
-            setMessages(prev => [...prev, `[System]: Disconnected`]);
 
             if (manuallyClosedRef.current || event.code === 1000) {
                 return;
@@ -216,7 +212,6 @@ export function useGamePage() {
             const delay = RECONNECT_SCHEDULE_MS[idx];
             reconnectAttemptRef.current += 1;
 
-            setMessages(prev => [...prev, `[System]: Reconnecting in ${delay / 1000}s...`]);
             reconnectTimerRef.current = window.setTimeout(() => {
                 reconnectTimerRef.current = null;
                 connectToLobby();
@@ -224,7 +219,6 @@ export function useGamePage() {
         };
 
         ws.onerror = (error) => {
-            setMessages(prev => [...prev, `[Error]: Check the browser console (F12)`]);
             console.error("WebSocket Error:", error);
         };
 
@@ -235,10 +229,8 @@ export function useGamePage() {
         if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
             const message = JSON.stringify({ action, payload });
             wsRef.current.send(message);
-            setMessages(prev => [...prev, `[Client Send]: ${message}`]);
         } else {
             console.error("WebSocket is not connected");
-            setMessages(prev => [...prev, `[System Error]: Cannot send action, WS disconnected`]);
         }
     };
 
@@ -310,7 +302,6 @@ export function useGamePage() {
     const connection = {
         sessionUuid,
         setSessionUuid,
-        messages,
         isConnected,
         errorMsg,
         setErrorMsg,
