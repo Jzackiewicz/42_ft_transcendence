@@ -9,6 +9,7 @@ export function useHomePage() {
     const { user, setUser } = useUser()
     const [joinUuid, setJoinUuid] = useState('')
     const [showJoinModal, setShowJoinModal] = useState(false)
+    const [showRulesModal, setShowRulesModal] = useState(false)
 
     const handleLogout = async () => {
         try {
@@ -59,5 +60,6 @@ export function useHomePage() {
         handleJoinLobby,
         joinUuid, setJoinUuid,
         showJoinModal, setShowJoinModal,
+        showRulesModal, setShowRulesModal,
     }
 }
