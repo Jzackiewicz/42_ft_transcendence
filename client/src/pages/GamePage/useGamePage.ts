@@ -281,11 +281,30 @@ export function useGamePage() {
         setIsAiQuestionsRequested(true);
     };
     const leaveGame = () => {
+        const finish = () => {
+            disconnect();
+            setSessionUuid('');
+            setActiveSessionUuid(null);
+            navigate('/home');
+        };
+
+        const ws = wsRef.current;
+        if (!ws || ws.readyState !== WebSocket.OPEN) {
+            finish();
+            return;
+        }
+
         sendAction('leave_game');
-        disconnect();
-        setSessionUuid('');
-        setActiveSessionUuid(null);
-        navigate('/home');
+
+        const startedAt = Date.now();
+        const waitForFlush = () => {
+            if (ws.bufferedAmount === 0 || Date.now() - startedAt > 1000) {
+                finish();
+            } else {
+                window.setTimeout(waitForFlush, 50);
+            }
+        };
+        waitForFlush();
     };
 
     const connection = {
