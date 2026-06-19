@@ -3,12 +3,14 @@ from unittest.mock import MagicMock, patch
 
 from django.contrib.auth import get_user_model
 from django.core.cache import cache
+from django.core.exceptions import ValidationError
 from django.test import SimpleTestCase, TestCase
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from game.models import GameSession, Question, SessionPlayer, SessionQuestion
+from game.selectors.game_flow_selectors import get_game_snapshot
 from game.serializers import GenerateExtraQuestionsResponseSerializer
 from game.services.lobby.lobby_management import create_room
 from game.services.question_generation.extra_question_generator import (
@@ -120,6 +122,17 @@ class GenerateExtraQuestionsApiTest(APITestCase):
                 question=question,
                 order_index=start + i,
             )
+
+    def _make_host_session(self, real=0):
+        """Create another LOBBY session hosted by self.host, with ``real`` questions."""
+        session = GameSession.objects.create(current_status=GameSession.Status.LOBBY)
+        host_sp = SessionPlayer.objects.create(
+            session=session, user=self.host, display_name="Host", seat_number=1,
+        )
+        session.host_player = host_sp
+        session.save()
+        self._add_questions(real=real, session=session)
+        return session
 
     @patch("game.services.lobby.lobby_management.generate_extra_questions")
     def test_generates_half_of_real_questions(self, mock_generate):
@@ -248,25 +261,44 @@ class GenerateExtraQuestionsApiTest(APITestCase):
         mock_generate.assert_not_called()
 
     @patch("game.services.lobby.lobby_management.generate_extra_questions")
-    def test_is_limited_per_user_per_hour(self, mock_generate):
+    def test_generation_allowed_once_per_session(self, mock_generate):
         mock_generate.return_value = {"created_question_ids": [1]}
         self._add_questions(real=10)
 
         url = reverse("generate-extra-questions")
         self.client.force_authenticate(user=self.host)
+        payload = {"session_uuid": str(self.session.session_uuid)}
 
+        first = self.client.post(url, payload, format="json")
+        second = self.client.post(url, payload, format="json")
+
+        self.assertEqual(first.status_code, status.HTTP_200_OK)
+        self.assertEqual(second.status_code, status.HTTP_400_BAD_REQUEST)
+        self.session.refresh_from_db()
+        self.assertTrue(self.session.extra_questions_generated)
+        self.assertEqual(mock_generate.call_count, 1)
+
+    def test_snapshot_exposes_extra_questions_generated_flag(self):
+        snapshot = get_game_snapshot(self.session.id)
+        self.assertIn("extra_questions_generated", snapshot)
+        self.assertFalse(snapshot["extra_questions_generated"])
+
+    @patch("game.services.lobby.lobby_management.generate_extra_questions")
+    def test_is_limited_per_user_per_hour(self, mock_generate):
+        mock_generate.return_value = {"created_question_ids": [1]}
+
+        url = reverse("generate-extra-questions")
+        self.client.force_authenticate(user=self.host)
+
+        # Generation is once-per-session, so each request uses a fresh session.
+        # The per-user hourly quota (5) blocks the 6th regardless of session.
+        sessions = [self._make_host_session(real=10) for _ in range(6)]
         responses = [
-            self.client.post(
-                url,
-                {"session_uuid": str(self.session.session_uuid)},
-                format="json",
-            )
-            for _ in range(5)
+            self.client.post(url, {"session_uuid": str(s.session_uuid)}, format="json")
+            for s in sessions[:5]
         ]
         blocked = self.client.post(
-            url,
-            {"session_uuid": str(self.session.session_uuid)},
-            format="json",
+            url, {"session_uuid": str(sessions[5].session_uuid)}, format="json",
         )
 
         self.assertTrue(all(response.status_code == status.HTTP_200_OK for response in responses))
@@ -302,12 +334,13 @@ class GenerateExtraQuestionsIntegrationTest(TestCase):
         self.user = User.objects.create_user(username="host", password="pass")
         self.client.force_login(self.user)
 
-        # create questions FIRST (required by create_room)
+        # create verified questions FIRST (required by create_room)
         for i in range(10):
             Question.objects.create(
                 question_text=f"Seed question {i}?",
                 correct_answer=f"A{i}",
                 category="general",
+                is_verified=True,
             )
 
         # now create the lobby (it will pick from existing questions)
@@ -363,3 +396,47 @@ class GenerateExtraQuestionsIntegrationTest(TestCase):
 
         self.assertSetEqual(set(attached_ai_questions), {"AI Q1?", "AI Q2?", "AI Q3?"})
         self.assertEqual(len(attached_ai_questions), 3)
+
+
+class NewSessionUsesOnlyVerifiedQuestionsTest(TestCase):
+    """A new room is seeded only with verified questions, which MAY be
+    AI-generated. Unverified questions are never assigned."""
+
+    def setUp(self):
+        cache.clear()
+        self.user = User.objects.create_user(username="host", password="pass")
+
+    def test_only_verified_questions_are_assigned(self):
+        for i in range(7):
+            Question.objects.create(
+                question_text=f"Verified real {i}?", correct_answer="A", category="general",
+                is_verified=True,
+            )
+        for i in range(3):
+            Question.objects.create(
+                question_text=f"Verified AI {i}?", correct_answer="A", category="general",
+                is_ai_generated=True, is_verified=True,
+            )
+        for i in range(20):
+            Question.objects.create(
+                question_text=f"Unverified AI {i}?", correct_answer="A", category="general",
+                is_ai_generated=True, is_verified=False,
+            )
+
+        session = create_room(user=self.user)
+        assigned = list(session.session_questions.select_related("question"))
+
+        self.assertEqual(len(assigned), 10)
+        # Everything assigned is verified...
+        self.assertTrue(all(sq.question.is_verified for sq in assigned))
+        # ...and verified AI questions are allowed (not excluded from the pool).
+        self.assertEqual(sum(1 for sq in assigned if sq.question.is_ai_generated), 3)
+
+    def test_unverified_questions_cannot_seed_a_room(self):
+        for i in range(10):
+            Question.objects.create(
+                question_text=f"Unverified {i}?", correct_answer="A", category="general",
+                is_verified=False,
+            )
+        with self.assertRaises(ValidationError):
+            create_room(user=self.user)
