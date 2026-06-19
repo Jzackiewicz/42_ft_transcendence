@@ -4,13 +4,11 @@ import './GameOverView.css';
 
 interface GameOverViewProps {
     winnerId: number | null;
-    winnerName: string;
-    endReason: string;
     players: Player[];
     onReturnToHome: () => void;
 }
 
-export function GameOverView({ winnerId, winnerName, endReason, players, onReturnToHome }: GameOverViewProps) {
+export function GameOverView({ winnerId, players, onReturnToHome }: GameOverViewProps) {
     const sortedLeaderboard = [...players].sort((a, b) => {
         // 0. The official winner always comes first
         if (winnerId !== null) {

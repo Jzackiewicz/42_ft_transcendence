@@ -79,8 +79,6 @@ export function GamePage() {
                 return (
                     <GameOverView
                         winnerId={gameState.winner}
-                        winnerName={gameState.players.find(p => p.id === gameState.winner)?.display_name || ''}
-                        endReason={gameState.end_reason || ''}
                         players={gameState.players}
                         onReturnToHome={connection.leaveGame}
                     />
@@ -97,7 +95,7 @@ export function GamePage() {
     };
 
     const { sessionUuid, errorMsg, setErrorMsg } = connection;
-    const { gameState, gameStarted, timeLeft, hostPlayerId, isSpectator, currentPlayerObj, eligiblePlayers } = sessionState;
+    const { gameState, timeLeft, hostPlayerId, isSpectator, currentPlayerObj, eligiblePlayers } = sessionState;
 
     return (
         <div className={`game-page-container phase-${gameState?.current_status || 'none'}`}>

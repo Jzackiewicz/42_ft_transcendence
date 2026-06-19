@@ -38,7 +38,6 @@ export interface AnswerAttempt {
     answer_text: string | null;
     is_timeout: boolean;
     is_correct: boolean | null;
-    evaluation_status: string;
     correct_answer?: string;
     player: number; // player ID
 }
@@ -61,7 +60,6 @@ export interface GameSnapshot {
     end_reason: string | null;
     question_asked_count: number;
     total_questions_count: number;
-    current_attempt_started_at?: string | null;
     turn_deadline_at?: string | null;
     nomination_deadline_at?: string | null;
     evaluation_deadline_at?: string | null;
@@ -108,7 +106,6 @@ export function useGamePage() {
         ((myPlayerId !== null && activeGameState.host_player === myPlayerId) ||
          (myPlayerId === null && sortedPlayers.length > 0 && currentPlayerObj !== undefined && sortedPlayers[0].id === currentPlayerObj.id));
     const hostPlayerId = activeGameState?.host_player ?? (sortedPlayers.length > 0 ? sortedPlayers[0].id : null);
-    const gameStarted = activeGameState !== null && activeGameState.current_status !== GameStatus.LOBBY;
     const isGameOver = activeGameState !== null && activeGameState.current_status === GameStatus.GAME_OVER;
 
 
@@ -324,7 +321,6 @@ export function useGamePage() {
         isSpectator: activeGameState?.is_spectator ?? false,
         isHost,
         hostPlayerId,
-        gameStarted,
         isGameOver,
         sortedPlayers
     };
