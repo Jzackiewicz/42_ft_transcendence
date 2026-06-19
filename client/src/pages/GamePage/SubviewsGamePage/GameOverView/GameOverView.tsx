@@ -1,5 +1,6 @@
 import React from 'react';
 import { Player } from '../../useGamePage';
+import { Button } from '../../../../components/Button/Button';
 import './GameOverView.css';
 
 interface GameOverViewProps {
@@ -44,60 +45,77 @@ export function GameOverView({ winnerId, winnerName, endReason, players, onRetur
         return a.seat_number - b.seat_number;
     });
 
+    // Render lives as visual hearts
+    const renderHearts = (lives: number) =>
+        Array.from({ length: 3 })
+            .map((_, i) => (i < lives ? '❤️' : '🖤'))
+            .join('');
+
     return (
         <div className="game-over-container">
-            <h2 className="game-over-title">Game Over!</h2>
 
-            <div className="game-over-winner-card">
-                <div className="game-over-winner-name">
-                    🏆 Winner: {winnerName || 'No winner (Draw)'}
-                </div>
-                <div className="game-over-reason">
-                    <strong>Reason:</strong> {endReason || 'Game completed.'}
-                </div>
-            </div>
-
-            <h3>Final Standings</h3>
             <table className="game-over-table">
-                <thead>
-                    <tr className="game-over-table-header">
-                        <th className="game-over-th-left">Rank</th>
-                        <th className="game-over-th-left">Player</th>
-                        <th className="game-over-th-center">Status</th>
-                        <th className="game-over-th-center">Lives</th>
-                        <th className="game-over-th-center">Points</th>
-                        <th className="game-over-th-center">Answers</th>
+                <thead className="game-over-thead">
+                    <tr>
+                        <th>Rank</th>
+                        <th>Player</th>
+                        <th>Points</th>
+                        <th>Lives</th>
+                        <th>Answers</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {sortedLeaderboard.map((player, idx) => (
-                        <tr key={player.id} className="game-over-tr">
-                            <td className="game-over-td-rank">#{idx + 1}</td>
-                            <td className="game-over-td-name">{player.display_name}</td>
-                            <td className="game-over-td-center">
-                                {player.is_alive ? '❤️ Alive' : '💀 Dead'}
-                            </td>
-                            <td className="game-over-td-center">{player.lives}</td>
-                            <td className="game-over-td-points">
-                                {player.points}
-                            </td>
-                            <td className="game-over-td-center">
-                                {player.answered_count}
-                            </td>
-                        </tr>
-                    ))}
+                    {sortedLeaderboard.map((player, idx) => {
+                        const isWinner = player.id === winnerId;
+                        const rowClasses = [
+                            'game-over-row',
+                            isWinner ? 'winner-row' : '',
+                            !player.is_alive ? 'eliminated-row' : ''
+                        ].filter(Boolean).join(' ');
+
+                        return (
+                            <tr key={player.id} className={rowClasses}>
+                                <td className="game-over-rank">
+                                    #{idx + 1}
+                                </td>
+                                <td className="game-over-player-cell">
+                                    <div className="game-over-player-info">
+                                        {player.avatar ? (
+                                            <img
+                                                src={player.avatar}
+                                                alt={`${player.display_name}'s avatar`}
+                                                className="game-over-avatar"
+                                            />
+                                        ) : (
+                                            <span className="game-over-avatar-placeholder">👤</span>
+                                        )}
+                                        <span className="game-over-player-name">
+                                            {player.display_name}
+                                        </span>
+                                    </div>
+                                </td>
+                                <td className="game-over-points">
+                                    {player.points}
+                                </td>
+                                <td className="game-over-lives">
+                                    {renderHearts(player.lives)}
+                                </td>
+                                <td className="game-over-answers">
+                                    {player.answered_count}
+                                </td>
+                            </tr>
+                        );
+                    })}
                 </tbody>
             </table>
 
+            {/* ── Actions ────────────────────────────────────────── */}
             <div className="game-over-actions">
-                <button 
-                    onClick={onReturnToHome}
-                    className="btn-game-over-home"
-                >
+                <Button onClick={onReturnToHome}>
                     Return to Home
-                </button>
+                </Button>
             </div>
+
         </div>
     );
 }
-

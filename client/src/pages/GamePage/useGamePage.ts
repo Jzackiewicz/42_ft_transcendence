@@ -55,6 +55,8 @@ export interface GameSnapshot {
     current_question: Question | null;
     current_attempt: AnswerAttempt | null;
     answer_time_limit_ms: number;
+    nomination_time_limit_ms: number;
+    max_players: number;
     winner: number | null;
     end_reason: string | null;
     question_asked_count: number;
@@ -62,6 +64,7 @@ export interface GameSnapshot {
     current_attempt_started_at?: string | null;
     turn_deadline_at?: string | null;
     nomination_deadline_at?: string | null;
+    evaluation_deadline_at?: string | null;
 }
 
 export function useGamePage() {
@@ -122,6 +125,8 @@ export function useGamePage() {
             deadlineStr = activeGameState.turn_deadline_at;
         } else if (activeGameState.current_status === GameStatus.NOMINATION) {
             deadlineStr = activeGameState.nomination_deadline_at;
+        } else if (activeGameState.current_status === GameStatus.EVALUATION) {
+            deadlineStr = activeGameState.evaluation_deadline_at;
         }
 
         if (!deadlineStr) {
@@ -142,7 +147,7 @@ export function useGamePage() {
         const intervalId = setInterval(updateTimer, 200);
 
         return () => clearInterval(intervalId);
-    }, [activeGameState?.current_status, activeGameState?.turn_deadline_at, activeGameState?.nomination_deadline_at]);
+    }, [activeGameState?.current_status, activeGameState?.turn_deadline_at, activeGameState?.nomination_deadline_at, activeGameState?.evaluation_deadline_at]);
 
     const wsRef = useRef<WebSocket | null>(null);
 

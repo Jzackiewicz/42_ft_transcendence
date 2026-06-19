@@ -1,8 +1,4 @@
 .lobby-view-container {
-    padding: 20px;
-    border: 1px solid #444;
-    border-radius: 4px;
-    background-color: #000;
     color: #fff;
 }
 
@@ -15,24 +11,6 @@
     margin-bottom: 15px;
     color: #00e676;
     font-weight: bold;
-}
-
-.lobby-btn {
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #000;
-    color: #fff;
-    border: 1px solid #444;
-}
-
-.lobby-btn:disabled {
-    cursor: not-allowed;
-    color: #666;
-    border-color: #222;
-}
-
-.lobby-btn:enabled {
-    cursor: pointer;
 }
 
 .lobby-actions-row {

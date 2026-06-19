@@ -38,7 +38,6 @@ export function EvaluationView({
 
     return (
         <div className={`evaluation-view-container ${statusClass}`}>
-            <h2>Evaluation Phase</h2>
             
             <div className="eval-question-info">
                 <span className="eval-category">[{category}]</span>
@@ -51,10 +50,12 @@ export function EvaluationView({
                 <div className="eval-player-answer-box">
                     <div className="eval-box-label">{playerName}'s Answer:</div>
                     <div className="eval-box-content">
-                        {answerText === null ? (
-                            <span className="eval-text-none">None (Timeout)</span>
+                        {isTimeout ? (
+                            <span className="eval-text-none">Timeout</span>
+                        ) : (answerText === null || answerText.trim() === '') ? (
+                            <span className="eval-text-none">None</span>
                         ) : (
-                            <span className="eval-text-value">"{answerText}"</span>
+                            <span className="eval-text-value">{answerText}</span>
                         )}
                     </div>
                 </div>
@@ -62,7 +63,7 @@ export function EvaluationView({
                 <div className="eval-correct-answer-box">
                     <div className="eval-box-label">Correct Answer:</div>
                     <div className="eval-box-content">
-                        <span className="eval-text-value">"{correctAnswer}"</span>
+                        <span className="eval-text-value">{correctAnswer}</span>
                     </div>
                 </div>
             </div>

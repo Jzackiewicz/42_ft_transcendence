@@ -1,0 +1,86 @@
+.app-btn {
+    border-radius: var(--radius-sm);
+    font-family: var(--fb);
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: none;
+    outline: none;
+    user-select: none;
+}
+
+/* ── SIZES ──────────────────────────────────────────────────────── */
+.app-btn-sm {
+    padding: 6px 12px;
+    font-size: var(--font-xs);
+}
+
+.app-btn-md {
+    padding: 8px 18px;
+    font-size: var(--font-sm);
+}
+
+.app-btn-lg {
+    padding: 12px 24px;
+    font-size: var(--font-md);
+}
+
+/* ── VARIANTS ───────────────────────────────────────────────────── */
+
+/* Primary: Neon Cyan */
+.app-btn-primary {
+    background: var(--cyan);
+    color: #000;
+}
+
+.app-btn-primary:hover:not(:disabled) {
+    box-shadow: 0 0 20px rgba(0, 229, 255, 0.5);
+}
+
+/* Secondary: Outlined Cyan */
+.app-btn-secondary {
+    background: transparent;
+    border: 1px solid var(--cyan);
+    color: var(--cyan);
+}
+
+.app-btn-secondary:hover:not(:disabled) {
+    background: rgba(0, 229, 255, 0.08);
+    box-shadow: 0 0 15px rgba(0, 229, 255, 0.2);
+}
+
+/* Danger: Neon Red */
+.app-btn-danger {
+    background: var(--red);
+    color: #000;
+}
+
+.app-btn-danger:hover:not(:disabled) {
+    box-shadow: 0 0 20px rgba(255, 23, 68, 0.5);
+}
+
+/* Success: Neon Green */
+.app-btn-success {
+    background: var(--green);
+    color: #000;
+}
+
+.app-btn-success:hover:not(:disabled) {
+    box-shadow: 0 0 20px rgba(0, 230, 118, 0.5);
+}
+
+/* ── STATES ─────────────────────────────────────────────────────── */
+.app-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
+    box-shadow: none !important;
+}
+
+.app-btn:active:not(:disabled) {
+    transform: scale(0.97);
+}
