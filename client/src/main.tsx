@@ -14,6 +14,9 @@ import { UserProvider } from './context/UserContext.tsx'
 import { PresenceProvider } from './context/PresenceContext.tsx'
 import { ProtectedRoute, PublicOnlyRoute, SessionProtectedRoute, RootRedirect } from './components/NavGuards.tsx'
 
+import './index.css'
+
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
 	<React.StrictMode>
 		<UserProvider>

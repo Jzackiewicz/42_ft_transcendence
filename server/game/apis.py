@@ -9,9 +9,9 @@ from .services.lobby.lobby_management import create_room, join_room, destroy_roo
 from .serializers import (
 	GameSessionOutputSerializer,
 	SessionPlayerOutputSerializer,
-	UserGameStatsSerializer,
 	GenerateExtraQuestionsPayloadSerializer,
 	GenerateExtraQuestionsResponseSerializer,
+	UserGameStatsSerializer,
 )
 from .selectors.stats_selectors import get_user_game_stats
 
@@ -75,8 +75,6 @@ class UserGameStatsApi(APIView):
 		stats = get_user_game_stats(user_id=user_id)
 		serializer = UserGameStatsSerializer(stats)
 		return Response(serializer.data, status=status.HTTP_200_OK)
-
-
 
 
 class GenerateExtraQuestionsApi(APIView):

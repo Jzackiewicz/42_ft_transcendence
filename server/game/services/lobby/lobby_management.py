@@ -17,6 +17,7 @@ from game.services.game_flow.lifecycle import handle_disconnect_in_lobby, assign
 from game.services.game_flow.game_action_handler import GameActionHandler
 from game.services.game_flow.game_service import GameService
 
+
 def _cleanup_and_sync_other_sessions(user, exclude_session_id: int | None = None) -> None:
     if not user or not user.is_authenticated:
         return
