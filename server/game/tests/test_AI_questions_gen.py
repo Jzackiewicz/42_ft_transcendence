@@ -62,6 +62,21 @@ class PersistGeneratedQuestionsGuardTest(TestCase):
         self.assertEqual(persist_generated_questions(self.session, []), [])
         self.assertEqual(self.session.session_questions.count(), 0)
 
+    def test_persists_all_answer_variants_pipe_joined(self):
+        generated = [
+            GeneratedQuestion(
+                question="Who formulated the three laws of motion?",
+                answers=[" Isaac Newton ", "Newton", "Newton", "Sir Isaac Newton"],
+                category="science",
+            )
+        ]
+        ids = persist_generated_questions(self.session, generated)
+
+        self.assertEqual(len(ids), 1)
+        question = Question.objects.get(id=ids[0])
+        # All variants kept (trimmed + deduplicated), joined with '|'.
+        self.assertEqual(question.correct_answer, "Isaac Newton | Newton | Sir Isaac Newton")
+
 
 class GenerateExtraQuestionsUnparseableTest(TestCase):
     """An unparseable LLM response must yield an empty result, not a crash."""
