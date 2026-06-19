@@ -5,9 +5,9 @@ export async function register(username: string, email: string, password: string
 	return res.data;
 }
 
-export async function login(username: string, password: string) {
-	console.log("Sending login request:", { username, password });
-	const res = await apiClient.post('/account/users/login/', { username, password });
+export async function login(identifier: string, password: string) {
+	console.log("Sending login request for identifier:", identifier);
+	const res = await apiClient.post('/account/users/login/', { identifier, password });
 	console.log("Login response:", res.data);
 	return res.data;
 }
@@ -42,4 +42,8 @@ export async function uploadAvatar(userId: number, file: File) {
 		headers: { 'Content-Type': 'multipart/form-data' },
 	});
 	return res.data;
+}
+
+export function googleOAuthLogin() {
+	window.location.href = '/api/account/oauth/google/login/';
 }

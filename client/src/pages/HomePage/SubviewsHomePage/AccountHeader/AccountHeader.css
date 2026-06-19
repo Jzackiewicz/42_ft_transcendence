@@ -148,3 +148,23 @@
     color: var(--magenta);
     margin-top: 4px;
 }
+
+/* ── How to Play button ── */
+.home-nav-rules {
+    padding: 7px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--pb);
+    background: transparent;
+    color: var(--dim);
+    font-family: var(--fb);
+    font-size: var(--font-sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.home-nav-rules:hover {
+    color: var(--cyan);
+    border-color: var(--cyan);
+    background: rgba(0, 229, 255, 0.06);
+}

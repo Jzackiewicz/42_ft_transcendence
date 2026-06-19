@@ -6,10 +6,11 @@ interface AccountHeaderProps {
     user: User | null | undefined
     setUser: (u: User | null) => void
     setShowJoinModal: (bool: boolean) => void
+    setShowRulesModal: (bool: boolean) => void
     handleCreateLobby: () => void
 }
 
-function AccountHeader({ user, setUser, setShowJoinModal, handleCreateLobby }: AccountHeaderProps) {
+function AccountHeader({ user, setUser, setShowJoinModal, setShowRulesModal, handleCreateLobby }: AccountHeaderProps) {
     const {
         editingField, editValue, setEditValue, error,
         startEdit, cancelEdit, confirmEdit,
@@ -101,6 +102,14 @@ function AccountHeader({ user, setUser, setShowJoinModal, handleCreateLobby }: A
                 </div>
             </div>
 
+            <button
+                className="home-nav-rules"
+                onClick={() => setShowRulesModal(true)}
+                aria-label="How to play"
+                title="How to play"
+            >
+                How to Play ?
+            </button>
             <button className="home-nav-join" onClick={() => setShowJoinModal(true)}>Join Game</button>
             <button className="home-nav-play" onClick={handleCreateLobby}>▶ Play Now</button>
         </div>

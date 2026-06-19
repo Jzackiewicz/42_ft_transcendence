@@ -24,7 +24,7 @@
   --border:  rgba(255,255,255,0.08);
 
   --gradient-deg: 135deg;
-  --auth-container-height: 600px;
+  --auth-container-height: 700px;
   --spacing-xs: 4px;
   --spacing-sm: 6px;
   --spacing-md: 8px;
@@ -97,27 +97,6 @@ body {
     margin: 0;
 }
 
-/* ── STAR BACKGROUND ────────────────────────────────────────────── */
-.blinking-space-bg {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-}
-
-.star {
-    position: absolute;
-    width: 2px;
-    height: 2px;
-    border-radius: 50%;
-    background: white;
-    animation: blink 10s ease-in-out infinite;
-}
-
-@keyframes blink {
-    0%, 100% { opacity: 1; }
-    85%      { opacity: 0.2; }
-}
 
 /* ── AUTH PANEL (right side) ────────────────────────────────────── */
 .auth-container {
@@ -138,6 +117,18 @@ body {
     flex-direction: column;
     gap: var(--spacing-2xl);
     height: var(--auth-container-height);
+    min-height: 0;
+}
+
+.auth-title-container,
+.auth-tabs {
+    flex-shrink: 0;
+}
+
+.login-view,
+.registration-view {
+    flex: 1;
+    min-height: 0;
     overflow-y: auto;
 }
 
@@ -190,7 +181,7 @@ body {
 .login-view form, .registration-view form {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 20px;
 }
 
 .field {
@@ -264,4 +255,54 @@ body {
 
 .auth-submit:active {
     transform: translateY(0);
+}
+
+.google-signin-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    padding: 12px var(--spacing-lg);
+    background: var(--bg2);
+    color: var(--text);
+    border: 1px solid var(--pb);
+    border-radius: var(--radius-md);
+    font-family: var(--fb);
+    font-size: var(--font-md);
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, transform 0.1s;
+}
+
+.google-signin-btn:hover {
+    background: var(--bg3);
+    border-color: var(--cyan);
+}
+
+.google-signin-btn:active {
+    transform: translateY(1px);
+}
+
+.google-signin-btn svg {
+    flex-shrink: 0;
+}
+
+.auth-divider {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    color: var(--dim);
+    font-size: var(--font-xs);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
 }

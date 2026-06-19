@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button } from '../../../../components/Button/Button';
 import './LobbyView.css';
 
 interface LobbyViewProps {
@@ -18,7 +19,6 @@ export function LobbyView({
 }: LobbyViewProps) {
     return (
         <div className="lobby-view-container">
-            <h2>Lobby</h2>
             
             {isHost ? (
                 <div>
@@ -33,22 +33,21 @@ export function LobbyView({
                     )}
                     
                     <div className="lobby-actions-row">
-                        <button 
+                        <Button 
                             onClick={onStartGame} 
                             disabled={playersCount < 2}
-                            className="lobby-btn"
                         >
                             Start Game
-                        </button>
+                        </Button>
 
                         <div className="ai-questions-wrapper">
-                            <button
+                            <Button
                                 onClick={onRequestAiQuestions}
-                                className="lobby-btn"
                                 disabled={isAiQuestionsRequested}
+                                variant="secondary"
                             >
                                 {isAiQuestionsRequested ? '✨ Generation Requested!' : 'Generate AI Questions'}
-                            </button>
+                            </Button>
                             {isAiQuestionsRequested && (
                                 <span className="ai-feedback-toast">
                                     ✓ AI Questions successfully queued!
