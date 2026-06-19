@@ -20,20 +20,17 @@ export function EvaluationView({
     questionText,
     category
 }: EvaluationViewProps) {
-    let statusClass = 'eval-pending';
-    let statusText = '⏳ EVALUATING... (TODO)';
-
-    if (answerText !== '...') {
-        if (isCorrect) {
-            statusClass = 'eval-correct';
-            statusText = '🏆 CORRECT ANSWER';
-        } else if (isTimeout) {
-            statusClass = 'eval-timeout';
-            statusText = "⏰ TIME'S UP";
-        } else {
-            statusClass = 'eval-wrong';
-            statusText = '❌ WRONG ANSWER';
-        }
+    let statusClass: string;
+    let statusText: string;
+    if (isCorrect) {
+        statusClass = 'eval-correct';
+        statusText = '🏆 CORRECT ANSWER';
+    } else if (isTimeout) {
+        statusClass = 'eval-timeout';
+        statusText = "⏰ TIME'S UP";
+    } else {
+        statusClass = 'eval-wrong';
+        statusText = '❌ WRONG ANSWER';
     }
 
     return (
