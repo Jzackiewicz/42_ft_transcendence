@@ -102,6 +102,97 @@
 
 .join-modal-cancel:hover { color: var(--text); }
 
+/* ── RULES MODAL ────────────────────────────────────────────────── */
+.rules-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 20px;
+    animation: rules-fade-in 0.15s ease-out;
+}
+
+@keyframes rules-fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.rules-modal {
+    position: relative;
+    background: var(--panel);
+    border: 1px solid var(--pb);
+    border-radius: 14px;
+    padding: 28px 32px 24px;
+    max-width: 460px;
+    width: 100%;
+    box-shadow: 0 0 40px rgba(0, 229, 255, 0.15);
+}
+
+.rules-modal-close {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: var(--dim);
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    transition: color 0.15s, background 0.15s;
+}
+
+.rules-modal-close:hover {
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.rules-modal-title {
+    font-family: var(--fd);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0 0 16px;
+    padding-right: 28px;
+}
+
+.rules-modal-title-accent {
+    background: linear-gradient(var(--gradient-deg), var(--cyan) 10%, var(--magenta) 30%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.rules-modal-list {
+    margin: 0 0 16px;
+    padding-left: 20px;
+    color: var(--text);
+    font-family: var(--fb);
+    font-size: var(--font-sm);
+    line-height: 1.65;
+}
+
+.rules-modal-list li { margin-bottom: 6px; }
+.rules-modal-list li:last-child { margin-bottom: 0; }
+
+.rules-modal-win {
+    margin: 0 0 14px;
+    padding: 12px 14px;
+    border-radius: 8px;
+    background: rgba(0, 229, 255, 0.06);
+    border-left: 3px solid var(--cyan);
+    font-family: var(--fb);
+    font-size: var(--font-sm);
+    color: var(--text);
+    line-height: 1.5;
+}
+
+
 /* ── MAIN CONTENT ───────────────────────────────────────────────── */
 .home-content {
     flex: 1;
