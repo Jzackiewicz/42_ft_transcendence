@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useUser } from '../../context/UserContext';
+import { generateExtraQuestions } from '../../api/gameWrapper';
 
 export interface Player {
     id: number;
@@ -21,6 +22,8 @@ export interface Question {
     question: {
         question_text: string;
         category: string;
+        is_ai_generated: boolean;
+        is_verified: boolean;
     };
     order_index: number;
 }
@@ -38,7 +41,6 @@ export interface AnswerAttempt {
     answer_text: string | null;
     is_timeout: boolean;
     is_correct: boolean | null;
-    evaluation_status: string;
     correct_answer?: string;
     player: number; // player ID
 }
@@ -61,11 +63,17 @@ export interface GameSnapshot {
     end_reason: string | null;
     question_asked_count: number;
     total_questions_count: number;
+    ai_questions_count: number;
+    generated_questions_count: number;
+    extra_questions_generated: boolean;
     current_attempt_started_at?: string | null;
     turn_deadline_at?: string | null;
     nomination_deadline_at?: string | null;
     evaluation_deadline_at?: string | null;
+    server_time?: string | null;
 }
+
+const RECONNECT_SCHEDULE_MS = [1000, 2000, 4000, 8000, 16000, 30000];
 
 export function useGamePage() {
     const { user, activeSessionUuid, setActiveSessionUuid } = useUser();
@@ -83,13 +91,13 @@ export function useGamePage() {
             setActiveSessionUuid(sessionUuid);
         }
     }, [sessionUuid, setActiveSessionUuid]);
-    const [messages, setMessages] = useState<string[]>([]);
     const [isConnected, setIsConnected] = useState<boolean>(false);
     const [gameState, setGameState] = useState<GameSnapshot | null>(null);
     const [myPlayerId, setMyPlayerId] = useState<number | null>(null);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
     const [timeLeft, setTimeLeft] = useState<number | null>(null);
+    const serverTimeOffsetRef = useRef<number>(0);
 
     // activeGameState directly uses gameState as player_type is removed
     const activeGameState: GameSnapshot | null = gameState;
@@ -107,7 +115,6 @@ export function useGamePage() {
         ((myPlayerId !== null && activeGameState.host_player === myPlayerId) ||
          (myPlayerId === null && sortedPlayers.length > 0 && currentPlayerObj !== undefined && sortedPlayers[0].id === currentPlayerObj.id));
     const hostPlayerId = activeGameState?.host_player ?? (sortedPlayers.length > 0 ? sortedPlayers[0].id : null);
-    const gameStarted = activeGameState !== null && activeGameState.current_status !== GameStatus.LOBBY;
     const isGameOver = activeGameState !== null && activeGameState.current_status === GameStatus.GAME_OVER;
 
 
@@ -137,7 +144,7 @@ export function useGamePage() {
         const deadline = new Date(deadlineStr).getTime();
 
         const updateTimer = () => {
-            const now = new Date().getTime();
+            const now = Date.now() + serverTimeOffsetRef.current;
             const diff = deadline - now;
             const secondsLeft = Math.max(0, Math.ceil(diff / 1000));
             setTimeLeft(secondsLeft);
@@ -150,13 +157,27 @@ export function useGamePage() {
     }, [activeGameState?.current_status, activeGameState?.turn_deadline_at, activeGameState?.nomination_deadline_at, activeGameState?.evaluation_deadline_at]);
 
     const wsRef = useRef<WebSocket | null>(null);
+    const reconnectAttemptRef = useRef(0);
+    const reconnectTimerRef = useRef<number | null>(null);
+    const manuallyClosedRef = useRef(false);
+
+    const clearReconnectTimer = () => {
+        if (reconnectTimerRef.current !== null) {
+            clearTimeout(reconnectTimerRef.current);
+            reconnectTimerRef.current = null;
+        }
+    };
 
     const connectToLobby = () => {
         if (!sessionUuid) return;
 
         if (wsRef.current) {
+            wsRef.current.onclose = null;
             wsRef.current.close();
         }
+
+        clearReconnectTimer();
+        manuallyClosedRef.current = false;
 
         // Connect through Vite proxy
         const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
@@ -164,20 +185,24 @@ export function useGamePage() {
         const ws = new WebSocket(wsUrl);
 
         ws.onopen = () => {
+            reconnectAttemptRef.current = 0;
             setIsConnected(true);
-            setMessages(prev => [...prev, `[System]: Connected to session ${sessionUuid}`]);
             setErrorMsg(null);
         };
 
         ws.onmessage = (event) => {
-            setMessages(prev => [...prev, `[Server]: ${event.data}`]);
             try {
                 const data = JSON.parse(event.data);
                 if (data.your_player_id !== undefined) {
                     setMyPlayerId(data.your_player_id);
                 }
                 if (data.snapshot) {
-                    setGameState(data.snapshot as GameSnapshot);
+                    const snapshot = data.snapshot as GameSnapshot;
+                    if (snapshot.server_time) {
+                        serverTimeOffsetRef.current =
+                            new Date(snapshot.server_time).getTime() - Date.now();
+                    }
+                    setGameState(snapshot);
                     setErrorMsg(null);
                 } else if (data.type === 'error' || data.error) {
                     setErrorMsg(data.message || data.error || 'Unknown error occurred');
@@ -187,13 +212,24 @@ export function useGamePage() {
             }
         };
 
-        ws.onclose = () => {
+        ws.onclose = (event) => {
             setIsConnected(false);
-            setMessages(prev => [...prev, `[System]: Disconnected`]);
+
+            if (manuallyClosedRef.current || event.code === 1000) {
+                return;
+            }
+
+            const idx = Math.min(reconnectAttemptRef.current, RECONNECT_SCHEDULE_MS.length - 1);
+            const delay = RECONNECT_SCHEDULE_MS[idx];
+            reconnectAttemptRef.current += 1;
+
+            reconnectTimerRef.current = window.setTimeout(() => {
+                reconnectTimerRef.current = null;
+                connectToLobby();
+            }, delay);
         };
 
         ws.onerror = (error) => {
-            setMessages(prev => [...prev, `[Error]: Check the browser console (F12)`]);
             console.error("WebSocket Error:", error);
         };
 
@@ -204,10 +240,8 @@ export function useGamePage() {
         if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
             const message = JSON.stringify({ action, payload });
             wsRef.current.send(message);
-            setMessages(prev => [...prev, `[Client Send]: ${message}`]);
         } else {
             console.error("WebSocket is not connected");
-            setMessages(prev => [...prev, `[System Error]: Cannot send action, WS disconnected`]);
         }
     };
 
@@ -224,7 +258,10 @@ export function useGamePage() {
     };
 
     const disconnect = () => {
+        manuallyClosedRef.current = true;
+        clearReconnectTimer();
         if (wsRef.current) {
+            wsRef.current.onclose = null;
             wsRef.current.close();
             wsRef.current = null;
         }
@@ -237,27 +274,59 @@ export function useGamePage() {
         return () => disconnect(); // calling a destructor
     }, []); // Happens only once
 
-    const requestAiQuestions = () => {
-        // No-op for now (backend integration in separate issue #82)
-    };
-    const [isAiQuestionsRequested, setIsAiQuestionsRequested] = useState(false);
+    const [isGeneratingAiQuestions, setIsGeneratingAiQuestions] = useState(false);
 
-    const handleRequestAiQuestions = () => {
-        requestAiQuestions();
-        setIsAiQuestionsRequested(true);
+    const aiQuestionsGenerated = activeGameState?.extra_questions_generated ?? false;
+
+    const handleRequestAiQuestions = async () => {
+        if (!sessionUuid || isGeneratingAiQuestions || aiQuestionsGenerated) {
+            return;
+        }
+        setIsGeneratingAiQuestions(true);
+        setErrorMsg(null);
+        try {
+            await generateExtraQuestions(sessionUuid);
+        } catch (err: any) {
+            const detail = err?.response?.data?.error;
+            setErrorMsg(
+                Array.isArray(detail)
+                    ? detail.join(' ')
+                    : (detail || 'Failed to generate AI questions. Please try again.')
+            );
+        } finally {
+            setIsGeneratingAiQuestions(false);
+        }
     };
     const leaveGame = () => {
+        const finish = () => {
+            disconnect();
+            setSessionUuid('');
+            setActiveSessionUuid(null);
+            navigate('/home');
+        };
+
+        const ws = wsRef.current;
+        if (!ws || ws.readyState !== WebSocket.OPEN) {
+            finish();
+            return;
+        }
+
         sendAction('leave_game');
-        disconnect();
-        setSessionUuid('');
-        setActiveSessionUuid(null);
-        navigate('/home');
+
+        const startedAt = Date.now();
+        const waitForFlush = () => {
+            if (ws.bufferedAmount === 0 || Date.now() - startedAt > 1000) {
+                finish();
+            } else {
+                window.setTimeout(waitForFlush, 50);
+            }
+        };
+        waitForFlush();
     };
 
     const connection = {
         sessionUuid,
         setSessionUuid,
-        messages,
         isConnected,
         errorMsg,
         setErrorMsg,
@@ -280,7 +349,6 @@ export function useGamePage() {
         isSpectator: activeGameState?.is_spectator ?? false,
         isHost,
         hostPlayerId,
-        gameStarted,
         isGameOver,
         sortedPlayers
     };
@@ -288,7 +356,10 @@ export function useGamePage() {
         connection,
         gameActions,
         sessionState,
-        isAiQuestionsRequested,
+        isGeneratingAiQuestions,
+        aiQuestionsGenerated,
+        totalQuestionsCount: activeGameState?.total_questions_count ?? 0,
+        aiQuestionsCount: activeGameState?.ai_questions_count ?? 0,
         onRequestAiQuestions: handleRequestAiQuestions
     };
 }

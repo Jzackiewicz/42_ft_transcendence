@@ -1,34 +1,47 @@
-import React from 'react';
 import './GameHUD.css';
 
 interface GameHUDProps {
     questionAskedCount: number;
     totalQuestionsCount: number;
+    generatedQuestionsCount?: number;
     timeLeft: number | null;
     timeLimitSeconds?: number;
     nominationTimeLimitSeconds?: number;
     maxPlayers?: number;
     isLobby?: boolean;
     isEvaluation?: boolean;
+    isNomination?: boolean;
 }
 
-export function GameHUD({ 
-    questionAskedCount, 
-    totalQuestionsCount, 
-    timeLeft, 
-    timeLimitSeconds, 
+export function GameHUD({
+    questionAskedCount,
+    totalQuestionsCount,
+    generatedQuestionsCount = 0,
+    timeLeft,
+    timeLimitSeconds,
     nominationTimeLimitSeconds,
     maxPlayers,
     isLobby = false,
-    isEvaluation = false
+    isEvaluation = false,
+    isNomination = false
 }: GameHUDProps) {
+    const timerLabel = isEvaluation
+        ? 'TIME TO NEXT STAGE'
+        : isNomination
+            ? 'RANDOM PICK IN'
+            : 'TIMEOUT IN';
     return (
         <div className="game-hud-container">
             {isLobby ? (
                 <div className="hud-group">
                     <div className="hud-item">
                         <span className="hud-label">QUESTIONS</span>
-                        <strong className="hud-value">{totalQuestionsCount}</strong>
+                        <strong className="hud-value">
+                            {totalQuestionsCount - generatedQuestionsCount}
+                            {generatedQuestionsCount > 0 && (
+                                <span className="hud-generated">+ {generatedQuestionsCount} generated</span>
+                            )}
+                        </strong>
                     </div>
                     {timeLimitSeconds !== undefined && (
                         <div className="hud-item">
@@ -60,7 +73,7 @@ export function GameHUD({
 
                     {timeLeft !== null && (
                         <div className={`hud-item hud-timer ${(timeLeft <= 5 && !isEvaluation) ? 'warning' : ''}`}>
-                            <span className="hud-label">{isEvaluation ? 'TIME TO NEXT STAGE' : 'TIME LEFT'}</span>
+                            <span className="hud-label">{timerLabel}</span>
                             <strong className="hud-value">{timeLeft}s</strong>
                         </div>
                     )}

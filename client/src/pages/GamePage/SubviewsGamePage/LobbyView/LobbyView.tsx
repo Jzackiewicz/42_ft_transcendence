@@ -1,12 +1,13 @@
-import React from 'react';
 import { Button } from '../../../../components/Button/Button';
+import { LobbyChat } from '../LobbyChat/LobbyChat';
 import './LobbyView.css';
 
 interface LobbyViewProps {
     isHost: boolean;
     playersCount: number;
     onStartGame: () => void;
-    isAiQuestionsRequested: boolean;
+    isGeneratingAiQuestions: boolean;
+    aiQuestionsGenerated: boolean;
     onRequestAiQuestions: () => void;
 }
 
@@ -14,7 +15,8 @@ export function LobbyView({
     isHost,
     playersCount,
     onStartGame,
-    isAiQuestionsRequested,
+    isGeneratingAiQuestions,
+    aiQuestionsGenerated,
     onRequestAiQuestions
 }: LobbyViewProps) {
     return (
@@ -33,9 +35,9 @@ export function LobbyView({
                     )}
                     
                     <div className="lobby-actions-row">
-                        <Button 
-                            onClick={onStartGame} 
-                            disabled={playersCount < 2}
+                        <Button
+                            onClick={onStartGame}
+                            disabled={playersCount < 2 || isGeneratingAiQuestions}
                         >
                             Start Game
                         </Button>
@@ -43,14 +45,18 @@ export function LobbyView({
                         <div className="ai-questions-wrapper">
                             <Button
                                 onClick={onRequestAiQuestions}
-                                disabled={isAiQuestionsRequested}
+                                disabled={isGeneratingAiQuestions || aiQuestionsGenerated}
                                 variant="secondary"
                             >
-                                {isAiQuestionsRequested ? '✨ Generation Requested!' : 'Generate AI Questions'}
+                                {isGeneratingAiQuestions
+                                    ? 'Generating AI Questions…'
+                                    : aiQuestionsGenerated
+                                        ? 'AI Questions Added'
+                                        : 'Generate AI Questions'}
                             </Button>
-                            {isAiQuestionsRequested && (
+                            {aiQuestionsGenerated && (
                                 <span className="ai-feedback-toast">
-                                    ✓ AI Questions successfully queued!
+                                    ✓ AI Questions added to the lobby!
                                 </span>
                             )}
                         </div>
@@ -61,6 +67,7 @@ export function LobbyView({
                     Waiting for lobby host to start the game...
                 </div>
             )}
+            <LobbyChat />
         </div>
     );
 }

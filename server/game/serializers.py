@@ -1,3 +1,4 @@
+from django.conf import settings
 from rest_framework import serializers
 
 from .models import Question
@@ -31,7 +32,8 @@ class SessionPlayerOutputSerializer(serializers.ModelSerializer):
 
 class SubmitAnswerPayloadSerializer(StrictSerializer):
 	answer = serializers.CharField(
-		allow_null=True, allow_blank=True, required=False, default=None
+		allow_null=True, allow_blank=True, required=False, default=None,
+		max_length=settings.ANSWER_MAX_LENGTH,
 	)
 
 class NominatePlayerPayloadSerializer(StrictSerializer):
@@ -40,7 +42,6 @@ class NominatePlayerPayloadSerializer(StrictSerializer):
 
 class GenerateExtraQuestionsPayloadSerializer(StrictSerializer):
 	session_uuid = serializers.UUIDField(required=True)
-	n_questions_to_generate = serializers.IntegerField(required=False, default=10, min_value=1, max_value=50)
 
 
 class PlayerSnapshotSerializer(serializers.ModelSerializer):
@@ -68,7 +69,7 @@ class PlayerSnapshotSerializer(serializers.ModelSerializer):
 class QuestionSnapshotSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Question
-		fields = ['question_text', 'category']
+		fields = ['question_text', 'category', 'is_ai_generated', 'is_verified']
 
 class SessionQuestionSnapshotSerializer(serializers.ModelSerializer):
 	question = QuestionSnapshotSerializer()
@@ -111,6 +112,8 @@ class GameStateSnapshotSerializer(serializers.ModelSerializer):
 	current_question = SessionQuestionSnapshotSerializer()
 	current_attempt = AnswerAttemptSnapshotSerializer()
 	total_questions_count = serializers.SerializerMethodField()
+	ai_questions_count = serializers.SerializerMethodField()
+	generated_questions_count = serializers.SerializerMethodField()
 
 	class Meta:
 		model = GameSession
@@ -118,7 +121,8 @@ class GameStateSnapshotSerializer(serializers.ModelSerializer):
 			'session_uuid', 'current_status', 'host_player', 'current_player', 'last_correct_player',
 			'last_nominated_player', 'players', 'current_question', 'current_attempt',
 			'answer_time_limit_ms', 'nomination_time_limit_ms', 'max_players', 'winner', 'end_reason',
-			'question_asked_count', 'total_questions_count',
+			'question_asked_count', 'total_questions_count', 'ai_questions_count',
+			'generated_questions_count', 'extra_questions_generated',
 		]
 
 	def get_players(self, obj: GameSession):
@@ -127,6 +131,15 @@ class GameStateSnapshotSerializer(serializers.ModelSerializer):
 
 	def get_total_questions_count(self, obj: GameSession) -> int:
 		return obj.session_questions.count()
+
+	def get_ai_questions_count(self, obj: GameSession) -> int:
+		return obj.session_questions.filter(question__is_ai_generated=True).count()
+
+	def get_generated_questions_count(self, obj: GameSession) -> int:
+		return obj.session_questions.filter(
+			question__is_ai_generated=True,
+			question__is_verified=False,
+		).count()
 
 class UserGameStatsSerializer(serializers.Serializer):
 	games_played = serializers.IntegerField()
