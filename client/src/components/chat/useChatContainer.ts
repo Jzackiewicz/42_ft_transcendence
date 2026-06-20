@@ -24,10 +24,6 @@ function getRoomName(myId: number, friendId: number): string {
 }
 
 export function useChatContainer() {
-    // `refresh` re-pulls friends/requests from the server. We trigger it
-    // when the server kicks our WS with code 4003 (e.g. the friendship
-    // was revoked) so the active conversation auto-switches and we stop
-    // trying to reconnect to a room we can no longer access.
     const { friendsList, refresh } = useFriendsContext()
     const { user, setUser } = useUser()
     const [activeId, setActiveId] = useState<number>(0)
@@ -43,16 +39,10 @@ export function useChatContainer() {
     const shouldScrollRef = useRef<boolean>(true)
 
     useEffect(() => {
-        // No friends left — reset so the [activeId, user] effect early-returns
-        // and tears down the socket.
         if (friendsList.length === 0) {
             if (activeId !== 0) setActiveId(0)
             return
         }
-        // Auto-pick the first friend on initial load, AND switch away from
-        // a friend that just disappeared from the list (e.g. after an
-        // unfriend triggered by a 4003 close, or after the user removed a
-        // friend via the friends UI).
         const stillFriend = friendsList.some(f => f.friend.id === activeId)
         if (activeId === 0 || !stillFriend) {
             setActiveId(friendsList[0].friend.id)
@@ -115,12 +105,6 @@ export function useChatContainer() {
                     setUser(null)
                     return
                 }
-
-                // 4003 = server rejected because the friendship is gone
-                // (e.g. the other party unfriended us mid-session). Refresh
-                // the friends list so the active conversation auto-switches
-                // to another friend (or the no-friends empty state). Don't
-                // reconnect — every retry would fail with the same code.
                 if (event.code === 4003) {
                     refresh()
                     return
