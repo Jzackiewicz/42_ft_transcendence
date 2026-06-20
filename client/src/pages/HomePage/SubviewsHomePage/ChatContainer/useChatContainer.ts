@@ -148,10 +148,11 @@ export function useChatContainer() {
         }
     }
 
-    const handleSend = (text: string) => {
-        if (!socketRef.current || !text.trim()) return
-        if (socketRef.current.readyState !== WebSocket.OPEN) return
+    const handleSend = (text: string): boolean => {
+        if (!socketRef.current || !text.trim()) return false
+        if (socketRef.current.readyState !== WebSocket.OPEN) return false
         socketRef.current.send(JSON.stringify({ message: text }))
+        return true
     }
 
     const handleChooseTab = (id: number) => {

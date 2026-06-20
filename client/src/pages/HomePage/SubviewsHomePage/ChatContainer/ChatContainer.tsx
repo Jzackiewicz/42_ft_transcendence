@@ -10,8 +10,8 @@ function ChatContainer() {
     const [draft, setDraft] = useState('')
 
     const send = () => {
-        input.handleSend(draft)
-        setDraft('')
+        const ok = input.handleSend(draft)
+        if (ok) setDraft('')   // keep draft on failure so the user can see it didn't send
     }
 
     let sendBtnLabel
