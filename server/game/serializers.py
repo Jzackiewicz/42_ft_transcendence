@@ -1,3 +1,4 @@
+from django.conf import settings
 from rest_framework import serializers
 
 from .models import Question
@@ -31,7 +32,8 @@ class SessionPlayerOutputSerializer(serializers.ModelSerializer):
 
 class SubmitAnswerPayloadSerializer(StrictSerializer):
 	answer = serializers.CharField(
-		allow_null=True, allow_blank=True, required=False, default=None
+		allow_null=True, allow_blank=True, required=False, default=None,
+		max_length=settings.ANSWER_MAX_LENGTH,
 	)
 
 class NominatePlayerPayloadSerializer(StrictSerializer):

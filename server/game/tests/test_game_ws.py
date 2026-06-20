@@ -162,6 +162,29 @@ class GameConsumerTests(TransactionTestCase):
 		self.assertIn("answer_text", response["error"])
 		await communicator.disconnect()
 
+	async def test_submit_answer_rejects_over_length_answer(self):
+		from django.conf import settings
+
+		headers = [(b'cookie', f'sessionid={self.cookie}'.encode('ascii'))]
+		communicator = WebsocketCommunicator(
+			self.application,
+			f"/ws/game/{self.session.session_uuid}/",
+			headers=headers
+		)
+		connected, _ = await communicator.connect()
+		self.assertTrue(connected)
+		await communicator.receive_json_from()
+
+		await communicator.send_json_to({
+			"action": GameAction.SUBMIT_ANSWER,
+			"payload": {"answer": "a" * (settings.ANSWER_MAX_LENGTH + 1)}
+		})
+		response = await communicator.receive_json_from()
+
+		self.assertIn("error", response)
+		self.assertIn("answer", response["error"])
+		await communicator.disconnect()
+
 	async def test_action_domain_validation_error_returns_error_message(self):
 		headers = [(b'cookie', f'sessionid={self.cookie}'.encode('ascii'))]
 		communicator = WebsocketCommunicator(
