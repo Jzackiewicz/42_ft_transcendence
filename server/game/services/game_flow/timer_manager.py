@@ -2,11 +2,11 @@ import asyncio
 from datetime import datetime, timedelta
 
 from channels.db import database_sync_to_async
-from channels.layers import get_channel_layer
 from django.core.exceptions import ValidationError
 
 from game.models import GameSession
 from game.selectors.game_flow_selectors import get_game_snapshot
+from game.services.game_flow.broadcast import broadcast_snapshot
 from game.services.game_flow.game_action_handler import GameActionHandler
 
 
@@ -20,7 +20,7 @@ class GameTimerManager:
 	_timers: dict[int, asyncio.Task] = {}
 
 	@classmethod
-	def schedule(cls, session_id: int, timer_data: dict, room_group_name: str) -> None:
+	def schedule(cls, session_id: int, timer_data: dict) -> None:
 		cls.cancel(session_id)
 
 		deadline_at = timer_data['deadline_at']
@@ -33,7 +33,6 @@ class GameTimerManager:
 			coro = cls._run_timer(
 				session_id=session_id,
 				sleep_seconds=sleep_seconds,
-				room_group_name=room_group_name,
 				expected_status=GameSession.Status.ANSWERING,
 				action_name='evaluate_timeout',
 			)
@@ -41,7 +40,6 @@ class GameTimerManager:
 			coro = cls._run_timer(
 				session_id=session_id,
 				sleep_seconds=sleep_seconds,
-				room_group_name=room_group_name,
 				expected_status=GameSession.Status.EVALUATION,
 				action_name='handle_evaluation_finish',
 			)
@@ -49,7 +47,6 @@ class GameTimerManager:
 			coro = cls._run_timer(
 				session_id=session_id,
 				sleep_seconds=sleep_seconds,
-				room_group_name=room_group_name,
 				expected_status=GameSession.Status.NOMINATION,
 				action_name='nomination_timeout',
 			)
@@ -71,7 +68,6 @@ class GameTimerManager:
 		cls,
 		session_id: int,
 		sleep_seconds: float,
-		room_group_name: str,
 		expected_status: GameSession.Status,
 		action_name: str,
 	) -> None:
@@ -99,24 +95,16 @@ class GameTimerManager:
 				return
 
 			snapshot = await database_sync_to_async(get_game_snapshot)(session_id)
-			channel_layer = get_channel_layer()
-			await channel_layer.group_send(
-				room_group_name,
-				{
-					'type': 'game_state_update',
-					'action': result.action,
-					'snapshot': snapshot,
-				}
-			)
+			await broadcast_snapshot(session_id, result.action, snapshot)
 
-			cls._schedule_from_result(session_id, sync_result, room_group_name)
+			cls._schedule_from_result(session_id, sync_result)
 		except ValidationError:
 			pass
 
 	@classmethod
-	def _schedule_from_result(cls, session_id: int, result, room_group_name: str) -> None:
+	def _schedule_from_result(cls, session_id: int, result) -> None:
 		"""Chain-schedule the next timer based on the handler result's timer_data."""
 		if not result.timer_data:
 			return
-		cls.schedule(session_id, result.timer_data, room_group_name)
+		cls.schedule(session_id, result.timer_data)
 

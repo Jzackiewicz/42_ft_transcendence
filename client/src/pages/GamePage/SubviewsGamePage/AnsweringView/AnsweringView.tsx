@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from '../../../../components/Button/Button';
+import { QuestionBadges } from '../QuestionBadges/QuestionBadges';
 import './AnsweringView.css';
 
 const ANSWER_MAX_LENGTH = 30;
@@ -7,6 +8,8 @@ const ANSWER_MAX_LENGTH = 30;
 interface AnsweringViewProps {
     questionText: string;
     category: string;
+    isAiGenerated: boolean;
+    isVerified: boolean;
     isCurrentAnswering: boolean;
     activePlayerName: string;
     onSubmitAnswer: (answer: string) => void;
@@ -15,6 +18,8 @@ interface AnsweringViewProps {
 export function AnsweringView({
     questionText,
     category,
+    isAiGenerated,
+    isVerified,
     isCurrentAnswering,
     activePlayerName,
     onSubmitAnswer
@@ -34,8 +39,11 @@ export function AnsweringView({
         <div className="answering-view-container">
             
             <div className="answering-question-box">
-                <div className="answering-category">
-                    Category: {category || 'General'}
+                <div className="answering-question-meta">
+                    <div className="answering-category">
+                        Category: {category || 'General'}
+                    </div>
+                    <QuestionBadges isAiGenerated={isAiGenerated} isVerified={isVerified} />
                 </div>
                 <div className="answering-question-text">
                     {questionText}

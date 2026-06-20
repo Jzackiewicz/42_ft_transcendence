@@ -5,6 +5,7 @@ import { ChatMessage } from '../../../../types/Message'
 import { getChatHistory, createChatSocket } from '../../../../api/socialsWrapper'
 
 const PAGE_SIZE = 50
+const RECONNECT_SCHEDULE_MS = [1000, 2000, 4000, 8000, 16000, 30000]
 
 function hasNoFriends(friendsList: { friend: { id: number } }[]): boolean {
     var friendsAreEmpty: boolean
@@ -49,15 +50,33 @@ export function useChatContainer() {
         shouldScrollRef.current = true
 
         const roomName = getRoomName(user.id, activeId)
-        socketRef.current?.close()
-        socketRef.current = createChatSocket(roomName)
-        socketRef.current.onmessage = (event) => {
-            const msg: ChatMessage = JSON.parse(event.data)
-            if (msg.message) {
-                shouldScrollRef.current = true
-                setMessages(prev => [...prev, msg])
+        let reconnectAttempts = 0
+        let reconnectTimer: number | null = null
+
+        const connect = () => {
+            const ws = createChatSocket(roomName)
+            socketRef.current = ws
+
+            ws.onopen = () => { reconnectAttempts = 0 }
+
+            ws.onmessage = (event) => {
+                const msg: ChatMessage = JSON.parse(event.data)
+                if (msg.message) {
+                    shouldScrollRef.current = true
+                    setMessages(prev => [...prev, msg])
+                }
+            }
+
+            ws.onclose = (event) => {
+                if (!isCurrent || event.code === 1000) return
+                const idx = Math.min(reconnectAttempts, RECONNECT_SCHEDULE_MS.length - 1)
+                reconnectAttempts += 1
+                reconnectTimer = window.setTimeout(connect, RECONNECT_SCHEDULE_MS[idx])
             }
         }
+
+        socketRef.current?.close()
+        connect()
 
         getChatHistory(roomName, 0).then(data => {
             if (isCurrent) {
@@ -69,7 +88,11 @@ export function useChatContainer() {
 
         return () => {
             isCurrent = false
-            socketRef.current?.close()
+            if (reconnectTimer !== null) clearTimeout(reconnectTimer)
+            if (socketRef.current) {
+                socketRef.current.onclose = null
+                socketRef.current.close()
+            }
         }
     }, [activeId, user])
 
