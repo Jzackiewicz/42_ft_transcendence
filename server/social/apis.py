@@ -1,6 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import PermissionDenied
 from rest_framework import status
 from drf_spectacular.utils import extend_schema
 from django.core.exceptions import ValidationError
@@ -8,10 +9,12 @@ from account.selectors import user_get_by_id
 from account.serializers import PublicUserSerializer
 from .selectors import (
     get_chat_history_data,
+    are_friends,
+    other_user_in_dm,
+    PRESENCE_ROOM,
     get_friends,
     get_incoming_friend_requests,
     get_outgoing_friend_requests,
-    get_relationship_status,
     search_users_for_friending,
 )
 from .serializers import (
@@ -20,7 +23,6 @@ from .serializers import (
     FriendshipOutputSerializer,
     GetChatHistoryInputSerializer,
     GetChatHistoryOutputSerializer,
-    RelationshipStatusOutputSerializer,
     RespondFriendRequestInputSerializer,
     SendFriendRequestInputSerializer,
 )
@@ -44,6 +46,7 @@ It should not contain any business logic or direct database access; instead, it 
 # chat
 
 class ChatHistoryApi(APIView):
+    permission_classes = [IsAuthenticated]
 
     @extend_schema(
         parameters=[GetChatHistoryInputSerializer],
@@ -51,6 +54,14 @@ class ChatHistoryApi(APIView):
         description="GET endpoint to retrieve chatroom history."
     )
     def get(self, request, room_name: str):
+        if room_name != PRESENCE_ROOM:
+            other_id = other_user_in_dm(
+                room_name=room_name, requester_id=request.user.id
+            )
+            if other_id is None or not are_friends(
+                user_a_id=request.user.id, user_b_id=other_id
+            ):
+                raise PermissionDenied("You can only read your chats.")
         input_serializer = GetChatHistoryInputSerializer(data=request.query_params)
         input_serializer.is_valid(raise_exception=True)
 
@@ -64,7 +75,7 @@ class ChatHistoryApi(APIView):
 # friend requests
 
 class FriendRequestCollectionApi(APIView):
-    """POST /social/friend-requests/  — send a friend request."""
+    """POST /social/friend-requests/ - send a friend request."""
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
@@ -223,23 +234,4 @@ class FriendSearchApi(APIView):
             requester=request.user, query=input_serializer.validated_data["q"]
         )
         output = PublicUserSerializer(users, many=True, context={"request": request})
-        return Response(output.data, status=status.HTTP_200_OK)
-    
-
-# relationship status
-
-class RelationshipStatusApi(APIView):
-    """GET /social/relationship/<user_id>/"""
-    permission_classes = [IsAuthenticated]
-
-    @extend_schema(
-        responses={200: RelationshipStatusOutputSerializer},
-        description="Get the relationship between the authenticated user and another user.",
-    )
-    def get(self, request, user_id: int):
-        other_user = user_get_by_id(user_id=user_id)
-        relationship_status = get_relationship_status(
-            from_user=request.user, to_user=other_user
-        )
-        output = RelationshipStatusOutputSerializer({"status": relationship_status})
         return Response(output.data, status=status.HTTP_200_OK)
