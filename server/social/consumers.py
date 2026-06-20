@@ -3,6 +3,7 @@ from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.db import database_sync_to_async
 from .serializers import ChatMessageSerializer
 from .services import create_chat_message
+from .selectors import are_friends, other_user_in_dm, PRESENCE_ROOM
 from account.presence import PresenceRegistry
 
 
@@ -16,8 +17,15 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
             await self.accept()
             await self.close(code=4001)
             return
+        
+        room_name = self.scope["url_route"]["kwargs"]["room_name"]
+        if room_name != PRESENCE_ROOM:
+            if not await self._can_access_dm(user.id, room_name):
+                await self.accept()
+                await self.close(code=4003)
+                return
 
-        self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
+        self.room_name = room_name
         self.room_group_name = f"chat_{self.room_name}"
 
         await self.accept()
@@ -30,6 +38,14 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
                 PRESENCE_GROUP,
                 {"type": "presence.update", "user_id": user.id, "is_online": True},
             )
+
+    
+    @database_sync_to_async
+    def _can_access_dm(self, user_id: int, room_name: str) -> bool:
+        other_id = other_user_in_dm(room_name=room_name, requester_id=user_id)
+        if other_id is None:
+            return False
+        return are_friends(user_a_id=user_id, user_b_id=other_id)
 
 
     async def disconnect(self, close_code):
@@ -57,6 +73,13 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
             })
             return
 
+        user = self.scope["user"]
+        if self.room_name != PRESENCE_ROOM:
+            if not await self._can_access_dm(user.id, self.room_name):
+                await self.send_json({"error": "You are no longer allowed in this room."})
+                await self.close(code=4003)
+                return
+            
         message = input_serializer.validated_data["message"]
         sender = self.scope["user"].username
 

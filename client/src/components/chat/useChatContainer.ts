@@ -24,7 +24,7 @@ function getRoomName(myId: number, friendId: number): string {
 }
 
 export function useChatContainer() {
-    const { friendsList } = useFriendsContext()
+    const { friendsList, refresh } = useFriendsContext()
     const { user, setUser } = useUser()
     const [activeId, setActiveId] = useState<number>(0)
     const [messages, setMessages] = useState<ChatMessage[]>([])
@@ -39,8 +39,14 @@ export function useChatContainer() {
     const shouldScrollRef = useRef<boolean>(true)
 
     useEffect(() => {
-        if (activeId === 0 && friendsList.length > 0)
+        if (friendsList.length === 0) {
+            if (activeId !== 0) setActiveId(0)
+            return
+        }
+        const stillFriend = friendsList.some(f => f.friend.id === activeId)
+        if (activeId === 0 || !stillFriend) {
             setActiveId(friendsList[0].friend.id)
+        }
     }, [friendsList])
 
     useEffect(() => {
@@ -97,6 +103,10 @@ export function useChatContainer() {
                 if (cancelled) return // intentional close (cleanup)
                 if (event.code === 4001) {
                     setUser(null)
+                    return
+                }
+                if (event.code === 4003) {
+                    refresh()
                     return
                 }
 

@@ -21,7 +21,7 @@ User = get_user_model()
 APPLICATION = AuthMiddlewareStack(URLRouter(websocket_urlpatterns))
 
 
-async def _make_auth_communicator(user, path="/ws/chat/test_room/"):
+async def _make_auth_communicator(user, path="/ws/chat/presence/"):
     """Mirror of the helper in test_chat_ws.py — builds a session cookie the
     AuthMiddlewareStack will accept. Duplicated here on purpose so the
     presence test can run independently of the chat-WS test module."""
@@ -113,8 +113,8 @@ class FriendListIsOnlineIntegrationTests(TransactionTestCase):
         SET of channels per user, so closing one tab while another is open
         must not mark the user offline.
         """
-        tab_one = await _make_auth_communicator(self.bob, path="/ws/chat/r1/")
-        tab_two = await _make_auth_communicator(self.bob, path="/ws/chat/r2/")
+        tab_one = await _make_auth_communicator(self.bob, path="/ws/chat/presence/")
+        tab_two = await _make_auth_communicator(self.bob, path="/ws/chat/presence/")
 
         await tab_one.connect()
         await _drain_initial_presence(tab_one)
