@@ -65,12 +65,19 @@ def user_soft_delete(*, user: User) -> User:
 
 
 def profile_update_avatar(*, profile: UserProfile, avatar) -> UserProfile:
+    old = profile.avatar
     profile.avatar = avatar
     profile.save(update_fields=["avatar"])
+    # Remove the previous file from storage
+    if old and old.name != profile.avatar.name:
+        old.delete(save=False)
     return profile
 
 
 def profile_clear_avatar(*, profile: UserProfile) -> UserProfile:
+    old = profile.avatar
     profile.avatar = None
     profile.save(update_fields=["avatar"])
+    if old:
+        old.delete(save=False)
     return profile
