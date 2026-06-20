@@ -8,6 +8,7 @@ import { GameOverView } from './SubviewsGamePage/GameOverView/GameOverView';
 import { PlayerTile } from './SubviewsGamePage/PlayerTile/PlayerTile';
 import { GameHUD } from './SubviewsGamePage/GameHUD/GameHUD';
 import BlinkingSpaceBGDiv from '../../components/BlinkingSpaceBGDiv/BlinkingSpaceBGDiv';
+import { FriendsProvider } from '../../context/FriendsListContext';
 import { Navbar } from '../../components/Navbar/Navbar';
 import { Card } from '../../components/Card/Card';
 import { SectionTitle } from '../../components/SectionTitle/SectionTitle';
@@ -15,6 +16,14 @@ import { cx } from '../../utils/cx';
 import styles from './GamePage.module.css';
 
 export function GamePage() {
+    return (
+        <FriendsProvider>
+            <GamePageInner />
+        </FriendsProvider>
+    );
+}
+
+function GamePageInner() {
     const { user } = useUser();
 
     const {
