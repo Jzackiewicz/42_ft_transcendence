@@ -21,7 +21,8 @@ export function GamePage() {
         connection,
         gameActions,
         sessionState,
-        isAiQuestionsRequested,
+        isGeneratingAiQuestions,
+        aiQuestionsGenerated,
         onRequestAiQuestions
     } = useGamePage();
 
@@ -37,7 +38,8 @@ export function GamePage() {
                         isHost={isHost}
                         playersCount={gameState.players.length}
                         onStartGame={gameActions.startGame}
-                        isAiQuestionsRequested={isAiQuestionsRequested}
+                        isGeneratingAiQuestions={isGeneratingAiQuestions}
+                        aiQuestionsGenerated={aiQuestionsGenerated}
                         onRequestAiQuestions={onRequestAiQuestions}
                     />
                 );
@@ -47,6 +49,8 @@ export function GamePage() {
                     <AnsweringView
                         questionText={gameState.current_question?.question?.question_text || ''}
                         category={gameState.current_question?.question?.category || ''}
+                        isAiGenerated={gameState.current_question?.question?.is_ai_generated ?? false}
+                        isVerified={gameState.current_question?.question?.is_verified ?? false}
                         isCurrentAnswering={gameState.current_player === currentPlayerObj?.id}
                         activePlayerName={gameState.players.find(p => p.id === gameState.current_player)?.display_name || 'Someone'}
                         onSubmitAnswer={gameActions.submitAnswer}
@@ -75,6 +79,8 @@ export function GamePage() {
                         isTimeout={attempt?.is_timeout || false}
                         questionText={gameState.current_question?.question?.question_text || ''}
                         category={gameState.current_question?.question?.category || ''}
+                        isAiGenerated={gameState.current_question?.question?.is_ai_generated ?? false}
+                        isVerified={gameState.current_question?.question?.is_verified ?? false}
                     />
                 );
             }
@@ -82,8 +88,6 @@ export function GamePage() {
                 return (
                     <GameOverView
                         winnerId={gameState.winner}
-                        winnerName={gameState.players.find(p => p.id === gameState.winner)?.display_name || ''}
-                        endReason={gameState.end_reason || ''}
                         players={gameState.players}
                         onReturnToHome={connection.leaveGame}
                     />
@@ -177,12 +181,14 @@ export function GamePage() {
                                 <GameHUD
                                     questionAskedCount={gameState.question_asked_count}
                                     totalQuestionsCount={gameState.total_questions_count}
+                                    generatedQuestionsCount={gameState.generated_questions_count}
                                     timeLeft={timeLeft}
                                     timeLimitSeconds={gameState.answer_time_limit_ms / 1000}
                                     nominationTimeLimitSeconds={gameState.nomination_time_limit_ms / 1000}
                                     maxPlayers={gameState.max_players}
                                     isLobby={gameState.current_status === GameStatus.LOBBY}
                                     isEvaluation={gameState.current_status === GameStatus.EVALUATION}
+                                    isNomination={gameState.current_status === GameStatus.NOMINATION}
                                 />
                             )}
                             {renderActiveView()}

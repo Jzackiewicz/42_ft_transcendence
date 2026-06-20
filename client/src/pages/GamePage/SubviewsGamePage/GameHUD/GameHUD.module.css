@@ -70,6 +70,14 @@
     font-weight: 400;
 }
 
+.hud-generated {
+    color: var(--green);
+    font-size: var(--font-sm);
+    font-weight: 700;
+    text-shadow: 0 0 8px rgba(0, 230, 118, 0.25);
+    margin-left: 6px;
+}
+
 
 /* Alert styles for low time */
 .hud-item.hud-timer.warning {

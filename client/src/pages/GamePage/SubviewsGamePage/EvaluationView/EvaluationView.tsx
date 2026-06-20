@@ -1,5 +1,5 @@
-
 import { cx } from '../../../../utils/cx';
+import { QuestionBadges } from '../QuestionBadges/QuestionBadges';
 import styles from './EvaluationView.module.css';
 
 interface EvaluationViewProps {
@@ -10,6 +10,8 @@ interface EvaluationViewProps {
     isTimeout: boolean;
     questionText: string;
     category: string;
+    isAiGenerated: boolean;
+    isVerified: boolean;
 }
 
 export function EvaluationView({
@@ -19,29 +21,31 @@ export function EvaluationView({
     isCorrect,
     isTimeout,
     questionText,
-    category
+    category,
+    isAiGenerated,
+    isVerified
 }: EvaluationViewProps) {
-    let statusClass: string | undefined = undefined;
-    let statusText = '⏳ EVALUATING... (TODO)';
-
-    if (answerText !== '...') {
-        if (isCorrect) {
-            statusClass = styles['eval-correct'];
-            statusText = '🏆 CORRECT ANSWER';
-        } else if (isTimeout) {
-            statusClass = styles['eval-timeout'];
-            statusText = "⏰ TIME'S UP";
-        } else {
-            statusClass = styles['eval-wrong'];
-            statusText = '❌ WRONG ANSWER';
-        }
+    let statusClass = '';
+    let statusText = '';
+    if (isCorrect) {
+        statusClass = styles['eval-correct'];
+        statusText = '🏆 CORRECT ANSWER';
+    } else if (isTimeout) {
+        statusClass = styles['eval-timeout'];
+        statusText = "⏰ TIME'S UP";
+    } else {
+        statusClass = styles['eval-wrong'];
+        statusText = '❌ WRONG ANSWER';
     }
 
     return (
         <div className={cx(styles['evaluation-view-container'], statusClass)}>
-
+            
             <div className={styles['eval-question-info']}>
-                <span className={styles['eval-category']}>[{category}]</span>
+                <div className={styles['eval-question-meta']}>
+                    <span className={styles['eval-category']}>[{category}]</span>
+                    <QuestionBadges isAiGenerated={isAiGenerated} isVerified={isVerified} />
+                </div>
                 <p className={styles['eval-question-text']}>{questionText}</p>
             </div>
 

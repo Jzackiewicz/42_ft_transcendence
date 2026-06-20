@@ -1,4 +1,3 @@
-
 import { Player } from '../../useGamePage';
 import styles from './NominationView.module.css';
 

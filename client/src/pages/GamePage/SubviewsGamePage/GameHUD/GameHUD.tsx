@@ -1,35 +1,48 @@
-
 import { cx } from '../../../../utils/cx';
 import styles from './GameHUD.module.css';
 
 interface GameHUDProps {
     questionAskedCount: number;
     totalQuestionsCount: number;
+    generatedQuestionsCount?: number;
     timeLeft: number | null;
     timeLimitSeconds?: number;
     nominationTimeLimitSeconds?: number;
     maxPlayers?: number;
     isLobby?: boolean;
     isEvaluation?: boolean;
+    isNomination?: boolean;
 }
 
-export function GameHUD({ 
-    questionAskedCount, 
-    totalQuestionsCount, 
-    timeLeft, 
-    timeLimitSeconds, 
+export function GameHUD({
+    questionAskedCount,
+    totalQuestionsCount,
+    generatedQuestionsCount = 0,
+    timeLeft,
+    timeLimitSeconds,
     nominationTimeLimitSeconds,
     maxPlayers,
     isLobby = false,
-    isEvaluation = false
+    isEvaluation = false,
+    isNomination = false
 }: GameHUDProps) {
+    const timerLabel = isEvaluation
+        ? 'TIME TO NEXT STAGE'
+        : isNomination
+            ? 'RANDOM PICK IN'
+            : 'TIMEOUT IN';
     return (
         <div className={styles['game-hud-container']}>
             {isLobby ? (
                 <div className={styles['hud-group']}>
                     <div className={styles['hud-item']}>
                         <span className={styles['hud-label']}>QUESTIONS</span>
-                        <strong className={styles['hud-value']}>{totalQuestionsCount}</strong>
+                        <strong className={styles['hud-value']}>
+                            {totalQuestionsCount - generatedQuestionsCount}
+                            {generatedQuestionsCount > 0 && (
+                                <span className={styles['hud-generated']}>+ {generatedQuestionsCount} generated</span>
+                            )}
+                        </strong>
                     </div>
                     {timeLimitSeconds !== undefined && (
                         <div className={styles['hud-item']}>
@@ -61,7 +74,7 @@ export function GameHUD({
 
                     {timeLeft !== null && (
                         <div className={cx(styles['hud-item'], styles['hud-timer'], (timeLeft <= 5 && !isEvaluation) && styles.warning)}>
-                            <span className={styles['hud-label']}>{isEvaluation ? 'TIME TO NEXT STAGE' : 'TIME LEFT'}</span>
+                            <span className={styles['hud-label']}>{timerLabel}</span>
                             <strong className={styles['hud-value']}>{timeLeft}s</strong>
                         </div>
                     )}

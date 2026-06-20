@@ -1,4 +1,3 @@
-
 import { Link } from 'react-router-dom';
 import BlinkingSpaceBGDiv from '../../components/BlinkingSpaceBGDiv/BlinkingSpaceBGDiv';
 import styles from '../static-page.module.css';

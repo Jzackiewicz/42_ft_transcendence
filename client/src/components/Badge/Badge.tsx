@@ -2,7 +2,7 @@ import React from 'react';
 import { cx } from '../../utils/cx';
 import styles from './Badge.module.css';
 
-export type BadgeVariant = 'host' | 'answering' | 'nominator' | 'human' | 'joined';
+export type BadgeVariant = 'host' | 'answering' | 'nominator' | 'human' | 'joined' | 'ai' | 'verified';
 
 interface BadgeProps {
     variant: BadgeVariant;

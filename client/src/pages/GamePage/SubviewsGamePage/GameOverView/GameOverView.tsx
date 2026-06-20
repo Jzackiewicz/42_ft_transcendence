@@ -1,4 +1,3 @@
-
 import { Player } from '../../useGamePage';
 import { Button } from '../../../../components/Button/Button';
 import { cx } from '../../../../utils/cx';
@@ -6,8 +5,6 @@ import styles from './GameOverView.module.css';
 
 interface GameOverViewProps {
     winnerId: number | null;
-    winnerName: string;
-    endReason: string;
     players: Player[];
     onReturnToHome: () => void;
 }
