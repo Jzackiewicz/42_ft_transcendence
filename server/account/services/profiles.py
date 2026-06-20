@@ -4,6 +4,8 @@ User and UserProfile write-side operations (the "C", "U", "D" of CRUD).
 Reads belong in selectors.py, not here.
 """
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
+from django.db import IntegrityError
 
 from account.models import UserProfile
 
@@ -44,7 +46,11 @@ def user_update_basic_info(
         user.email = email
         update_fields.append("email")
     if update_fields:
-        user.save(update_fields=update_fields)
+        try:
+            user.save(update_fields=update_fields)
+        except IntegrityError:
+            field = " or ".join(update_fields)
+            raise ValidationError(f"That {field} is already taken.") 
     return user
 
 
