@@ -10,6 +10,8 @@ import { PlayerTile } from './SubviewsGamePage/PlayerTile/PlayerTile';
 import { GameHUD } from './SubviewsGamePage/GameHUD/GameHUD';
 import BlinkingSpaceBGDiv from '../../components/BlinkingSpaceBGDiv';
 import { Navbar } from '../../components/Navbar/Navbar';
+import { Card } from '../../components/Card/Card';
+import { SectionTitle } from '../../components/SectionTitle/SectionTitle';
 import './GamePage.css';
 
 export function GamePage() {
@@ -136,8 +138,8 @@ export function GamePage() {
                     <div className="game-main-layout">
 
                         {/* Players List Sidebar (Always Visible) */}
-                        <div className="game-sidebar section-card">
-                            <h3 className="game-sidebar-title section-title">Players</h3>
+                        <Card className="game-sidebar">
+                            <SectionTitle as="h3" className="game-sidebar-title">Players</SectionTitle>
                             <div className="game-players-list">
                                 {gameState.players.map((player) => {
                                     const isCurrentNominator = gameState.last_correct_player === currentPlayerObj?.id;
@@ -159,17 +161,17 @@ export function GamePage() {
                                     );
                                 })}
                             </div>
-                        </div>
+                        </Card>
 
                         {/* Active State View Component */}
-                        <div className="game-active-area section-card">
-                            <h3 className="game-active-title section-title">
+                        <Card className="game-active-area">
+                            <SectionTitle as="h3" className="game-active-title">
                                 {gameState.current_status === GameStatus.LOBBY && "LOBBY"}
                                 {gameState.current_status === GameStatus.ANSWERING && "ANSWER TO THE QUESTION"}
                                 {gameState.current_status === GameStatus.NOMINATION && "NOMINATE NEXT PLAYER"}
                                 {gameState.current_status === GameStatus.EVALUATION && "ANSWER REVEAL"}
                                 {gameState.current_status === GameStatus.GAME_OVER && "GAME OVER"}
-                            </h3>
+                            </SectionTitle>
                             {/* Question & Timer HUD */}
                             {gameState.current_status !== GameStatus.GAME_OVER && (
                                 <GameHUD
@@ -184,7 +186,7 @@ export function GamePage() {
                                 />
                             )}
                             {renderActiveView()}
-                        </div>
+                        </Card>
 
                     </div>
                 ) : (

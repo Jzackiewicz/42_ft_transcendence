@@ -56,26 +56,6 @@
     margin-top: 8px;
 }
 
-.badge {
-    padding: 3px 10px;
-    border-radius: 12px;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-}
-
-.badge.human {
-    background: rgba(0, 229, 255, 0.1);
-    border: 1px solid rgba(0, 229, 255, 0.25);
-    color: var(--cyan);
-}
-
-.badge.joined {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid var(--pb);
-    color: var(--dim);
-}
 
 /* ── How to Play button ── */
 .home-nav-rules {

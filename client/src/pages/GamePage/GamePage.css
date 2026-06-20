@@ -39,14 +39,16 @@
     --theme-glow: rgba(224, 64, 251, 0.05);
 }
 
-/* Apply themes to cards and headers */
-.game-page-container .section-card {
+/* Apply themes to cards and headers (Card / SectionTitle components) */
+.game-page-container .game-sidebar,
+.game-page-container .game-active-area {
     border-color: var(--theme-border, var(--pb));
     box-shadow: 0 0 20px var(--theme-glow, transparent);
     transition: border-color 0.4s ease, box-shadow 0.4s ease;
 }
 
-.game-page-container .section-title {
+.game-page-container .game-sidebar-title,
+.game-page-container .game-active-title {
     border-color: var(--theme-border, var(--border));
     color: var(--theme-accent, var(--text));
     transition: color 0.4s ease, border-color 0.4s ease;

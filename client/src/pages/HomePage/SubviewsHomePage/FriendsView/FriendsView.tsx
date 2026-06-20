@@ -2,14 +2,16 @@ import { useFriendsView } from './useFriendsView'
 import FriendsListTabView from './TabViews/FriendsListTabView/FriendsListTabView'
 import FriendsRequestTabView from './TabViews/FriendsRequestTabView/FriendsRequestTabView'
 import FriendsFindTabView from './TabViews/FriendsFindTabView/FriendsFindTabView'
+import { Card } from '../../../../components/Card/Card'
+import { SectionTitle } from '../../../../components/SectionTitle/SectionTitle'
 import './FriendsView.css'
 
 function FriendsView() {
     const { activeTab, setActiveTab } = useFriendsView()
 
     return (
-        <div className="section-card friends-view">
-            <div className="section-title">👥 Friends</div>
+        <Card className="friends-view">
+            <SectionTitle>👥 Friends</SectionTitle>
 
             {/* ── Tabs ── */}
             <div className="friends-tabs">
@@ -37,7 +39,7 @@ function FriendsView() {
             {activeTab === 'friends'  && <FriendsListTabView />}
             {activeTab === 'requests' && <FriendsRequestTabView />}
             {activeTab === 'find'     && <FriendsFindTabView />}
-        </div>
+        </Card>
     )
 }
 

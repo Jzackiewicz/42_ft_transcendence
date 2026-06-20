@@ -1,4 +1,5 @@
 import { Player } from '../../useGamePage';
+import { Badge } from '../../../../components/Badge/Badge';
 import './PlayerTile.css';
 
 interface PlayerTileProps {
@@ -54,9 +55,9 @@ export function PlayerTile({
                     </span>
                 </div>
                 <span className="player-role-badges">
-                    {isPlayerHost && <span className="badge badge-host" title="Lobby Host">Host</span>}
-                    {isPlayerActive && <span className="badge badge-answering" title="Answering Turn">Answering</span>}
-                    {isPlayerNominator && <span className="badge badge-nominator" title="Has Nomination Rights">Nominator</span>}
+                    {isPlayerHost && <Badge variant="host" title="Lobby Host">Host</Badge>}
+                    {isPlayerActive && <Badge variant="answering" title="Answering Turn">Answering</Badge>}
+                    {isPlayerNominator && <Badge variant="nominator" title="Has Nomination Rights">Nominator</Badge>}
                 </span>
             </div>
             <div className="player-stats">

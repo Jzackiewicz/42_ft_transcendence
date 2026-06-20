@@ -1,12 +1,14 @@
 import { useStatsView } from './useStatsView'
+import { Card } from '../../../../components/Card/Card'
+import { SectionTitle } from '../../../../components/SectionTitle/SectionTitle'
 import './StatsView.css'
 
 function StatsView() {
     const stats = useStatsView()
 
     return (
-        <div className="section-card">
-            <div className="section-title">📊 Statistics</div>
+        <Card>
+            <SectionTitle>📊 Statistics</SectionTitle>
 
             <div className="stats-grid">
                 <div className="stat-box">
@@ -34,7 +36,7 @@ function StatsView() {
                     <div className="stat-box-lbl">Best Streak</div>
                 </div>
             </div>
-        </div>
+        </Card>
     )
 }
 

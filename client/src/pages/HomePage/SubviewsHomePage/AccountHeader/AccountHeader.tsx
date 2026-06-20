@@ -1,3 +1,4 @@
+import { Badge } from '../../../../components/Badge/Badge'
 import './AccountHeader.css'
 
 interface AccountHeaderProps {
@@ -18,7 +19,7 @@ function AccountHeader({ username, email, setShowJoinModal, setShowRulesModal, h
                 <div className="account-name">{username}</div>
                 <div className="account-email">{email}</div>
                 <div className="account-badges">
-                    <span className="badge human">Human</span>
+                    <Badge variant="human">Human</Badge>
                 </div>
             </div>
             <button

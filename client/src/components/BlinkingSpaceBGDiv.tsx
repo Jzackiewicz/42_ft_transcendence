@@ -1,5 +1,6 @@
 
 import { useMemo } from 'react';
+import styles from './BlinkingSpaceBGDiv.module.css';
 
 function createStars() {
     return Array.from({ length: 100 }, () => ({
@@ -10,7 +11,7 @@ function createStars() {
 
 function Star({ x, y }: { x: number, y: number }) {
     return (
-        <div className="star" style={{ left: `${x}%`, top: `${y}%` }} />
+        <div className={styles.star} style={{ left: `${x}%`, top: `${y}%` }} />
     )
 }
 
@@ -18,7 +19,7 @@ function BlinkingSpaceBGDiv() {
     const stars = useMemo(() => createStars(), [])
 
     return (
-        <div className="blinking-space-bg">
+        <div className={styles.bg}>
             {stars.map((star, index) => (
                 <Star key={index} x={star.x} y={star.y} />
             ))}
