@@ -6,6 +6,7 @@ from .services.game_flow.timer_manager import GameTimerManager
 from .services.game_flow.lifecycle import reconnect_player
 from .selectors.lobby_selectors import verify_player_in_session
 from .selectors.game_flow_selectors import get_game_snapshot
+from .services.game_flow.broadcast import broadcast_snapshot
 from .serializers import SubmitAnswerPayloadSerializer, NominatePlayerPayloadSerializer
 
 class GameConsumer(AsyncJsonWebsocketConsumer):
@@ -38,14 +39,7 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 			return
 
 		snapshot = await database_sync_to_async(get_game_snapshot)(self.session_id)
-		await self.channel_layer.group_send(
-			self.room_group_name,
-			{
-				'type': 'game_state_update',
-				'action': 'player_connected',
-				'snapshot': snapshot
-			}
-		)
+		await broadcast_snapshot(self.session_id, 'player_connected', snapshot)
 		self._schedule_timer(sync_result)
 
 	async def disconnect(self, close_code):
@@ -75,14 +69,7 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 					return
 
 				snapshot = await database_sync_to_async(get_game_snapshot)(self.session_id)
-				await self.channel_layer.group_send(
-					self.room_group_name,
-					{
-						'type': 'game_state_update',
-						'action': result.action,
-						'snapshot': snapshot
-					}
-				)
+				await broadcast_snapshot(self.session_id, result.action, snapshot)
 
 				self._schedule_timer(sync_result)
 			except ValidationError:
@@ -132,14 +119,7 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 				return
 
 			snapshot = await database_sync_to_async(get_game_snapshot)(self.session_id)
-			await self.channel_layer.group_send(
-				self.room_group_name,
-				{
-					'type': 'game_state_update',
-					'action': result.action,
-					'snapshot': snapshot
-				}
-			)
+			await broadcast_snapshot(self.session_id, result.action, snapshot)
 
 			self._schedule_timer(sync_result)
 		except ValidationError as e:
@@ -164,4 +144,4 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 			GameTimerManager.cancel(self.session_id)
 			return
 
-		GameTimerManager.schedule(self.session_id, result.timer_data, self.room_group_name)
+		GameTimerManager.schedule(self.session_id, result.timer_data)
