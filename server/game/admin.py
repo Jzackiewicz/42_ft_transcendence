@@ -16,8 +16,9 @@ class SessionPlayerAdmin(admin.ModelAdmin):
 
 @admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
-    list_display = ('question_text', 'category', 'correct_answer')
-    list_filter = ('category',)
+    list_display = ('question_text', 'category', 'correct_answer', 'is_ai_generated', 'is_verified')
+    list_filter = ('category', 'is_ai_generated', 'is_verified')
+    list_editable = ('is_verified', 'is_ai_generated',)
     search_fields = ('question_text',)
 
 @admin.register(SessionQuestion)

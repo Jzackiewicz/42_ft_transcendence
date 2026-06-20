@@ -12,7 +12,7 @@ import { PresenceUpdateMessage } from '../types/Presence'
 // --- Config -----------------------------------------------------------------
 
 const PRESENCE_ROOM = 'presence'
-const BACKOFF_SCHEDULE_MS = [1000, 2000, 4000, 8000, 16000, 30000]
+const RECONNECT_SCHEDULE_MS = [1000, 2000, 4000, 8000, 16000, 30000]
 
 // --- Context shape ----------------------------------------------------------
 
@@ -116,9 +116,9 @@ export function PresenceProvider({ children }: { children: React.ReactNode }) {
 
 			const idx = Math.min(
 				reconnectAttemptRef.current,
-				BACKOFF_SCHEDULE_MS.length - 1,
+				RECONNECT_SCHEDULE_MS.length - 1,
 			)
-			const delay = BACKOFF_SCHEDULE_MS[idx]
+			const delay = RECONNECT_SCHEDULE_MS[idx]
 			reconnectAttemptRef.current += 1
 
 			reconnectTimerRef.current = window.setTimeout(() => {

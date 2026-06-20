@@ -12,6 +12,13 @@
     border-radius: 4px;
 }
 
+.eval-question-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
 .eval-category {
     font-family: var(--fd);
     font-size: var(--font-xs);
