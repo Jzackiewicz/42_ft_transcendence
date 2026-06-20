@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Player } from '../../useGamePage';
 import { Button } from '../../../../components/Button/Button';
 import { cx } from '../../../../utils/cx';
@@ -12,7 +12,7 @@ interface GameOverViewProps {
     onReturnToHome: () => void;
 }
 
-export function GameOverView({ winnerId, winnerName, endReason, players, onReturnToHome }: GameOverViewProps) {
+export function GameOverView({ winnerId, players, onReturnToHome }: GameOverViewProps) {
     const sortedLeaderboard = [...players].sort((a, b) => {
         // 0. The official winner always comes first
         if (winnerId !== null) {

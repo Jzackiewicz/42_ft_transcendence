@@ -1,4 +1,3 @@
-import React from 'react';
 import { useGamePage, GameStatus } from './useGamePage';
 import { useUser } from '../../context/UserContext';
 import { LobbyView } from './SubviewsGamePage/LobbyView/LobbyView';
@@ -101,7 +100,7 @@ export function GamePage() {
     };
 
     const { sessionUuid, errorMsg, setErrorMsg } = connection;
-    const { gameState, gameStarted, timeLeft, hostPlayerId, isSpectator, currentPlayerObj, eligiblePlayers } = sessionState;
+    const { gameState, timeLeft, hostPlayerId, isSpectator, currentPlayerObj, eligiblePlayers } = sessionState;
 
     return (
         <div className={cx(styles['game-page-container'], styles[`phase-${gameState?.current_status || 'none'}`])}>

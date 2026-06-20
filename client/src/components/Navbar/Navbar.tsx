@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Button } from '../Button/Button';
 import { cx } from '../../utils/cx';
 import styles from './Navbar.module.css';
