@@ -62,6 +62,7 @@
     font-size: var(--font-md);
     font-family: var(--fb);
     flex: 1;
+    min-width: 24ch;
     background-color: rgba(0, 0, 0, 0.25);
     color: var(--text);
     border: 1px solid var(--theme-border, var(--border));
@@ -78,6 +79,15 @@
 
 .answering-input::placeholder {
     color: var(--placeholder);
+}
+
+.answering-char-limit {
+    margin-top: 8px;
+    font-family: var(--fb);
+    font-size: var(--font-xs);
+    letter-spacing: 0.5px;
+    font-weight: 700;
+    color: var(--theme-accent, var(--magenta));
 }
 
 .answering-spectator-waiting {
