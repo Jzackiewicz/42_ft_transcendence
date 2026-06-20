@@ -1,5 +1,6 @@
-import { usePresence } from '../context/PresenceContext'
-import './OnlineIndicator.css'
+import { usePresence } from '../../context/PresenceContext'
+import { cx } from '../../utils/cx'
+import styles from './OnlineIndicator.module.css'
 
 interface Props {
 	userId: number
@@ -11,7 +12,7 @@ export function OnlineIndicator({ userId }: Props) {
 
 	return (
 		<span
-			className={`presence-dot ${online ? 'online' : 'offline'}`}
+			className={cx(styles['presence-dot'], online ? styles.online : styles.offline)}
 			role="status"
 			aria-label={online ? 'online' : 'offline'}
 			title={online ? 'Online' : 'Offline'}

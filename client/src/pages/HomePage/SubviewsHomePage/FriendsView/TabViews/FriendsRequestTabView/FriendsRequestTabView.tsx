@@ -1,5 +1,5 @@
 import { useFriendsRequestTabView, FriendRequest } from './useFriendsRequestTabView'
-import InlineError from '../../../../../../components/InlineError'
+import InlineError from '../../../../../../components/InlineError/InlineError'
 import './FriendsRequestTabView.css'
 
 function FriendsRequestTabView() {

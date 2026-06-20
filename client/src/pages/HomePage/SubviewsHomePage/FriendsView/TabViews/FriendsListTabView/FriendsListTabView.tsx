@@ -1,6 +1,6 @@
 import { useFriendsListTabView } from './useFriendsListTabView'
-import InlineError from '../../../../../../components/InlineError'
-import { OnlineIndicator } from '../../../../../../components/OnlineIndicator'
+import InlineError from '../../../../../../components/InlineError/InlineError'
+import { OnlineIndicator } from '../../../../../../components/OnlineIndicator/OnlineIndicator'
 import './FriendsListTabView.css'
 
 function FriendsListTabView() {

@@ -1,4 +1,4 @@
-import BlinkingSpaceBGDiv from '../../components/BlinkingSpaceBGDiv'
+import BlinkingSpaceBGDiv from '../../components/BlinkingSpaceBGDiv/BlinkingSpaceBGDiv'
 import AccountHeader from './SubviewsHomePage/AccountHeader/AccountHeader'
 import FriendsView from './SubviewsHomePage/FriendsView/FriendsView'
 import ChatContainer from './SubviewsHomePage/ChatContainer/ChatContainer'

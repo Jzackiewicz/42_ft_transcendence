@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import BlinkingSpaceBGDiv from '../../components/BlinkingSpaceBGDiv';
+import BlinkingSpaceBGDiv from '../../components/BlinkingSpaceBGDiv/BlinkingSpaceBGDiv';
 import './PrivacyPolicy.css';
 
 export function PrivacyPolicyPage() {

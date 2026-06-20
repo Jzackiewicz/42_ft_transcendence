@@ -8,7 +8,7 @@ import { EvaluationView } from './SubviewsGamePage/EvaluationView/EvaluationView
 import { GameOverView } from './SubviewsGamePage/GameOverView/GameOverView';
 import { PlayerTile } from './SubviewsGamePage/PlayerTile/PlayerTile';
 import { GameHUD } from './SubviewsGamePage/GameHUD/GameHUD';
-import BlinkingSpaceBGDiv from '../../components/BlinkingSpaceBGDiv';
+import BlinkingSpaceBGDiv from '../../components/BlinkingSpaceBGDiv/BlinkingSpaceBGDiv';
 import { Navbar } from '../../components/Navbar/Navbar';
 import { Card } from '../../components/Card/Card';
 import { SectionTitle } from '../../components/SectionTitle/SectionTitle';

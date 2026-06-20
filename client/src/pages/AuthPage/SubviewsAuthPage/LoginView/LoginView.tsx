@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useLoginView } from './useLoginView'
-import InputField from '../../../../components/InputField'
-import InlineError from '../../../../components/InlineError'
-import GoogleSignInButton from '../../../../components/GoogleSignInButton'
+import InputField from '../../../../components/InputField/InputField'
+import InlineError from '../../../../components/InlineError/InlineError'
+import GoogleSignInButton from '../../../../components/GoogleSignInButton/GoogleSignInButton'
 
 interface LoginViewProps {
     onSuccess: () => void

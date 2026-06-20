@@ -1,4 +1,5 @@
-import { googleOAuthLogin } from '../api/authWrapper';
+import { googleOAuthLogin } from '../../api/authWrapper';
+import styles from './GoogleSignInButton.module.css';
 
 interface GoogleSignInButtonProps {
     label?: string;
@@ -13,7 +14,7 @@ function GoogleSignInButton({ label = 'Sign in with Google' }: GoogleSignInButto
         <button
             type="button"
             onClick={googleOAuthLogin}
-            className="google-signin-btn"
+            className={styles['google-signin-btn']}
         >
             <svg
                 xmlns="http://www.w3.org/2000/svg"

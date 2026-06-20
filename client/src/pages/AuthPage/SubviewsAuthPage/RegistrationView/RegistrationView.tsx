@@ -1,6 +1,6 @@
 import { useRegistrationView } from './useRegistrationView'
-import InputField from '../../../../components/InputField'
-import GoogleSignInButton from '../../../../components/GoogleSignInButton'
+import InputField from '../../../../components/InputField/InputField'
+import GoogleSignInButton from '../../../../components/GoogleSignInButton/GoogleSignInButton'
 
 interface RegistrationProps {
     onSuccess: () => void

@@ -1,5 +1,6 @@
 import React from 'react';
-import './Button.css';
+import { cx } from '../../utils/cx';
+import styles from './Button.module.css';
 
 interface ButtonProps {
     variant?: 'primary' | 'secondary' | 'danger' | 'success';
@@ -20,12 +21,12 @@ export function Button({
     children,
     className = ''
 }: ButtonProps) {
-    const classNames = [
-        'app-btn',
-        `app-btn-${variant}`,
-        `app-btn-${size}`,
+    const classNames = cx(
+        styles['app-btn'],
+        styles[`app-btn-${variant}`],
+        styles[`app-btn-${size}`],
         className
-    ].filter(Boolean).join(' ');
+    );
 
     return (
         <button

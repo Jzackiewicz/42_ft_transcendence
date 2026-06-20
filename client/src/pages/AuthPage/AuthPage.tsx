@@ -1,6 +1,6 @@
 import LoginView from './SubviewsAuthPage/LoginView/LoginView.tsx'
 import RegistrationView from './SubviewsAuthPage/RegistrationView/RegistrationView'
-import BlinkingSpaceBGDiv from '../../components/BlinkingSpaceBGDiv.tsx'
+import BlinkingSpaceBGDiv from '../../components/BlinkingSpaceBGDiv/BlinkingSpaceBGDiv.tsx'
 import './AuthPage.css'
 
 import { useAuthPage, useLoginNavigation, useRegistrationNavigation } from './useAuthPage'

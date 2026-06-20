@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useChatContainer } from './useChatContainer'
-import { OnlineIndicator } from '../../../../components/OnlineIndicator'
+import { OnlineIndicator } from '../../../../components/OnlineIndicator/OnlineIndicator'
 import './ChatContainer.css'
 
 function ChatContainer() {

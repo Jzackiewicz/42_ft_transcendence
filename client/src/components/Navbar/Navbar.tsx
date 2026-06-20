@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '../Button/Button';
-import './Navbar.css';
+import { cx } from '../../utils/cx';
+import styles from './Navbar.module.css';
 
 interface NavbarProps {
     sessionUuid?: string | null;
@@ -19,28 +20,28 @@ export function Navbar({ sessionUuid, actionButtonText, onActionButtonClick }: N
     };
 
     return (
-        <nav className="app-nav">
-            <div className="app-nav-logo">
-                <span className="logo-quiz">QUIZ</span>SENDENCE
+        <nav className={styles['app-nav']}>
+            <div className={styles['app-nav-logo']}>
+                <span className={styles['logo-quiz']}>QUIZ</span>SENDENCE
             </div>
 
-            <div className="app-nav-space" />
+            <div className={styles['app-nav-space']} />
 
             {sessionUuid && (
                 <div
-                    className={`app-session-code ${copied ? 'copied' : ''}`}
+                    className={cx(styles['app-session-code'], copied && styles.copied)}
                     onClick={handleCopy}
                     title="Click to copy session code"
                 >
-                    <span className="code-label">SESSION CODE:</span>
-                    <span className="code-value">{sessionUuid}</span>
-                    <span className="copy-icon">
+                    <span className={styles['code-label']}>SESSION CODE:</span>
+                    <span className={styles['code-value']}>{sessionUuid}</span>
+                    <span className={styles['copy-icon']}>
                         {copied ? '✓' : '📋'}
                     </span>
                 </div>
             )}
 
-            <Button onClick={onActionButtonClick}>
+            <Button onClick={onActionButtonClick} className={styles['nav-btn']}>
                 {actionButtonText}
             </Button>
         </nav>

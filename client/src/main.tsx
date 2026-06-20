@@ -7,7 +7,7 @@ import { AuthPage } from './pages/AuthPage/AuthPage.tsx'
 import { GamePage } from './pages/GamePage/GamePage.tsx'
 import { PrivacyPolicyPage } from './pages/PrivacyPolicy/PrivacyPolicyPage.tsx'
 import { TermsOfServicePage } from './pages/TermsOfService/TermsOfServicePage.tsx'
-import { Footer } from './components/Footer.tsx'
+import { Footer } from './components/Footer/Footer.tsx'
 import { ErrorPage } from './pages/ErrorPage/ErrorPage.tsx'
 
 import { UserProvider } from './context/UserContext.tsx'
