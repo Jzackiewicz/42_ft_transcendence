@@ -17,7 +17,7 @@ class UserRegisterInputSerializer(serializers.Serializer):
     """Input for user registration - validated data is passed to user_create()"""
 
     username = serializers.CharField(max_length=150, min_length=3)
-    email = serializers.EmailField()
+    email = serializers.EmailField(max_length=254)
     password = serializers.CharField(write_only=True, min_length=8)
 
     def validate_username(self, value):
@@ -49,8 +49,8 @@ class UserOutputSerializer(serializers.ModelSerializer):
 
 
 class UserUpdateInputSerializer(serializers.Serializer):
-    username = serializers.CharField(max_length=150, required=False)
-    email = serializers.EmailField(required=False)
+    username = serializers.CharField(max_length=150, min_length=3, required=False)
+    email = serializers.EmailField(max_length=254, required=False)
 
     def validate_username(self, value):
         if "@" in value:
