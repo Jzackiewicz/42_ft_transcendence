@@ -1,0 +1,24 @@
+.lobby-chat {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    border-radius: 14px;
+    border: 1px solid var(--pb);
+    background: var(--panel);
+    overflow: hidden;
+    height: 360px;
+}
+
+.lobby-chat-sidebar {
+    border-right: 1px solid var(--pb);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.lobby-chat-thread {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-width: 0;
+}

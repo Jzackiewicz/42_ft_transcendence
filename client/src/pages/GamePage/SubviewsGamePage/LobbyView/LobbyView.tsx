@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button } from '../../../../components/Button/Button';
+import { LobbyChat } from '../LobbyChat/LobbyChat';
 import './LobbyView.css';
 
 interface LobbyViewProps {
@@ -61,6 +62,7 @@ export function LobbyView({
                     Waiting for lobby host to start the game...
                 </div>
             )}
+            <LobbyChat />
         </div>
     );
 }

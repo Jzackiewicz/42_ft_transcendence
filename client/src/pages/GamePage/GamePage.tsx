@@ -1,6 +1,7 @@
 import React from 'react';
 import { useGamePage, GameStatus } from './useGamePage';
 import { useUser } from '../../context/UserContext';
+import { FriendsProvider } from '../../context/FriendsListContext';
 import { LobbyView } from './SubviewsGamePage/LobbyView/LobbyView';
 import { AnsweringView } from './SubviewsGamePage/AnsweringView/AnsweringView';
 import { NominationView } from './SubviewsGamePage/NominationView/NominationView';
@@ -13,6 +14,14 @@ import { Navbar } from '../../components/Navbar/Navbar';
 import './GamePage.css';
 
 export function GamePage() {
+    return (
+        <FriendsProvider>
+            <GamePageInner />
+        </FriendsProvider>
+    );
+}
+
+function GamePageInner() {
     const { user } = useUser();
 
     const {
