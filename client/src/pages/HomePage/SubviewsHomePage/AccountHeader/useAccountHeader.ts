@@ -23,6 +23,29 @@ export function useAccountHeader(user: User | null | undefined, setUser: (u: Use
     const confirmEdit = async () => {
         if (!editingField || !user) return
         try {
+
+            if (editingField === 'username') {
+                if (editValue.trim().length < 3) {
+                    setError('Username must be at least 3 characters.')
+                    return
+                }
+                if (editValue.length > 40) {
+                    setError('This Field must be 40 characters or fewer.')
+                    return
+                }
+            }
+            if (editingField === 'email') {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+                if (!emailRegex.test(editValue)) {
+                    setError('Please enter a valid email address.')
+                    return
+                }
+                if (editValue.trim().length > 254) {
+                    setError('This Field must be 254 characters max')
+                    return
+                }
+
+            }
             const updated = await patchMe({ [editingField]: editValue })
             setUser({
                 id:       updated.user.id       ?? user.id,
