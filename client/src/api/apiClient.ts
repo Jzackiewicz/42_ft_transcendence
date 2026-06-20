@@ -21,7 +21,8 @@ apiClient.interceptors.request.use((config) => {
 apiClient.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (error.response && error.response.status >= 500) {
+        const skipRedirect = (error.config as any)?.skipGlobalErrorRedirect;
+        if (!skipRedirect && error.response && error.response.status >= 500) {
             if (window.location.pathname !== '/error') {
                 sessionStorage.setItem('lastErrorStatus', error.response.status.toString());
                 window.location.href = '/error';

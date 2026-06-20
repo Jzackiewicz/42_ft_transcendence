@@ -18,7 +18,7 @@ def require_questions_exist(session: GameSession) -> None:
 
 
 def require_enough_questions_in_db(limit: int) -> None:
-	available = Question.objects.count()
+	available = Question.objects.filter(is_verified=True).count()
 	if available == 0:
 		raise ValidationError("Cannot start game without questions in the database.")
 	if available < limit:

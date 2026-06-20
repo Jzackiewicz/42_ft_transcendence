@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useUser } from '../../context/UserContext';
+import { generateExtraQuestions } from '../../api/gameWrapper';
 
 export interface Player {
     id: number;
@@ -21,6 +22,8 @@ export interface Question {
     question: {
         question_text: string;
         category: string;
+        is_ai_generated: boolean;
+        is_verified: boolean;
     };
     order_index: number;
 }
@@ -60,6 +63,10 @@ export interface GameSnapshot {
     end_reason: string | null;
     question_asked_count: number;
     total_questions_count: number;
+    ai_questions_count: number;
+    generated_questions_count: number;
+    extra_questions_generated: boolean;
+    current_attempt_started_at?: string | null;
     turn_deadline_at?: string | null;
     nomination_deadline_at?: string | null;
     evaluation_deadline_at?: string | null;
@@ -260,14 +267,28 @@ export function useGamePage() {
         return () => disconnect(); // calling a destructor
     }, []); // Happens only once
 
-    const requestAiQuestions = () => {
-        // No-op for now (backend integration in separate issue #82)
-    };
-    const [isAiQuestionsRequested, setIsAiQuestionsRequested] = useState(false);
+    const [isGeneratingAiQuestions, setIsGeneratingAiQuestions] = useState(false);
 
-    const handleRequestAiQuestions = () => {
-        requestAiQuestions();
-        setIsAiQuestionsRequested(true);
+    const aiQuestionsGenerated = activeGameState?.extra_questions_generated ?? false;
+
+    const handleRequestAiQuestions = async () => {
+        if (!sessionUuid || isGeneratingAiQuestions || aiQuestionsGenerated) {
+            return;
+        }
+        setIsGeneratingAiQuestions(true);
+        setErrorMsg(null);
+        try {
+            await generateExtraQuestions(sessionUuid);
+        } catch (err: any) {
+            const detail = err?.response?.data?.error;
+            setErrorMsg(
+                Array.isArray(detail)
+                    ? detail.join(' ')
+                    : (detail || 'Failed to generate AI questions. Please try again.')
+            );
+        } finally {
+            setIsGeneratingAiQuestions(false);
+        }
     };
     const leaveGame = () => {
         const finish = () => {
@@ -328,7 +349,10 @@ export function useGamePage() {
         connection,
         gameActions,
         sessionState,
-        isAiQuestionsRequested,
+        isGeneratingAiQuestions,
+        aiQuestionsGenerated,
+        totalQuestionsCount: activeGameState?.total_questions_count ?? 0,
+        aiQuestionsCount: activeGameState?.ai_questions_count ?? 0,
         onRequestAiQuestions: handleRequestAiQuestions
     };
 }
