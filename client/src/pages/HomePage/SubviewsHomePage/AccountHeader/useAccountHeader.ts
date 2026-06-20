@@ -2,6 +2,12 @@ import { useRef, useState } from 'react'
 import { patchMe, uploadAvatar } from '../../../../api/authWrapper'
 import { User } from '../../../../types/User'
 
+const AVATAR_MAX_SIZE_MB = 2
+
+function convertMB(mb: number): number {
+    return mb * 1024 * 1024
+}
+
 export function useAccountHeader(user: User | null | undefined, setUser: (u: User | null) => void) {
     const [editingField, setEditingField] = useState<'username' | 'email' | null>(null)
     const [editValue, setEditValue] = useState('')
@@ -67,6 +73,11 @@ export function useAccountHeader(user: User | null | undefined, setUser: (u: Use
     const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
         if (!file || !user) return
+        if (file.size > convertMB(AVATAR_MAX_SIZE_MB)) {
+            setError(`Avatar must be smaller than ${AVATAR_MAX_SIZE_MB}MB.`)
+            return
+        }
+            
         try {
             const updated = await uploadAvatar(user.id, file)
             setUser({

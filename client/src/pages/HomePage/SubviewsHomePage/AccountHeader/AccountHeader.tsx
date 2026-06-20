@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { User } from '../../../../types/User'
 import { useAccountHeader } from './useAccountHeader'
 import './AccountHeader.css'
@@ -18,10 +19,22 @@ function AccountHeader({ user, setUser, setShowJoinModal, setShowRulesModal, han
     } = useAccountHeader(user, setUser)
 
     const initial = user?.username?.[0]?.toUpperCase() ?? '?'
+    const [avatarBroken, setAvatarBroken] = useState(false)
+
+    useEffect(() => {
+        setAvatarBroken(false)
+    }, [user?.avatar])
 
     let avatarContent
-    if (user?.avatar) {
-        avatarContent = <img src={user.avatar} alt="avatar" className="account-avatar-img" />
+    if (user?.avatar && !avatarBroken) {
+        avatarContent = (
+            <img
+                src={user.avatar}
+                alt="avatar"
+                className="account-avatar-img"
+                onError={() => setAvatarBroken(true)}
+            />
+        )
     } else {
         avatarContent = initial
     }
