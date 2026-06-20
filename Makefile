@@ -35,12 +35,20 @@ up:
 	HTTP_EXPOSED_PORT=$(HTTP_EXPOSED_PORT) \
 	HTTPS_EXPOSED_PORT=$(HTTPS_EXPOSED_PORT) \
 	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(PROD_PROJECT) up -d --build
-	@echo "Waiting for database..."
-	sleep 5
+	@echo "Waiting for database and migrations to complete..."
+	@COUNT=0; \
+	until $(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(PROD_PROJECT) exec api python manage.py migrate --check >/dev/null 2>&1 || [ $$COUNT -eq 30 ]; do \
+		sleep 1; \
+		COUNT=$$((COUNT + 1)); \
+	done; \
+	if [ $$COUNT -eq 30 ]; then \
+		echo "Migrations did not complete in time."; \
+		exit 1; \
+	fi
 	@echo "Creating superuser if not exists (Production)..."
 	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(PROD_PROJECT) exec -e DJANGO_SUPERUSER_PASSWORD=$(DJANGO_SUPERUSER_PASSWORD) api python manage.py createsuperuser --noinput || true
 	@echo "Seeding database (Production)..."
-	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(PROD_PROJECT) exec api python manage.py loaddata questions || true
+	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(PROD_PROJECT) exec api python core/seeding/seed_data.py || true
 
 
 # Stop the stack
@@ -77,10 +85,9 @@ migrate:
 	@echo "Running migrations (Production)..."
 	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(PROD_PROJECT) exec api python manage.py migrate
 
-# Seed database in production stack
 seed:
 	@echo "Seeding database (Production)..."
-	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(PROD_PROJECT) exec api python manage.py loaddata questions
+	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(PROD_PROJECT) exec api python core/seeding/seed_data.py
 
 # Create and setup virtual environment
 dev-venv:
@@ -102,12 +109,20 @@ dev-up: dev-venv client-install
 	HTTP_EXPOSED_PORT=$(DEV_HTTP_EXPOSED_PORT) \
 	HTTPS_EXPOSED_PORT=$(DEV_HTTPS_EXPOSED_PORT) \
 	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) up -d --build proxy db redis api web
-	@echo "Waiting for database..."
-	sleep 5
+	@echo "Waiting for database and migrations to complete..."
+	@COUNT=0; \
+	until $(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) exec api python manage.py migrate --check >/dev/null 2>&1 || [ $$COUNT -eq 30 ]; do \
+		sleep 1; \
+		COUNT=$$((COUNT + 1)); \
+	done; \
+	if [ $$COUNT -eq 30 ]; then \
+		echo "Migrations did not complete in time."; \
+		exit 1; \
+	fi
 	@echo "Creating superuser if not exists (Dev)..."
 	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) exec -e DJANGO_SUPERUSER_PASSWORD=$(DJANGO_SUPERUSER_PASSWORD) api python manage.py createsuperuser --noinput || true
 	@echo "Seeding database (Dev)..."
-	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) exec api python manage.py loaddata questions || true
+	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) exec api python core/seeding/seed_data.py || true
 
 
 dev-shell: dev-up
@@ -123,10 +138,10 @@ dev-migrate: dev-up
 	@echo "Running migrations locally (Dev)..."
 	cd server && DB_HOST=127.0.0.1 DB_PORT=$(DEV_DB_EXPOSED_PORT) REDIS_HOST=127.0.0.1 REDIS_PORT=$(DEV_REDIS_EXPOSED_PORT) $(VENV_PYTHON) manage.py migrate
 
-# Seed questions locally
+# Seed database locally
 dev-seed: dev-up
-	@echo "Seeding questions locally (Dev)..."
-	cd server && DB_HOST=127.0.0.1 DB_PORT=$(DEV_DB_EXPOSED_PORT) REDIS_HOST=127.0.0.1 REDIS_PORT=$(DEV_REDIS_EXPOSED_PORT) $(VENV_PYTHON) manage.py loaddata questions
+	@echo "Seeding database locally (Dev)..."
+	cd server && DB_HOST=127.0.0.1 DB_PORT=$(DEV_DB_EXPOSED_PORT) REDIS_HOST=127.0.0.1 REDIS_PORT=$(DEV_REDIS_EXPOSED_PORT) $(VENV_PYTHON) core/seeding/seed_data.py
 
 
 # Stop only DB and Redis
