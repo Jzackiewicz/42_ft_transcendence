@@ -19,7 +19,7 @@
 
 .answering {
     background: rgba(0, 229, 255, 0.08);
-    border: 1px solid rgba(0, 229, 255, 0.2);
+    border: 1px solid var(--cyan-shadowed);
     color: var(--cyan);
 }
 

@@ -44,7 +44,7 @@
 
 .hud-item:hover {
     background: rgba(255, 255, 255, 0.03);
-    border-color: var(--theme-accent, rgba(0, 229, 255, 0.2));
+    border-color: var(--theme-accent, var(--cyan-shadowed));
     box-shadow: 0 0 12px var(--theme-glow, rgba(0, 229, 255, 0.08));
 }
 

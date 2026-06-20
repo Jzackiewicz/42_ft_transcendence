@@ -34,7 +34,7 @@
     transition: box-shadow 0.2s;
 }
 
-.find-btn:hover { box-shadow: 0 0 16px rgba(0, 229, 255, 0.4); }
+.find-btn:hover { box-shadow: 0 0 16px var(--cyan-light-shadow); }
 
 .find-status {
     display: block;

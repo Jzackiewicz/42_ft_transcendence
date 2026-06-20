@@ -1,8 +1,8 @@
 .static-page-container {
     min-height: 100vh;
-    background-color: #05050f;
-    color: #eeeef8;
-    font-family: 'Space Grotesk', sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: var(--fb);
     position: relative;
     overflow: hidden;
     display: flex;
@@ -15,30 +15,30 @@
     z-index: 2;
     max-width: 800px;
     width: 100%;
-    background: rgba(255, 255, 255, 0.035);
+    background: var(--panel);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--border);
     border-radius: 16px;
     padding: 40px;
 }
 
 .static-page-content h1 {
-    font-family: 'Rajdhani', sans-serif;
+    font-family: var(--fd);
     font-size: 48px;
     margin-bottom: 10px;
-    background: linear-gradient(135deg, #00e5ff 10%, #e040fb 30%);
+    background: linear-gradient(var(--gradient-deg), var(--cyan) 10%, var(--magenta) 30%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
 
 .static-page-content h2 {
-    font-family: 'Rajdhani', sans-serif;
+    font-family: var(--fd);
     font-size: 24px;
-    color: #00e5ff;
+    color: var(--cyan);
     margin-top: 30px;
     margin-bottom: 15px;
-    border-bottom: 1px solid rgba(0, 229, 255, 0.2);
+    border-bottom: 1px solid var(--cyan-shadowed);
     padding-bottom: 5px;
 }
 
@@ -58,8 +58,8 @@
 }
 
 .last-updated {
-    font-size: 14px;
-    color: rgba(238, 238, 248, 0.45);
+    font-size: var(--font-md);
+    color: var(--dim);
     margin-bottom: 40px;
 }
 
@@ -69,10 +69,10 @@
     gap: 8px;
     background: transparent;
     border: 1px solid rgba(0, 229, 255, 0.3);
-    color: #00e5ff;
+    color: var(--cyan);
     padding: 8px 16px;
-    border-radius: 8px;
-    font-family: 'Rajdhani', sans-serif;
+    border-radius: var(--radius-sm);
+    font-family: var(--fd);
     font-weight: 600;
     text-decoration: none;
     margin-bottom: 24px;
@@ -82,6 +82,6 @@
 
 .back-button:hover {
     background: rgba(0, 229, 255, 0.1);
-    border-color: #00e5ff;
+    border-color: var(--cyan);
     transform: translateX(-4px);
 }

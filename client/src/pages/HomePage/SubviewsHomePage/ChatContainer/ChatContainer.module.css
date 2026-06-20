@@ -1,11 +1,11 @@
 /* ── LOCAL TOKENS ───────────────────────────────────────────────── */
 :root {
-    --chat-accent:        #00e5ff;
+    --chat-accent:        var(--cyan);
     --chat-accent-bg:     rgba(0, 229, 255, 0.07);
     --chat-accent-bg-hi:  rgba(0, 229, 255, 0.15);
     --chat-accent-border: rgba(0, 229, 255, 0.25);
     --chat-bubble-friend:   rgba(255, 255, 255, 0.05);
-    --chat-scrollbar:     rgba(255, 255, 255, 0.08);
+    --chat-scrollbar:     var(--border);
     --chat-hover:         rgba(255, 255, 255, 0.04);
     --chat-divider:       rgba(255, 255, 255, 0.03);
     --chat-height:        420px;

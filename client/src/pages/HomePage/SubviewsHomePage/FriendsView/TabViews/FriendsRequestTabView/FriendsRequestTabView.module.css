@@ -55,7 +55,7 @@
 }
 
 .req-accept  { background: var(--cyan);    color: #000; }
-.req-decline { background: rgba(255,255,255,0.08); color: var(--dim); }
+.req-decline { background: var(--border); color: var(--dim); }
 
 .req-accept:hover, .req-decline:hover { opacity: 0.8; }
 

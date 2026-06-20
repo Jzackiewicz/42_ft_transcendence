@@ -26,7 +26,7 @@
 .stat-box-val--gold    { color: var(--gold); }
 .stat-box-val--green   { color: var(--green); }
 .stat-box-val--red     { color: var(--red); }
-.stat-box-val--violet  { color: #7c4dff; }
+.stat-box-val--violet  { color: var(--violet); }
 
 .stat-box-lbl {
     font-size: 11px;

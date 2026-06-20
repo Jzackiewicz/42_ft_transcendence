@@ -20,7 +20,7 @@
 }
 
 .home-nav-play:hover {
-    box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
+    box-shadow: 0 0 20px var(--cyan-light-shadow);
 }
 
 .home-nav-join {
