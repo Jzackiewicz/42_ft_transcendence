@@ -36,7 +36,7 @@ def assign_random_questions_to_session(session: GameSession) -> None:
 
 	require_enough_questions_in_db(limit)
 
-	all_ids = list(Question.objects.values_list('id', flat=True))
+	all_ids = list(Question.objects.filter(is_verified=True).values_list('id', flat=True))
 	sampled_ids = random.sample(all_ids, limit)
 	questions = list(Question.objects.filter(id__in=sampled_ids))
 	random.shuffle(questions)

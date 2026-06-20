@@ -3,6 +3,7 @@ import './GameHUD.css';
 interface GameHUDProps {
     questionAskedCount: number;
     totalQuestionsCount: number;
+    generatedQuestionsCount?: number;
     timeLeft: number | null;
     timeLimitSeconds?: number;
     nominationTimeLimitSeconds?: number;
@@ -11,11 +12,12 @@ interface GameHUDProps {
     isEvaluation?: boolean;
 }
 
-export function GameHUD({ 
-    questionAskedCount, 
-    totalQuestionsCount, 
-    timeLeft, 
-    timeLimitSeconds, 
+export function GameHUD({
+    questionAskedCount,
+    totalQuestionsCount,
+    generatedQuestionsCount = 0,
+    timeLeft,
+    timeLimitSeconds,
     nominationTimeLimitSeconds,
     maxPlayers,
     isLobby = false,
@@ -27,7 +29,12 @@ export function GameHUD({
                 <div className="hud-group">
                     <div className="hud-item">
                         <span className="hud-label">QUESTIONS</span>
-                        <strong className="hud-value">{totalQuestionsCount}</strong>
+                        <strong className="hud-value">
+                            {totalQuestionsCount - generatedQuestionsCount}
+                            {generatedQuestionsCount > 0 && (
+                                <span className="hud-generated">+ {generatedQuestionsCount} generated</span>
+                            )}
+                        </strong>
                     </div>
                     {timeLimitSeconds !== undefined && (
                         <div className="hud-item">
