@@ -9,9 +9,13 @@ export function LobbyChat() {
     const { sidebar, thread, input } = useChatContainer()
     const [draft, setDraft] = useState('')
 
+    const notConnected = input.socketStatus !== 'open'
+    const isDisabled = sidebar.noFriends || notConnected
+
     const send = () => {
-        input.handleSend(draft)
-        setDraft('')
+        if (!draft.trim()) return
+        const ok = input.handleSend(draft)
+        if (ok) setDraft('')          // keep draft on failure so user can retry
     }
 
     const sendBtnLabel = draft.length === 500 ? 'max 500 chars' : 'Send'
@@ -21,10 +25,7 @@ export function LobbyChat() {
         chatContent = <div className="chat-empty">Add Friends to message</div>
     } else {
         chatContent = thread.messages.filter(msg => msg.message).map((msg, i) => (
-            <div
-                key={i}
-                className={`chat-bubble-row ${msg.sender_username === thread.myUsername ? 'me' : 'friend'}`}
-            >
+            <div key={i} className={`chat-bubble-row ${msg.sender_username === thread.myUsername ? 'me' : 'friend'}`}>
                 <div className="chat-bubble">{msg.message}</div>
             </div>
         ))
@@ -60,27 +61,34 @@ export function LobbyChat() {
                     ref={thread.messagesRef}
                     onScroll={thread.handleScroll}
                 >
+                    {thread.historyError && (
+                        <div className="chat-error" role="alert">{thread.historyError}</div>
+                    )}
                     {thread.hasMore && thread.loadingOlder && (
                         <div className="chat-load-older">Loading…</div>
                     )}
                     {chatContent}
                 </div>
 
+                {notConnected && !sidebar.noFriends && (
+                    <div className="chat-conn-hint" role="status">Reconnecting…</div>
+                )}
+
                 {/* ── Input ── */}
                 <div className="chat-input-row">
                     <input
                         className={`chat-input ${draft.length === 500 ? 'chat-input--error' : ''}`}
-                        placeholder="Message…"
+                        placeholder={notConnected ? 'Reconnecting…' : 'Message…'}
                         value={draft}
                         maxLength={500}
-                        disabled={sidebar.noFriends}
+                        disabled={isDisabled}
                         onChange={e => setDraft(e.target.value)}
                         onKeyDown={e => e.key === 'Enter' && send()}
                     />
                     <button
                         className="chat-send-btn"
                         onClick={send}
-                        disabled={sidebar.noFriends || draft.length === 500}
+                        disabled={isDisabled || draft.length === 500}
                     >
                         {sendBtnLabel}
                     </button>

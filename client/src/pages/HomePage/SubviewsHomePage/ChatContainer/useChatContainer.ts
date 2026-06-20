@@ -5,6 +5,9 @@ import { ChatMessage } from '../../../../types/Message'
 import { getChatHistory, createChatSocket } from '../../../../api/socialsWrapper'
 
 const PAGE_SIZE = 50
+const BACKOFF_MS = [1000, 2000, 4000, 8000, 16000, 30000]
+
+export type SocketStatus = 'connecting' | 'open' | 'closed'
 
 function hasNoFriends(friendsList: { friend: { id: number } }[]): boolean {
     var friendsAreEmpty: boolean
@@ -28,6 +31,8 @@ export function useChatContainer() {
     const [offset, setOffset] = useState<number>(0)
     const [hasMore, setHasMore] = useState<boolean>(true)
     const [loadingOlder, setLoadingOlder] = useState<boolean>(false)
+    const [historyError, setHistoryError] = useState<string | null>(null)
+    const [socketStatus, setSocketStatus] = useState<SocketStatus>('closed')
 
     const socketRef = useRef<WebSocket | null>(null)
     const messagesRef = useRef<HTMLDivElement | null>(null)
@@ -39,37 +44,88 @@ export function useChatContainer() {
     }, [friendsList])
 
     useEffect(() => {
-        if (!user || !activeId)
+        if (!user || !activeId) {
+            setSocketStatus('closed')
             return
+        }
 
         let isCurrent = true
+        let cancelled = false
+        let reconnectTimer: ReturnType<typeof setTimeout> | null = null
+        let reconnectAttempt = 0
+
+        const roomName = getRoomName(user.id, activeId)
+
         setMessages([])
         setOffset(0)
         setHasMore(true)
+        setHistoryError(null)
+        setSocketStatus('connecting')
         shouldScrollRef.current = true
 
-        const roomName = getRoomName(user.id, activeId)
-        socketRef.current?.close()
-        socketRef.current = createChatSocket(roomName)
-        socketRef.current.onmessage = (event) => {
-            const msg: ChatMessage = JSON.parse(event.data)
-            if (msg.message) {
-                shouldScrollRef.current = true
-                setMessages(prev => [...prev, msg])
+        const openSocket = () => {
+            if (cancelled) return
+
+            const ws = createChatSocket(roomName)
+            socketRef.current = ws
+
+            ws.onopen = () => {
+                if (cancelled) return
+                reconnectAttempt = 0
+                setSocketStatus('open')
+            }
+
+            ws.onmessage = (event) => {
+                let msg: ChatMessage
+                try {
+                    msg = JSON.parse(event.data)
+                } catch {
+                    return                     // ignore malformed payloads
+                }
+                if (msg.message) {
+                    shouldScrollRef.current = true
+                    setMessages(prev => [...prev, msg])
+                }
+            }
+
+            ws.onerror = () => {
+                // onerror fires just before onclose on a drop
+                // nothing to do here: onclose decides whether to reconnect.
+            }
+
+            ws.onclose = () => {
+                if (cancelled) return // intentional close (cleanup)
+                setSocketStatus('connecting')
+                const idx = Math.min(reconnectAttempt, BACKOFF_MS.length - 1)
+                const delay = BACKOFF_MS[idx]
+                reconnectAttempt += 1
+                reconnectTimer = setTimeout(() => {
+                    reconnectTimer = null
+                    openSocket()
+                }, delay)
             }
         }
 
-        getChatHistory(roomName, 0).then(data => {
-            if (isCurrent) {
+        openSocket()
+
+        getChatHistory(roomName, 0)
+            .then(data => {
+                if (!isCurrent) return
                 setMessages(data)
                 setOffset(data.length)
                 setHasMore(data.length === PAGE_SIZE)
-            }
-        })
+            })
+            .catch(() => {
+                if (!isCurrent) return
+                setHistoryError("Couldn't load messages. Please try again.")
+            })
 
         return () => {
             isCurrent = false
+            cancelled = true
+            if (reconnectTimer) clearTimeout(reconnectTimer)
             socketRef.current?.close()
+            socketRef.current = null
         }
     }, [activeId, user])
 
@@ -90,22 +146,28 @@ export function useChatContainer() {
         const scrollHeightBefore = container?.scrollHeight ?? 0
 
         setLoadingOlder(true)
-        getChatHistory(roomName, offset).then(data => {
-            if (data.length === 0) {
-                setHasMore(false)
-            } else {
-                setMessages(prev => [...data, ...prev])
-                setOffset(prev => prev + data.length)
-                setHasMore(data.length === PAGE_SIZE)
+        getChatHistory(roomName, offset)
+            .then(data => {
+                if (data.length === 0) {
+                    setHasMore(false)
+                } else {
+                    setMessages(prev => [...data, ...prev])
+                    setOffset(prev => prev + data.length)
+                    setHasMore(data.length === PAGE_SIZE)
 
-                // restore scroll position so user doesn't jump to top
-                requestAnimationFrame(() => {
-                    if (container) {
-                        container.scrollTop = container.scrollHeight - scrollHeightBefore
-                    }
-                })
-            }
-        }).finally(() => setLoadingOlder(false))
+                    // restore scroll position so user doesn't jump to top
+                    requestAnimationFrame(() => {
+                        if (container) {
+                            container.scrollTop = container.scrollHeight - scrollHeightBefore
+                        }
+                    })
+                }
+                setHistoryError(null) // clear if a retry-via-scroll succeeded
+            })
+            .catch(() => {
+                setHistoryError("Couldn't load older messages.")
+            })
+            .finally(() => setLoadingOlder(false))
     }
 
     const handleScroll = () => {
@@ -114,10 +176,11 @@ export function useChatContainer() {
         }
     }
 
-    const handleSend = (text: string) => {
-        if (!socketRef.current || !text.trim()) return
-        if (socketRef.current.readyState !== WebSocket.OPEN) return
+    const handleSend = (text: string): boolean => {
+        if (!socketRef.current || !text.trim()) return false
+        if (socketRef.current.readyState !== WebSocket.OPEN) return false
         socketRef.current.send(JSON.stringify({ message: text }))
+        return true
     }
 
     const handleChooseTab = (id: number) => {
@@ -128,7 +191,7 @@ export function useChatContainer() {
 
     return {
         sidebar: { friendsList, activeId, noFriends, handleChooseTab },
-        thread:  { messages, myUsername: user?.username ?? '', messagesRef, loadingOlder, hasMore, handleScroll },
-        input:   { handleSend }
+        thread:  { messages, myUsername: user?.username ?? '', messagesRef, loadingOlder, hasMore, handleScroll, historyError },
+        input:   { handleSend, socketStatus }
     }
 }

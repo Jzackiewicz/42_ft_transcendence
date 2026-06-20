@@ -207,6 +207,32 @@
     text-align: center;
 }
 
+/* ── ERROR BANNER (shown above messages on fetch failure) ───────── */
+.chat-error {
+    margin: 0 0 8px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    background: rgba(255, 77, 77, 0.08);
+    border: 1px solid rgba(255, 77, 77, 0.35);
+    color: #ff8a80;
+    font-family: var(--fb);
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+/* ── CONNECTION HINT (shown above input while WS is not OPEN) ───── */
+.chat-conn-hint {
+    padding: 6px 18px;
+    border-top: 1px solid var(--pb);
+    color: var(--dim);
+    font-family: var(--fb);
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.02);
+    flex-shrink: 0;
+}
+
 /* ── INPUT ──────────────────────────────────────────────────────── */
 .chat-input-row {
     display: flex;
