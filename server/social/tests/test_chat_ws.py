@@ -35,7 +35,7 @@ async def _drain_initial_presence(communicator):
     assert msg["is_online"] is True
 
 
-async def _make_auth_communicator(user, path="/ws/chat/test_room/"):
+async def _make_auth_communicator(user, path="/ws/chat/presence/"):
     """
     Build a WebsocketCommunicator that carries a valid Django session cookie
     for `user`.
@@ -74,7 +74,7 @@ class ChatAuthTests(TransactionTestCase):
 
         Clients should treat 4001 as 'not authenticated' and redirect to login.
         """
-        communicator = WebsocketCommunicator(APPLICATION, "/ws/chat/test_room/")
+        communicator = WebsocketCommunicator(APPLICATION, "/ws/chat/presence/")
 
         connected, _ = await communicator.connect()
         # The server calls accept() before close() — so connected is True here.
@@ -151,7 +151,7 @@ class ChatConsumerTests(TransactionTestCase):
         PresenceRegistry._connections.clear()
         self.user = User.objects.create_user(username="testuser", password="pass")
 
-    async def _communicator(self, path="/ws/chat/test_room/"):
+    async def _communicator(self, path="/ws/chat/presence/"):
         return await _make_auth_communicator(self.user, path)
 
     async def test_valid_message_broadcast(self):
@@ -214,7 +214,7 @@ class ChatHistoryAPITests(TestCase):
         self.user = User.objects.create_user(username="testuser", password="password")
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
-        self.room_name = "test_lobby"
+        self.room_name = "presence"
 
         ChatMessage.objects.create(
             room_name=self.room_name,
