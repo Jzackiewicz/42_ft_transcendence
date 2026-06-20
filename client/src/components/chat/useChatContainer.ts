@@ -1,8 +1,8 @@
 import { useEffect, useState, useRef } from 'react'
-import { useFriendsContext } from '../../../../context/FriendsListContext'
-import { useUser } from '../../../../context/UserContext'
-import { ChatMessage } from '../../../../types/Message'
-import { getChatHistory, createChatSocket } from '../../../../api/socialsWrapper'
+import { useFriendsContext } from '../../context/FriendsListContext'
+import { useUser } from '../../context/UserContext'
+import { ChatMessage } from '../../types/Message'
+import { getChatHistory, createChatSocket } from '../../api/socialsWrapper'
 
 const PAGE_SIZE = 50
 const BACKOFF_MS = [1000, 2000, 4000, 8000, 16000, 30000]
@@ -80,7 +80,7 @@ export function useChatContainer() {
                 try {
                     msg = JSON.parse(event.data)
                 } catch {
-                    return                     // ignore malformed payloads
+                    return // ignore malformed payloads
                 }
                 if (msg.message) {
                     shouldScrollRef.current = true
@@ -181,6 +181,21 @@ export function useChatContainer() {
         }
     }
 
+    const retryHistory = () => {
+        if (!user || !activeId) return
+        const roomName = getRoomName(user.id, activeId)
+        setHistoryError(null)
+        getChatHistory(roomName, 0)
+            .then(data => {
+                setMessages(data)
+                setOffset(data.length)
+                setHasMore(data.length === PAGE_SIZE)
+            })
+            .catch(() => {
+                setHistoryError("Couldn't load messages. Please try again.")
+            })
+    }
+
     const handleSend = (text: string): boolean => {
         if (!socketRef.current || !text.trim()) return false
         if (socketRef.current.readyState !== WebSocket.OPEN) return false
@@ -196,7 +211,7 @@ export function useChatContainer() {
 
     return {
         sidebar: { friendsList, activeId, noFriends, handleChooseTab },
-        thread:  { messages, myUsername: user?.username ?? '', messagesRef, loadingOlder, hasMore, handleScroll, historyError },
+        thread:  { messages, myUsername: user?.username ?? '', messagesRef, loadingOlder, hasMore, handleScroll, historyError, retryHistory },
         input:   { handleSend, socketStatus }
     }
 }
