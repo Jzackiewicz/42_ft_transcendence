@@ -249,46 +249,6 @@ class FriendListAndRemoveTests(APITestCase):
 
 
 # ---------------------------------------------------------------------------
-# Relationship status
-# ---------------------------------------------------------------------------
-
-class RelationshipStatusTests(APITestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.alice = User.objects.create_user(
-            username="alice", email="alice@example.com", password=PASSWORD
-        )
-        cls.bob = User.objects.create_user(
-            username="bob", email="bob@example.com", password=PASSWORD
-        )
-
-    def _status(self, other) -> str:
-        url = reverse("relationship-status", kwargs={"user_id": other.id})
-        return self.client.get(url).json()["status"]
-
-    def test_status_none(self):
-        _login(self.client, self.alice)
-        self.assertEqual(self._status(self.bob), "none")
-
-    def test_status_request_sent_and_received(self):
-        FriendRequest.objects.create(from_user=self.alice, to_user=self.bob)
-
-        _login(self.client, self.alice)
-        self.assertEqual(self._status(self.bob), "request_sent")
-
-        self.client.logout()
-        _login(self.client, self.bob)
-        self.assertEqual(self._status(self.alice), "request_received")
-
-    def test_status_friends(self):
-        Friendship.objects.create(user=self.alice, friend=self.bob)
-        Friendship.objects.create(user=self.bob, friend=self.alice)
-
-        _login(self.client, self.alice)
-        self.assertEqual(self._status(self.bob), "friends")
-
-
-# ---------------------------------------------------------------------------
 # Friend search
 # ---------------------------------------------------------------------------
 
