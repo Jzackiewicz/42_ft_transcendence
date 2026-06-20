@@ -14,7 +14,8 @@ import { UserProvider } from './context/UserContext.tsx'
 import { PresenceProvider } from './context/PresenceContext.tsx'
 import { ProtectedRoute, PublicOnlyRoute, SessionProtectedRoute, RootRedirect } from './components/NavGuards.tsx'
 
-import './index.css'
+import './styles/theme.css'
+import './styles/global.css'
 
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
