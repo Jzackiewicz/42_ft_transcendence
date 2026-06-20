@@ -65,6 +65,8 @@ def check_can_generate_extra_questions(*, session: GameSession, user) -> None:
 		raise ValidationError("Only the host can generate extra questions.")
 	if session.current_status != GameSession.Status.LOBBY:
 		raise ValidationError("Cannot generate extra questions once the game has started.")
+	if session.extra_questions_generated:
+		raise ValidationError("Extra questions have already been generated for this session.")
 
 
 def reserve_extra_question_generation_quota(*, user) -> None:

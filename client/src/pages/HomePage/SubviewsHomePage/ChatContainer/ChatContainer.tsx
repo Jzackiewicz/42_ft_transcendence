@@ -3,6 +3,8 @@ import { useChatContainer } from './useChatContainer'
 import { OnlineIndicator } from '../../../../components/OnlineIndicator'
 import './ChatContainer.css'
 
+const MAX_MESSAGE_LENGTH = 500
+
 function ChatContainer() {
     const { sidebar, thread, input } = useChatContainer()
     const [draft, setDraft] = useState('')
@@ -13,8 +15,8 @@ function ChatContainer() {
     }
 
     let sendBtnLabel
-    if (draft.length === 500) {
-        sendBtnLabel = 'max 500 chars'
+    if (draft.length === MAX_MESSAGE_LENGTH) {
+        sendBtnLabel = `max ${MAX_MESSAGE_LENGTH} chars`
     } else {
         sendBtnLabel = 'Send'
     }
@@ -59,10 +61,10 @@ function ChatContainer() {
             {/* ── Input ── */}
                 <div className="chat-input-row">
                     <input
-                        className={`chat-input ${draft.length === 500 ? 'chat-input--error' : ''}`}
+                        className={`chat-input ${draft.length === MAX_MESSAGE_LENGTH ? 'chat-input--error' : ''}`}
                         placeholder="Message…"
                         value={draft}
-                        maxLength={500}
+                        maxLength={MAX_MESSAGE_LENGTH}
                         disabled={sidebar.noFriends}
                         onChange={e => setDraft(e.target.value)}
                         onKeyDown={e => e.key === 'Enter' && send()}
@@ -70,7 +72,7 @@ function ChatContainer() {
                     <button
                         className="chat-send-btn"
                         onClick={send}
-                        disabled={sidebar.noFriends || draft.length === 500}
+                        disabled={sidebar.noFriends || draft.length === MAX_MESSAGE_LENGTH}
                     >
                         {sendBtnLabel}
                     </button>
