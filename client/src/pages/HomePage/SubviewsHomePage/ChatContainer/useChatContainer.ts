@@ -25,7 +25,7 @@ function getRoomName(myId: number, friendId: number): string {
 
 export function useChatContainer() {
     const { friendsList } = useFriendsContext()
-    const { user } = useUser()
+    const { user, setUser } = useUser()
     const [activeId, setActiveId] = useState<number>(0)
     const [messages, setMessages] = useState<ChatMessage[]>([])
     const [offset, setOffset] = useState<number>(0)
@@ -93,8 +93,13 @@ export function useChatContainer() {
                 // nothing to do here: onclose decides whether to reconnect.
             }
 
-            ws.onclose = () => {
+            ws.onclose = (event) => {
                 if (cancelled) return // intentional close (cleanup)
+                if (event.code === 4001) {
+                    setUser(null)
+                    return
+                }
+
                 setSocketStatus('connecting')
                 const idx = Math.min(reconnectAttempt, BACKOFF_MS.length - 1)
                 const delay = BACKOFF_MS[idx]
