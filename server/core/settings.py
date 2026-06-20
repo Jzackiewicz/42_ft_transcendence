@@ -267,3 +267,11 @@ EXTRA_QUESTION_GENERATION_CACHE_TIMEOUT_SECONDS = 60 * 60
 
 LLM_API_KEY = os.getenv("LLM_API_KEY", "ci-dummy-key-for-testing")
 LLM_MODEL = os.getenv("LLM_MODEL", "gemini-3.1-flash-lite")
+
+# Google OAuth
+GOOGLE_OAUTH_CLIENT_ID = os.getenv("GOOGLE_OAUTH_CLIENT_ID")
+GOOGLE_OAUTH_CLIENT_SECRET = os.getenv("GOOGLE_OAUTH_CLIENT_SECRET")
+GOOGLE_OAUTH_REDIRECT_URI = os.getenv(
+    "GOOGLE_OAUTH_REDIRECT_URI",
+    f"https://localhost:{_https_port}/api/account/oauth/google/callback/",
+)

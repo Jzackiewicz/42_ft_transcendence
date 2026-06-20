@@ -1,5 +1,6 @@
 import { useRegistrationView } from './useRegistrationView'
 import InputField from '../../../../components/InputField'
+import GoogleSignInButton from '../../../../components/GoogleSignInButton'
 
 interface RegistrationProps {
     onSuccess: () => void
@@ -10,13 +11,15 @@ function RegistrationView({onSuccess}: RegistrationProps) {
 
     return (
         <div className="registration-view">
-            <form onSubmit={(e) => {e.preventDefault(); handleRegister()}}> 
+            <form onSubmit={(e) => {e.preventDefault(); handleRegister()}}>
                 <InputField title= "Display Name" type="text" placeholder="Enter your nickname" value={username} onChange={(value) => setUsername(value)} error={errors.usernameIsEmptyErr} />
                 <InputField title="Email" type="email" placeholder="your_email@gmail.com" value={email} onChange={(value) => setEmail(value)} error={errors.mailIsEmptyErr} />
                 <InputField title="Password" type="password" placeholder="Create a password" value={password} onChange={(value) => setPassword(value)} error={errors.passIsEmptyErr || errors.passWeakErr} />
                 <InputField title="Confirm Password" type="password" placeholder="Confirm your password" value={confPassword} onChange={(value) => setConfPassword(value)} error={errors.confirmPassIsEmptyErr || errors.passDoesntMatchErr} />
                 {errors.generalErr && <span className="form-error">{errors.generalErr}</span>}
                 <button type="submit" className="auth-submit"> Register </button>
+                <div className="auth-divider">or</div>
+                <GoogleSignInButton label="Sign up with Google" />
             </form>
         </div>
     )
