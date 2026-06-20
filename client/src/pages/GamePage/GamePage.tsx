@@ -1,5 +1,6 @@
 import { useGamePage, GameStatus } from './useGamePage';
 import { useUser } from '../../context/UserContext';
+import { FriendsProvider } from '../../context/FriendsListContext';
 import { LobbyView } from './SubviewsGamePage/LobbyView/LobbyView';
 import { AnsweringView } from './SubviewsGamePage/AnsweringView/AnsweringView';
 import { NominationView } from './SubviewsGamePage/NominationView/NominationView';
@@ -8,7 +9,6 @@ import { GameOverView } from './SubviewsGamePage/GameOverView/GameOverView';
 import { PlayerTile } from './SubviewsGamePage/PlayerTile/PlayerTile';
 import { GameHUD } from './SubviewsGamePage/GameHUD/GameHUD';
 import BlinkingSpaceBGDiv from '../../components/BlinkingSpaceBGDiv/BlinkingSpaceBGDiv';
-import { FriendsProvider } from '../../context/FriendsListContext';
 import { Navbar } from '../../components/Navbar/Navbar';
 import { Card } from '../../components/Card/Card';
 import { SectionTitle } from '../../components/SectionTitle/SectionTitle';

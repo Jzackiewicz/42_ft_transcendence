@@ -104,6 +104,21 @@
     min-width: 0;
 }
 
+.chat-thread-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--pb);
+    flex-shrink: 0;
+}
+
+.chat-thread-name {
+    font-family: var(--fd);
+    font-size: 16px;
+    font-weight: 700;
+}
+
 .chat-messages {
     flex: 1;
     overflow-y: auto;
