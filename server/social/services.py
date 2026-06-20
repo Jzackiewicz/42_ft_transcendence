@@ -1,7 +1,6 @@
-from .models import ChatMessage
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
-from django.db import transaction
+from django.db import IntegrityError, transaction
 
 from .models import ChatMessage, Friendship, FriendRequest
 
@@ -38,7 +37,10 @@ def send_friend_request(*, from_user: User, to_user: User) -> FriendRequest:
             "This user has already sent you a friend request. You can accept it"
         )
 
-    return FriendRequest.objects.create(from_user=from_user, to_user=to_user)
+    try:
+        return FriendRequest.objects.create(from_user=from_user, to_user=to_user)
+    except IntegrityError:
+        raise ValidationError("A friend request to this user is already pending")
 
 
 def accept_friend_request(*, request_id: int, to_user: User) -> Friendship:
