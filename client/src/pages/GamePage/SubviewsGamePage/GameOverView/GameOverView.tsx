@@ -1,7 +1,8 @@
 import React from 'react';
 import { Player } from '../../useGamePage';
 import { Button } from '../../../../components/Button/Button';
-import './GameOverView.css';
+import { cx } from '../../../../utils/cx';
+import styles from './GameOverView.module.css';
 
 interface GameOverViewProps {
     winnerId: number | null;
@@ -52,10 +53,10 @@ export function GameOverView({ winnerId, winnerName, endReason, players, onRetur
             .join('');
 
     return (
-        <div className="game-over-container">
+        <div className={styles['game-over-container']}>
 
-            <table className="game-over-table">
-                <thead className="game-over-thead">
+            <table className={styles['game-over-table']}>
+                <thead className={styles['game-over-thead']}>
                     <tr>
                         <th>Rank</th>
                         <th>Player</th>
@@ -67,40 +68,40 @@ export function GameOverView({ winnerId, winnerName, endReason, players, onRetur
                 <tbody>
                     {sortedLeaderboard.map((player, idx) => {
                         const isWinner = player.id === winnerId;
-                        const rowClasses = [
-                            'game-over-row',
-                            isWinner ? 'winner-row' : '',
-                            !player.is_alive ? 'eliminated-row' : ''
-                        ].filter(Boolean).join(' ');
+                        const rowClasses = cx(
+                            styles['game-over-row'],
+                            isWinner && styles['winner-row'],
+                            !player.is_alive && styles['eliminated-row']
+                        );
 
                         return (
                             <tr key={player.id} className={rowClasses}>
-                                <td className="game-over-rank">
+                                <td className={styles['game-over-rank']}>
                                     #{idx + 1}
                                 </td>
-                                <td className="game-over-player-cell">
-                                    <div className="game-over-player-info">
+                                <td className={styles['game-over-player-cell']}>
+                                    <div className={styles['game-over-player-info']}>
                                         {player.avatar ? (
                                             <img
                                                 src={player.avatar}
                                                 alt={`${player.display_name}'s avatar`}
-                                                className="game-over-avatar"
+                                                className={styles['game-over-avatar']}
                                             />
                                         ) : (
-                                            <span className="game-over-avatar-placeholder">👤</span>
+                                            <span className={styles['game-over-avatar-placeholder']}>👤</span>
                                         )}
-                                        <span className="game-over-player-name">
+                                        <span className={styles['game-over-player-name']}>
                                             {player.display_name}
                                         </span>
                                     </div>
                                 </td>
-                                <td className="game-over-points">
+                                <td className={styles['game-over-points']}>
                                     {player.points}
                                 </td>
-                                <td className="game-over-lives">
+                                <td className={styles['game-over-lives']}>
                                     {renderHearts(player.lives)}
                                 </td>
-                                <td className="game-over-answers">
+                                <td className={styles['game-over-answers']}>
                                     {player.answered_count}
                                 </td>
                             </tr>
@@ -110,7 +111,7 @@ export function GameOverView({ winnerId, winnerName, endReason, players, onRetur
             </table>
 
             {/* ── Actions ────────────────────────────────────────── */}
-            <div className="game-over-actions">
+            <div className={styles['game-over-actions']}>
                 <Button onClick={onReturnToHome}>
                     Return to Home
                 </Button>

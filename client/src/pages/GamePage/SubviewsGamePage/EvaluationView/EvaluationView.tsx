@@ -1,5 +1,6 @@
 import React from 'react';
-import './EvaluationView.css';
+import { cx } from '../../../../utils/cx';
+import styles from './EvaluationView.module.css';
 
 interface EvaluationViewProps {
     answerText: string | null;
@@ -20,50 +21,50 @@ export function EvaluationView({
     questionText,
     category
 }: EvaluationViewProps) {
-    let statusClass = 'eval-pending';
+    let statusClass = styles['eval-pending'];
     let statusText = '⏳ EVALUATING... (TODO)';
 
     if (answerText !== '...') {
         if (isCorrect) {
-            statusClass = 'eval-correct';
+            statusClass = styles['eval-correct'];
             statusText = '🏆 CORRECT ANSWER';
         } else if (isTimeout) {
-            statusClass = 'eval-timeout';
+            statusClass = styles['eval-timeout'];
             statusText = "⏰ TIME'S UP";
         } else {
-            statusClass = 'eval-wrong';
+            statusClass = styles['eval-wrong'];
             statusText = '❌ WRONG ANSWER';
         }
     }
 
     return (
-        <div className={`evaluation-view-container ${statusClass}`}>
-            
-            <div className="eval-question-info">
-                <span className="eval-category">[{category}]</span>
-                <p className="eval-question-text">{questionText}</p>
+        <div className={cx(styles['evaluation-view-container'], statusClass)}>
+
+            <div className={styles['eval-question-info']}>
+                <span className={styles['eval-category']}>[{category}]</span>
+                <p className={styles['eval-question-text']}>{questionText}</p>
             </div>
 
-            <div className="eval-verdict-title">{statusText}</div>
+            <div className={styles['eval-verdict-title']}>{statusText}</div>
 
-            <div className="eval-answers-comparison">
-                <div className="eval-player-answer-box">
-                    <div className="eval-box-label">{playerName}'s Answer:</div>
-                    <div className="eval-box-content">
+            <div className={styles['eval-answers-comparison']}>
+                <div className={styles['eval-player-answer-box']}>
+                    <div className={styles['eval-box-label']}>{playerName}'s Answer:</div>
+                    <div className={styles['eval-box-content']}>
                         {isTimeout ? (
-                            <span className="eval-text-none">Timeout</span>
+                            <span className={styles['eval-text-none']}>Timeout</span>
                         ) : (answerText === null || answerText.trim() === '') ? (
-                            <span className="eval-text-none">None</span>
+                            <span className={styles['eval-text-none']}>None</span>
                         ) : (
-                            <span className="eval-text-value">{answerText}</span>
+                            <span className={styles['eval-text-value']}>{answerText}</span>
                         )}
                     </div>
                 </div>
 
-                <div className="eval-correct-answer-box">
-                    <div className="eval-box-label">Correct Answer:</div>
-                    <div className="eval-box-content">
-                        <span className="eval-text-value">{correctAnswer}</span>
+                <div className={styles['eval-correct-answer-box']}>
+                    <div className={styles['eval-box-label']}>Correct Answer:</div>
+                    <div className={styles['eval-box-content']}>
+                        <span className={styles['eval-text-value']}>{correctAnswer}</span>
                     </div>
                 </div>
             </div>

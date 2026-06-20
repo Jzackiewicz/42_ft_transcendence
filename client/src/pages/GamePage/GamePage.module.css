@@ -39,38 +39,6 @@
     --theme-glow: rgba(224, 64, 251, 0.05);
 }
 
-/* Apply themes to cards and headers (Card / SectionTitle components) */
-.game-page-container .game-sidebar,
-.game-page-container .game-active-area {
-    border-color: var(--theme-border, var(--pb));
-    box-shadow: 0 0 20px var(--theme-glow, transparent);
-    transition: border-color 0.4s ease, box-shadow 0.4s ease;
-}
-
-.game-page-container .game-sidebar-title,
-.game-page-container .game-active-title {
-    border-color: var(--theme-border, var(--border));
-    color: var(--theme-accent, var(--text));
-    transition: color 0.4s ease, border-color 0.4s ease;
-}
-
-/* Apply themes to GameHUD */
-.game-page-container .hud-item {
-    border-color: var(--theme-border, var(--border));
-    transition: all 0.4s ease;
-}
-
-.game-page-container .hud-item:hover {
-    border-color: var(--theme-accent);
-    box-shadow: 0 0 12px var(--theme-glow);
-}
-
-.game-page-container .hud-value {
-    color: var(--theme-accent);
-    text-shadow: 0 0 8px var(--theme-glow);
-    transition: color 0.4s ease, text-shadow 0.4s ease;
-}
-
 /* ── MAIN CONTENT WRAPPER ────────────────────────────────────────── */
 .game-page-content {
     flex: 1;

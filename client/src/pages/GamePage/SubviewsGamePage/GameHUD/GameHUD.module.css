@@ -34,17 +34,18 @@
     text-align: center;
     padding: 14px 10px;
     background: rgba(255, 255, 255, 0.015);
-    border: 1px solid var(--border);
+    /* Optional theming via the game-page theme contract; falls back to defaults. */
+    border: 1px solid var(--theme-border, var(--border));
     border-radius: 8px;
     flex: 1;
     min-width: 0;
-    transition: all 0.2s ease-in-out;
+    transition: all 0.4s ease;
 }
 
 .hud-item:hover {
     background: rgba(255, 255, 255, 0.03);
-    border-color: rgba(0, 229, 255, 0.2);
-    box-shadow: 0 0 12px rgba(0, 229, 255, 0.08);
+    border-color: var(--theme-accent, rgba(0, 229, 255, 0.2));
+    box-shadow: 0 0 12px var(--theme-glow, rgba(0, 229, 255, 0.08));
 }
 
 .hud-label {
@@ -57,9 +58,10 @@
 
 .hud-value {
     font-size: var(--font-lg);
-    color: var(--cyan);
+    color: var(--theme-accent, var(--cyan));
     font-weight: 700;
-    text-shadow: 0 0 8px var(--cyan-shadowed);
+    text-shadow: 0 0 8px var(--theme-glow, var(--cyan-shadowed));
+    transition: color 0.4s ease, text-shadow 0.4s ease;
 }
 
 .hud-muted {

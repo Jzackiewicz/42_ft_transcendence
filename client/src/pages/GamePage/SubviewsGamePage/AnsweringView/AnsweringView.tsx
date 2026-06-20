@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from '../../../../components/Button/Button';
-import './AnsweringView.css';
+import styles from './AnsweringView.module.css';
 
 interface AnsweringViewProps {
     questionText: string;
@@ -26,30 +26,30 @@ export function AnsweringView({
     };
 
     return (
-        <div className="answering-view-container">
-            
-            <div className="answering-question-box">
-                <div className="answering-category">
+        <div className={styles['answering-view-container']}>
+
+            <div className={styles['answering-question-box']}>
+                <div className={styles['answering-category']}>
                     Category: {category || 'General'}
                 </div>
-                <div className="answering-question-text">
+                <div className={styles['answering-question-text']}>
                     {questionText}
                 </div>
             </div>
 
             {isCurrentAnswering ? (
-                <div className="answering-active-prompt">
-                    <div className="answering-prompt-label">
+                <div className={styles['answering-active-prompt']}>
+                    <div className={styles['answering-prompt-label']}>
                         YOUR TURN TO ANSWER:
                     </div>
-                    <form onSubmit={handleSubmit} className="answering-form">
+                    <form onSubmit={handleSubmit} className={styles['answering-form']}>
                         <input
                             type="text"
                             value={localAnswerText}
                             onChange={(e) => setLocalAnswerText(e.target.value)}
                             placeholder="Type your answer..."
                             autoFocus
-                            className="answering-input"
+                            className={styles['answering-input']}
                         />
                         <Button type="submit">
                             Submit
@@ -57,7 +57,7 @@ export function AnsweringView({
                     </form>
                 </div>
             ) : (
-                <div className="answering-spectator-waiting">
+                <div className={styles['answering-spectator-waiting']}>
                     👀 {activePlayerName} is answering the question...
                 </div>
             )}

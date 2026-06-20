@@ -12,7 +12,8 @@ import BlinkingSpaceBGDiv from '../../components/BlinkingSpaceBGDiv/BlinkingSpac
 import { Navbar } from '../../components/Navbar/Navbar';
 import { Card } from '../../components/Card/Card';
 import { SectionTitle } from '../../components/SectionTitle/SectionTitle';
-import './GamePage.css';
+import { cx } from '../../utils/cx';
+import styles from './GamePage.module.css';
 
 export function GamePage() {
     const { user } = useUser();
@@ -103,7 +104,7 @@ export function GamePage() {
     const { gameState, gameStarted, timeLeft, hostPlayerId, isSpectator, currentPlayerObj, eligiblePlayers } = sessionState;
 
     return (
-        <div className={`game-page-container phase-${gameState?.current_status || 'none'}`}>
+        <div className={cx(styles['game-page-container'], styles[`phase-${gameState?.current_status || 'none'}`])}>
             <BlinkingSpaceBGDiv />
 
             {/* ── Nav ── */}
@@ -113,21 +114,21 @@ export function GamePage() {
                 onActionButtonClick={connection.leaveGame}
             />
 
-            <div className="game-page-content">
+            <div className={styles['game-page-content']}>
                 {/* Spectator Mode Warning Banner */}
                 {isSpectator && (
-                    <div className="spectator-banner">
+                    <div className={styles['spectator-banner']}>
                         👁️ SPECTATOR MODE — You are watching this match.
                     </div>
                 )}
 
                 {/* Error Banner */}
                 {errorMsg && (
-                    <div className="game-error-banner">
+                    <div className={styles['game-error-banner']}>
                         <span><strong>Error:</strong> {errorMsg}</span>
                         <button
                             onClick={() => setErrorMsg(null)}
-                            className="btn-error-close"
+                            className={styles['btn-error-close']}
                         >
                             &times;
                         </button>
@@ -135,12 +136,12 @@ export function GamePage() {
                 )}
 
                 {gameState ? (
-                    <div className="game-main-layout">
+                    <div className={styles['game-main-layout']}>
 
                         {/* Players List Sidebar (Always Visible) */}
-                        <Card className="game-sidebar">
-                            <SectionTitle as="h3" className="game-sidebar-title">Players</SectionTitle>
-                            <div className="game-players-list">
+                        <Card className={styles['game-sidebar']}>
+                            <SectionTitle as="h3" className={styles['game-sidebar-title']}>Players</SectionTitle>
+                            <div className={styles['game-players-list']}>
                                 {gameState.players.map((player) => {
                                     const isCurrentNominator = gameState.last_correct_player === currentPlayerObj?.id;
                                     const isInNominationPhase = gameState.current_status === GameStatus.NOMINATION;
@@ -164,8 +165,8 @@ export function GamePage() {
                         </Card>
 
                         {/* Active State View Component */}
-                        <Card className="game-active-area">
-                            <SectionTitle as="h3" className="game-active-title">
+                        <Card className={styles['game-active-area']}>
+                            <SectionTitle as="h3" className={styles['game-active-title']}>
                                 {gameState.current_status === GameStatus.LOBBY && "LOBBY"}
                                 {gameState.current_status === GameStatus.ANSWERING && "ANSWER TO THE QUESTION"}
                                 {gameState.current_status === GameStatus.NOMINATION && "NOMINATE NEXT PLAYER"}
@@ -190,7 +191,7 @@ export function GamePage() {
 
                     </div>
                 ) : (
-                    <div className="game-loading-banner">
+                    <div className={styles['game-loading-banner']}>
                         <h3>Waiting for Game Snapshot...</h3>
                         <p>Connection established. Awaiting state from the server...</p>
                     </div>
