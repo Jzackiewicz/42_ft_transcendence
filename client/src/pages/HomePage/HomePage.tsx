@@ -5,7 +5,7 @@ import ChatContainer from './SubviewsHomePage/ChatContainer/ChatContainer'
 import SolarSystem from './SubviewsHomePage/Solar/SolarSystem'
 import { Navbar } from '../../components/Navbar/Navbar'
 
-import './HomePage.css'
+import styles from './HomePage.module.css'
 
 import { useHomePage } from './useHomePage'
 import { FriendsProvider } from '../../context/FriendsListContext'
@@ -23,7 +23,7 @@ export function HomePage() {
 
     return (
         <FriendsProvider>
-        <div className="home-page-container">
+        <div className={styles['home-page-container']}>
             <BlinkingSpaceBGDiv />
 
             {/* ── Nav ── */}
@@ -35,24 +35,24 @@ export function HomePage() {
             {/* ── Rules modal ── */}
             {showRulesModal && (
                 <div
-                    className="rules-modal-overlay"
+                    className={styles['rules-modal-overlay']}
                     onClick={() => setShowRulesModal(false)}
                     role="dialog"
                     aria-modal="true"
                     aria-labelledby="rules-modal-title"
                 >
-                    <div className="rules-modal" onClick={e => e.stopPropagation()}>
+                    <div className={styles['rules-modal']} onClick={e => e.stopPropagation()}>
                         <button
-                            className="rules-modal-close"
+                            className={styles['rules-modal-close']}
                             onClick={() => setShowRulesModal(false)}
                             aria-label="Close rules"
                         >
                             ×
                         </button>
-                        <h3 id="rules-modal-title" className="rules-modal-title">
-                            How to Play <span className="rules-modal-title-accent">Quizscendence</span>
+                        <h3 id="rules-modal-title" className={styles['rules-modal-title']}>
+                            How to Play <span className={styles['rules-modal-title-accent']}>Quizscendence</span>
                         </h3>
-                        <ul className="rules-modal-list">
+                        <ul className={styles['rules-modal-list']}>
                             <li><strong>2–5 players.</strong> Everyone starts with <strong>❤️❤️❤️ lives</strong>.</li>
                             <li>On your turn, answer the question before the timer runs out.</li>
                             <li>Wrong answer or timeout = <strong>-1 life 💔</strong>. No lives = you're out.</li>
@@ -60,7 +60,7 @@ export function HomePage() {
                             <li>Pick yourself = <strong>+20 points</strong> if you're right (risky but worth it).</li>
                             <li>Keep nominating until someone else answers correctly.</li>
                         </ul>
-                        <p className="rules-modal-win">
+                        <p className={styles['rules-modal-win']}>
                             Be the last one alive, or earn the most points when the questions run out!
                         </p>
                     </div>
@@ -69,27 +69,27 @@ export function HomePage() {
 
             {/* ── Join modal ── */}
             {showJoinModal && (
-                <div className="join-modal-overlay">
-                    <div className="join-modal">
-                        <h3 className="join-modal-title">Join Lobby</h3>
+                <div className={styles['join-modal-overlay']}>
+                    <div className={styles['join-modal']}>
+                        <h3 className={styles['join-modal-title']}>Join Lobby</h3>
                         <input
-                            className="join-modal-input"
+                            className={styles['join-modal-input']}
                             type="text"
                             placeholder="Paste lobby UUID…"
                             value={joinUuid}
                             onChange={e => setJoinUuid(e.target.value)}
                             onKeyDown={e => e.key === 'Enter' && handleJoinLobby()}
                         />
-                        <div className="join-modal-actions">
-                            <button className="home-nav-play" onClick={handleJoinLobby}>Join</button>
-                            <button className="join-modal-cancel" onClick={() => setShowJoinModal(false)}>Cancel</button>
+                        <div className={styles['join-modal-actions']}>
+                            <button className={styles['home-nav-play']} onClick={handleJoinLobby}>Join</button>
+                            <button className={styles['join-modal-cancel']} onClick={() => setShowJoinModal(false)}>Cancel</button>
                         </div>
                     </div>
                 </div>
             )}
 
             {/* ── Main ── */}
-            <main className="home-content">
+            <main className={styles['home-content']}>
                 <AccountHeader
                     username={user?.username ?? ''}
                     email={user?.email ?? ''}
@@ -98,11 +98,11 @@ export function HomePage() {
                     handleCreateLobby={handleCreateLobby}
                 />
 
-                <div className="account-grid">
+                <div className={styles['account-grid']}>
                     <FriendsView />
                     <SolarSystem />
 
-                    <div className="account-grid-chat">
+                    <div className={styles['account-grid-chat']}>
                         <ChatContainer />
                     </div>
                 </div>

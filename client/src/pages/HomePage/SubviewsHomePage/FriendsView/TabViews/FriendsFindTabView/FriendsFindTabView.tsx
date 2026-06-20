@@ -1,32 +1,34 @@
 import { useFriendsFindTabView } from './useFriendsFindTabView'
-import './FriendsFindTabView.css'
+import { cx } from '../../../../../../utils/cx'
+import styles from './FriendsFindTabView.module.css'
+import shared from '../../FriendsView.module.css'
 
 function FriendsFindTabView() {
     const { searchQuery, setSearchQuery, handleSendRequest, friends, status } = useFriendsFindTabView()
 
     return (
-        <div className="friends-find">
-            <div className="find-row">
+        <div className={styles['friends-find']}>
+            <div className={styles['find-row']}>
                 <input
-                    className="find-input"
+                    className={styles['find-input']}
                     placeholder="Search by username…"
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && handleSendRequest(searchQuery)}
                 />
-                <button className="find-btn" onClick={() => handleSendRequest(searchQuery)}>
+                <button className={styles['find-btn']} onClick={() => handleSendRequest(searchQuery)}>
                     Send Request
                 </button>
             </div>
             {status && (
-                <span className={`find-status find-status--${status.type}`}>
+                <span className={cx(styles['find-status'], styles[`find-status--${status.type}`])}>
                     {status.message}
                 </span>
             )}
-            <div className="friends-scroll">
-                <div className="find-results">
+            <div className={shared['friends-scroll']}>
+                <div className={styles['find-results']}>
                     {friends.map(user => (
-                        <div key={user.id} className="find-result-item" onClick={() => setSearchQuery(user.username)}>
+                        <div key={user.id} className={styles['find-result-item']} onClick={() => setSearchQuery(user.username)}>
                             {user.username}
                         </div>
                     ))}

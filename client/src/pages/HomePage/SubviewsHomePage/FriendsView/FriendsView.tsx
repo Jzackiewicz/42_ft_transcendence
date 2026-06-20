@@ -4,31 +4,32 @@ import FriendsRequestTabView from './TabViews/FriendsRequestTabView/FriendsReque
 import FriendsFindTabView from './TabViews/FriendsFindTabView/FriendsFindTabView'
 import { Card } from '../../../../components/Card/Card'
 import { SectionTitle } from '../../../../components/SectionTitle/SectionTitle'
-import './FriendsView.css'
+import { cx } from '../../../../utils/cx'
+import styles from './FriendsView.module.css'
 
 function FriendsView() {
     const { activeTab, setActiveTab } = useFriendsView()
 
     return (
-        <Card className="friends-view">
+        <Card className={styles['friends-view']}>
             <SectionTitle>👥 Friends</SectionTitle>
 
             {/* ── Tabs ── */}
-            <div className="friends-tabs">
+            <div className={styles['friends-tabs']}>
                 <button
-                    className={`friends-tab ${activeTab === 'friends' ? 'active' : ''}`}
+                    className={cx(styles['friends-tab'], activeTab === 'friends' && styles.active)}
                     onClick={() => setActiveTab('friends')}
                 >
                     Friends
                 </button>
                 <button
-                    className={`friends-tab ${activeTab === 'requests' ? 'active' : ''}`}
+                    className={cx(styles['friends-tab'], activeTab === 'requests' && styles.active)}
                     onClick={() => setActiveTab('requests')}
                 >
                     Requests
                 </button>
                 <button
-                    className={`friends-tab ${activeTab === 'find' ? 'active' : ''}`}
+                    className={cx(styles['friends-tab'], activeTab === 'find' && styles.active)}
                     onClick={() => setActiveTab('find')}
                 >
                     Find Players

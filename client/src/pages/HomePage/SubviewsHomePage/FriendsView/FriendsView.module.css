@@ -80,19 +80,6 @@
     flex-shrink: 0;
 }
 
-.friend-avatar .presence-dot {
-    position: absolute;
-    top: 1px;
-    right: 1px;
-    width: 6px;
-    height: 6px;
-    margin: 0;
-    border: 1px solid var(--panel);
-}
-
-.friend-avatar .presence-dot.online  { background: #22c55e; }
-.friend-avatar .presence-dot.offline { background: #4b5563; }
-
 .friend-name {
     flex: 1;
     font-family: var(--fb);
