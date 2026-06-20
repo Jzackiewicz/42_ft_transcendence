@@ -38,7 +38,7 @@ class UserRegisterInputSerializer(serializers.Serializer):
 class UserOutputSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "username", "email"]
+        fields = ["id", "username", "email", "date_joined"]
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
