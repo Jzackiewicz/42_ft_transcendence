@@ -40,11 +40,9 @@
     --auth-container-height: 600px;
 
     /* Spacing scale */
-    --spacing-xs: 4px;
     --spacing-sm: 6px;
     --spacing-md: 8px;
     --spacing-lg: 14px;
-    --spacing-xl: 16px;
     --spacing-2xl: 24px;
     --spacing-3xl: 40px;
 

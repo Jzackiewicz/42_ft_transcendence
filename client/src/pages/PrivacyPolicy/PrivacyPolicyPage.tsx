@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import BlinkingSpaceBGDiv from '../../components/BlinkingSpaceBGDiv/BlinkingSpaceBGDiv';
-import styles from './PrivacyPolicy.module.css';
+import styles from '../static-page.module.css';
 
 export function PrivacyPolicyPage() {
 	return (

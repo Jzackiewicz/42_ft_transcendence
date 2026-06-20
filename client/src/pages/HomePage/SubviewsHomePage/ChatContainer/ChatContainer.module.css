@@ -103,21 +103,6 @@
     overflow: hidden;
 }
 
-.chat-thread-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 14px 18px;
-    border-bottom: 1px solid var(--pb);
-    flex-shrink: 0;
-}
-
-.chat-thread-name {
-    font-family: var(--fd);
-    font-size: 16px;
-    font-weight: 700;
-}
-
 .chat-messages {
     flex: 1;
     overflow-y: auto;
@@ -162,15 +147,6 @@
     color: var(--text);
     border-bottom-left-radius: 3px;
 }
-
-.chat-ts {
-    font-size: 10px;
-    color: var(--dim);
-    margin-top: 3px;
-    text-align: right;
-}
-
-.chat-bubble-row.friend .chat-ts { text-align: left; }
 
 /* ── LOAD OLDER ─────────────────────────────────────────────────── */
 .chat-load-older {

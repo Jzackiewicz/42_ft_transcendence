@@ -12,8 +12,7 @@ export function AuthPage() {
 	const { onRegistrationSuccess } = useRegistrationNavigation()
 
 	return (
-		<div className={styles['login-page']}>
-			<div className={styles['main-container']}>
+		<div className={styles['main-container']}>
 				<div className={styles['empty-container']}>
 					<BlinkingSpaceBGDiv />
 					<div className={styles['empty-container-content']}>         {/* groups title + subtitle */}
@@ -41,8 +40,6 @@ export function AuthPage() {
 						{isLoginTabActive ? <LoginView onSuccess={onLoginSuccess} /> : <RegistrationView onSuccess={onRegistrationSuccess} />}
 					</div>
 				</div>
-
-			</div>
 
 		</div>
 	)

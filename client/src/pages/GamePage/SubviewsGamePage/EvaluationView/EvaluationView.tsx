@@ -21,7 +21,7 @@ export function EvaluationView({
     questionText,
     category
 }: EvaluationViewProps) {
-    let statusClass = styles['eval-pending'];
+    let statusClass: string | undefined = undefined;
     let statusText = '⏳ EVALUATING... (TODO)';
 
     if (answerText !== '...') {

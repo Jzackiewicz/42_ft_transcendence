@@ -219,37 +219,3 @@
 .account-grid-chat {
     grid-column: 1 / -1;
 }
-
-
-/* ── FOOTER ─────────────────────────────────────────────────────── */
-.home-footer {
-    padding: 16px 32px;
-    border-top: 1px solid var(--border);
-    background: rgba(5, 5, 15, 0.9);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 24px;
-    flex-shrink: 0;
-    position: relative;
-    z-index: 10;
-}
-
-.home-footer-link {
-    font-size: var(--font-xs);
-    font-family: var(--fb);
-    color: var(--dim);
-    text-decoration: none;
-    letter-spacing: 0.5px;
-    transition: color 0.2s;
-}
-
-.home-footer-link:hover { color: var(--cyan); }
-
-.home-footer-sep {
-    width: 3px;
-    height: 3px;
-    border-radius: 50%;
-    background: var(--dim);
-    opacity: 0.4;
-}

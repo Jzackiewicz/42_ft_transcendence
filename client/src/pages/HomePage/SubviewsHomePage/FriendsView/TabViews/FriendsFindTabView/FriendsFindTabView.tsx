@@ -7,7 +7,7 @@ function FriendsFindTabView() {
     const { searchQuery, setSearchQuery, handleSendRequest, friends, status } = useFriendsFindTabView()
 
     return (
-        <div className={styles['friends-find']}>
+        <div>
             <div className={styles['find-row']}>
                 <input
                     className={styles['find-input']}

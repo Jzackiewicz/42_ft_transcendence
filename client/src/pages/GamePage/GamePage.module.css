@@ -115,19 +115,6 @@
     text-align: center;
 }
 
-.game-question-counter {
-    padding: 12px 16px;
-    background: rgba(255, 255, 255, 0.02);
-    border-radius: var(--radius-sm);
-    font-weight: bold;
-    color: var(--cyan);
-    border: 1px solid var(--border);
-    border-left: 4px solid var(--cyan);
-    font-family: var(--fb);
-    font-size: var(--font-sm);
-    letter-spacing: 0.5px;
-}
-
 .game-loading-banner {
     background: var(--panel);
     border: 1px dashed var(--pb);
