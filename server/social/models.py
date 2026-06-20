@@ -8,12 +8,6 @@ class ChatMessage(models.Model):
     message = models.TextField(max_length=500)
     timestamp = models.DateTimeField(auto_now_add=True)
 
-class RelationshipStatus(models.TextChoices):
-    NONE  = "none", "None"
-    FRIENDS = "friends", "Friends"
-    REQUEST_SENT = "request_sent", "Request sent"
-    REQUEST_RECEIVED = "request_received", "Request received"
-
 class Friendship(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, 
                              on_delete=models.CASCADE, 

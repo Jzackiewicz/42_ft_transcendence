@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from account.serializers import PublicUserSerializer
-from .models import RelationshipStatus
 
 
 class ChatMessageSerializer(serializers.Serializer):
@@ -62,7 +61,3 @@ class FriendSearchInputSerializer(serializers.Serializer):
         max_length=150,
         help_text="Username prefix to search (min 2 characters)",
     )
-
-
-class RelationshipStatusOutputSerializer(serializers.Serializer):
-    status = serializers.ChoiceField(choices=RelationshipStatus.choices)
