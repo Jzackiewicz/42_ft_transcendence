@@ -1,5 +1,5 @@
 import { Player } from '../../useGamePage';
-import './NominationView.css';
+import styles from './NominationView.module.css';
 
 interface NominationViewProps {
     isCurrentNominator: boolean;
@@ -13,15 +13,15 @@ export function NominationView({
     nominatorName
 }: NominationViewProps) {
     return (
-        <div className="nomination-view-container">
+        <div className={styles.nominationViewContainer}>
             {isCurrentNominator ? (
-                <div className="nomination-active-prompt">
-                    <div className="nomination-prompt-label">
+                <div className={styles.nominationActivePrompt}>
+                    <div className={styles.nominationPromptLabel}>
                         👉 Click on any player in the sidebar list to nominate them for the next turn!
                     </div>
                 </div>
             ) : (
-                <div className="nomination-spectator-waiting">
+                <div className={styles.nominationSpectatorWaiting}>
                     👀 {nominatorName} is selecting the next target...
                 </div>
             )}

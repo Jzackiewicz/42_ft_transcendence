@@ -1,4 +1,5 @@
-import './GameHUD.css';
+import { cx } from '../../../../utils/cx';
+import styles from './GameHUD.module.css';
 
 interface GameHUDProps {
     questionAskedCount: number;
@@ -31,50 +32,50 @@ export function GameHUD({
             ? 'RANDOM PICK IN'
             : 'TIMEOUT IN';
     return (
-        <div className="game-hud-container">
+        <div className={styles.gameHudContainer}>
             {isLobby ? (
-                <div className="hud-group">
-                    <div className="hud-item">
-                        <span className="hud-label">QUESTIONS</span>
-                        <strong className="hud-value">
+                <div className={styles.hudGroup}>
+                    <div className={styles.hudItem}>
+                        <span className={styles.hudLabel}>QUESTIONS</span>
+                        <strong className={styles.hudValue}>
                             {totalQuestionsCount - generatedQuestionsCount}
                             {generatedQuestionsCount > 0 && (
-                                <span className="hud-generated">+ {generatedQuestionsCount} generated</span>
+                                <span className={styles.hudGenerated}>+ {generatedQuestionsCount} generated</span>
                             )}
                         </strong>
                     </div>
                     {timeLimitSeconds !== undefined && (
-                        <div className="hud-item">
-                            <span className="hud-label">ANSWER LIMIT</span>
-                            <strong className="hud-value">{timeLimitSeconds}s</strong>
+                        <div className={styles.hudItem}>
+                            <span className={styles.hudLabel}>ANSWER LIMIT</span>
+                            <strong className={styles.hudValue}>{timeLimitSeconds}s</strong>
                         </div>
                     )}
                     {nominationTimeLimitSeconds !== undefined && (
-                        <div className="hud-item">
-                            <span className="hud-label">NOMINATION LIMIT</span>
-                            <strong className="hud-value">{nominationTimeLimitSeconds}s</strong>
+                        <div className={styles.hudItem}>
+                            <span className={styles.hudLabel}>NOMINATION LIMIT</span>
+                            <strong className={styles.hudValue}>{nominationTimeLimitSeconds}s</strong>
                         </div>
                     )}
                     {maxPlayers !== undefined && (
-                        <div className="hud-item">
-                            <span className="hud-label">MAX PLAYERS</span>
-                            <strong className="hud-value">{maxPlayers}</strong>
+                        <div className={styles.hudItem}>
+                            <span className={styles.hudLabel}>MAX PLAYERS</span>
+                            <strong className={styles.hudValue}>{maxPlayers}</strong>
                         </div>
                     )}
                 </div>
             ) : (
-                <div className="hud-group hud-active-game">
-                    <div className="hud-item">
-                        <span className="hud-label">QUESTION</span>
-                        <strong className="hud-value">
-                            {questionAskedCount} <span className="hud-muted">of</span> {totalQuestionsCount}
+                <div className={cx(styles.hudGroup, styles.hudActiveGame)}>
+                    <div className={styles.hudItem}>
+                        <span className={styles.hudLabel}>QUESTION</span>
+                        <strong className={styles.hudValue}>
+                            {questionAskedCount} <span className={styles.hudMuted}>of</span> {totalQuestionsCount}
                         </strong>
                     </div>
 
                     {timeLeft !== null && (
-                        <div className={`hud-item hud-timer ${(timeLeft <= 5 && !isEvaluation) ? 'warning' : ''}`}>
-                            <span className="hud-label">{timerLabel}</span>
-                            <strong className="hud-value">{timeLeft}s</strong>
+                        <div className={cx(styles.hudItem, styles.hudTimer, (timeLeft <= 5 && !isEvaluation) && styles.warning)}>
+                            <span className={styles.hudLabel}>{timerLabel}</span>
+                            <strong className={styles.hudValue}>{timeLeft}s</strong>
                         </div>
                     )}
                 </div>
