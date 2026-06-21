@@ -4,8 +4,8 @@
 /* ── LAYOUT ─────────────────────────────────────────────────────── */
 .mainContainer {
     display: flex;
-    height: 100vh;
     width: 100%;
+    flex: 1;
 }
 
 /* ── Empty Container (left side titles) ────────────────────────────────────── */
@@ -60,15 +60,12 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    height: 100vh;
 }
 
 .authContent {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-2xl);
-    height: var(--auth-container-height);
-    min-height: 0;
 }
 
 .authTitleContainer,
@@ -79,8 +76,6 @@
 .loginView,
 .registrationView {
     flex: 1;
-    min-height: 0;
-    overflow-y: auto;
 }
 
 .authTitle {
