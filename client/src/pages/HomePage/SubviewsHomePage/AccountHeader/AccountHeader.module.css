@@ -28,7 +28,7 @@
     align-items: center;
     justify-content: center;
     font-family: var(--fd);
-    font-size: 26px;
+    font-size: var(--font-2xl);
     font-weight: 700;
     color: #000;
     border: 3px solid var(--cyan-light-shadow);
@@ -40,7 +40,7 @@
 
 .accountName {
     font-family: var(--fd);
-    font-size: 26px;
+    font-size: var(--font-2xl);
     font-weight: 700;
 }
 

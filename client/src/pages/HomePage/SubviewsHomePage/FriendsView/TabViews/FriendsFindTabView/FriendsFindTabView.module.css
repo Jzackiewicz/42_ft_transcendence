@@ -7,7 +7,7 @@
 .findInput {
     flex: 1;
     padding: 8px 14px;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     border: 1px solid var(--pb);
     background: rgba(255, 255, 255, 0.05);
     color: var(--text);
@@ -22,7 +22,7 @@
 
 .findBtn {
     padding: 8px 16px;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     border: none;
     background: var(--cyan);
     color: #000;
@@ -62,7 +62,7 @@
     flex-direction: column;
     margin-top: 10px;
     border: 1px solid var(--pb);
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     overflow: hidden;
 }
 

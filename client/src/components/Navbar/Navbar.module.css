@@ -81,7 +81,7 @@
 }
 
 .appSessionCode .copyIcon {
-    font-size: 14px;
+    font-size: var(--font-md);
     opacity: 0.6;
     transition: transform 0.2s, opacity 0.2s;
 }
@@ -113,7 +113,7 @@
     .appSessionCode {
         padding: 5px 8px;
         gap: 4px;
-        font-size: 11px;
+        font-size: var(--font-xs);
     }
     .appSessionCode .codeLabel {
         display: none;

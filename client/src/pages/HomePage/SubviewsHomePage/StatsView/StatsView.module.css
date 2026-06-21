@@ -7,7 +7,7 @@
 .statBox {
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid var(--pb);
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     padding: 14px 16px;
     display: flex;
     flex-direction: column;
@@ -16,7 +16,7 @@
 
 .statBoxVal {
     font-family: var(--fd);
-    font-size: 26px;
+    font-size: var(--font-2xl);
     font-weight: 700;
     line-height: 1;
 }
@@ -29,7 +29,7 @@
 .statBoxValViolet  { color: var(--violet); }
 
 .statBoxLbl {
-    font-size: 11px;
+    font-size: var(--font-xs);
     color: var(--dim);
     letter-spacing: 0.5px;
 }

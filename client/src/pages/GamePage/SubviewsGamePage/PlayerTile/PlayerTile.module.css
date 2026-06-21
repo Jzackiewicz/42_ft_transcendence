@@ -110,7 +110,7 @@
 }
 
 .statHearts {
-    font-size: 11px;
+    font-size: var(--font-xs);
     letter-spacing: 1px;
 }
 
@@ -160,7 +160,7 @@
     align-items: center;
     justify-content: center;
     background-color: rgba(255, 255, 255, 0.05);
-    font-size: 14px;
+    font-size: var(--font-md);
     color: var(--dim);
     border: 1px solid var(--border);
 }

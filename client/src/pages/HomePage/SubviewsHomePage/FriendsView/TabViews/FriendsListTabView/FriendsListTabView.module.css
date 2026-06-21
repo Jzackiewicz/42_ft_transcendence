@@ -9,7 +9,7 @@
     align-items: center;
     gap: 10px;
     padding: 8px 10px;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     background: rgba(255, 255, 255, 0.04);
     border: 1px solid var(--pb);
 }
@@ -19,7 +19,7 @@
     border: none;
     color: var(--dim);
     font-family: var(--fb);
-    font-size: 11px;
+    font-size: var(--font-xs);
     cursor: pointer;
     transition: color 0.15s;
     white-space: nowrap;

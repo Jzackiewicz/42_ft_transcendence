@@ -62,7 +62,7 @@
 
 .joinModalTitle {
     font-family: var(--fd);
-    font-size: 18px;
+    font-size: var(--font-xl);
     font-weight: 700;
     color: var(--text);
     margin: 0;
@@ -70,7 +70,7 @@
 
 .joinModalInput {
     padding: 10px 14px;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     border: 1px solid var(--pb);
     background: rgba(255, 255, 255, 0.05);
     color: var(--text);
@@ -183,7 +183,7 @@
 .rulesModalWin {
     margin: 0 0 14px;
     padding: 12px 14px;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     background: rgba(0, 229, 255, 0.06);
     border-left: 3px solid var(--cyan);
     font-family: var(--fb);
