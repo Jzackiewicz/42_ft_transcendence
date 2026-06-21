@@ -28,6 +28,7 @@ The question text must never contain its own answer, nor an obvious abbreviation
 Questions should be of moderate difficulty: answerable by a reasonably knowledgeable person without specialist expertise, but not trivially easy facts that almost everyone knows offhand (avoid the difficulty of questions like the capital of Japan, which planet is the Red Planet, or who wrote Romeo and Juliet).
 If you are not 100% sure about an answer, don't include it."""
 RETRY_STATUS_CODES = {429, 500, 502, 503, 504}
+OVER_REQUEST_BUFFER = 3
 
 class GeneratedQuestion(BaseModel):
     category: str
@@ -95,7 +96,7 @@ def build_prompt(lobby_id, n_questions_to_generate):
         "Return JSON array: question, answers, category."
     )
 @transaction.atomic
-def persist_generated_questions(session, generated):
+def persist_generated_questions(session, generated, limit=None):
     if not generated:
         return []
 
@@ -179,6 +180,8 @@ def persist_generated_questions(session, generated):
             )
             next_index += 1
             created_question_ids.append(q_obj.id)
+            if limit is not None and len(created_question_ids) >= limit:
+                break
 
     if to_create:
         SessionQuestion.objects.bulk_create(to_create)
@@ -208,12 +211,10 @@ def generate_extra_questions(lobby_id, n_questions_to_generate):
         raise RuntimeError(f"Lobby not found: {lobby_id}")
         
     client = genai.Client(api_key=LLM_API_KEY)
-    prompt = build_prompt(lobby_id, n_questions_to_generate)
-    generated = generate(
-        client,
-        LLM_MODEL,
-        prompt,
-    )
+    prompt = build_prompt(lobby_id, n_questions_to_generate + OVER_REQUEST_BUFFER)
+    generated = generate(client, LLM_MODEL, prompt)
 
-    created_question_ids = persist_generated_questions(session, generated)
+    created_question_ids = persist_generated_questions(
+        session, generated, limit=n_questions_to_generate
+    )
     return {"created_question_ids": created_question_ids}
