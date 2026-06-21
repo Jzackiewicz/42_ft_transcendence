@@ -48,7 +48,7 @@ up:
 	@echo "Creating superuser if not exists (Production)..."
 	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(PROD_PROJECT) exec -e DJANGO_SUPERUSER_PASSWORD=$(DJANGO_SUPERUSER_PASSWORD) api python manage.py createsuperuser --noinput || true
 	@echo "Seeding database (Production)..."
-	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(PROD_PROJECT) exec api python core/seeding/seed_data.py || true
+	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(PROD_PROJECT) exec api python manage.py loaddata questions || true
 
 
 # Stop the stack
@@ -122,7 +122,7 @@ dev-up: dev-venv client-install
 	@echo "Creating superuser if not exists (Dev)..."
 	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) exec -e DJANGO_SUPERUSER_PASSWORD=$(DJANGO_SUPERUSER_PASSWORD) api python manage.py createsuperuser --noinput || true
 	@echo "Seeding database (Dev)..."
-	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) exec api python core/seeding/seed_data.py || true
+	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) exec api python manage.py loaddata questions || true
 
 
 dev-shell: dev-up
