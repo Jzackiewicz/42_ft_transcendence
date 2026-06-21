@@ -98,7 +98,7 @@ class IsSelfOrReadOnlyTests(APITestCase):
 
     def test_upload_avatar_exceeding_size_limit_returns_400(self):
         url = reverse("profile-avatar", kwargs={"user_id": self.user_a.id})
-        large_data = _png_bytes() + (b"0" * (2 * 1024 * 1024 + 1))
+        large_data = _png_bytes() + (b"0" * (5 * 1024 * 1024 + 1))
         avatar = SimpleUploadedFile("large.png", large_data, content_type="image/png")
         response = self.client.post(url, {"avatar": avatar}, format="multipart")
 
