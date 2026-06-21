@@ -6,7 +6,7 @@ import { useUser } from '../../context/UserContext'
 
 export function useHomePage() {
     const navigate = useNavigate()
-    const { user, setUser } = useUser()
+    const { user, setUser, setActiveSessionUuid } = useUser()
     const [joinUuid, setJoinUuid] = useState('')
     const [showJoinModal, setShowJoinModal] = useState(false)
     const [showRulesModal, setShowRulesModal] = useState(false)
@@ -15,6 +15,7 @@ export function useHomePage() {
         try {
             await logout()
             setUser(null)
+            setActiveSessionUuid(null)
             navigate('/login')
         } catch (error: any) {
             navigate('/error', { state: {

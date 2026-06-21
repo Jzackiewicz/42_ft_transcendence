@@ -25,7 +25,7 @@ function getRoomName(myId: number, friendId: number): string {
 
 export function useChatContainer() {
     const { friendsList, refresh } = useFriendsContext()
-    const { user, setUser } = useUser()
+    const { user, setUser, setActiveSessionUuid } = useUser()
     const [activeId, setActiveId] = useState<number>(0)
     const [messages, setMessages] = useState<ChatMessage[]>([])
     const [offset, setOffset] = useState<number>(0)
@@ -103,6 +103,7 @@ export function useChatContainer() {
                 if (cancelled) return // intentional close (cleanup)
                 if (event.code === 4001) {
                     setUser(null)
+                    setActiveSessionUuid(null)
                     return
                 }
                 if (event.code === 4003) {
