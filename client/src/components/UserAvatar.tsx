@@ -1,17 +1,17 @@
-import { OnlineIndicator } from './OnlineIndicator'
+import { OnlineIndicator } from './OnlineIndicator/OnlineIndicator'
+import styles from './UserAvatar.module.css'
 
 interface UserAvatarProps {
     username: string
     avatar?: string | null
     userId?: number
-    className?: string
 }
 
-function UserAvatar({ username, avatar, userId, className = 'friend-avatar' }: UserAvatarProps) {
+function UserAvatar({ username, avatar, userId }: UserAvatarProps) {
     return (
-        <div className={className}>
+        <div className={styles.avatar}>
             {avatar
-                ? <img src={avatar} alt={username} className={`${className}-img`} />
+                ? <img src={avatar} alt={username} className={styles.avatarImg} />
                 : username[0]?.toUpperCase() ?? '?'
             }
             {userId !== undefined && <OnlineIndicator userId={userId} />}
