@@ -1,12 +1,13 @@
+import { useState } from 'react'
 import BlinkingSpaceBGDiv from '../../components/BlinkingSpaceBGDiv/BlinkingSpaceBGDiv'
 import AccountHeader from './SubviewsHomePage/AccountHeader/AccountHeader'
 import FriendsView from './SubviewsHomePage/FriendsView/FriendsView'
 import ChatContainer from './SubviewsHomePage/ChatContainer/ChatContainer'
 import SolarSystem from './SubviewsHomePage/Solar/SolarSystem'
 import { Navbar } from '../../components/Navbar/Navbar'
-
+import UserProfileModal from '../../components/UserProfileModal/UserProfileModal'
+import { PublicUser } from '../../types/User'
 import styles from './HomePage.module.css'
-
 import { useHomePage } from './useHomePage'
 import { FriendsProvider } from '../../context/FriendsListContext'
 
@@ -21,6 +22,7 @@ export function HomePage() {
         showJoinModal, setShowJoinModal,
         showRulesModal, setShowRulesModal,
     } = useHomePage()
+    const [selectedUser, setSelectedUser] = useState<PublicUser | null>(null)
 
     return (
         <FriendsProvider>
@@ -89,6 +91,11 @@ export function HomePage() {
                 </div>
             )}
 
+            {/* ── User profile modal ── */}
+            {selectedUser && (
+                <UserProfileModal user={selectedUser} onClose={() => setSelectedUser(null)} />
+            )}
+
             {/* ── Main ── */}
             <main className={styles.homeContent}>
                 <AccountHeader
@@ -100,7 +107,7 @@ export function HomePage() {
                 />
 
                 <div className={styles.accountGrid}>
-                    <FriendsView />
+                    <FriendsView onSelectUser={setSelectedUser} />
                     <SolarSystem />
 
                     <div className={styles.accountGridChat}>

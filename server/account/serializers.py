@@ -95,7 +95,7 @@ class PublicUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["id", "username", "avatar", "is_online"]
+        fields = ["id", "username", "avatar", "is_online", "date_joined"]
 
     def get_avatar(self, user):
         return user.profile.avatar_url(self.context.get("request"))

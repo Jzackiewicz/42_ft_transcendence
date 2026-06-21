@@ -11,6 +11,7 @@ export interface PublicUser {
     username: string
     avatar: string | null
     is_online: boolean
+    date_joined: string
 }
 
 export interface Friendship {

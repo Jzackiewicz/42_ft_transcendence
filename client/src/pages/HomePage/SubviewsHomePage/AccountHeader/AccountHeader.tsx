@@ -126,7 +126,7 @@ function AccountHeader({ user, setUser, setShowJoinModal, setShowRulesModal, han
                 How to Play ?
             </button>
             <button className={homeStyles.homeNavJoin} onClick={() => setShowJoinModal(true)}>Join Game</button>
-            <button className={homeStyles.homeNavPlay} onClick={handleCreateLobby}>▶ Play Now</button>
+            <button className={homeStyles.homeNavPlay} onClick={handleCreateLobby}> Play Now</button>
         </div>
     )
 }

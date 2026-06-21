@@ -67,6 +67,9 @@
 }
 
 .findResultItem {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     padding: 8px 14px;
     color: var(--text);
     font-family: var(--fb);
@@ -76,3 +79,9 @@
 }
 
 .findResultItem:hover { background: rgba(255, 255, 255, 0.07); }
+
+.findResultDate {
+    margin-left: auto;
+    font-size: var(--font-xs);
+    color: var(--dim);
+}
