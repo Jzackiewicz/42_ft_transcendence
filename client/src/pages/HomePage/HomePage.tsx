@@ -2,7 +2,6 @@ import BlinkingSpaceBGDiv from '../../components/BlinkingSpaceBGDiv/BlinkingSpac
 import AccountHeader from './SubviewsHomePage/AccountHeader/AccountHeader'
 import FriendsView from './SubviewsHomePage/FriendsView/FriendsView'
 import ChatContainer from './SubviewsHomePage/ChatContainer/ChatContainer'
-import SolarSystem from './SubviewsHomePage/Solar/SolarSystem'
 import { Navbar } from '../../components/Navbar/Navbar'
 
 import styles from './HomePage.module.css'
@@ -100,7 +99,6 @@ export function HomePage() {
 
                 <div className={styles.accountGrid}>
                     <FriendsView />
-                    <SolarSystem />
 
                     <div className={styles.accountGridChat}>
                         <ChatContainer />
