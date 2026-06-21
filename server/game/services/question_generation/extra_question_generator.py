@@ -14,14 +14,18 @@ from game.models import GameSession, Question, SessionQuestion
 LLM_SYSTEM_INSTRUCTION = """You must respond using the JSON format only with each section containing a 'category', 'question', and 'answer' field.
 The answer field must be an array of possible answers to the question, and the question field must be a string containing the question itself.
 Questions must give a clear indication of what the answer should be, and the answer must be a clear and concise response to the question.
-Answers must made up of only one word, short phrase or name each.
+Answers must be made up of only one word, a short phrase, or a name each. Most answers should be short and quick to type; avoid long, highly technical, or obscure answer terms.
 Questions must not include the word "and" or "type" or "while".
 Questions must give the full context of the question, and must not rely on the category field to give context to the question.
 If a question can have multiple answers, create a very extensive list of answers for that question.
 If the answer can have nicknames of itself, create a very extensive list out of answers that include the nickname and the actual name.
+Answer variants must only be common, widely recognised alternatives; do not include obscure, outdated, or highly technical synonyms.
 Always include every reasonable way a person might phrase the same answer: numbers written as both digits and words (e.g. "4" and "four"), Roman numerals and their spelled-out and digit forms (e.g. "Elizabeth II", "Elizabeth 2", "Elizabeth the Second"), names with and without titles or articles (e.g. "Newton", "Isaac Newton", "Sir Isaac Newton"; "Severn", "River Severn"), and chemical symbols alongside element names (e.g. "Iron", "Fe").
 You must generate an appropriate catagory name for each question, and the catagory name must be relevant to the question and answer.
-The catagory name must be a single word or phrase that is relevant to the question and answer, and it must not be a generic term like "general" or "miscellaneous".
+The catagory name must be a broad, common subject area such as "Science", "History", "Geography", "Sports", "Music", "Film" or "Art". Do not use narrow specialties (for example use "Science" instead of "Microbiology" or "Organic Chemistry", and "Art" instead of "Art History"), and do not use generic terms like "general" or "miscellaneous".
+Keep most questions short and quick to read; an occasional longer question is fine, but the majority must be concise. Avoid filler words such as "specific", "particular", or "fundamental".
+The question text must never contain its own answer, nor an obvious abbreviation of it; for example ask "What is the chemical symbol for gold?" rather than "What is the chemical symbol Au?".
+Questions should be of moderate difficulty: answerable by a reasonably knowledgeable person without specialist expertise, but not trivially easy facts that almost everyone knows offhand (avoid the difficulty of questions like the capital of Japan, which planet is the Red Planet, or who wrote Romeo and Juliet).
 If you are not 100% sure about an answer, don't include it."""
 RETRY_STATUS_CODES = {429, 500, 502, 503, 504}
 
@@ -62,7 +66,6 @@ def load_lobby_questions(lobby_id):
         raise RuntimeError(f"Lobby not found: {lobby_id}")
     questions_data = [
         {
-            "category": session_question.question.category,
             "question": session_question.question.question_text,
             "answers": [session_question.question.correct_answer],
         }
@@ -75,15 +78,20 @@ def build_prompt(lobby_id, n_questions_to_generate):
 
     if not questions_data:
         return (
-            f"Generate {n_questions_to_generate} general knowledge questions. "
+            f"Generate {n_questions_to_generate} general knowledge questions across a wide variety of subjects. "
             "The questions must not be duplicates. "
+            "Avoid questions that are trivially easy or that most people know offhand. "
+            "The question text must never contain its own answer. "
             "Return JSON array: question, answers, category."
         )
 
     return (
-        f"Generate {n_questions_to_generate} questions based on: "
+        f"Generate {n_questions_to_generate} new general knowledge questions across a wide variety of subjects. "
+        "The existing questions below are provided ONLY as a reference for the general difficulty and phrasing "
+        "level expected — do NOT reuse their topics, subjects, or categories, and do not duplicate them: "
         f"{json.dumps(questions_data)}. "
-        "Do not duplicate existing questions. "
+        "Match that difficulty level and avoid questions that are trivially easy or that most people know offhand. "
+        "The question text must never contain its own answer. "
         "Return JSON array: question, answers, category."
     )
 @transaction.atomic
