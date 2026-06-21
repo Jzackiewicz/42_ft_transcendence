@@ -6,35 +6,7 @@
     position: relative;
 }
 
-/* ── JOIN MODAL ─────────────────────────────────────────────────── */
-.joinModalOverlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 100;
-}
-
-.joinModal {
-    background: var(--panel);
-    border: 1px solid var(--pb);
-    border-radius: var(--radius-lg);
-    padding: 28px 32px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    min-width: 320px;
-}
-
-.joinModalTitle {
-    font-family: var(--fd);
-    font-size: var(--font-xl);
-    font-weight: 700;
-    color: var(--text);
-    margin: 0;
-}
+/* ── JOIN MODAL (content styles) ───────────────────────────────── */
 
 .joinModalInput {
     padding: 10px 14px;
@@ -56,64 +28,7 @@
     justify-content: flex-end;
 }
 
-/* ── RULES MODAL ────────────────────────────────────────────────── */
-.rulesModalOverlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.65);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 100;
-    padding: 20px;
-    animation: rules-fade-in 0.15s ease-out;
-}
-
-@keyframes rules-fade-in {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-}
-
-.rulesModal {
-    position: relative;
-    background: var(--panel);
-    border: 1px solid var(--pb);
-    border-radius: var(--radius-lg);
-    padding: 28px 32px 24px;
-    max-width: 460px;
-    width: 100%;
-    box-shadow: 0 0 40px rgba(0, 229, 255, 0.15);
-}
-
-.rulesModalClose {
-    position: absolute;
-    top: 10px;
-    right: 12px;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    border: none;
-    background: transparent;
-    color: var(--dim);
-    font-size: 22px;
-    line-height: 1;
-    cursor: pointer;
-    transition: color 0.15s, background 0.15s;
-}
-
-.rulesModalClose:hover {
-    color: var(--text);
-    background: rgba(255, 255, 255, 0.06);
-}
-
-.rulesModalTitle {
-    font-family: var(--fd);
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--text);
-    margin: 0 0 16px;
-    padding-right: 28px;
-}
+/* ── RULES MODAL (content styles) ──────────────────────────────── */
 
 .rulesModalTitleAccent {
     background: linear-gradient(var(--gradient-deg), var(--cyan) 10%, var(--magenta) 30%);
@@ -123,7 +38,7 @@
 }
 
 .rulesModalList {
-    margin: 0 0 16px;
+    margin: 0;
     padding-left: 20px;
     color: var(--text);
     font-family: var(--fb);
@@ -135,7 +50,7 @@
 .rulesModalList li:last-child { margin-bottom: 0; }
 
 .rulesModalWin {
-    margin: 0 0 14px;
+    margin: 0;
     padding: 12px 14px;
     border-radius: var(--radius-sm);
     background: rgba(0, 229, 255, 0.06);
