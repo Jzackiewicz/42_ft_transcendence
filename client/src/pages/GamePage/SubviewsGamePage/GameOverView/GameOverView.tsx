@@ -1,6 +1,7 @@
 import { Player } from '../../useGamePage';
 import { Button } from '../../../../components/Button/Button';
 import { Avatar } from '../../../../components/Avatar/Avatar';
+import { Icon } from '../../../../components/Icon/Icon';
 import { cx } from '../../../../utils/cx';
 import styles from './GameOverView.module.css';
 
@@ -46,9 +47,14 @@ export function GameOverView({ winnerId, players, onReturnToHome }: GameOverView
 
     // Render lives as visual hearts
     const renderHearts = (lives: number) =>
-        Array.from({ length: 3 })
-            .map((_, i) => (i < lives ? '❤️' : '🖤'))
-            .join('');
+        Array.from({ length: 3 }).map((_, i) => (
+            <Icon
+                key={i}
+                name={i < lives ? 'heart' : 'heartOutline'}
+                size="xs"
+                className={i < lives ? styles.heartFull : styles.heartEmpty}
+            />
+        ));
 
     return (
         <div className={styles.gameOverContainer}>

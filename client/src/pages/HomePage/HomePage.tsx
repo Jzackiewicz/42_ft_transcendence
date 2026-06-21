@@ -6,6 +6,7 @@ import SolarSystem from './SubviewsHomePage/Solar/SolarSystem'
 import { Navbar } from '../../components/Navbar/Navbar'
 import { Button } from '../../components/Button/Button'
 import { Modal } from '../../components/Modal/Modal'
+import { Icon } from '../../components/Icon/Icon'
 
 import styles from './HomePage.module.css'
 
@@ -41,9 +42,9 @@ export function HomePage() {
                 title={<>How to Play <span className={styles.rulesModalTitleAccent}>Quizscendence</span></>}
             >
                 <ul className={styles.rulesModalList}>
-                    <li><strong>2–5 players.</strong> Everyone starts with <strong>❤️❤️❤️ lives</strong>.</li>
+                    <li><strong>2–5 players.</strong> Everyone starts with <strong className={styles.rulesLives}><Icon name="heart" size="sm" /><Icon name="heart" size="sm" /><Icon name="heart" size="sm" /> lives</strong>.</li>
                     <li>On your turn, answer the question before the timer runs out.</li>
-                    <li>Wrong answer or timeout = <strong>-1 life 💔</strong>. No lives = you're out.</li>
+                    <li>Wrong answer or timeout = <strong className={styles.rulesLives}>-1 life <Icon name="heartOutline" size="sm" /></strong>. No lives = you're out.</li>
                     <li>Correct answer = <strong>+10 points</strong>, and you pick who answers next.</li>
                     <li>Pick yourself = <strong>+20 points</strong> if you're right (risky but worth it).</li>
                     <li>Keep nominating until someone else answers correctly.</li>

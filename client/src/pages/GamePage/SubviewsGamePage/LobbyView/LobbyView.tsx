@@ -1,4 +1,5 @@
 import { Button } from '../../../../components/Button/Button';
+import { Icon } from '../../../../components/Icon/Icon';
 import { LobbyChat } from '../LobbyChat/LobbyChat';
 import styles from './LobbyView.module.css';
 
@@ -56,7 +57,7 @@ export function LobbyView({
                             </Button>
                             {aiQuestionsGenerated && (
                                 <span className={styles.aiFeedbackToast}>
-                                    ✓ AI Questions added to the lobby!
+                                    <Icon name="check" size="sm" /> AI Questions added to the lobby!
                                 </span>
                             )}
                         </div>

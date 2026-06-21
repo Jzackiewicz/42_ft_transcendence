@@ -110,8 +110,17 @@
 }
 
 .statHearts {
-    font-size: var(--font-xs);
-    letter-spacing: 1px;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.heartFull {
+    color: var(--red);
+}
+
+.heartEmpty {
+    color: var(--dim);
 }
 
 .statPoints {

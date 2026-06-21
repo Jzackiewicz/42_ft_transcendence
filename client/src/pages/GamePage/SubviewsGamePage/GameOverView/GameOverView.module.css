@@ -110,8 +110,15 @@
 
 /* ── LIVES ───────────────────────────────────────────────────── */
 .gameOverLives {
-    font-size: var(--font-sm);
-    letter-spacing: 1px;
+    white-space: nowrap;
+}
+
+.gameOverLives .heartFull {
+    color: var(--red);
+}
+
+.gameOverLives .heartEmpty {
+    color: var(--dim);
 }
 
 /* ── POINTS ──────────────────────────────────────────────────── */

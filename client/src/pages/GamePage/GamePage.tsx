@@ -12,6 +12,7 @@ import BlinkingSpaceBGDiv from '../../components/BlinkingSpaceBGDiv/BlinkingSpac
 import { Navbar } from '../../components/Navbar/Navbar';
 import { Card } from '../../components/Card/Card';
 import { SectionTitle } from '../../components/SectionTitle/SectionTitle';
+import { Icon } from '../../components/Icon/Icon';
 import { cx } from '../../utils/cx';
 import { ErrorBanner } from '../../components/ErrorBanner/ErrorBanner';
 import styles from './GamePage.module.css';
@@ -139,7 +140,7 @@ function GamePageInner() {
                 {/* Spectator Mode Warning Banner */}
                 {isSpectator && (
                     <div className={styles.spectatorBanner}>
-                        👁️ SPECTATOR MODE — You are watching this match.
+                        <Icon name="eye" size="md" /> SPECTATOR MODE — You are watching this match.
                     </div>
                 )}
 

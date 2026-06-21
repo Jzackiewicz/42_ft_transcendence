@@ -1,6 +1,7 @@
 import { Player } from '../../useGamePage';
 import { Badge } from '../../../../components/Badge/Badge';
 import { Avatar } from '../../../../components/Avatar/Avatar';
+import { Icon } from '../../../../components/Icon/Icon';
 import { cx } from '../../../../utils/cx';
 import styles from './PlayerTile.module.css';
 
@@ -26,9 +27,14 @@ export function PlayerTile({
     const { display_name, lives, points, is_alive } = player;
 
     // Render lives as visual hearts
-    const hearts = Array.from({ length: 3 })
-        .map((_, i) => i < lives ? '❤️' : '🖤')
-        .join('');
+    const hearts = Array.from({ length: 3 }).map((_, i) => (
+        <Icon
+            key={i}
+            name={i < lives ? 'heart' : 'heartOutline'}
+            size="xs"
+            className={i < lives ? styles.heartFull : styles.heartEmpty}
+        />
+    ));
 
     const tileClasses = cx(
         styles.playerTile,
@@ -72,12 +78,12 @@ export function PlayerTile({
             </div>
             {!is_alive && (
                 <div className={styles.playerEliminatedLabel}>
-                    💀 ELIMINATED
+                    <Icon name="skull" size="sm" /> ELIMINATED
                 </div>
             )}
             {player.is_online === false && is_alive && (
                 <div className={styles.playerOfflineLabel}>
-                    📡 DISCONNECTED
+                    <Icon name="signalOff" size="sm" /> DISCONNECTED
                 </div>
             )}
         </div>

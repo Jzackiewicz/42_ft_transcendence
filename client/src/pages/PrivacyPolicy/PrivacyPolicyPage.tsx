@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import BlinkingSpaceBGDiv from '../../components/BlinkingSpaceBGDiv/BlinkingSpaceBGDiv';
+import { Icon } from '../../components/Icon/Icon';
 import styles from '../static-page.module.css';
 
 export function PrivacyPolicyPage() {
@@ -8,7 +9,7 @@ export function PrivacyPolicyPage() {
 			<BlinkingSpaceBGDiv />
 			<div className={styles.staticPageContent}>
 				<Link to="/" className={styles.backButton}>
-					← Go Back
+					<Icon name="arrowLeft" size="sm" /> Go Back
 				</Link>
 				<h1>Privacy Policy</h1>
 				<p className={styles.lastUpdated}>Last Updated: June 2026</p>

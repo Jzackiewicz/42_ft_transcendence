@@ -49,6 +49,14 @@
 .rulesModalList li { margin-bottom: 6px; }
 .rulesModalList li:last-child { margin-bottom: 0; }
 
+.rulesLives {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    color: var(--red);
+    vertical-align: middle;
+}
+
 .rulesModalWin {
     margin: 0;
     padding: 12px 14px;
