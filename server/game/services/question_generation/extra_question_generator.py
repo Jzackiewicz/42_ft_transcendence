@@ -5,6 +5,7 @@ import time
 from django.db import transaction
 from django.db.models import Max
 from google import genai
+from google.genai.errors import APIError
 from pydantic import BaseModel
 
 from core.settings import LLM_API_KEY, LLM_MODEL
@@ -30,6 +31,7 @@ class GeneratedQuestion(BaseModel):
     answers: list[str]
 
 def generate(client, model, prompt):
+    last_error = None
     for attempt in range(5):
         try:
             response = client.models.generate_content(
@@ -44,11 +46,14 @@ def generate(client, model, prompt):
             return response.parsed or []
         except APIError as e:
             if e.code in RETRY_STATUS_CODES:
+                last_error = e
                 delay = min(2 ** attempt, 30) + random.random()
                 time.sleep(delay)
                 continue
             raise
-    raise RuntimeError("Maximum retries exceeded.")
+    raise RuntimeError(
+        f"AI question generation failed after retries: [{last_error.code}] {last_error.message}"
+    ) from last_error
 
 def load_lobby_questions(lobby_id):
     """Takes a lobby ID and returns a data object containing the questions, their answers, and a category for each question."""
