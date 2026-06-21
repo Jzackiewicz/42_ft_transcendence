@@ -4,6 +4,8 @@ import FriendsView from './SubviewsHomePage/FriendsView/FriendsView'
 import ChatContainer from './SubviewsHomePage/ChatContainer/ChatContainer'
 import SolarSystem from './SubviewsHomePage/Solar/SolarSystem'
 import { Navbar } from '../../components/Navbar/Navbar'
+import InlineError from '../../components/InlineError'
+import ErrorBanner from '../../components/ErrorBanner'
 
 import './HomePage.css'
 
@@ -17,6 +19,8 @@ export function HomePage() {
         handleCreateLobby,
         handleJoinLobby,
         joinUuid, setJoinUuid,
+        joinError, setJoinError,
+        createError, setCreateError,
         showJoinModal, setShowJoinModal,
         showRulesModal, setShowRulesModal,
     } = useHomePage()
@@ -69,19 +73,32 @@ export function HomePage() {
 
             {/* ── Join modal ── */}
             {showJoinModal && (
-                <div className="join-modal-overlay">
+                <div
+                    className="join-modal-overlay"
+                    role="dialog"
+                    aria-modal="true"
+                    onKeyDown={e => e.key === 'Escape' && setShowJoinModal(false)}
+                >
                     <div className="join-modal">
                         <h3 className="join-modal-title">Join Lobby</h3>
+                        <InlineError message={joinError} />
                         <input
                             className="join-modal-input"
                             type="text"
                             placeholder="Paste lobby UUID…"
                             value={joinUuid}
-                            onChange={e => setJoinUuid(e.target.value)}
+                            autoFocus
+                            onChange={e => { setJoinUuid(e.target.value); setJoinError(null) }}
                             onKeyDown={e => e.key === 'Enter' && handleJoinLobby()}
                         />
                         <div className="join-modal-actions">
-                            <button className="home-nav-play" onClick={handleJoinLobby}>Join</button>
+                            <button
+                                className="home-nav-play"
+                                onClick={handleJoinLobby}
+                                disabled={!joinUuid.trim()}
+                            >
+                                Join
+                            </button>
                             <button className="join-modal-cancel" onClick={() => setShowJoinModal(false)}>Cancel</button>
                         </div>
                     </div>
@@ -90,6 +107,7 @@ export function HomePage() {
 
             {/* ── Main ── */}
             <main className="home-content">
+                <ErrorBanner message={createError} onDismiss={() => setCreateError(null)} />
                 <AccountHeader
                     username={user?.username ?? ''}
                     email={user?.email ?? ''}
