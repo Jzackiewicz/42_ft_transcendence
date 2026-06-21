@@ -4,6 +4,7 @@ import FriendsView from './SubviewsHomePage/FriendsView/FriendsView'
 import ChatContainer from './SubviewsHomePage/ChatContainer/ChatContainer'
 import SolarSystem from './SubviewsHomePage/Solar/SolarSystem'
 import { Navbar } from '../../components/Navbar/Navbar'
+import { Button } from '../../components/Button/Button'
 
 import styles from './HomePage.module.css'
 
@@ -81,8 +82,8 @@ export function HomePage() {
                             onKeyDown={e => e.key === 'Enter' && handleJoinLobby()}
                         />
                         <div className={styles.joinModalActions}>
-                            <button className={styles.homeNavPlay} onClick={handleJoinLobby}>Join</button>
-                            <button className={styles.joinModalCancel} onClick={() => setShowJoinModal(false)}>Cancel</button>
+                            <Button onClick={handleJoinLobby}>Join</Button>
+                            <Button variant="ghost" onClick={() => setShowJoinModal(false)}>Cancel</Button>
                         </div>
                     </div>
                 </div>

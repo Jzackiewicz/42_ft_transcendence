@@ -292,6 +292,6 @@
     font-size: var(--font-xs);
 }
 
-.chatSendBtn:hover {
+.chatSendBtn:hover:not(:disabled) {
     box-shadow: 0 0 16px var(--chat-accent-border);
 }

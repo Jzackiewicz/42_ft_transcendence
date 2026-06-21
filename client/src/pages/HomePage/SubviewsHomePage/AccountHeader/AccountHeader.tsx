@@ -1,7 +1,6 @@
 import { Badge } from '../../../../components/Badge/Badge'
+import { Button } from '../../../../components/Button/Button'
 import styles from './AccountHeader.module.css'
-// Shared "home nav" button styles owned by the HomePage module.
-import homeStyles from '../../HomePage.module.css'
 
 interface AccountHeaderProps {
     username: string
@@ -24,16 +23,16 @@ function AccountHeader({ username, email, setShowJoinModal, setShowRulesModal, h
                     <Badge variant="human">Human</Badge>
                 </div>
             </div>
-            <button
-                className={styles.homeNavRules}
+            <Button
+                variant="ghost"
                 onClick={() => setShowRulesModal(true)}
                 aria-label="How to play"
                 title="How to play"
             >
                 How to Play ?
-            </button>
-            <button className={homeStyles.homeNavJoin} onClick={() => setShowJoinModal(true)}> Join Game</button>
-            <button className={homeStyles.homeNavPlay} onClick={handleCreateLobby}>▶ Play Now</button>
+            </Button>
+            <Button variant="secondary" onClick={() => setShowJoinModal(true)}> Join Game</Button>
+            <Button onClick={handleCreateLobby}>▶ Play Now</Button>
         </div>
     )
 }

@@ -74,6 +74,37 @@
     box-shadow: 0 0 20px rgba(0, 230, 118, 0.5);
 }
 
+.appBtnGradient {
+    background: linear-gradient(var(--gradient-deg), var(--cyan), var(--magenta));
+    color: var(--bg);
+    font-family: var(--fd);
+    font-size: var(--font-xl);
+    letter-spacing: 1.5px;
+    box-shadow: 0 0 30px var(--cyan-shadowed);
+}
+
+.appBtnGradient:hover:not(:disabled) {
+    transform: translateY(-1px);
+    filter: drop-shadow(0 0 20px var(--cyan-light-shadow));
+}
+
+/* Ghost: quiet, low-emphasis action (cancel, remove, secondary nav) */
+.appBtnGhost {
+    background: transparent;
+    border: 1px solid var(--pb);
+    color: var(--dim);
+}
+
+.appBtnGhost:hover:not(:disabled) {
+    color: var(--text);
+    background: var(--panel);
+}
+
+/* ── MODIFIERS ──────────────────────────────────────────────────── */
+.appBtnFull {
+    width: 100%;
+}
+
 /* ── STATES ─────────────────────────────────────────────────────── */
 .appBtn:disabled {
     cursor: not-allowed;

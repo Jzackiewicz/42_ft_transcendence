@@ -43,21 +43,6 @@
     margin-left: auto;
 }
 
-.reqAccept, .reqDecline {
-    padding: 4px 12px;
-    border-radius: var(--radius-sm);
-    border: none;
-    font-family: var(--fb);
-    font-size: var(--font-xs);
-    font-weight: 600;
-    cursor: pointer;
-    transition: opacity 0.15s;
-}
-
-.reqAccept  { background: var(--cyan);    color: #000; }
-.reqDecline { background: var(--border); color: var(--dim); }
-
-.reqAccept:hover, .reqDecline:hover { opacity: 0.8; }
 
 .friendsEmpty {
     color: var(--dim);

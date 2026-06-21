@@ -1,5 +1,6 @@
 import { useFriendsFindTabView } from './useFriendsFindTabView'
 import { cx } from '../../../../../../utils/cx'
+import { Button } from '../../../../../../components/Button/Button'
 import styles from './FriendsFindTabView.module.css'
 import shared from '../../FriendsView.module.css'
 
@@ -16,9 +17,9 @@ function FriendsFindTabView() {
                     onChange={e => setSearchQuery(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && handleSendRequest(searchQuery)}
                 />
-                <button className={styles.findBtn} onClick={() => handleSendRequest(searchQuery)}>
+                <Button onClick={() => handleSendRequest(searchQuery)}>
                     Send Request
-                </button>
+                </Button>
             </div>
             {status && (
                 <span className={cx(styles.findStatus, styles[status.type === 'error' ? 'findStatusError' : 'findStatusSuccess'])}>

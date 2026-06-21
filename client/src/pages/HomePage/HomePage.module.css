@@ -6,38 +6,6 @@
     position: relative;
 }
 
-.homeNavPlay {
-    padding: 7px 18px;
-    border-radius: var(--radius-sm);
-    border: none;
-    background: var(--cyan);
-    color: #000;
-    font-family: var(--fb);
-    font-size: var(--font-sm);
-    font-weight: 700;
-    cursor: pointer;
-    transition: box-shadow 0.2s;
-}
-
-.homeNavPlay:hover {
-    box-shadow: 0 0 20px var(--cyan-light-shadow);
-}
-
-.homeNavJoin {
-    padding: 7px 18px;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--cyan);
-    background: transparent;
-    color: var(--cyan);
-    font-family: var(--fb);
-    font-size: var(--font-sm);
-    font-weight: 700;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.homeNavJoin:hover { background: rgba(0, 229, 255, 0.08); }
-
 /* ── JOIN MODAL ─────────────────────────────────────────────────── */
 .joinModalOverlay {
     position: fixed;
@@ -87,20 +55,6 @@
     gap: 10px;
     justify-content: flex-end;
 }
-
-.joinModalCancel {
-    padding: 7px 18px;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--pb);
-    background: transparent;
-    color: var(--dim);
-    font-family: var(--fb);
-    font-size: var(--font-sm);
-    cursor: pointer;
-    transition: color 0.15s;
-}
-
-.joinModalCancel:hover { color: var(--text); }
 
 /* ── RULES MODAL ────────────────────────────────────────────────── */
 .rulesModalOverlay {

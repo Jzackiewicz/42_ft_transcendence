@@ -20,21 +20,6 @@
 .findInput::placeholder { color: var(--dim); }
 .findInput:focus { border-color: var(--cyan); }
 
-.findBtn {
-    padding: 8px 16px;
-    border-radius: var(--radius-sm);
-    border: none;
-    background: var(--cyan);
-    color: #000;
-    font-family: var(--fb);
-    font-size: var(--font-sm);
-    font-weight: 700;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: box-shadow 0.2s;
-}
-
-.findBtn:hover { box-shadow: 0 0 16px var(--cyan-light-shadow); }
 
 .findStatus {
     display: block;
