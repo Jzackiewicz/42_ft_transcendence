@@ -6,9 +6,14 @@
 **QUIZSENDENCE** is a **Game Show Webapp** that lets you and your friends take part in a gameshow based off Fifteen to One.
 
 ### Key features ```key features```
-- Online Multiplayer
-- AI expanded questions
-- <Fill_In>
+- **Online Multiplayer** Quiz Game Show.
+- **Friends system**.
+- **Text chats** between Friends and open text chat in-game.
+- <NOT_YET_IMPLEMENTED **Player Statistics**>.
+- <NOT_YET_IMPLEMENTED **Player Profiles**>.
+- **LLM** based question generator for lobbies.
+- **Mobile Support** along with **multi-browser support**.
+- **Admin Panel** with database and user control.
 
 ### How to win?
 The game show has you gain points by answering questions correctly. You must avoid answering incorrectly as you lose one of your three lives for each question you get wrong!
