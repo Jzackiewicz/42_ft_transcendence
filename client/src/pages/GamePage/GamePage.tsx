@@ -10,6 +10,7 @@ import { PlayerTile } from './SubviewsGamePage/PlayerTile/PlayerTile';
 import { GameHUD } from './SubviewsGamePage/GameHUD/GameHUD';
 import BlinkingSpaceBGDiv from '../../components/BlinkingSpaceBGDiv';
 import { Navbar } from '../../components/Navbar/Navbar';
+import ErrorBanner from '../../components/ErrorBanner';
 import './GamePage.css';
 
 export function GamePage() {
@@ -132,17 +133,7 @@ function GamePageInner() {
                 )}
 
                 {/* Error Banner */}
-                {errorMsg && (
-                    <div className="game-error-banner">
-                        <span><strong>Error:</strong> {errorMsg}</span>
-                        <button
-                            onClick={() => setErrorMsg(null)}
-                            className="btn-error-close"
-                        >
-                            &times;
-                        </button>
-                    </div>
-                )}
+                <ErrorBanner message={errorMsg} onDismiss={() => setErrorMsg(null)} />
 
                 {gameState ? (
                     <div className="game-main-layout">
