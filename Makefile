@@ -89,6 +89,9 @@ seed:
 	@echo "Seeding database (Production)..."
 	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(PROD_PROJECT) exec api python core/seeding/seed_data.py
 
+access_db:
+	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(PROD_PROJECT) exec db psql -U $(POSTGRES_USER) -d $(POSTGRES_DB)
+
 # Create and setup virtual environment
 dev-venv:
 	@if [ ! -d ".venv" ]; then \
@@ -233,4 +236,4 @@ client-test: client-install
 	@echo "Running frontend tests..."
 	cd client && npm run test:e2e
 
-.PHONY: all up down restart re clean check_clean check_fclean logs dev-logs ps fclean migrate dev-up dev-migrate dev-down dev-clean dev-runserver dev-test dev-createsuperuser dev-shell dev-venv client-install dev-client client-build dev-proxy dev-seed client-test seed
+.PHONY: all up down restart re clean check_clean check_fclean logs dev-logs ps fclean migrate dev-up dev-migrate dev-down dev-clean dev-runserver dev-test dev-createsuperuser dev-shell dev-venv client-install dev-client client-build dev-proxy dev-seed client-test seed access_db
