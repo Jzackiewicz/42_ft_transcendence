@@ -1,7 +1,6 @@
 import { useFriendsListTabView } from './useFriendsListTabView'
 import InlineError from '../../../../../../components/InlineError'
 import UserAvatar from '../../../../../../components/UserAvatar'
-import { OnlineIndicator } from '../../../../../../components/OnlineIndicator'
 import './FriendsListTabView.css'
 
 function FriendsListTabView() {
@@ -13,8 +12,7 @@ function FriendsListTabView() {
             <div className="friends-grid">
                 {friendsList.map((f) => (
                     <div key={f.friend.id} className="friend-item">
-                        <UserAvatar username={f.friend.username} avatar={f.friend.avatar} />
-                        <OnlineIndicator userId={f.friend.id} />
+                        <UserAvatar username={f.friend.username} avatar={f.friend.avatar} userId={f.friend.id} />
                         <span className="friend-name">{f.friend.username}</span>
                         <button className="friend-remove" onClick={() => handleRemove(f.friend.id)}>Remove</button>
                     </div>

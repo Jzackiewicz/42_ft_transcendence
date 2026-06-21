@@ -73,8 +73,8 @@
 
 .friend-avatar {
     position: relative;
-    width: 34px;
-    height: 34px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -99,6 +99,13 @@
 
 .friend-avatar .presence-dot.online  { background: #22c55e; }
 .friend-avatar .presence-dot.offline { background: #4b5563; }
+
+.friend-avatar-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
 
 .friend-name {
     font-size: 13px;

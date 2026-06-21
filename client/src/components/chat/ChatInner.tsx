@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useChatContainer } from './useChatContainer'
-import { OnlineIndicator } from '../OnlineIndicator'
+import UserAvatar from '../UserAvatar'
 import './chat.css'
 
 const MAX_MESSAGE_LENGTH = 500
@@ -50,10 +50,7 @@ export function ChatInner() {
                             className={`friend-item ${f.friend.id === sidebar.activeId ? 'active' : ''}`}
                             onClick={() => sidebar.handleChooseTab(f.friend.id)}
                         >
-                            <div className="friend-avatar">
-                                {(f.friend.username ?? '?')[0].toUpperCase()}
-                                <OnlineIndicator userId={f.friend.id} />
-                            </div>
+                            <UserAvatar username={f.friend.username} avatar={f.friend.avatar} userId={f.friend.id} />
                             <span className="friend-name">{f.friend.username}</span>
                         </div>
                     ))}
