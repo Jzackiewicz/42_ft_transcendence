@@ -46,10 +46,11 @@ export function useLoginView(onSuccess: () => void) {
                 return
             }
             setUser({
-                id:       data.user.id,
-                username: data.user.username,
-                email:    data.user.email,
-                avatar:   data.avatar,
+                id:          data.user.id,
+                username:    data.user.username,
+                email:       data.user.email,
+                avatar:      data.avatar ?? null,
+                date_joined: data.user.date_joined ?? '',
             })
 
             onSuccess()

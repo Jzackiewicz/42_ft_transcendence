@@ -227,3 +227,19 @@
 .accountGridChat {
     grid-column: 1 / -1;
 }
+
+/* ── RESPONSIVENESS ─────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .homeContent {
+        padding: 16px;
+        gap: 16px;
+    }
+
+    .accountGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .accountGridChat {
+        grid-column: 1;
+    }
+}

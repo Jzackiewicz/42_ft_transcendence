@@ -152,3 +152,22 @@
     border-color: var(--cyan);
     background: rgba(0, 229, 255, 0.06);
 }
+
+/* ── RESPONSIVENESS ─────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .accountHeader {
+        flex-wrap: wrap;
+        padding: 16px;
+        gap: 14px;
+        margin-bottom: 16px;
+    }
+
+    .accountInfo {
+        flex: 1 1 100%;
+    }
+
+    .homeNavRules,
+    .account-field-row {
+        flex: 1 1 auto;
+    }
+}
