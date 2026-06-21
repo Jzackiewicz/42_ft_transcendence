@@ -1,10 +1,9 @@
 import { ChatInner } from '../../../../components/chat/ChatInner'
-import './LobbyChat.css'
-
+import styles from './LobbyChat.module.css'
 
 export function LobbyChat() {
     return (
-        <div className="lobby-chat">
+        <div className={styles.lobbyChat}>
             <ChatInner />
         </div>
     )

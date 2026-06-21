@@ -94,7 +94,7 @@ dev-venv:
 VENV_PYTHON = ../.venv/bin/python3
 
 # Start stack for local dev
-dev-up: dev-venv client-install
+dev-up: dev-venv client-install client-typecheck
 	@echo "Starting development stack..."
 	DB_EXPOSED_PORT=$(DEV_DB_EXPOSED_PORT) \
 	REDIS_EXPOSED_PORT=$(DEV_REDIS_EXPOSED_PORT) \
@@ -181,6 +181,11 @@ client-install:
 	@echo "Installing frontend dependencies..."
 	cd client && npm install
 
+# Run typescript compilation checks
+client-typecheck: client-install
+	@echo "Checking frontend TypeScript types..."
+	cd client && npx tsc --noEmit
+
 # Run frontend locally (Dev)
 dev-client: client-install
 	@echo "Running frontend locally..."
@@ -218,4 +223,4 @@ client-test: client-install
 	@echo "Running frontend tests..."
 	cd client && npm run test:e2e
 
-.PHONY: all up down restart re clean check_clean check_fclean logs dev-logs ps fclean migrate dev-up dev-migrate dev-down dev-clean dev-runserver dev-test dev-createsuperuser dev-shell dev-venv client-install dev-client client-build dev-proxy dev-seed client-test seed
+.PHONY: all up down restart re clean check_clean check_fclean logs dev-logs ps fclean migrate dev-up dev-migrate dev-down dev-clean dev-runserver dev-test dev-createsuperuser dev-shell dev-venv client-install client-typecheck dev-client client-build dev-proxy dev-seed client-test seed
