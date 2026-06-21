@@ -104,7 +104,9 @@ class IsSelfOrReadOnlyTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("avatar", response.data)
-        self.assertEqual(response.data["avatar"][0], "Avatar file size must be under 2MB.")
+        self.assertEqual(
+            response.data["avatar"][0], "Avatar file size must be under 5MB."
+        )
 
     def test_upload_avatar_within_size_limit_succeeds(self):
         url = reverse("profile-avatar", kwargs={"user_id": self.user_a.id})
