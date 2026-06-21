@@ -13,6 +13,7 @@ function FriendsFindTabView() {
                     className={styles.findInput}
                     placeholder="Search by username…"
                     value={searchQuery}
+                    maxLength={40}
                     onChange={e => setSearchQuery(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && handleSendRequest(searchQuery)}
                 />
