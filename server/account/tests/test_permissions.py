@@ -98,13 +98,15 @@ class IsSelfOrReadOnlyTests(APITestCase):
 
     def test_upload_avatar_exceeding_size_limit_returns_400(self):
         url = reverse("profile-avatar", kwargs={"user_id": self.user_a.id})
-        large_data = _png_bytes() + (b"0" * (2 * 1024 * 1024 + 1))
+        large_data = _png_bytes() + (b"0" * (5 * 1024 * 1024 + 1))
         avatar = SimpleUploadedFile("large.png", large_data, content_type="image/png")
         response = self.client.post(url, {"avatar": avatar}, format="multipart")
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("avatar", response.data)
-        self.assertEqual(response.data["avatar"][0], "Avatar file size must be under 2MB.")
+        self.assertEqual(
+            response.data["avatar"][0], "Avatar file size must be under 5MB."
+        )
 
     def test_upload_avatar_within_size_limit_succeeds(self):
         url = reverse("profile-avatar", kwargs={"user_id": self.user_a.id})

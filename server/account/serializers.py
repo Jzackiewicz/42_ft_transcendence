@@ -73,6 +73,7 @@ class UserUpdateInputSerializer(serializers.Serializer):
 # UserProfile serializers
 # ---------------------------------------------------------------------------
 
+
 # me
 class UserProfileOutputSerializer(serializers.ModelSerializer):
     user = UserOutputSerializer(read_only=True)
@@ -98,20 +99,21 @@ class PublicUserSerializer(serializers.ModelSerializer):
 
     def get_avatar(self, user):
         return user.profile.avatar_url(self.context.get("request"))
-    
+
     def get_is_online(self, user):
         precomputed = self.context.get("online_user_ids")
         if precomputed is not None:
             return user.id in precomputed
         return PresenceRegistry.is_online(user.id)
 
+
 class UserProfileAvatarInputSerializer(serializers.Serializer):
     avatar = serializers.ImageField()
 
     def validate_avatar(self, value):
-        max_size = 2 * 1024 * 1024 # 2MB
+        max_size = 5 * 1024 * 1024  # 5MB
         if value.size > max_size:
-            raise serializers.ValidationError("Avatar file size must be under 2MB.")
+            raise serializers.ValidationError("Avatar file size must be under 5MB.")
         return value
 
 
