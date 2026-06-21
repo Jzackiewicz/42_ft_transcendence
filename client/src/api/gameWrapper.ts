@@ -5,6 +5,11 @@ export async function createLobby() {
     return res.data;
 }
 
+export async function getUserStats(userId: number) {
+    const res = await apiClient.get(`/game/users/${userId}/stats/`);
+    return res.data;
+}
+
 export async function joinLobby(joinUuid: string) {
     await apiClient.post(`/game/lobby/join/${joinUuid}/`);
 }

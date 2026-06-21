@@ -1,6 +1,7 @@
 import BlinkingSpaceBGDiv from '../../components/BlinkingSpaceBGDiv/BlinkingSpaceBGDiv'
 import AccountHeader from './SubviewsHomePage/AccountHeader/AccountHeader'
 import FriendsView from './SubviewsHomePage/FriendsView/FriendsView'
+import StatsView from './SubviewsHomePage/StatsView/StatsView'
 import ChatContainer from './SubviewsHomePage/ChatContainer/ChatContainer'
 import { Navbar } from '../../components/Navbar/Navbar'
 
@@ -99,6 +100,7 @@ export function HomePage() {
 
                 <div className={styles.accountGrid}>
                     <FriendsView />
+                    <StatsView />
 
                     <div className={styles.accountGridChat}>
                         <ChatContainer />
