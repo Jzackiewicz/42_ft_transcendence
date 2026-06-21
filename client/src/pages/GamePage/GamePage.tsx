@@ -15,6 +15,14 @@ import { SectionTitle } from '../../components/SectionTitle/SectionTitle';
 import { cx } from '../../utils/cx';
 import styles from './GamePage.module.css';
 
+const phaseClass: Record<GameStatus, string> = {
+    [GameStatus.LOBBY]: styles.phaseLobby,
+    [GameStatus.ANSWERING]: styles.phaseAnswering,
+    [GameStatus.NOMINATION]: styles.phaseNomination,
+    [GameStatus.EVALUATION]: styles.phaseEvaluation,
+    [GameStatus.GAME_OVER]: styles.phaseGame_over,
+};
+
 export function GamePage() {
     return (
         <FriendsProvider>
@@ -116,7 +124,7 @@ function GamePageInner() {
     const { gameState, timeLeft, hostPlayerId, isSpectator, currentPlayerObj, eligiblePlayers } = sessionState;
 
     return (
-        <div className={cx(styles.gamePageContainer, styles[`phase${(gameState?.current_status || 'none').replace(/^./, c => c.toUpperCase())}`])}>
+        <div className={cx(styles.gamePageContainer, gameState && phaseClass[gameState.current_status])}>
             <BlinkingSpaceBGDiv />
 
             {/* ── Nav ── */}
@@ -152,7 +160,7 @@ function GamePageInner() {
 
                         {/* Players List Sidebar (Always Visible) */}
                         <Card className={styles.gameSidebar}>
-                            <SectionTitle as="h3" className={styles.gameSidebarTitle}>Players</SectionTitle>
+                            <SectionTitle as="h3">Players</SectionTitle>
                             <div className={styles.gamePlayersList}>
                                 {gameState.players.map((player) => {
                                     const isCurrentNominator = gameState.last_correct_player === currentPlayerObj?.id;

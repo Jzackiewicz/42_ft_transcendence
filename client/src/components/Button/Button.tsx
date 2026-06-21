@@ -2,9 +2,25 @@ import React from 'react';
 import { cx } from '../../utils/cx';
 import styles from './Button.module.css';
 
+type Variant = 'primary' | 'secondary' | 'danger' | 'success';
+type Size = 'sm' | 'md' | 'lg';
+
+const variantClass: Record<Variant, string> = {
+    primary: styles.appBtnPrimary,
+    secondary: styles.appBtnSecondary,
+    danger: styles.appBtnDanger,
+    success: styles.appBtnSuccess,
+};
+
+const sizeClass: Record<Size, string> = {
+    sm: styles.appBtnSm,
+    md: styles.appBtnMd,
+    lg: styles.appBtnLg,
+};
+
 interface ButtonProps {
-    variant?: 'primary' | 'secondary' | 'danger' | 'success';
-    size?: 'sm' | 'md' | 'lg';
+    variant?: Variant;
+    size?: Size;
     disabled?: boolean;
     onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
     type?: 'button' | 'submit' | 'reset';
@@ -21,11 +37,10 @@ export function Button({
     children,
     className = ''
 }: ButtonProps) {
-    const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
     const classNames = cx(
         styles.appBtn,
-        styles[`appBtn${cap(variant)}`],
-        styles[`appBtn${cap(size)}`],
+        variantClass[variant],
+        sizeClass[size],
         className
     );
 
