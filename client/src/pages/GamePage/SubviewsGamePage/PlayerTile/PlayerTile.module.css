@@ -124,7 +124,7 @@
 
 .playerEliminatedLabel {
     margin-top: 4px;
-    font-size: 10px;
+    font-size: var(--font-xs);
     color: var(--red);
     font-weight: bold;
     letter-spacing: 0.5px;
@@ -132,7 +132,7 @@
 
 .playerOfflineLabel {
     margin-top: 4px;
-    font-size: 10px;
+    font-size: var(--font-xs);
     color: var(--red);
     font-weight: bold;
     letter-spacing: 0.5px;

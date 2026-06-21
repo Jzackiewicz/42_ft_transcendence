@@ -3,7 +3,7 @@
     align-items: center;
     gap: 20px;
     padding: 22px 28px;
-    border-radius: 14px;
+    border-radius: var(--radius-lg);
     background: var(--panel);
     border: 1px solid var(--pb);
     margin-bottom: 24px;

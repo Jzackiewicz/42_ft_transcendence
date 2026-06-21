@@ -40,14 +40,14 @@
     display: block;
     margin-top: 8px;
     padding: 6px 12px;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     font-family: var(--fb);
     font-size: var(--font-sm);
 }
 
 .findStatusSuccess {
     background: rgba(0, 229, 100, 0.12);
-    color: #00e564;
+    color: var(--green);
     border: 1px solid rgba(0, 229, 100, 0.25);
 }
 

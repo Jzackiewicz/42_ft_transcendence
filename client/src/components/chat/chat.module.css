@@ -16,7 +16,7 @@
 .chatContainer {
     display: grid;
     grid-template-columns: var(--chat-sidebar-w) 1fr;
-    border-radius: 14px;
+    border-radius: var(--radius-lg);
     border: 1px solid var(--pb);
     background: var(--panel);
     overflow: hidden;
@@ -115,7 +115,7 @@
 
 .chatThreadName {
     font-family: var(--fd);
-    font-size: 16px;
+    font-size: var(--font-lg);
     font-weight: 700;
 }
 
@@ -142,7 +142,7 @@
 .chatBubble {
     max-width: 50%;
     padding: 8px 13px;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     font-size: var(--font-sm);
     line-height: 1.45;
     overflow-wrap: break-word;
@@ -165,7 +165,7 @@
 }
 
 .chatTs {
-    font-size: 10px;
+    font-size: var(--font-xs);
     color: var(--dim);
     margin-top: 3px;
     text-align: right;
@@ -199,12 +199,12 @@
 .chatError {
     margin: 0 0 8px;
     padding: 8px 12px;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     background: rgba(255, 77, 77, 0.08);
     border: 1px solid rgba(255, 77, 77, 0.35);
     color: #ff8a80;
     font-family: var(--fb);
-    font-size: 12px;
+    font-size: var(--font-sm);
     line-height: 1.4;
     display: flex;
     align-items: center;
@@ -218,7 +218,7 @@
     border: 1px solid rgba(255, 77, 77, 0.5);
     color: #ff8a80;
     padding: 3px 10px;
-    border-radius: 4px;
+    border-radius: var(--radius-xs);
     font-family: var(--fb);
     font-size: var(--font-xs);
     font-weight: 600;

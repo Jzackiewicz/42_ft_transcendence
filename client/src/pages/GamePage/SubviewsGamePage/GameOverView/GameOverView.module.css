@@ -142,7 +142,7 @@
 
 /* ── LIVES ───────────────────────────────────────────────────── */
 .gameOverLives {
-    font-size: 12px;
+    font-size: var(--font-sm);
     letter-spacing: 1px;
 }
 

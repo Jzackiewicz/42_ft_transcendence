@@ -118,7 +118,7 @@
 .gameLoadingBanner {
     background: var(--panel);
     border: 1px dashed var(--pb);
-    border-radius: 14px;
+    border-radius: var(--radius-lg);
     padding: 40px;
     text-align: center;
     font-family: var(--fb);

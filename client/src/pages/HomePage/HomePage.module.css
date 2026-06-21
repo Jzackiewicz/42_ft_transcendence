@@ -52,7 +52,7 @@
 .joinModal {
     background: var(--panel);
     border: 1px solid var(--pb);
-    border-radius: 14px;
+    border-radius: var(--radius-lg);
     padding: 28px 32px;
     display: flex;
     flex-direction: column;
@@ -124,7 +124,7 @@
     position: relative;
     background: var(--panel);
     border: 1px solid var(--pb);
-    border-radius: 14px;
+    border-radius: var(--radius-lg);
     padding: 28px 32px 24px;
     max-width: 460px;
     width: 100%;

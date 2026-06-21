@@ -45,7 +45,7 @@
 
 .reqAccept, .reqDecline {
     padding: 4px 12px;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     border: none;
     font-family: var(--fb);
     font-size: var(--font-xs);
