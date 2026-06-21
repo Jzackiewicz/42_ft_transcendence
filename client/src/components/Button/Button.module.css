@@ -88,6 +88,18 @@
     filter: drop-shadow(0 0 20px var(--cyan-light-shadow));
 }
 
+/* Danger Ghost: red-accent outlined (retry, destructive secondary) */
+.appBtnDangerGhost {
+    background: transparent;
+    border: 1px solid rgba(255, 77, 77, 0.5);
+    color: #ff8a80;
+}
+
+.appBtnDangerGhost:hover:not(:disabled) {
+    background: rgba(255, 77, 77, 0.18);
+    color: #ffb4b4;
+}
+
 /* Ghost: quiet, low-emphasis action (cancel, remove, secondary nav) */
 .appBtnGhost {
     background: transparent;

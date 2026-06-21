@@ -2,13 +2,14 @@ import React from 'react';
 import { cx } from '../../utils/cx';
 import styles from './Button.module.css';
 
-type Variant = 'primary' | 'secondary' | 'danger' | 'success' | 'gradient' | 'ghost';
+type Variant = 'primary' | 'secondary' | 'danger' | 'dangerGhost' | 'success' | 'gradient' | 'ghost';
 type Size = 'sm' | 'md' | 'lg';
 
 const variantClass: Record<Variant, string> = {
     primary: styles.appBtnPrimary,
     secondary: styles.appBtnSecondary,
     danger: styles.appBtnDanger,
+    dangerGhost: styles.appBtnDangerGhost,
     success: styles.appBtnSuccess,
     gradient: styles.appBtnGradient,
     ghost: styles.appBtnGhost,

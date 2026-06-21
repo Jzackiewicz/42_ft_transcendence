@@ -1,0 +1,32 @@
+.errorBanner {
+    color: var(--text);
+    background: rgba(255, 23, 68, 0.08);
+    border: 1px solid rgba(255, 23, 68, 0.2);
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--fb);
+    font-size: var(--font-sm);
+    line-height: 1.4;
+    box-shadow: 0 0 15px rgba(255, 23, 68, 0.1);
+}
+
+.errorBannerDismiss {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    color: var(--red);
+    opacity: 0.8;
+    transition: opacity 0.15s;
+    padding: 0 4px;
+}
+
+.errorBannerDismiss:hover {
+    opacity: 1;
+}

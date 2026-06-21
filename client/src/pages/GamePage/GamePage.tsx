@@ -13,6 +13,7 @@ import { Navbar } from '../../components/Navbar/Navbar';
 import { Card } from '../../components/Card/Card';
 import { SectionTitle } from '../../components/SectionTitle/SectionTitle';
 import { cx } from '../../utils/cx';
+import { ErrorBanner } from '../../components/ErrorBanner/ErrorBanner';
 import styles from './GamePage.module.css';
 
 const phaseClass: Record<GameStatus, string> = {
@@ -142,17 +143,11 @@ function GamePageInner() {
                     </div>
                 )}
 
-                {/* Error Banner */}
                 {errorMsg && (
-                    <div className={styles.gameErrorBanner}>
-                        <span><strong>Error:</strong> {errorMsg}</span>
-                        <button
-                            onClick={() => setErrorMsg(null)}
-                            className={styles.btnErrorClose}
-                        >
-                            &times;
-                        </button>
-                    </div>
+                    <ErrorBanner
+                        message={`Error: ${errorMsg}`}
+                        onDismiss={() => setErrorMsg(null)}
+                    />
                 )}
 
                 {gameState ? (

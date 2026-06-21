@@ -195,41 +195,6 @@
     text-align: center;
 }
 
-/* ERROR BANNER */
-.chatError {
-    margin: 0 0 8px;
-    padding: 8px 12px;
-    border-radius: var(--radius-sm);
-    background: rgba(255, 77, 77, 0.08);
-    border: 1px solid rgba(255, 77, 77, 0.35);
-    color: #ff8a80;
-    font-family: var(--fb);
-    font-size: var(--font-sm);
-    line-height: 1.4;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-}
-
-.chatErrorRetry {
-    flex-shrink: 0;
-    background: transparent;
-    border: 1px solid rgba(255, 77, 77, 0.5);
-    color: #ff8a80;
-    padding: 3px 10px;
-    border-radius: var(--radius-xs);
-    font-family: var(--fb);
-    font-size: var(--font-xs);
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.15s, color 0.15s;
-}
-
-.chatErrorRetry:hover {
-    background: rgba(255, 77, 77, 0.18);
-    color: #ffb4b4;
-}
 
 /* CONNECTION HINT */
 .chatConnHint {
