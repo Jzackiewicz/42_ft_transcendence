@@ -30,7 +30,7 @@ function AccountHeader({ username, email, setShowJoinModal, setShowRulesModal, h
                 How to Play ?
             </button>
             <button className="home-nav-join" onClick={() => setShowJoinModal(true)}> Join Game</button>
-            <button className="home-nav-play" onClick={handleCreateLobby}>▶ Play Now</button>
+            <button className="home-nav-play" onClick={handleCreateLobby}>▶ Create Game</button>
         </div>
     )
 }
