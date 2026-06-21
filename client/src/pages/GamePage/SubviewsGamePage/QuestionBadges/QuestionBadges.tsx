@@ -1,3 +1,6 @@
+import { Badge } from '../../../../components/Badge/Badge';
+import styles from './QuestionBadges.module.css';
+
 interface QuestionBadgesProps {
     isAiGenerated: boolean;
     isVerified: boolean;
@@ -9,12 +12,16 @@ export function QuestionBadges({ isAiGenerated, isVerified }: QuestionBadgesProp
     }
 
     return (
-        <span className="question-badges">
+        <span className={styles.questionBadges}>
             {isAiGenerated && (
-                <span className="badge badge-ai" title="AI generated question">AI Generated</span>
+                <Badge variant="ai" title="AI generated question">
+                    AI Generated
+                </Badge>
             )}
             {isVerified && (
-                <span className="badge badge-verified" title="Verified question">Verified</span>
+                <Badge variant="verified" title="Verified question">
+                    Verified
+                </Badge>
             )}
         </span>
     );

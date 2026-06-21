@@ -1,17 +1,17 @@
 import { Link } from 'react-router-dom';
-import BlinkingSpaceBGDiv from '../../components/BlinkingSpaceBGDiv';
-import './TermsOfService.css';
+import BlinkingSpaceBGDiv from '../../components/BlinkingSpaceBGDiv/BlinkingSpaceBGDiv';
+import styles from '../static-page.module.css';
 
 export function TermsOfServicePage() {
 	return (
-		<div className="static-page-container">
+		<div className={styles.staticPageContainer}>
 			<BlinkingSpaceBGDiv />
-			<div className="static-page-content">
-				<Link to="/" className="back-button">
+			<div className={styles.staticPageContent}>
+				<Link to="/" className={styles.backButton}>
 					← Go Back
 				</Link>
 				<h1>Terms of Service</h1>
-				<p className="last-updated">Last Updated: June 2026</p>
+				<p className={styles.lastUpdated}>Last Updated: June 2026</p>
 
 				<h2>1. Acceptance of Terms</h2>
 				<p>By accessing or using Transcendence, you agree to be bound by these Terms of Service and all applicable laws and regulations.</p>

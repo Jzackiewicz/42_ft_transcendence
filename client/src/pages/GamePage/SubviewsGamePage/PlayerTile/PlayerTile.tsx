@@ -1,5 +1,7 @@
 import { Player } from '../../useGamePage';
-import './PlayerTile.css';
+import { Badge } from '../../../../components/Badge/Badge';
+import { cx } from '../../../../utils/cx';
+import styles from './PlayerTile.module.css';
 
 interface PlayerTileProps {
     player: Player;
@@ -27,55 +29,55 @@ export function PlayerTile({
         .map((_, i) => i < lives ? '❤️' : '🖤')
         .join('');
 
-    const tileClasses = [
-        'player-tile',
-        isPlayerActive ? 'active' : '',
-        isCurrentUser ? 'current-user' : '',
-        !is_alive ? 'eliminated' : '',
-        !player.is_online ? 'offline' : '',
-        isClickable ? 'clickable' : ''
-    ].filter(Boolean).join(' ');
+    const tileClasses = cx(
+        styles.playerTile,
+        isPlayerActive && styles.active,
+        isCurrentUser && styles.currentUser,
+        !is_alive && styles.eliminated,
+        !player.is_online && styles.offline,
+        isClickable && styles.clickable
+    );
 
     return (
         <div className={tileClasses} onClick={isClickable ? onClick : undefined}>
-            <div className="player-tile-header">
-                <div className="player-tile-user-info">
+            <div className={styles.playerTileHeader}>
+                <div className={styles.playerTileUserInfo}>
                     {player.avatar ? (
-                        <img 
-                            src={player.avatar} 
-                            alt={`${display_name}'s avatar`} 
-                            className="player-tile-avatar"
+                        <img
+                            src={player.avatar}
+                            alt={`${display_name}'s avatar`}
+                            className={styles.playerTileAvatar}
                         />
                     ) : (
-                        <span className="player-tile-avatar-placeholder">👤</span>
+                        <span className={styles.playerTileAvatarPlaceholder}>👤</span>
                     )}
-                    <span className={is_alive ? 'player-name-alive' : 'player-name-dead'}>
+                    <span className={is_alive ? styles.playerNameAlive : styles.playerNameDead}>
                         {display_name} {isCurrentUser && '(You)'}
                     </span>
                 </div>
-                <span className="player-role-badges">
-                    {isPlayerHost && <span className="badge badge-host" title="Lobby Host">Host</span>}
-                    {isPlayerActive && <span className="badge badge-answering" title="Answering Turn">Answering</span>}
-                    {isPlayerNominator && <span className="badge badge-nominator" title="Has Nomination Rights">Nominator</span>}
+                <span className={styles.playerRoleBadges}>
+                    {isPlayerHost && <Badge variant="host" title="Lobby Host">Host</Badge>}
+                    {isPlayerActive && <Badge variant="answering" title="Answering Turn">Answering</Badge>}
+                    {isPlayerNominator && <Badge variant="nominator" title="Has Nomination Rights">Nominator</Badge>}
                 </span>
             </div>
-            <div className="player-stats">
-                <div className="player-stat-item">
-                    <span className="stat-label">Lives</span>
-                    <span className="stat-hearts">{hearts}</span>
+            <div className={styles.playerStats}>
+                <div className={styles.playerStatItem}>
+                    <span className={styles.statLabel}>Lives</span>
+                    <span className={styles.statHearts}>{hearts}</span>
                 </div>
-                <div className="player-stat-item">
-                    <span className="stat-label">Points</span>
-                    <span className="stat-points">{points}</span>
+                <div className={styles.playerStatItem}>
+                    <span className={styles.statLabel}>Points</span>
+                    <span className={styles.statPoints}>{points}</span>
                 </div>
             </div>
             {!is_alive && (
-                <div className="player-eliminated-label">
+                <div className={styles.playerEliminatedLabel}>
                     💀 ELIMINATED
                 </div>
             )}
             {player.is_online === false && is_alive && (
-                <div className="player-offline-label">
+                <div className={styles.playerOfflineLabel}>
                     📡 DISCONNECTED
                 </div>
             )}

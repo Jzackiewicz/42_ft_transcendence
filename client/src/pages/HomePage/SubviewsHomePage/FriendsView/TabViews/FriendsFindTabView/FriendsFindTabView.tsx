@@ -1,32 +1,34 @@
 import { useFriendsFindTabView } from './useFriendsFindTabView'
-import './FriendsFindTabView.css'
+import { cx } from '../../../../../../utils/cx'
+import styles from './FriendsFindTabView.module.css'
+import shared from '../../FriendsView.module.css'
 
 function FriendsFindTabView() {
     const { searchQuery, setSearchQuery, handleSendRequest, friends, status } = useFriendsFindTabView()
 
     return (
-        <div className="friends-find">
-            <div className="find-row">
+        <div>
+            <div className={styles.findRow}>
                 <input
-                    className="find-input"
+                    className={styles.findInput}
                     placeholder="Search by username…"
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && handleSendRequest(searchQuery)}
                 />
-                <button className="find-btn" onClick={() => handleSendRequest(searchQuery)}>
+                <button className={styles.findBtn} onClick={() => handleSendRequest(searchQuery)}>
                     Send Request
                 </button>
             </div>
             {status && (
-                <span className={`find-status find-status--${status.type}`}>
+                <span className={cx(styles.findStatus, styles[status.type === 'error' ? 'findStatusError' : 'findStatusSuccess'])}>
                     {status.message}
                 </span>
             )}
-            <div className="friends-scroll">
-                <div className="find-results">
+            <div className={shared.friendsScroll}>
+                <div className={styles.findResults}>
                     {friends.map(user => (
-                        <div key={user.id} className="find-result-item" onClick={() => setSearchQuery(user.username)}>
+                        <div key={user.id} className={styles.findResultItem} onClick={() => setSearchQuery(user.username)}>
                             {user.username}
                         </div>
                     ))}

@@ -1,0 +1,19 @@
+.nominationViewContainer {
+    color: #fff;
+}
+
+.nominationActivePrompt {
+    margin-top: 10px;
+}
+
+.nominationPromptLabel {
+    color: #7986cb;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.nominationSpectatorWaiting {
+    margin-top: 10px;
+    color: #aaa;
+    font-style: italic;
+}
