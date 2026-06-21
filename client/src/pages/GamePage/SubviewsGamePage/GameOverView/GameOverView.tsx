@@ -1,5 +1,6 @@
 import { Player } from '../../useGamePage';
 import { Button } from '../../../../components/Button/Button';
+import { Avatar } from '../../../../components/Avatar/Avatar';
 import { cx } from '../../../../utils/cx';
 import styles from './GameOverView.module.css';
 
@@ -78,15 +79,13 @@ export function GameOverView({ winnerId, players, onReturnToHome }: GameOverView
                                 </td>
                                 <td className={styles.gameOverPlayerCell}>
                                     <div className={styles.gameOverPlayerInfo}>
-                                        {player.avatar ? (
-                                            <img
-                                                src={player.avatar}
-                                                alt={`${player.display_name}'s avatar`}
-                                                className={styles.gameOverAvatar}
-                                            />
-                                        ) : (
-                                            <span className={styles.gameOverAvatarPlaceholder}>👤</span>
-                                        )}
+                                        <Avatar
+                                            name={player.display_name}
+                                            imageUrl={player.avatar}
+                                            size="sm"
+                                            bg="neutral"
+                                            bordered
+                                        />
                                         <span className={styles.gameOverPlayerName}>
                                             {player.display_name}
                                         </span>

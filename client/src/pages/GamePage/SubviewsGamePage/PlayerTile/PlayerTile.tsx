@@ -1,5 +1,6 @@
 import { Player } from '../../useGamePage';
 import { Badge } from '../../../../components/Badge/Badge';
+import { Avatar } from '../../../../components/Avatar/Avatar';
 import { cx } from '../../../../utils/cx';
 import styles from './PlayerTile.module.css';
 
@@ -42,15 +43,13 @@ export function PlayerTile({
         <div className={tileClasses} onClick={isClickable ? onClick : undefined}>
             <div className={styles.playerTileHeader}>
                 <div className={styles.playerTileUserInfo}>
-                    {player.avatar ? (
-                        <img
-                            src={player.avatar}
-                            alt={`${display_name}'s avatar`}
-                            className={styles.playerTileAvatar}
-                        />
-                    ) : (
-                        <span className={styles.playerTileAvatarPlaceholder}>👤</span>
-                    )}
+                    <Avatar
+                        name={display_name}
+                        imageUrl={player.avatar}
+                        size="xs"
+                        bg="neutral"
+                        bordered
+                    />
                     <span className={is_alive ? styles.playerNameAlive : styles.playerNameDead}>
                         {display_name} {isCurrentUser && '(You)'}
                     </span>

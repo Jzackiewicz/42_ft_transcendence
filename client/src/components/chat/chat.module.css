@@ -71,21 +71,6 @@
     color: var(--chat-accent);
 }
 
-.friendAvatar {
-    position: relative;
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--fd);
-    font-size: var(--font-md);
-    font-weight: 700;
-    color: #000;
-    flex-shrink: 0;
-    background: var(--chat-accent);
-}
 
 .friendName {
     font-size: var(--font-sm);

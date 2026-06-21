@@ -19,23 +19,6 @@
     background: linear-gradient(90deg, transparent, var(--cyan), var(--magenta), transparent);
 }
 
-.accountAvatar {
-    width: 72px;
-    height: 72px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--cyan), #0088aa);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--fd);
-    font-size: var(--font-2xl);
-    font-weight: 700;
-    color: #000;
-    border: 3px solid var(--cyan-light-shadow);
-    box-shadow: 0 0 24px rgba(0, 229, 255, 0.3);
-    flex-shrink: 0;
-}
-
 .accountInfo { flex: 1; }
 
 .accountName {
