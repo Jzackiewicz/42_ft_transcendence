@@ -1,5 +1,8 @@
 import { useState } from 'react'
 import { useChatContainer } from './useChatContainer'
+import { OnlineIndicator } from '../OnlineIndicator/OnlineIndicator'
+import { cx } from '../../utils/cx'
+import styles from './chat.module.css'
 import UserAvatar from '../UserAvatar'
 import './chat.css'
 
@@ -26,14 +29,14 @@ export function ChatInner() {
 
     let chatContent
     if (sidebar.noFriends) {
-        chatContent = <div className="chat-empty">Add Friends to message</div>
+        chatContent = <div className={styles.chatEmpty}>Add Friends to message</div>
     } else {
         chatContent = thread.messages.filter(msg => msg.message).map((msg, i) => (
             <div
                 key={i}
-                className={`chat-bubble-row ${msg.sender_username === thread.myUsername ? 'me' : 'friend'}`}
+                className={cx(styles.chatBubbleRow, msg.sender_username === thread.myUsername ? styles.me : styles.friend)}
             >
-                <div className="chat-bubble">{msg.message}</div>
+                <div className={styles.chatBubble}>{msg.message}</div>
             </div>
         ))
     }
@@ -41,15 +44,20 @@ export function ChatInner() {
     return (
         <>
             {/* ── Sidebar ── */}
-            <div className="chat-sidebar">
-                <div className="chat-sidebar-title">Messages</div>
-                <div className="chat-conv-list">
+            <div className={styles.chatSidebar}>
+                <div className={styles.chatSidebarTitle}>Messages</div>
+                <div className={styles.chatConvList}>
                     {sidebar.friendsList.map(f => (
                         <div
                             key={f.friend.id}
-                            className={`friend-item ${f.friend.id === sidebar.activeId ? 'active' : ''}`}
+                            className={cx(styles.friendItem, f.friend.id === sidebar.activeId && styles.active)}
                             onClick={() => sidebar.handleChooseTab(f.friend.id)}
                         >
+                            <div className={styles.friendAvatar}>
+                                {(f.friend.username ?? '?')[0].toUpperCase()}
+                                <OnlineIndicator userId={f.friend.id} />
+                            </div>
+                            <span className={styles.friendName}>{f.friend.username}</span>
                             <UserAvatar username={f.friend.username} avatar={f.friend.avatar} userId={f.friend.id} />
                             <span className="friend-name">{f.friend.username}</span>
                         </div>
@@ -58,34 +66,34 @@ export function ChatInner() {
             </div>
 
             {/* ── Thread ── */}
-            <div className="chat-thread">
+            <div className={styles.chatThread}>
                 <div
-                    className="chat-messages"
+                    className={styles.chatMessages}
                     ref={thread.messagesRef}
                     onScroll={thread.handleScroll}
                 >
                     {thread.historyError && (
-                        <div className="chat-error" role="alert">
+                        <div className={styles.chatError} role="alert">
                             <span>{thread.historyError}</span>
-                            <button className="chat-error-retry" onClick={thread.retryHistory}>
+                            <button className={styles.chatErrorRetry} onClick={thread.retryHistory}>
                                 Retry
                             </button>
                         </div>
                     )}
                     {thread.hasMore && thread.loadingOlder && (
-                        <div className="chat-load-older">Loading…</div>
+                        <div className={styles.chatLoadOlder}>Loading…</div>
                     )}
                     {chatContent}
                 </div>
 
                 {notConnected && !sidebar.noFriends && (
-                    <div className="chat-conn-hint" role="status">Reconnecting…</div>
+                    <div className={styles.chatConnHint} role="status">Reconnecting…</div>
                 )}
 
                 {/* ── Input ── */}
-                <div className="chat-input-row">
+                <div className={styles.chatInputRow}>
                     <input
-                        className={`chat-input ${draft.length === MAX_MESSAGE_LENGTH ? 'chat-input--error' : ''}`}
+                        className={cx(styles.chatInput, draft.length === MAX_MESSAGE_LENGTH && styles.chatInputError)}
                         placeholder={notConnected ? 'Reconnecting…' : 'Message…'}
                         value={draft}
                         maxLength={MAX_MESSAGE_LENGTH}
@@ -94,7 +102,7 @@ export function ChatInner() {
                         onKeyDown={e => e.key === 'Enter' && send()}
                     />
                     <button
-                        className="chat-send-btn"
+                        className={styles.chatSendBtn}
                         onClick={send}
                         disabled={isDisabled || draft.length === MAX_MESSAGE_LENGTH}
                     >

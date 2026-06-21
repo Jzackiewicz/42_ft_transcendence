@@ -1,0 +1,13 @@
+.card {
+    background: var(--panel);
+    /* Optional theming via an ancestor-published contract; falls back to defaults. */
+    border: 1px solid var(--theme-border, var(--pb));
+    border-radius: 14px;
+    padding: 24px 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 20px var(--theme-glow, transparent);
+    transition: border-color 0.4s ease, box-shadow 0.4s ease;
+}

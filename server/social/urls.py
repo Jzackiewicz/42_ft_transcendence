@@ -53,10 +53,4 @@ urlpatterns = [
         apis.FriendDetailApi.as_view(),
         name="friend-detail",
     ),
-    # relationships
-    path(
-        "relationship/<int:user_id>/",
-        apis.RelationshipStatusApi.as_view(),
-        name="relationship-status",
-    ),
 ]

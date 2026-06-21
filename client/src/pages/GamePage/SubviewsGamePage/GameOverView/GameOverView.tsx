@@ -1,6 +1,7 @@
 import { Player } from '../../useGamePage';
 import { Button } from '../../../../components/Button/Button';
-import './GameOverView.css';
+import { cx } from '../../../../utils/cx';
+import styles from './GameOverView.module.css';
 
 interface GameOverViewProps {
     winnerId: number | null;
@@ -49,10 +50,10 @@ export function GameOverView({ winnerId, players, onReturnToHome }: GameOverView
             .join('');
 
     return (
-        <div className="game-over-container">
+        <div className={styles.gameOverContainer}>
 
-            <table className="game-over-table">
-                <thead className="game-over-thead">
+            <table className={styles.gameOverTable}>
+                <thead className={styles.gameOverThead}>
                     <tr>
                         <th>Rank</th>
                         <th>Player</th>
@@ -64,40 +65,40 @@ export function GameOverView({ winnerId, players, onReturnToHome }: GameOverView
                 <tbody>
                     {sortedLeaderboard.map((player, idx) => {
                         const isWinner = player.id === winnerId;
-                        const rowClasses = [
-                            'game-over-row',
-                            isWinner ? 'winner-row' : '',
-                            !player.is_alive ? 'eliminated-row' : ''
-                        ].filter(Boolean).join(' ');
+                        const rowClasses = cx(
+                            styles.gameOverRow,
+                            isWinner && styles.winnerRow,
+                            !player.is_alive && styles.eliminatedRow
+                        );
 
                         return (
                             <tr key={player.id} className={rowClasses}>
-                                <td className="game-over-rank">
+                                <td className={styles.gameOverRank}>
                                     #{idx + 1}
                                 </td>
-                                <td className="game-over-player-cell">
-                                    <div className="game-over-player-info">
+                                <td className={styles.gameOverPlayerCell}>
+                                    <div className={styles.gameOverPlayerInfo}>
                                         {player.avatar ? (
                                             <img
                                                 src={player.avatar}
                                                 alt={`${player.display_name}'s avatar`}
-                                                className="game-over-avatar"
+                                                className={styles.gameOverAvatar}
                                             />
                                         ) : (
-                                            <span className="game-over-avatar-placeholder">👤</span>
+                                            <span className={styles.gameOverAvatarPlaceholder}>👤</span>
                                         )}
-                                        <span className="game-over-player-name">
+                                        <span className={styles.gameOverPlayerName}>
                                             {player.display_name}
                                         </span>
                                     </div>
                                 </td>
-                                <td className="game-over-points">
+                                <td className={styles.gameOverPoints}>
                                     {player.points}
                                 </td>
-                                <td className="game-over-lives">
+                                <td className={styles.gameOverLives}>
                                     {renderHearts(player.lives)}
                                 </td>
-                                <td className="game-over-answers">
+                                <td className={styles.gameOverAnswers}>
                                     {player.answered_count}
                                 </td>
                             </tr>
@@ -107,7 +108,7 @@ export function GameOverView({ winnerId, players, onReturnToHome }: GameOverView
             </table>
 
             {/* ── Actions ────────────────────────────────────────── */}
-            <div className="game-over-actions">
+            <div className={styles.gameOverActions}>
                 <Button onClick={onReturnToHome}>
                     Return to Home
                 </Button>

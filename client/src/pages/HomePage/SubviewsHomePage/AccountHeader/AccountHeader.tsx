@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
 import { User } from '../../../../types/User'
 import { useAccountHeader } from './useAccountHeader'
-import './AccountHeader.css'
+import { Badge } from '../../../../components/Badge/Badge'
+import styles from './AccountHeader.module.css'
+import homeStyles from '../../HomePage.module.css'
 
 interface AccountHeaderProps {
     user: User | null | undefined
@@ -31,7 +33,7 @@ function AccountHeader({ user, setUser, setShowJoinModal, setShowRulesModal, han
             <img
                 src={user.avatar}
                 alt="avatar"
-                className="account-avatar-img"
+                className={styles['account-avatar-img']}
                 onError={() => setAvatarBroken(true)}
             />
         )
@@ -44,21 +46,21 @@ function AccountHeader({ user, setUser, setShowJoinModal, setShowRulesModal, han
         usernameField = (
             <>
                 <input
-                    className="account-edit-input"
+                    className={styles['account-edit-input']}
                     value={editValue}
                     onChange={e => setEditValue(e.target.value)}
                     onKeyDown={e => { if (e.key === 'Enter') confirmEdit(); if (e.key === 'Escape') cancelEdit() }}
                     autoFocus
                 />
-                <button className="edit-btn confirm-btn" onClick={confirmEdit}>✓</button>
-                <button className="edit-btn cancel-btn" onClick={cancelEdit}>✕</button>
+                <button className={`${styles['edit-btn']} ${styles['confirm-btn']}`} onClick={confirmEdit}>✓</button>
+                <button className={`${styles['edit-btn']} ${styles['cancel-btn']}`} onClick={cancelEdit}>✕</button>
             </>
         )
     } else {
         usernameField = (
             <>
-                <div className="account-name">{user?.username}</div>
-                <button className="edit-btn" onClick={() => startEdit('username')} title="Edit username">✎</button>
+                <div className={styles.accountName}>{user?.username}</div>
+                <button className={styles['edit-btn']} onClick={() => startEdit('username')} title="Edit username">✎</button>
             </>
         )
     }
@@ -68,35 +70,35 @@ function AccountHeader({ user, setUser, setShowJoinModal, setShowRulesModal, han
         emailField = (
             <>
                 <input
-                    className="account-edit-input account-edit-input--sm"
+                    className={`${styles['account-edit-input']} ${styles['account-edit-input--sm']}`}
                     value={editValue}
                     onChange={e => setEditValue(e.target.value)}
                     onKeyDown={e => { if (e.key === 'Enter') confirmEdit(); if (e.key === 'Escape') cancelEdit() }}
                     autoFocus
                 />
-                <button className="edit-btn confirm-btn" onClick={confirmEdit}>✓</button>
-                <button className="edit-btn cancel-btn" onClick={cancelEdit}>✕</button>
+                <button className={`${styles['edit-btn']} ${styles['confirm-btn']}`} onClick={confirmEdit}>✓</button>
+                <button className={`${styles['edit-btn']} ${styles['cancel-btn']}`} onClick={cancelEdit}>✕</button>
             </>
         )
     } else {
         emailField = (
             <>
-                <div className="account-email">{user?.email}</div>
-                <button className="edit-btn edit-btn--sm" onClick={() => startEdit('email')} title="Edit email">✎</button>
+                <div className={styles.accountEmail}>{user?.email}</div>
+                <button className={`${styles['edit-btn']} ${styles['edit-btn--sm']}`} onClick={() => startEdit('email')} title="Edit email">✎</button>
             </>
         )
     }
 
     let errorMessage
     if (error) {
-        errorMessage = <div className="account-edit-error">{error}</div>
+        errorMessage = <div className={styles['account-edit-error']}>{error}</div>
     }
 
     return (
-        <div className="account-header">
-            <div className="account-avatar-wrapper">
-                <div className="account-avatar">{avatarContent}</div>
-                <button className="edit-btn avatar-edit-btn" onClick={handleAvatarClick} title="Change avatar">✎</button>
+        <div className={styles.accountHeader}>
+            <div className={styles['account-avatar-wrapper']}>
+                <div className={styles.accountAvatar}>{avatarContent}</div>
+                <button className={`${styles['edit-btn']} ${styles['avatar-edit-btn']}`} onClick={handleAvatarClick} title="Change avatar">✎</button>
                 <input
                     ref={fileInputRef}
                     type="file"
@@ -106,25 +108,25 @@ function AccountHeader({ user, setUser, setShowJoinModal, setShowRulesModal, han
                 />
             </div>
 
-            <div className="account-info">
-                <div className="account-field-row">{usernameField}</div>
-                <div className="account-field-row">{emailField}</div>
+            <div className={styles.accountInfo}>
+                <div className={styles['account-field-row']}>{usernameField}</div>
+                <div className={styles['account-field-row']}>{emailField}</div>
                 {errorMessage}
-                <div className="account-badges">
-                    <span className="badge human">{user?.date_joined?.slice(0, 10)}</span>
+                <div className={styles.accountBadges}>
+                    <Badge variant="human">{user?.date_joined?.slice(0, 10)}</Badge>
                 </div>
             </div>
 
             <button
-                className="home-nav-rules"
+                className={styles.homeNavRules}
                 onClick={() => setShowRulesModal(true)}
                 aria-label="How to play"
                 title="How to play"
             >
                 How to Play ?
             </button>
-            <button className="home-nav-join" onClick={() => setShowJoinModal(true)}>Join Game</button>
-            <button className="home-nav-play" onClick={handleCreateLobby}>▶ Play Now</button>
+            <button className={homeStyles.homeNavJoin} onClick={() => setShowJoinModal(true)}>Join Game</button>
+            <button className={homeStyles.homeNavPlay} onClick={handleCreateLobby}>▶ Play Now</button>
         </div>
     )
 }

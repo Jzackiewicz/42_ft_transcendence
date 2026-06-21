@@ -1,20 +1,21 @@
 import { useFriendsListTabView } from './useFriendsListTabView'
-import InlineError from '../../../../../../components/InlineError'
+import InlineError from '../../../../../../components/InlineError/InlineError'
 import UserAvatar from '../../../../../../components/UserAvatar'
-import './FriendsListTabView.css'
+import styles from './FriendsListTabView.module.css'
+import shared from '../../FriendsView.module.css'
 
 function FriendsListTabView() {
     const { friendsList, handleRemove, error } = useFriendsListTabView()
 
     return (
-        <div className="friends-scroll">
+        <div className={shared.friendsScroll}>
             <InlineError message={error} />
-            <div className="friends-grid">
+            <div className={styles.friendsGrid}>
                 {friendsList.map((f) => (
-                    <div key={f.friend.id} className="friend-item">
+                    <div key={f.friend.id} className={styles.friendItem}>
                         <UserAvatar username={f.friend.username} avatar={f.friend.avatar} userId={f.friend.id} />
-                        <span className="friend-name">{f.friend.username}</span>
-                        <button className="friend-remove" onClick={() => handleRemove(f.friend.id)}>Remove</button>
+                        <span className={shared.friendName}>{f.friend.username}</span>
+                        <button className={styles.friendRemove} onClick={() => handleRemove(f.friend.id)}>Remove</button>
                     </div>
                 ))}
             </div>

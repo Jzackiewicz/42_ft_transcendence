@@ -35,8 +35,16 @@ up:
 	HTTP_EXPOSED_PORT=$(HTTP_EXPOSED_PORT) \
 	HTTPS_EXPOSED_PORT=$(HTTPS_EXPOSED_PORT) \
 	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(PROD_PROJECT) up -d --build
-	@echo "Waiting for database..."
-	sleep 5
+	@echo "Waiting for database and migrations to complete..."
+	@COUNT=0; \
+	until $(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(PROD_PROJECT) exec api python manage.py migrate --check >/dev/null 2>&1 || [ $$COUNT -eq 30 ]; do \
+		sleep 1; \
+		COUNT=$$((COUNT + 1)); \
+	done; \
+	if [ $$COUNT -eq 30 ]; then \
+		echo "Migrations did not complete in time."; \
+		exit 1; \
+	fi
 	@echo "Creating superuser if not exists (Production)..."
 	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(PROD_PROJECT) exec -e DJANGO_SUPERUSER_PASSWORD=$(DJANGO_SUPERUSER_PASSWORD) api python manage.py createsuperuser --noinput || true
 	@echo "Seeding database (Production)..."
@@ -77,10 +85,12 @@ migrate:
 	@echo "Running migrations (Production)..."
 	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(PROD_PROJECT) exec api python manage.py migrate
 
-# Seed database in production stack
 seed:
 	@echo "Seeding database (Production)..."
-	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(PROD_PROJECT) exec api python manage.py loaddata questions
+	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(PROD_PROJECT) exec api python core/seeding/seed_data.py
+
+access_db:
+	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(PROD_PROJECT) exec db psql -U $(POSTGRES_USER) -d $(POSTGRES_DB)
 
 # Create and setup virtual environment
 dev-venv:
@@ -94,7 +104,7 @@ dev-venv:
 VENV_PYTHON = ../.venv/bin/python3
 
 # Start stack for local dev
-dev-up: dev-venv client-install
+dev-up: dev-venv client-install client-typecheck
 	@echo "Starting development stack..."
 	DB_EXPOSED_PORT=$(DEV_DB_EXPOSED_PORT) \
 	REDIS_EXPOSED_PORT=$(DEV_REDIS_EXPOSED_PORT) \
@@ -102,8 +112,16 @@ dev-up: dev-venv client-install
 	HTTP_EXPOSED_PORT=$(DEV_HTTP_EXPOSED_PORT) \
 	HTTPS_EXPOSED_PORT=$(DEV_HTTPS_EXPOSED_PORT) \
 	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) up -d --build proxy db redis api web
-	@echo "Waiting for database..."
-	sleep 5
+	@echo "Waiting for database and migrations to complete..."
+	@COUNT=0; \
+	until $(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) exec api python manage.py migrate --check >/dev/null 2>&1 || [ $$COUNT -eq 30 ]; do \
+		sleep 1; \
+		COUNT=$$((COUNT + 1)); \
+	done; \
+	if [ $$COUNT -eq 30 ]; then \
+		echo "Migrations did not complete in time."; \
+		exit 1; \
+	fi
 	@echo "Creating superuser if not exists (Dev)..."
 	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) -p $(DEV_PROJECT) exec -e DJANGO_SUPERUSER_PASSWORD=$(DJANGO_SUPERUSER_PASSWORD) api python manage.py createsuperuser --noinput || true
 	@echo "Seeding database (Dev)..."
@@ -123,10 +141,10 @@ dev-migrate: dev-up
 	@echo "Running migrations locally (Dev)..."
 	cd server && DB_HOST=127.0.0.1 DB_PORT=$(DEV_DB_EXPOSED_PORT) REDIS_HOST=127.0.0.1 REDIS_PORT=$(DEV_REDIS_EXPOSED_PORT) $(VENV_PYTHON) manage.py migrate
 
-# Seed questions locally
+# Seed database locally
 dev-seed: dev-up
-	@echo "Seeding questions locally (Dev)..."
-	cd server && DB_HOST=127.0.0.1 DB_PORT=$(DEV_DB_EXPOSED_PORT) REDIS_HOST=127.0.0.1 REDIS_PORT=$(DEV_REDIS_EXPOSED_PORT) $(VENV_PYTHON) manage.py loaddata questions
+	@echo "Seeding database locally (Dev)..."
+	cd server && DB_HOST=127.0.0.1 DB_PORT=$(DEV_DB_EXPOSED_PORT) REDIS_HOST=127.0.0.1 REDIS_PORT=$(DEV_REDIS_EXPOSED_PORT) $(VENV_PYTHON) core/seeding/seed_data.py
 
 
 # Stop only DB and Redis
@@ -181,6 +199,11 @@ client-install:
 	@echo "Installing frontend dependencies..."
 	cd client && npm install
 
+# Run typescript compilation checks
+client-typecheck: client-install
+	@echo "Checking frontend TypeScript types..."
+	cd client && npx tsc --noEmit
+
 # Run frontend locally (Dev)
 dev-client: client-install
 	@echo "Running frontend locally..."
@@ -218,4 +241,4 @@ client-test: client-install
 	@echo "Running frontend tests..."
 	cd client && npm run test:e2e
 
-.PHONY: all up down restart re clean check_clean check_fclean logs dev-logs ps fclean migrate dev-up dev-migrate dev-down dev-clean dev-runserver dev-test dev-createsuperuser dev-shell dev-venv client-install dev-client client-build dev-proxy dev-seed client-test seed
+.PHONY: all up down restart re clean check_clean check_fclean logs dev-logs ps fclean migrate dev-up dev-migrate dev-down dev-clean dev-runserver dev-test dev-createsuperuser dev-shell dev-venv client-install client-typecheck dev-client client-build dev-proxy dev-seed client-test seed access_db

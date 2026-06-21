@@ -1,0 +1,167 @@
+.playerTile {
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background-color: rgba(255, 255, 255, 0.02);
+    color: var(--text);
+    transition: all 0.25s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.playerTile:hover {
+    background-color: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+.playerTile.clickable {
+    cursor: pointer;
+    border-color: var(--theme-border, rgba(124, 77, 255, 0.4));
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+.playerTile.clickable:hover {
+    background-color: var(--theme-border, rgba(124, 77, 255, 0.15));
+    border-color: var(--theme-accent, #a37eff);
+    box-shadow: 0 0 20px var(--theme-glow, rgba(124, 77, 255, 0.5));
+    transform: translateY(-2px);
+}
+
+.playerTile.clickable:hover .playerNameAlive {
+    color: #ffffff;
+    text-shadow: 0 0 8px var(--theme-accent, rgba(124, 77, 255, 0.8));
+}
+
+.playerTile.active {
+    border-color: var(--cyan);
+    background-color: rgba(0, 229, 255, 0.04);
+    box-shadow: 0 0 15px var(--cyan-shadowed);
+}
+
+.playerTile.currentUser {
+    border-left: 3px solid var(--cyan);
+}
+
+.playerTile.currentUser.active {
+    border-left: 3px solid var(--cyan);
+}
+
+.playerTile.eliminated {
+    opacity: 0.5;
+}
+
+.playerTile.offline {
+    opacity: 0.65;
+    border-color: var(--red);
+    border-style: dashed;
+}
+
+.playerTileHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.playerNameAlive {
+    font-family: var(--fb);
+    font-weight: 600;
+    color: var(--text);
+}
+
+.playerTile.currentUser .playerNameAlive {
+    color: var(--cyan);
+}
+
+.playerNameDead {
+    font-family: var(--fb);
+    text-decoration: line-through;
+    color: var(--dim);
+}
+
+.playerRoleBadges {
+    display: flex;
+    gap: 6px;
+    font-size: var(--font-sm);
+}
+
+.playerStats {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--border);
+}
+
+.playerStatItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: var(--font-xs);
+}
+
+.statLabel {
+    color: var(--dim);
+    font-family: var(--fb);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.statHearts {
+    font-size: 11px;
+    letter-spacing: 1px;
+}
+
+.statPoints {
+    font-family: var(--fd);
+    font-size: var(--font-md);
+    font-weight: 700;
+    color: var(--cyan);
+    text-shadow: 0 0 8px var(--cyan-shadowed);
+}
+
+.playerEliminatedLabel {
+    margin-top: 4px;
+    font-size: 10px;
+    color: var(--red);
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+.playerOfflineLabel {
+    margin-top: 4px;
+    font-size: 10px;
+    color: var(--red);
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+.playerTileUserInfo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.playerTileAvatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid var(--border);
+}
+
+.playerTileAvatarPlaceholder {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.05);
+    font-size: 14px;
+    color: var(--dim);
+    border: 1px solid var(--border);
+}
+
