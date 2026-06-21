@@ -79,50 +79,25 @@ You might want to do this if automatic migration is not working.
 
 ## 🟦Resources🟦 
 
-### General References
-#### ```section listing classic references related to the topic (documentation, articles, tutorials, etc.)```
-- [DRF Documentation](https://www.django-rest-framework.org/)
+### General References ```section listing classic references related to the topic (documentation, articles, tutorials, etc.)```
+
+- [Django Rest Framework](https://www.django-rest-framework.org/)
+- [Django ORM](https://docs.djangoproject.com/en/6.0/topics/db/models/)
+- [Django Authentication](https://docs.djangoproject.com/en/6.0/topics/auth/)
+- [Django Migrations](https://docs.djangoproject.com/en/6.0/topics/migrations/)
+- [Redis](https://channels.readthedocs.io/en/stable/topics/channel_layers.html)
 - [Service layer pattern](https://github.com/HackSoftware/Django-Styleguide)
 - [Websockets docs and tutorial](https://channels.readthedocs.io/)
-- <Fill_In>
+- [Gemini integration](https://ai.google.dev/gemini-api/docs)
+- [React docs](https://pl.react.dev/)
+### AI Usage ```a description of how AI was used specifying for which tasks and which parts of the project.```
 
-### Individual Resources and AI usage
-#### ```section listing classic references related to the topic (documentation, articles, tutorials, etc.), as well as a description of how AI was used specifying for which tasks and which parts of the project.```
-This will be separated into a section for each person as each person worked on separate tasks and may have used different documentation.
-### dbozic
-#### What references did you use and for what topic?
-+ **AI integration**
-  - During my SPIKE on integrating LLM - <Fill_In>
-  - other stuff - <Fill_In>
-  - django - <Fill_In>
-  - redis - <Fill_In>
-  - <Fill_In>
-  - <Fill_In>
-+ **Persistence and working with Django**
-  - django framework documentation - <Fill_In>
-  - <Fill_In>
-#### How did you utilize AI during this project?
-When I started work on the project I used Github Copilot to summarise what had already been made and how I should go about integrating my then standalone LLM based question generation program into my first glimpse of the Django framework.
-
-I used a conversational assistant to help me learn about possible solutions when assigned to a SPIKE where I explored various ways I could use RAG *(Retrieval-Augmented Generation)* in our project as well as alternate ways we could solve answer verification later on.
-
-I also explored using Github Copilot to assist me with writing code. I was pleasantly surprised by how efficient it was to integrate into daily coding routine. I unfortunately ran out of tokens after about a week of this and was forced to go back to manually writing code.
-
-### itykhono
-#### What references did you use and for what topic?
-#### How did you utilize AI during this project?
-
-### jzackiew
-#### What references did you use and for what topic?
-#### How did you utilize AI during this project?
-
-### mamichal
-#### What references did you use and for what topic?
-#### How did you utilize AI during this project?
-
-### mbudkevi
-#### What references did you use and for what topic?
-#### How did you utilize AI during this project?
+**We used a wide range of AI assistence when it came to work and research. Below is listed all the uses of AI our team utilised:**
+- **Research** on how to use new techologies.
+- Assistance with **design choice research**.
+- **Code summarisation** for individual understanding foreign sections of the codebase.
+- **Writing tedious and repetitive code that was already understood.**
+- **Debugging** tasks and **error summarisation**.
 
 ## 🟩Additional sections🟩
 
