@@ -57,6 +57,7 @@ export function useAccountHeader(user: User | null | undefined, setUser: (u: Use
                 id:       updated.user.id       ?? user.id,
                 username: updated.user.username ?? user.username,
                 email:    updated.user.email    ?? user.email,
+                date_joined: updated.user.dateJoin ?? user.dateJoin,
                 avatar:   updated.avatar        ?? user.avatar,
             })
             setEditingField(null)
@@ -84,6 +85,7 @@ export function useAccountHeader(user: User | null | undefined, setUser: (u: Use
                 id:       updated.user.id       ?? user.id,
                 username: updated.user.username ?? user.username,
                 email:    updated.user.email    ?? user.email,
+                date_joined: updated.user.dateJoin ?? user.dateJoin,
                 avatar:   updated.avatar        ?? user.avatar,
             })
         } catch (e: any) {
