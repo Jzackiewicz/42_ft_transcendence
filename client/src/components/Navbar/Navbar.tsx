@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Button } from '../Button/Button';
-import './Navbar.css';
+import { cx } from '../../utils/cx';
+import styles from './Navbar.module.css';
 
 interface NavbarProps {
     sessionUuid?: string | null;
@@ -19,22 +20,22 @@ export function Navbar({ sessionUuid, actionButtonText, onActionButtonClick }: N
     };
 
     return (
-        <nav className="app-nav">
-            <div className="app-nav-logo">
-                <span className="logo-quiz">QUIZ</span>SENDENCE
+        <nav className={styles.appNav}>
+            <div className={styles.appNavLogo}>
+                <span className={styles.logoQuiz}>QUIZ</span>SENDENCE
             </div>
 
-            <div className="app-nav-space" />
+            <div className={styles.appNavSpace} />
 
             {sessionUuid && (
                 <div
-                    className={`app-session-code ${copied ? 'copied' : ''}`}
+                    className={cx(styles.appSessionCode, copied && styles.copied)}
                     onClick={handleCopy}
                     title="Click to copy session code"
                 >
-                    <span className="code-label">SESSION CODE:</span>
-                    <span className="code-value">{sessionUuid}</span>
-                    <span className="copy-icon" aria-hidden="true">
+                    <span className={styles.codeLabel}>SESSION CODE:</span>
+                    <span className={styles.codeValue}>{sessionUuid}</span>
+                    <span className={styles.copyIcon} aria-hidden="true">
                         {copied ? (
                             <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
                                 <path d="M3 8.5L6.5 12L13 4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -49,7 +50,7 @@ export function Navbar({ sessionUuid, actionButtonText, onActionButtonClick }: N
                 </div>
             )}
 
-            <Button onClick={onActionButtonClick}>
+            <Button onClick={onActionButtonClick} className={styles.navBtn}>
                 {actionButtonText}
             </Button>
         </nav>

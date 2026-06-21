@@ -1,0 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Space+Grotesk:wght@400;600&display=swap');
+
+/* ── GLOBAL BASE ────────────────────────────────────────────────── */
+body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: var(--fb);
+    margin: 0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+@keyframes blink {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    85% {
+        opacity: 0.2;
+    }
+}

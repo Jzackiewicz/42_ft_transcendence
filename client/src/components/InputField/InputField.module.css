@@ -1,0 +1,39 @@
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.fieldLabel {
+    font-size: var(--font-xs);
+    letter-spacing: 1.5px;
+    text-transform: capitalize;
+    color: var(--dim);
+    font-weight: 600;
+}
+
+.fieldInput {
+    background: var(--bg);
+    border: 1px solid var(--pb);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    color: var(--text);
+    font-family: var(--fb);
+    font-size: var(--font-md);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.fieldInput:focus {
+    border-color: var(--cyan);
+    box-shadow: 0 0 0 3px var(--tr-cyan);
+}
+
+.fieldInput::placeholder {
+    color: var(--placeholder);
+}
+
+.inputfieldWarning {
+    font-size: var(--font-xs);
+    color: var(--red);
+}

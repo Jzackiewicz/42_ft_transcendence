@@ -1,0 +1,116 @@
+.gameHudContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 8px;
+    padding: 0 0 16px 0;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.hudGroup {
+    display: flex;
+    gap: 16px;
+    width: 100%;
+}
+
+.hudActiveGame {
+    justify-content: space-between;
+}
+
+.hudActiveGame .hudItem {
+    flex: 0 1 220px;
+}
+
+.hudItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    text-align: center;
+    padding: 14px 10px;
+    background: rgba(255, 255, 255, 0.015);
+    /* Optional theming via the game-page theme contract; falls back to defaults. */
+    border: 1px solid var(--theme-border, var(--border));
+    border-radius: 8px;
+    flex: 1;
+    min-width: 0;
+    transition: all 0.4s ease;
+}
+
+.hudItem:hover {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: var(--theme-accent, var(--cyan-shadowed));
+    box-shadow: 0 0 12px var(--theme-glow, rgba(0, 229, 255, 0.08));
+}
+
+.hudLabel {
+    font-size: var(--font-xs);
+    font-weight: 700;
+    color: var(--dim);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.hudValue {
+    font-size: var(--font-lg);
+    color: var(--theme-accent, var(--cyan));
+    font-weight: 700;
+    text-shadow: 0 0 8px var(--theme-glow, var(--cyan-shadowed));
+    transition: color 0.4s ease, text-shadow 0.4s ease;
+}
+
+.hudMuted {
+    color: var(--placeholder);
+    font-size: var(--font-sm);
+    font-weight: 400;
+}
+
+.hudGenerated {
+    color: var(--green);
+    font-size: var(--font-sm);
+    font-weight: 700;
+    text-shadow: 0 0 8px rgba(0, 230, 118, 0.25);
+    margin-left: 6px;
+}
+
+
+/* Alert styles for low time */
+.hudItem.hudTimer.warning {
+    border-color: var(--red);
+    box-shadow: 0 0 12px rgba(255, 23, 68, 0.15);
+}
+
+.hudItem.hudTimer.warning .hudValue {
+    color: var(--red);
+    text-shadow: 0 0 8px rgba(255, 23, 68, 0.5);
+    animation: pulse 1s infinite alternate;
+}
+
+@keyframes pulse {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0.7;
+        transform: scale(1.05);
+    }
+}
+
+/* Responsiveness */
+@media (max-width: 768px) {
+    .hudGroup {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+    .hudItem {
+        flex: none;
+        width: 100%;
+    }
+}

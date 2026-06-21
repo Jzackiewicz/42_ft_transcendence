@@ -1,4 +1,7 @@
-import './AccountHeader.css'
+import { Badge } from '../../../../components/Badge/Badge'
+import styles from './AccountHeader.module.css'
+// Shared "home nav" button styles owned by the HomePage module.
+import homeStyles from '../../HomePage.module.css'
 
 interface AccountHeaderProps {
     username: string
@@ -12,25 +15,25 @@ function AccountHeader({ username, email, setShowJoinModal, setShowRulesModal, h
     const initial = username[0]?.toUpperCase() ?? '?'
 
     return (
-        <div className="account-header">
-            <div className="account-avatar">{initial}</div>
-            <div className="account-info">
-                <div className="account-name">{username}</div>
-                <div className="account-email">{email}</div>
-                <div className="account-badges">
-                    <span className="badge human">Human</span>
+        <div className={styles.accountHeader}>
+            <div className={styles.accountAvatar}>{initial}</div>
+            <div className={styles.accountInfo}>
+                <div className={styles.accountName}>{username}</div>
+                <div className={styles.accountEmail}>{email}</div>
+                <div className={styles.accountBadges}>
+                    <Badge variant="human">Human</Badge>
                 </div>
             </div>
             <button
-                className="home-nav-rules"
+                className={styles.homeNavRules}
                 onClick={() => setShowRulesModal(true)}
                 aria-label="How to play"
                 title="How to play"
             >
                 How to Play ?
             </button>
-            <button className="home-nav-join" onClick={() => setShowJoinModal(true)}> Join Game</button>
-            <button className="home-nav-play" onClick={handleCreateLobby}>▶ Play Now</button>
+            <button className={homeStyles.homeNavJoin} onClick={() => setShowJoinModal(true)}> Join Game</button>
+            <button className={homeStyles.homeNavPlay} onClick={handleCreateLobby}>▶ Play Now</button>
         </div>
     )
 }
