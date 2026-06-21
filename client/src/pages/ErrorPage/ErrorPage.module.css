@@ -1,4 +1,4 @@
-.error-page {
+.errorPage {
     height: 100vh;
     display: flex;
     flex-direction: column;
@@ -11,7 +11,7 @@
     padding: 20px;
 }
 
-.error-code {
+.errorCode {
     font-size: 8rem;
     font-weight: 900;
     margin: 0;
@@ -21,18 +21,18 @@
     line-height: 1;
 }
 
-.error-title {
+.errorTitle {
     font-size: 2rem;
     margin: 1rem 0;
 }
 
-.error-msg {
+.errorMsg {
     color: #888;
     max-width: 400px;
     margin-bottom: 2rem;
 }
 
-.home-btn {
+.homeBtn {
     padding: 12px 24px;
     background: #fff;
     color: #000;
@@ -44,6 +44,6 @@
     transition: transform 0.2s;
 }
 
-.home-btn:hover {
+.homeBtn:hover {
     transform: scale(1.05);
 }

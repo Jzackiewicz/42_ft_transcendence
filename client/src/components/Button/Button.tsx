@@ -21,10 +21,11 @@ export function Button({
     children,
     className = ''
 }: ButtonProps) {
+    const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
     const classNames = cx(
-        styles['app-btn'],
-        styles[`app-btn-${variant}`],
-        styles[`app-btn-${size}`],
+        styles.appBtn,
+        styles[`appBtn${cap(variant)}`],
+        styles[`appBtn${cap(size)}`],
         className
     );
 

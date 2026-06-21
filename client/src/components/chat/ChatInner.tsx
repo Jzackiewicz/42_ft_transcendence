@@ -27,14 +27,14 @@ export function ChatInner() {
 
     let chatContent
     if (sidebar.noFriends) {
-        chatContent = <div className={styles['chat-empty']}>Add Friends to message</div>
+        chatContent = <div className={styles.chatEmpty}>Add Friends to message</div>
     } else {
         chatContent = thread.messages.filter(msg => msg.message).map((msg, i) => (
             <div
                 key={i}
-                className={cx(styles['chat-bubble-row'], msg.sender_username === thread.myUsername ? styles.me : styles.friend)}
+                className={cx(styles.chatBubbleRow, msg.sender_username === thread.myUsername ? styles.me : styles.friend)}
             >
-                <div className={styles['chat-bubble']}>{msg.message}</div>
+                <div className={styles.chatBubble}>{msg.message}</div>
             </div>
         ))
     }
@@ -42,54 +42,54 @@ export function ChatInner() {
     return (
         <>
             {/* ── Sidebar ── */}
-            <div className={styles['chat-sidebar']}>
-                <div className={styles['chat-sidebar-title']}>Messages</div>
-                <div className={styles['chat-conv-list']}>
+            <div className={styles.chatSidebar}>
+                <div className={styles.chatSidebarTitle}>Messages</div>
+                <div className={styles.chatConvList}>
                     {sidebar.friendsList.map(f => (
                         <div
                             key={f.friend.id}
-                            className={cx(styles['friend-item'], f.friend.id === sidebar.activeId && styles.active)}
+                            className={cx(styles.friendItem, f.friend.id === sidebar.activeId && styles.active)}
                             onClick={() => sidebar.handleChooseTab(f.friend.id)}
                         >
-                            <div className={styles['friend-avatar']}>
+                            <div className={styles.friendAvatar}>
                                 {(f.friend.username ?? '?')[0].toUpperCase()}
                                 <OnlineIndicator userId={f.friend.id} />
                             </div>
-                            <span className={styles['friend-name']}>{f.friend.username}</span>
+                            <span className={styles.friendName}>{f.friend.username}</span>
                         </div>
                     ))}
                 </div>
             </div>
 
             {/* ── Thread ── */}
-            <div className={styles['chat-thread']}>
+            <div className={styles.chatThread}>
                 <div
-                    className={styles['chat-messages']}
+                    className={styles.chatMessages}
                     ref={thread.messagesRef}
                     onScroll={thread.handleScroll}
                 >
                     {thread.historyError && (
-                        <div className={styles['chat-error']} role="alert">
+                        <div className={styles.chatError} role="alert">
                             <span>{thread.historyError}</span>
-                            <button className={styles['chat-error-retry']} onClick={thread.retryHistory}>
+                            <button className={styles.chatErrorRetry} onClick={thread.retryHistory}>
                                 Retry
                             </button>
                         </div>
                     )}
                     {thread.hasMore && thread.loadingOlder && (
-                        <div className={styles['chat-load-older']}>Loading…</div>
+                        <div className={styles.chatLoadOlder}>Loading…</div>
                     )}
                     {chatContent}
                 </div>
 
                 {notConnected && !sidebar.noFriends && (
-                    <div className={styles['chat-conn-hint']} role="status">Reconnecting…</div>
+                    <div className={styles.chatConnHint} role="status">Reconnecting…</div>
                 )}
 
                 {/* ── Input ── */}
-                <div className={styles['chat-input-row']}>
+                <div className={styles.chatInputRow}>
                     <input
-                        className={cx(styles['chat-input'], draft.length === MAX_MESSAGE_LENGTH && styles['chat-input--error'])}
+                        className={cx(styles.chatInput, draft.length === MAX_MESSAGE_LENGTH && styles.chatInputError)}
                         placeholder={notConnected ? 'Reconnecting…' : 'Message…'}
                         value={draft}
                         maxLength={MAX_MESSAGE_LENGTH}
@@ -98,7 +98,7 @@ export function ChatInner() {
                         onKeyDown={e => e.key === 'Enter' && send()}
                     />
                     <button
-                        className={styles['chat-send-btn']}
+                        className={styles.chatSendBtn}
                         onClick={send}
                         disabled={isDisabled || draft.length === MAX_MESSAGE_LENGTH}
                     >

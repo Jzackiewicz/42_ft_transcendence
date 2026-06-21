@@ -50,10 +50,10 @@ export function GameOverView({ winnerId, players, onReturnToHome }: GameOverView
             .join('');
 
     return (
-        <div className={styles['game-over-container']}>
+        <div className={styles.gameOverContainer}>
 
-            <table className={styles['game-over-table']}>
-                <thead className={styles['game-over-thead']}>
+            <table className={styles.gameOverTable}>
+                <thead className={styles.gameOverThead}>
                     <tr>
                         <th>Rank</th>
                         <th>Player</th>
@@ -66,39 +66,39 @@ export function GameOverView({ winnerId, players, onReturnToHome }: GameOverView
                     {sortedLeaderboard.map((player, idx) => {
                         const isWinner = player.id === winnerId;
                         const rowClasses = cx(
-                            styles['game-over-row'],
-                            isWinner && styles['winner-row'],
-                            !player.is_alive && styles['eliminated-row']
+                            styles.gameOverRow,
+                            isWinner && styles.winnerRow,
+                            !player.is_alive && styles.eliminatedRow
                         );
 
                         return (
                             <tr key={player.id} className={rowClasses}>
-                                <td className={styles['game-over-rank']}>
+                                <td className={styles.gameOverRank}>
                                     #{idx + 1}
                                 </td>
-                                <td className={styles['game-over-player-cell']}>
-                                    <div className={styles['game-over-player-info']}>
+                                <td className={styles.gameOverPlayerCell}>
+                                    <div className={styles.gameOverPlayerInfo}>
                                         {player.avatar ? (
                                             <img
                                                 src={player.avatar}
                                                 alt={`${player.display_name}'s avatar`}
-                                                className={styles['game-over-avatar']}
+                                                className={styles.gameOverAvatar}
                                             />
                                         ) : (
-                                            <span className={styles['game-over-avatar-placeholder']}>👤</span>
+                                            <span className={styles.gameOverAvatarPlaceholder}>👤</span>
                                         )}
-                                        <span className={styles['game-over-player-name']}>
+                                        <span className={styles.gameOverPlayerName}>
                                             {player.display_name}
                                         </span>
                                     </div>
                                 </td>
-                                <td className={styles['game-over-points']}>
+                                <td className={styles.gameOverPoints}>
                                     {player.points}
                                 </td>
-                                <td className={styles['game-over-lives']}>
+                                <td className={styles.gameOverLives}>
                                     {renderHearts(player.lives)}
                                 </td>
-                                <td className={styles['game-over-answers']}>
+                                <td className={styles.gameOverAnswers}>
                                     {player.answered_count}
                                 </td>
                             </tr>
@@ -108,7 +108,7 @@ export function GameOverView({ winnerId, players, onReturnToHome }: GameOverView
             </table>
 
             {/* ── Actions ────────────────────────────────────────── */}
-            <div className={styles['game-over-actions']}>
+            <div className={styles.gameOverActions}>
                 <Button onClick={onReturnToHome}>
                     Return to Home
                 </Button>

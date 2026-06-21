@@ -1,38 +1,38 @@
-.lobby-view-container {
+.lobbyViewContainer {
     color: #fff;
 }
 
-.lobby-waiting-more {
+.lobbyWaitingMore {
     margin-bottom: 15px;
     color: #aaa;
 }
 
-.lobby-ready {
+.lobbyReady {
     margin-bottom: 15px;
     color: var(--green);
     font-weight: bold;
 }
 
-.lobby-actions-row {
+.lobbyActionsRow {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
     margin-top: 20px;
 }
 
-.ai-questions-wrapper {
+.aiQuestionsWrapper {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
 }
 
-.ai-feedback-toast {
+.aiFeedbackToast {
     margin-top: 8px;
     font-size: 12px;
     color: var(--green);
 }
 
-.lobby-spectator-waiting {
+.lobbySpectatorWaiting {
     color: #aaa;
     font-style: italic;
 }

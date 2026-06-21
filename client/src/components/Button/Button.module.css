@@ -1,4 +1,4 @@
-.app-btn {
+.appBtn {
     border-radius: var(--radius-sm);
     font-family: var(--fb);
     font-weight: 700;
@@ -15,17 +15,17 @@
 }
 
 /* ── SIZES ──────────────────────────────────────────────────────── */
-.app-btn-sm {
+.appBtnSm {
     padding: 6px 12px;
     font-size: var(--font-xs);
 }
 
-.app-btn-md {
+.appBtnMd {
     padding: 8px 18px;
     font-size: var(--font-sm);
 }
 
-.app-btn-lg {
+.appBtnLg {
     padding: 12px 24px;
     font-size: var(--font-md);
 }
@@ -33,54 +33,54 @@
 /* ── VARIANTS ───────────────────────────────────────────────────── */
 
 /* Primary: Neon Cyan */
-.app-btn-primary {
+.appBtnPrimary {
     background: var(--cyan);
     color: #000;
 }
 
-.app-btn-primary:hover:not(:disabled) {
+.appBtnPrimary:hover:not(:disabled) {
     box-shadow: 0 0 20px rgba(0, 229, 255, 0.5);
 }
 
 /* Secondary: Outlined Cyan */
-.app-btn-secondary {
+.appBtnSecondary {
     background: transparent;
     border: 1px solid var(--cyan);
     color: var(--cyan);
 }
 
-.app-btn-secondary:hover:not(:disabled) {
+.appBtnSecondary:hover:not(:disabled) {
     background: rgba(0, 229, 255, 0.08);
     box-shadow: 0 0 15px var(--cyan-shadowed);
 }
 
 /* Danger: Neon Red */
-.app-btn-danger {
+.appBtnDanger {
     background: var(--red);
     color: #000;
 }
 
-.app-btn-danger:hover:not(:disabled) {
+.appBtnDanger:hover:not(:disabled) {
     box-shadow: 0 0 20px rgba(255, 23, 68, 0.5);
 }
 
 /* Success: Neon Green */
-.app-btn-success {
+.appBtnSuccess {
     background: var(--green);
     color: #000;
 }
 
-.app-btn-success:hover:not(:disabled) {
+.appBtnSuccess:hover:not(:disabled) {
     box-shadow: 0 0 20px rgba(0, 230, 118, 0.5);
 }
 
 /* ── STATES ─────────────────────────────────────────────────────── */
-.app-btn:disabled {
+.appBtn:disabled {
     cursor: not-allowed;
     opacity: 0.4;
     box-shadow: none !important;
 }
 
-.app-btn:active:not(:disabled) {
+.appBtn:active:not(:disabled) {
     transform: scale(0.97);
 }

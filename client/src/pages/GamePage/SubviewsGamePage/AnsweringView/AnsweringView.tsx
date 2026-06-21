@@ -36,26 +36,26 @@ export function AnsweringView({
     };
 
     return (
-        <div className={styles['answering-view-container']}>
+        <div className={styles.answeringViewContainer}>
 
-            <div className={styles['answering-question-box']}>
-                <div className={styles['answering-question-meta']}>
-                    <div className={styles['answering-category']}>
+            <div className={styles.answeringQuestionBox}>
+                <div className={styles.answeringQuestionMeta}>
+                    <div className={styles.answeringCategory}>
                         Category: {category || 'General'}
                     </div>
                     <QuestionBadges isAiGenerated={isAiGenerated} isVerified={isVerified} />
                 </div>
-                <div className={styles['answering-question-text']}>
+                <div className={styles.answeringQuestionText}>
                     {questionText}
                 </div>
             </div>
 
             {isCurrentAnswering ? (
-                <div className={styles['answering-active-prompt']}>
-                    <div className={styles['answering-prompt-label']}>
+                <div className={styles.answeringActivePrompt}>
+                    <div className={styles.answeringPromptLabel}>
                         YOUR TURN TO ANSWER:
                     </div>
-                    <form onSubmit={handleSubmit} className={styles['answering-form']}>
+                    <form onSubmit={handleSubmit} className={styles.answeringForm}>
                         <input
                             type="text"
                             value={localAnswerText}
@@ -63,20 +63,20 @@ export function AnsweringView({
                             placeholder="Type your answer..."
                             maxLength={ANSWER_MAX_LENGTH}
                             autoFocus
-                            className={styles['answering-input']}
+                            className={styles.answeringInput}
                         />
                         <Button type="submit" disabled={isEmpty}>
                             Submit
                         </Button>
                     </form>
                     {atLimit && (
-                        <div className={styles['answering-char-limit']}>
+                        <div className={styles.answeringCharLimit}>
                             Character limit reached ({ANSWER_MAX_LENGTH})
                         </div>
                     )}
                 </div>
             ) : (
-                <div className={styles['answering-spectator-waiting']}>
+                <div className={styles.answeringSpectatorWaiting}>
                     👀 {activePlayerName} is answering the question...
                 </div>
             )}

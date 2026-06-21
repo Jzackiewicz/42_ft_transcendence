@@ -1,9 +1,9 @@
-.evaluation-view-container {
+.evaluationViewContainer {
     color: var(--text);
     width: 100%;
 }
 
-.eval-question-info {
+.evalQuestionInfo {
     margin: 16px 0 24px 0;
     padding: 18px 20px;
     background-color: rgba(255, 255, 255, 0.01);
@@ -12,14 +12,14 @@
     border-radius: 4px;
 }
 
-.eval-question-meta {
+.evalQuestionMeta {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 10px;
 }
 
-.eval-category {
+.evalCategory {
     font-family: var(--fd);
     font-size: var(--font-xs);
     text-transform: uppercase;
@@ -28,7 +28,7 @@
     letter-spacing: 1px;
 }
 
-.eval-question-text {
+.evalQuestionText {
     font-family: var(--fd);
     font-size: var(--font-xl);
     color: var(--text);
@@ -37,7 +37,7 @@
     line-height: 1.4;
 }
 
-.eval-verdict-title {
+.evalVerdictTitle {
     font-family: var(--fd);
     font-size: var(--font-2xl);
     font-weight: 700;
@@ -48,19 +48,19 @@
 }
 
 /* Specific verdict status styles */
-.eval-correct .eval-verdict-title {
+.evalCorrect .evalVerdictTitle {
     color: var(--green);
     text-shadow: 0 0 12px rgba(0, 230, 118, 0.35);
 }
 
-.eval-wrong .eval-verdict-title,
-.eval-timeout .eval-verdict-title {
+.evalWrong .evalVerdictTitle,
+.evalTimeout .evalVerdictTitle {
     color: var(--red);
     text-shadow: 0 0 12px rgba(255, 23, 68, 0.35);
 }
 
 /* Answers block grid layout */
-.eval-answers-comparison {
+.evalAnswersComparison {
     display: flex;
     gap: 16px;
     flex-wrap: wrap;
@@ -68,8 +68,8 @@
     width: 100%;
 }
 
-.eval-player-answer-box,
-.eval-correct-answer-box {
+.evalPlayerAnswerBox,
+.evalCorrectAnswerBox {
     flex: 1;
     min-width: 240px;
     padding: 20px 18px;
@@ -85,22 +85,22 @@
 }
 
 /* Glow the boxes depending on result */
-.eval-correct .eval-player-answer-box {
+.evalCorrect .evalPlayerAnswerBox {
     border-color: rgba(0, 230, 118, 0.25);
     box-shadow: 0 0 15px rgba(0, 230, 118, 0.05);
 }
 
-.eval-wrong .eval-player-answer-box {
+.evalWrong .evalPlayerAnswerBox {
     border-color: rgba(255, 23, 68, 0.25);
     box-shadow: 0 0 15px rgba(255, 23, 68, 0.05);
 }
 
-.eval-correct-answer-box {
+.evalCorrectAnswerBox {
     border-color: rgba(0, 230, 118, 0.25);
     box-shadow: 0 0 15px rgba(0, 230, 118, 0.05);
 }
 
-.eval-box-label {
+.evalBoxLabel {
     font-family: var(--fb);
     color: var(--dim);
     font-size: var(--font-xs);
@@ -110,7 +110,7 @@
     letter-spacing: 0.5px;
 }
 
-.eval-box-content {
+.evalBoxContent {
     font-family: var(--fd);
     font-size: 22px;
     font-weight: 700;
@@ -123,26 +123,26 @@
     word-break: break-word;
 }
 
-.eval-text-value {
+.evalTextValue {
     color: #ffffff;
 }
 
-.eval-correct .eval-player-answer-box .eval-text-value {
+.evalCorrect .evalPlayerAnswerBox .evalTextValue {
     color: var(--green);
     text-shadow: 0 0 8px rgba(0, 230, 118, 0.4);
 }
 
-.eval-wrong .eval-player-answer-box .eval-text-value {
+.evalWrong .evalPlayerAnswerBox .evalTextValue {
     color: var(--red);
     text-shadow: 0 0 8px rgba(255, 23, 68, 0.4);
 }
 
-.eval-correct-answer-box .eval-text-value {
+.evalCorrectAnswerBox .evalTextValue {
     color: var(--green);
     text-shadow: 0 0 8px rgba(0, 230, 118, 0.4);
 }
 
-.eval-text-none {
+.evalTextNone {
     color: var(--placeholder);
     font-style: italic;
     font-family: var(--fb);

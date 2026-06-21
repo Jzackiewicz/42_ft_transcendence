@@ -1,4 +1,4 @@
-.account-header {
+.accountHeader {
     display: flex;
     align-items: center;
     gap: 20px;
@@ -11,7 +11,7 @@
     overflow: hidden;
 }
 
-.account-header::before {
+.accountHeader::before {
     content: '';
     position: absolute;
     top: 0; left: 0; right: 0;
@@ -19,7 +19,7 @@
     background: linear-gradient(90deg, transparent, var(--cyan), var(--magenta), transparent);
 }
 
-.account-avatar {
+.accountAvatar {
     width: 72px;
     height: 72px;
     border-radius: 50%;
@@ -36,21 +36,21 @@
     flex-shrink: 0;
 }
 
-.account-info { flex: 1; }
+.accountInfo { flex: 1; }
 
-.account-name {
+.accountName {
     font-family: var(--fd);
     font-size: 26px;
     font-weight: 700;
 }
 
-.account-email {
+.accountEmail {
     font-size: var(--font-sm);
     color: var(--dim);
     margin-top: 3px;
 }
 
-.account-badges {
+.accountBadges {
     display: flex;
     gap: 8px;
     margin-top: 8px;
@@ -58,7 +58,7 @@
 
 
 /* ── How to Play button ── */
-.home-nav-rules {
+.homeNavRules {
     padding: 7px 14px;
     border-radius: var(--radius-sm);
     border: 1px solid var(--pb);
@@ -71,7 +71,7 @@
     transition: color 0.15s, border-color 0.15s, background 0.15s;
 }
 
-.home-nav-rules:hover {
+.homeNavRules:hover {
     color: var(--cyan);
     border-color: var(--cyan);
     background: rgba(0, 229, 255, 0.06);

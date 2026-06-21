@@ -6,11 +6,11 @@ export function ErrorPage() {
     const { code, message } = useErrorPage();
 
     return (
-        <div className={styles['error-page']}>
-            <h1 className={styles['error-code']}>{code}</h1>
-            <h2 className={styles['error-title']}>Something went wrong</h2>
-            <p className={styles['error-msg']}>{message}</p>
-            <Link to="/" className={styles['home-btn']}>
+        <div className={styles.errorPage}>
+            <h1 className={styles.errorCode}>{code}</h1>
+            <h2 className={styles.errorTitle}>Something went wrong</h2>
+            <p className={styles.errorMsg}>{message}</p>
+            <Link to="/" className={styles.homeBtn}>
                 Return to Safety
             </Link>
         </div>

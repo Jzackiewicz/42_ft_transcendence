@@ -20,21 +20,21 @@ export function LobbyView({
     onRequestAiQuestions
 }: LobbyViewProps) {
     return (
-        <div className={styles['lobby-view-container']}>
+        <div className={styles.lobbyViewContainer}>
 
             {isHost ? (
                 <div>
                     {playersCount < 2 ? (
-                        <div className={styles['lobby-waiting-more']}>
+                        <div className={styles.lobbyWaitingMore}>
                             Waiting for more players to join... (Minimum 2 players required, currently {playersCount})
                         </div>
                     ) : (
-                        <div className={styles['lobby-ready']}>
+                        <div className={styles.lobbyReady}>
                             Ready to start! {playersCount} players in lobby.
                         </div>
                     )}
                     
-                    <div className={styles['lobby-actions-row']}>
+                    <div className={styles.lobbyActionsRow}>
                         <Button
                             onClick={onStartGame}
                             disabled={playersCount < 2 || isGeneratingAiQuestions}
@@ -42,7 +42,7 @@ export function LobbyView({
                             Start Game
                         </Button>
 
-                        <div className={styles['ai-questions-wrapper']}>
+                        <div className={styles.aiQuestionsWrapper}>
                             <Button
                                 onClick={onRequestAiQuestions}
                                 disabled={isGeneratingAiQuestions || aiQuestionsGenerated}
@@ -55,7 +55,7 @@ export function LobbyView({
                                         : 'Generate AI Questions'}
                             </Button>
                             {aiQuestionsGenerated && (
-                                <span className={styles['ai-feedback-toast']}>
+                                <span className={styles.aiFeedbackToast}>
                                     ✓ AI Questions added to the lobby!
                                 </span>
                             )}
@@ -63,7 +63,7 @@ export function LobbyView({
                     </div>
                 </div>
             ) : (
-                <div className={styles['lobby-spectator-waiting']}>
+                <div className={styles.lobbySpectatorWaiting}>
                     Waiting for lobby host to start the game...
                 </div>
             )}

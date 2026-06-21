@@ -1,10 +1,10 @@
-.find-row {
+.findRow {
     display: flex;
     gap: 10px;
     flex-shrink: 0;
 }
 
-.find-input {
+.findInput {
     flex: 1;
     padding: 8px 14px;
     border-radius: 8px;
@@ -17,10 +17,10 @@
     transition: border-color 0.15s;
 }
 
-.find-input::placeholder { color: var(--dim); }
-.find-input:focus { border-color: var(--cyan); }
+.findInput::placeholder { color: var(--dim); }
+.findInput:focus { border-color: var(--cyan); }
 
-.find-btn {
+.findBtn {
     padding: 8px 16px;
     border-radius: 8px;
     border: none;
@@ -34,9 +34,9 @@
     transition: box-shadow 0.2s;
 }
 
-.find-btn:hover { box-shadow: 0 0 16px var(--cyan-light-shadow); }
+.findBtn:hover { box-shadow: 0 0 16px var(--cyan-light-shadow); }
 
-.find-status {
+.findStatus {
     display: block;
     margin-top: 8px;
     padding: 6px 12px;
@@ -45,19 +45,19 @@
     font-size: var(--font-sm);
 }
 
-.find-status--success {
+.findStatusSuccess {
     background: rgba(0, 229, 100, 0.12);
     color: #00e564;
     border: 1px solid rgba(0, 229, 100, 0.25);
 }
 
-.find-status--error {
+.findStatusError {
     background: rgba(255, 80, 80, 0.12);
     color: #ff5050;
     border: 1px solid rgba(255, 80, 80, 0.25);
 }
 
-.find-results {
+.findResults {
     display: flex;
     flex-direction: column;
     margin-top: 10px;
@@ -66,7 +66,7 @@
     overflow: hidden;
 }
 
-.find-result-item {
+.findResultItem {
     padding: 8px 14px;
     color: var(--text);
     font-family: var(--fb);
@@ -75,4 +75,4 @@
     transition: background 0.15s;
 }
 
-.find-result-item:hover { background: rgba(255, 255, 255, 0.07); }
+.findResultItem:hover { background: rgba(255, 255, 255, 0.07); }

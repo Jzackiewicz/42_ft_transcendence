@@ -2,14 +2,14 @@
    and styles/global.css — this module only holds AuthPage's own classes. */
 
 /* ── LAYOUT ─────────────────────────────────────────────────────── */
-.main-container {
+.mainContainer {
     display: flex;
     height: 100vh;
     width: 100%;
 }
 
 /* ── Empty Container (left side titles) ────────────────────────────────────── */
-.empty-container {
+.emptyContainer {
     flex: 1;
     display: flex;
     align-items: center;
@@ -18,13 +18,13 @@
     z-index: 1;
 }
 
-.empty-container-content {
+.emptyContainerContent {
     display: flex;
     flex-direction: column;
     gap: 24px;
 }
 
-.page-title {
+.pageTitle {
     font-family: var(--fd);
     font-size: 72px;
     font-weight: 700;
@@ -33,14 +33,14 @@
     margin: 0;
 }
 
-.page-title.gradient {
+.pageTitle.gradient {
     background: linear-gradient(var(--gradient-deg), var(--cyan) 10%, var(--magenta) 30%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
 
-.page-subtitle {
+.pageSubtitle {
     font-size: 16px;
     color: var(--dim);
     line-height: 1.6;
@@ -50,7 +50,7 @@
 
 
 /* ── AUTH PANEL (right side) ────────────────────────────────────── */
-.auth-container {
+.authContainer {
     position: relative;
     z-index: 1;
     background: var(--bg);
@@ -63,7 +63,7 @@
     height: 100vh;
 }
 
-.auth-content {
+.authContent {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-2xl);
@@ -71,33 +71,33 @@
     min-height: 0;
 }
 
-.auth-title-container,
-.auth-tabs {
+.authTitleContainer,
+.authTabs {
     flex-shrink: 0;
 }
 
-.login-view,
-.registration-view {
+.loginView,
+.registrationView {
     flex: 1;
     min-height: 0;
     overflow-y: auto;
 }
 
-.auth-title {
+.authTitle {
     font-family: var(--fd);
     font-size: var(--font-2xl);
     font-weight: 700;
     letter-spacing: 0.5px;
 }
 
-.auth-subtitle {
+.authSubtitle {
     font-size: var(--font-sm);
     color: var(--dim);
     margin-top: 5px;
 }
 
 /* ── AUTH TABS ──────────────────────────────────────────────────── */
-.auth-tabs {
+.authTabs {
     display: flex;
     gap: 0;
     border-radius: var(--radius-md);
@@ -106,7 +106,7 @@
     background: var(--bg);
 }
 
-.auth-tab {
+.authTab {
     flex: 1;
     padding: var(--spacing-md) 0;
     text-align: center;
@@ -122,27 +122,27 @@
     transition: all 0.2s;
 }
 
-.auth-tab.active {
+.authTab.active {
     background: var(--tr-cyan);
     color: var(--cyan);
     box-shadow: inset 0 -2px 0 var(--cyan);
 }
 
 /* FORM FIELDS ────────────────────────────────────────────────── */
-.login-view form, .registration-view form {
+.loginView form, .registrationView form {
     display: flex;
     flex-direction: column;
     gap: 20px;
 }
 
-.form-error {
+.formError {
     font-size: var(--font-sm);
     color: var(--red);
     text-align: center;
 }
 
 /* SUBMIT BUTTON ──────────────────────────────────────────────── */
-.auth-submit {
+.authSubmit {
     background: linear-gradient(var(--gradient-deg), var(--cyan), var(--magenta));
     border: none;
     border-radius: var(--radius-md);
@@ -159,16 +159,16 @@
     box-shadow: 0 0 30px var(--cyan-shadowed);
 }
 
-.auth-submit:hover {
+.authSubmit:hover {
     transform: translateY(-1px);
     filter: drop-shadow(0 0 20px var(--cyan-light-shadow));
 }
 
-.auth-submit:active {
+.authSubmit:active {
     transform: translateY(0);
 }
 
-.auth-divider {
+.authDivider {
     display: flex;
     align-items: center;
     gap: var(--spacing-lg);
@@ -178,8 +178,8 @@
     letter-spacing: 1.5px;
 }
 
-.auth-divider::before,
-.auth-divider::after {
+.authDivider::before,
+.authDivider::after {
     content: '';
     flex: 1;
     height: 1px;

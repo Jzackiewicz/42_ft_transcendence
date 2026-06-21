@@ -1,12 +1,12 @@
 /* ── PAGE SHELL ─────────────────────────────────────────────────── */
-.home-page-container {
+.homePageContainer {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     position: relative;
 }
 
-.home-nav-play {
+.homeNavPlay {
     padding: 7px 18px;
     border-radius: var(--radius-sm);
     border: none;
@@ -19,11 +19,11 @@
     transition: box-shadow 0.2s;
 }
 
-.home-nav-play:hover {
+.homeNavPlay:hover {
     box-shadow: 0 0 20px var(--cyan-light-shadow);
 }
 
-.home-nav-join {
+.homeNavJoin {
     padding: 7px 18px;
     border-radius: var(--radius-sm);
     border: 1px solid var(--cyan);
@@ -36,10 +36,10 @@
     transition: background 0.2s;
 }
 
-.home-nav-join:hover { background: rgba(0, 229, 255, 0.08); }
+.homeNavJoin:hover { background: rgba(0, 229, 255, 0.08); }
 
 /* ── JOIN MODAL ─────────────────────────────────────────────────── */
-.join-modal-overlay {
+.joinModalOverlay {
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.6);
@@ -49,7 +49,7 @@
     z-index: 100;
 }
 
-.join-modal {
+.joinModal {
     background: var(--panel);
     border: 1px solid var(--pb);
     border-radius: 14px;
@@ -60,7 +60,7 @@
     min-width: 320px;
 }
 
-.join-modal-title {
+.joinModalTitle {
     font-family: var(--fd);
     font-size: 18px;
     font-weight: 700;
@@ -68,7 +68,7 @@
     margin: 0;
 }
 
-.join-modal-input {
+.joinModalInput {
     padding: 10px 14px;
     border-radius: 8px;
     border: 1px solid var(--pb);
@@ -80,15 +80,15 @@
     transition: border-color 0.15s;
 }
 
-.join-modal-input:focus { border-color: var(--cyan); }
+.joinModalInput:focus { border-color: var(--cyan); }
 
-.join-modal-actions {
+.joinModalActions {
     display: flex;
     gap: 10px;
     justify-content: flex-end;
 }
 
-.join-modal-cancel {
+.joinModalCancel {
     padding: 7px 18px;
     border-radius: var(--radius-sm);
     border: 1px solid var(--pb);
@@ -100,10 +100,10 @@
     transition: color 0.15s;
 }
 
-.join-modal-cancel:hover { color: var(--text); }
+.joinModalCancel:hover { color: var(--text); }
 
 /* ── RULES MODAL ────────────────────────────────────────────────── */
-.rules-modal-overlay {
+.rulesModalOverlay {
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.65);
@@ -120,7 +120,7 @@
     to   { opacity: 1; }
 }
 
-.rules-modal {
+.rulesModal {
     position: relative;
     background: var(--panel);
     border: 1px solid var(--pb);
@@ -131,7 +131,7 @@
     box-shadow: 0 0 40px rgba(0, 229, 255, 0.15);
 }
 
-.rules-modal-close {
+.rulesModalClose {
     position: absolute;
     top: 10px;
     right: 12px;
@@ -147,12 +147,12 @@
     transition: color 0.15s, background 0.15s;
 }
 
-.rules-modal-close:hover {
+.rulesModalClose:hover {
     color: var(--text);
     background: rgba(255, 255, 255, 0.06);
 }
 
-.rules-modal-title {
+.rulesModalTitle {
     font-family: var(--fd);
     font-size: 20px;
     font-weight: 700;
@@ -161,14 +161,14 @@
     padding-right: 28px;
 }
 
-.rules-modal-title-accent {
+.rulesModalTitleAccent {
     background: linear-gradient(var(--gradient-deg), var(--cyan) 10%, var(--magenta) 30%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
 
-.rules-modal-list {
+.rulesModalList {
     margin: 0 0 16px;
     padding-left: 20px;
     color: var(--text);
@@ -177,10 +177,10 @@
     line-height: 1.65;
 }
 
-.rules-modal-list li { margin-bottom: 6px; }
-.rules-modal-list li:last-child { margin-bottom: 0; }
+.rulesModalList li { margin-bottom: 6px; }
+.rulesModalList li:last-child { margin-bottom: 0; }
 
-.rules-modal-win {
+.rulesModalWin {
     margin: 0 0 14px;
     padding: 12px 14px;
     border-radius: 8px;
@@ -194,7 +194,7 @@
 
 
 /* ── MAIN CONTENT ───────────────────────────────────────────────── */
-.home-content {
+.homeContent {
     flex: 1;
     overflow-y: auto;
     padding: 28px 40px 40px;
@@ -202,20 +202,20 @@
     z-index: 1;
 }
 
-.home-content::-webkit-scrollbar { width: 5px; }
-.home-content::-webkit-scrollbar-thumb {
+.homeContent::-webkit-scrollbar { width: 5px; }
+.homeContent::-webkit-scrollbar-thumb {
     background: rgba(255, 255, 255, 0.1);
     border-radius: 3px;
 }
 
 /* ── ACCOUNT GRID ───────────────────────────────────────────────── */
-.account-grid {
+.accountGrid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 18px;
     /* align-items defaults to stretch — Avatar and Stats match height */
 }
 
-.account-grid-chat {
+.accountGridChat {
     grid-column: 1 / -1;
 }

@@ -1,7 +1,7 @@
 /* Only the outer shell — sidebar/thread/input styling is shared with
-   HomePage via components/chat/chat.module.css (the .chat-sidebar / .chat-thread
+   HomePage via components/chat/chat.module.css (the .chatSidebar / .chatThread
    classes rendered by ChatInner). */
-.lobby-chat {
+.lobbyChat {
     margin-top: 20px;
     display: grid;
     grid-template-columns: 180px 1fr;

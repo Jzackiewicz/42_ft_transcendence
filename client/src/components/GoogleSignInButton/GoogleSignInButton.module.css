@@ -1,4 +1,4 @@
-.google-signin-btn {
+.googleSigninBtn {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -17,15 +17,15 @@
     transition: background 0.2s, border-color 0.2s, transform 0.1s;
 }
 
-.google-signin-btn:hover {
+.googleSigninBtn:hover {
     background: var(--bg3);
     border-color: var(--cyan);
 }
 
-.google-signin-btn:active {
+.googleSigninBtn:active {
     transform: translateY(1px);
 }
 
-.google-signin-btn svg {
+.googleSigninBtn svg {
     flex-shrink: 0;
 }

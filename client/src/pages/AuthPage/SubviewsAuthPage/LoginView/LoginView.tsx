@@ -48,13 +48,13 @@ function LoginView({ onSuccess }: LoginViewProps) {
     }
 
     return (
-        <div className={styles['login-view']}>
+        <div className={styles.loginView}>
             <form onSubmit={(e) => {e.preventDefault(); dismissOauthError(); handleLogin()}}>
                 <InputField title="Email or username" type="text" placeholder="Enter your email or username" value={identifier} onChange={(v) => { dismissOauthError(); setIdentifier(v) }} error={errors.identifierErr} />
                 <InputField title="Password" type="password" placeholder="Enter your password" value={password} onChange={(v) => { dismissOauthError(); setPassword(v) }} error={errors.passwordErr}/>
                 <InlineError message={oauthError ?? errors.generalErr ?? null} />
-                <button type="submit" className={styles['auth-submit']}>Sign In ⟶</button>
-                <div className={styles['auth-divider']}>or</div>
+                <button type="submit" className={styles.authSubmit}>Sign In ⟶</button>
+                <div className={styles.authDivider}>or</div>
                 <div onClick={dismissOauthError}>
                     <GoogleSignInButton label="Sign in with Google" />
                 </div>

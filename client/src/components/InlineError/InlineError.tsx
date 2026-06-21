@@ -6,7 +6,7 @@ interface InlineErrorProps {
 
 function InlineError({ message }: InlineErrorProps) {
     if (!message) return null
-    return <span className={styles['inline-error']}>{message}</span>
+    return <span className={styles.inlineError}>{message}</span>
 }
 
 export default InlineError

@@ -1,18 +1,18 @@
-.nomination-view-container {
+.nominationViewContainer {
     color: #fff;
 }
 
-.nomination-active-prompt {
+.nominationActivePrompt {
     margin-top: 10px;
 }
 
-.nomination-prompt-label {
+.nominationPromptLabel {
     color: #7986cb;
     font-weight: bold;
     margin-bottom: 8px;
 }
 
-.nomination-spectator-waiting {
+.nominationSpectatorWaiting {
     margin-top: 10px;
     color: #aaa;
     font-style: italic;

@@ -116,7 +116,7 @@ function GamePageInner() {
     const { gameState, timeLeft, hostPlayerId, isSpectator, currentPlayerObj, eligiblePlayers } = sessionState;
 
     return (
-        <div className={cx(styles['game-page-container'], styles[`phase-${gameState?.current_status || 'none'}`])}>
+        <div className={cx(styles.gamePageContainer, styles[`phase${(gameState?.current_status || 'none').replace(/^./, c => c.toUpperCase())}`])}>
             <BlinkingSpaceBGDiv />
 
             {/* ── Nav ── */}
@@ -126,21 +126,21 @@ function GamePageInner() {
                 onActionButtonClick={connection.leaveGame}
             />
 
-            <div className={styles['game-page-content']}>
+            <div className={styles.gamePageContent}>
                 {/* Spectator Mode Warning Banner */}
                 {isSpectator && (
-                    <div className={styles['spectator-banner']}>
+                    <div className={styles.spectatorBanner}>
                         👁️ SPECTATOR MODE — You are watching this match.
                     </div>
                 )}
 
                 {/* Error Banner */}
                 {errorMsg && (
-                    <div className={styles['game-error-banner']}>
+                    <div className={styles.gameErrorBanner}>
                         <span><strong>Error:</strong> {errorMsg}</span>
                         <button
                             onClick={() => setErrorMsg(null)}
-                            className={styles['btn-error-close']}
+                            className={styles.btnErrorClose}
                         >
                             &times;
                         </button>
@@ -148,12 +148,12 @@ function GamePageInner() {
                 )}
 
                 {gameState ? (
-                    <div className={styles['game-main-layout']}>
+                    <div className={styles.gameMainLayout}>
 
                         {/* Players List Sidebar (Always Visible) */}
-                        <Card className={styles['game-sidebar']}>
-                            <SectionTitle as="h3" className={styles['game-sidebar-title']}>Players</SectionTitle>
-                            <div className={styles['game-players-list']}>
+                        <Card className={styles.gameSidebar}>
+                            <SectionTitle as="h3" className={styles.gameSidebarTitle}>Players</SectionTitle>
+                            <div className={styles.gamePlayersList}>
                                 {gameState.players.map((player) => {
                                     const isCurrentNominator = gameState.last_correct_player === currentPlayerObj?.id;
                                     const isInNominationPhase = gameState.current_status === GameStatus.NOMINATION;
@@ -177,8 +177,8 @@ function GamePageInner() {
                         </Card>
 
                         {/* Active State View Component */}
-                        <Card className={styles['game-active-area']}>
-                            <SectionTitle as="h3" className={styles['game-active-title']}>
+                        <Card className={styles.gameActiveArea}>
+                            <SectionTitle as="h3" className={styles.gameActiveTitle}>
                                 {gameState.current_status === GameStatus.LOBBY && "LOBBY"}
                                 {gameState.current_status === GameStatus.ANSWERING && "ANSWER TO THE QUESTION"}
                                 {gameState.current_status === GameStatus.NOMINATION && "NOMINATE NEXT PLAYER"}
@@ -205,7 +205,7 @@ function GamePageInner() {
 
                     </div>
                 ) : (
-                    <div className={styles['game-loading-banner']}>
+                    <div className={styles.gameLoadingBanner}>
                         <h3>Waiting for Game Snapshot...</h3>
                         <p>Connection established. Awaiting state from the server...</p>
                     </div>

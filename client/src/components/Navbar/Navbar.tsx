@@ -20,22 +20,22 @@ export function Navbar({ sessionUuid, actionButtonText, onActionButtonClick }: N
     };
 
     return (
-        <nav className={styles['app-nav']}>
-            <div className={styles['app-nav-logo']}>
-                <span className={styles['logo-quiz']}>QUIZ</span>SENDENCE
+        <nav className={styles.appNav}>
+            <div className={styles.appNavLogo}>
+                <span className={styles.logoQuiz}>QUIZ</span>SENDENCE
             </div>
 
-            <div className={styles['app-nav-space']} />
+            <div className={styles.appNavSpace} />
 
             {sessionUuid && (
                 <div
-                    className={cx(styles['app-session-code'], copied && styles.copied)}
+                    className={cx(styles.appSessionCode, copied && styles.copied)}
                     onClick={handleCopy}
                     title="Click to copy session code"
                 >
-                    <span className={styles['code-label']}>SESSION CODE:</span>
-                    <span className={styles['code-value']}>{sessionUuid}</span>
-                    <span className={styles['copy-icon']} aria-hidden="true">
+                    <span className={styles.codeLabel}>SESSION CODE:</span>
+                    <span className={styles.codeValue}>{sessionUuid}</span>
+                    <span className={styles.copyIcon} aria-hidden="true">
                         {copied ? (
                             <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
                                 <path d="M3 8.5L6.5 12L13 4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -50,7 +50,7 @@ export function Navbar({ sessionUuid, actionButtonText, onActionButtonClick }: N
                 </div>
             )}
 
-            <Button onClick={onActionButtonClick} className={styles['nav-btn']}>
+            <Button onClick={onActionButtonClick} className={styles.navBtn}>
                 {actionButtonText}
             </Button>
         </nav>

@@ -1,4 +1,4 @@
-.game-hud-container {
+.gameHudContainer {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -11,21 +11,21 @@
     width: 100%;
 }
 
-.hud-group {
+.hudGroup {
     display: flex;
     gap: 16px;
     width: 100%;
 }
 
-.hud-active-game {
+.hudActiveGame {
     justify-content: space-between;
 }
 
-.hud-active-game .hud-item {
+.hudActiveGame .hudItem {
     flex: 0 1 220px;
 }
 
-.hud-item {
+.hudItem {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -42,13 +42,13 @@
     transition: all 0.4s ease;
 }
 
-.hud-item:hover {
+.hudItem:hover {
     background: rgba(255, 255, 255, 0.03);
     border-color: var(--theme-accent, var(--cyan-shadowed));
     box-shadow: 0 0 12px var(--theme-glow, rgba(0, 229, 255, 0.08));
 }
 
-.hud-label {
+.hudLabel {
     font-size: var(--font-xs);
     font-weight: 700;
     color: var(--dim);
@@ -56,7 +56,7 @@
     text-transform: uppercase;
 }
 
-.hud-value {
+.hudValue {
     font-size: var(--font-lg);
     color: var(--theme-accent, var(--cyan));
     font-weight: 700;
@@ -64,13 +64,13 @@
     transition: color 0.4s ease, text-shadow 0.4s ease;
 }
 
-.hud-muted {
+.hudMuted {
     color: var(--placeholder);
     font-size: var(--font-sm);
     font-weight: 400;
 }
 
-.hud-generated {
+.hudGenerated {
     color: var(--green);
     font-size: var(--font-sm);
     font-weight: 700;
@@ -80,12 +80,12 @@
 
 
 /* Alert styles for low time */
-.hud-item.hud-timer.warning {
+.hudItem.hudTimer.warning {
     border-color: var(--red);
     box-shadow: 0 0 12px rgba(255, 23, 68, 0.15);
 }
 
-.hud-item.hud-timer.warning .hud-value {
+.hudItem.hudTimer.warning .hudValue {
     color: var(--red);
     text-shadow: 0 0 8px rgba(255, 23, 68, 0.5);
     animation: pulse 1s infinite alternate;
@@ -104,12 +104,12 @@
 
 /* Responsiveness */
 @media (max-width: 768px) {
-    .hud-group {
+    .hudGroup {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         gap: 12px;
     }
-    .hud-item {
+    .hudItem {
         flex: none;
         width: 100%;
     }

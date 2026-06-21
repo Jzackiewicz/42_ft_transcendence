@@ -12,7 +12,7 @@ export function OnlineIndicator({ userId }: Props) {
 
 	return (
 		<span
-			className={cx(styles['presence-dot'], online ? styles.online : styles.offline)}
+			className={cx(styles.presenceDot, online ? styles.online : styles.offline)}
 			role="status"
 			aria-label={online ? 'online' : 'offline'}
 			title={online ? 'Online' : 'Offline'}

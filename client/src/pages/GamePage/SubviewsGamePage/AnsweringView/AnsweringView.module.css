@@ -1,9 +1,9 @@
-.answering-view-container {
+.answeringViewContainer {
     color: var(--text);
     width: 100%;
 }
 
-.answering-question-box {
+.answeringQuestionBox {
     margin: 16px 0 24px 0;
     padding: 18px 20px;
     background-color: rgba(255, 255, 255, 0.01);
@@ -13,7 +13,7 @@
     box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.005);
 }
 
-.answering-question-meta {
+.answeringQuestionMeta {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -21,7 +21,7 @@
     margin-bottom: 6px;
 }
 
-.answering-category {
+.answeringCategory {
     font-family: var(--fd);
     font-size: var(--font-xs);
     text-transform: uppercase;
@@ -30,7 +30,7 @@
     letter-spacing: 1px;
 }
 
-.answering-question-text {
+.answeringQuestionText {
     font-family: var(--fd);
     font-size: var(--font-xl);
     color: var(--text);
@@ -38,11 +38,11 @@
     line-height: 1.4;
 }
 
-.answering-active-prompt {
+.answeringActivePrompt {
     margin-top: 20px;
 }
 
-.answering-prompt-label {
+.answeringPromptLabel {
     font-family: var(--fb);
     font-size: var(--font-xs);
     letter-spacing: 1px;
@@ -52,12 +52,12 @@
     text-transform: uppercase;
 }
 
-.answering-form {
+.answeringForm {
     display: flex;
     gap: 12px;
 }
 
-.answering-input {
+.answeringInput {
     padding: 12px 16px;
     font-size: var(--font-md);
     font-family: var(--fb);
@@ -71,17 +71,17 @@
     transition: all 0.25s ease-in-out;
 }
 
-.answering-input:focus {
+.answeringInput:focus {
     border-color: var(--theme-accent, var(--magenta));
     background-color: rgba(0, 0, 0, 0.4);
     box-shadow: 0 0 10px var(--theme-glow, rgba(224, 64, 251, 0.1));
 }
 
-.answering-input::placeholder {
+.answeringInput::placeholder {
     color: var(--placeholder);
 }
 
-.answering-char-limit {
+.answeringCharLimit {
     margin-top: 8px;
     font-family: var(--fb);
     font-size: var(--font-xs);
@@ -90,7 +90,7 @@
     color: var(--theme-accent, var(--magenta));
 }
 
-.answering-spectator-waiting {
+.answeringSpectatorWaiting {
     margin-top: 20px;
     color: var(--dim);
     font-size: var(--font-sm);

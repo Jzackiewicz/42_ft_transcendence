@@ -1,10 +1,10 @@
 /* ── CARD HEIGHT ─────────────────────────────────────────────────── */
-.friends-view {
+.friendsView {
     height: 300px;
     overflow: hidden;
 }
 
-.friends-view > *:last-child {
+.friendsView > *:last-child {
     flex: 1;
     min-height: 0;
     display: flex;
@@ -12,12 +12,12 @@
 }
 
 /* ── TAB BAR ─────────────────────────────────────────────────────── */
-.friends-tabs {
+.friendsTabs {
     display: flex;
     gap: 8px;
 }
 
-.friends-tab {
+.friendsTab {
     display: flex;
     align-items: center;
     gap: 6px;
@@ -33,19 +33,19 @@
     transition: all 0.15s;
 }
 
-.friends-tab:hover {
+.friendsTab:hover {
     color: var(--text);
     border-color: rgba(255, 255, 255, 0.2);
 }
 
-.friends-tab.active {
+.friendsTab.active {
     background: rgba(0, 229, 255, 0.1);
     border-color: var(--cyan);
     color: var(--cyan);
 }
 
 /* ── SHARED (used by both list and requests tabs) ────────────────── */
-.friend-avatar {
+.friendAvatar {
     position: relative;
     width: 36px;
     height: 36px;
@@ -61,21 +61,21 @@
     flex-shrink: 0;
 }
 
-.friend-name {
+.friendName {
     flex: 1;
     font-family: var(--fb);
     font-size: var(--font-sm);
     color: var(--text);
 }
 
-.friends-scroll {
+.friendsScroll {
     flex: 1;
     overflow-y: auto;
     padding-right: 4px;
 }
 
-.friends-scroll::-webkit-scrollbar { width: 4px; }
-.friends-scroll::-webkit-scrollbar-thumb {
+.friendsScroll::-webkit-scrollbar { width: 4px; }
+.friendsScroll::-webkit-scrollbar-thumb {
     background: rgba(255, 255, 255, 0.1);
     border-radius: 2px;
 }

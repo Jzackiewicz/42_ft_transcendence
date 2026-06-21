@@ -12,13 +12,13 @@ interface InputFieldProps {
 function InputField({ title, value, type, placeholder, error, onChange }: InputFieldProps) {
     return (
         <div className={styles.field}>
-            <label className={styles['field-label']}>{title}</label>
-            <input  className={styles['field-input']}
+            <label className={styles.fieldLabel}>{title}</label>
+            <input  className={styles.fieldInput}
                     type={type}
                     value={value}
                     placeholder={placeholder}
                     onChange={e => onChange(e.target.value)} />
-            {error && <span className={styles['inputfield-warning']}>{error}</span>}
+            {error && <span className={styles.inputfieldWarning}>{error}</span>}
         </div>
     )
 }

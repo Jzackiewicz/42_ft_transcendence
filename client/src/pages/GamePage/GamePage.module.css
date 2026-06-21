@@ -1,4 +1,4 @@
-.game-page-container {
+.gamePageContainer {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -9,38 +9,38 @@
 }
 
 /* ── PHASE THEMES ──────────────────────────────────────────────── */
-.game-page-container.phase-lobby {
+.gamePageContainer.phaseLobby {
     --theme-accent: var(--cyan);
     --theme-border: rgba(0, 229, 255, 0.18);
     --theme-glow: rgba(0, 229, 255, 0.05);
 }
 
-.game-page-container.phase-answering {
+.gamePageContainer.phaseAnswering {
     --theme-accent: var(--magenta);
     --theme-border: rgba(224, 64, 251, 0.18);
     --theme-glow: rgba(224, 64, 251, 0.05);
 }
 
-.game-page-container.phase-nomination {
+.gamePageContainer.phaseNomination {
     --theme-accent: var(--gold);
     --theme-border: rgba(255, 196, 0, 0.18);
     --theme-glow: rgba(255, 196, 0, 0.05);
 }
 
-.game-page-container.phase-evaluation {
+.gamePageContainer.phaseEvaluation {
     --theme-accent: var(--violet);
     --theme-border: rgba(124, 77, 255, 0.18);
     --theme-glow: rgba(124, 77, 255, 0.05);
 }
 
-.game-page-container.phase-game_over {
+.gamePageContainer.phaseGame_over {
     --theme-accent: var(--magenta);
     --theme-border: rgba(224, 64, 251, 0.18);
     --theme-glow: rgba(224, 64, 251, 0.05);
 }
 
 /* ── MAIN CONTENT WRAPPER ────────────────────────────────────────── */
-.game-page-content {
+.gamePageContent {
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -53,7 +53,7 @@
     z-index: 1;
 }
 
-.game-error-banner {
+.gameErrorBanner {
     color: var(--text);
     background: rgba(255, 23, 68, 0.08);
     border: 1px solid rgba(255, 23, 68, 0.2);
@@ -67,7 +67,7 @@
     box-shadow: 0 0 15px rgba(255, 23, 68, 0.1);
 }
 
-.btn-error-close {
+.btnErrorClose {
     background: none;
     border: none;
     font-size: 20px;
@@ -77,30 +77,30 @@
     transition: opacity 0.2s;
 }
 
-.btn-error-close:hover {
+.btnErrorClose:hover {
     opacity: 1;
 }
 
-.game-main-layout {
+.gameMainLayout {
     display: flex;
     gap: 28px;
     flex-wrap: wrap;
     align-items: flex-start;
 }
 
-.game-sidebar {
+.gameSidebar {
     flex: 1 1 280px;
     min-width: 250px;
 }
 
 
-.game-players-list {
+.gamePlayersList {
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
-.game-active-area {
+.gameActiveArea {
     flex: 2 1 500px;
     min-width: 300px;
     display: flex;
@@ -108,14 +108,14 @@
     gap: 24px;
 }
 
-.game-active-title {
+.gameActiveTitle {
     font-size: 22px !important;
     text-transform: uppercase;
     justify-content: center;
     text-align: center;
 }
 
-.game-loading-banner {
+.gameLoadingBanner {
     background: var(--panel);
     border: 1px dashed var(--pb);
     border-radius: 14px;
@@ -126,7 +126,7 @@
     backdrop-filter: blur(10px);
 }
 
-.game-loading-banner h3 {
+.gameLoadingBanner h3 {
     font-family: var(--fd);
     font-size: var(--font-2xl);
     color: var(--cyan);
@@ -134,12 +134,12 @@
     letter-spacing: 0.5px;
 }
 
-.game-loading-banner p {
+.gameLoadingBanner p {
     margin: 0;
     font-size: var(--font-md);
 }
 
-.spectator-banner {
+.spectatorBanner {
     background: rgba(124, 77, 255, 0.08);
     color: var(--violet);
     border: 1px solid rgba(124, 77, 255, 0.2);
@@ -155,29 +155,29 @@
 
 /* ── RESPONSIVENESS ─────────────────────────────────────────────── */
 @media (max-width: 768px) {
-    .game-page-content {
+    .gamePageContent {
         padding: 16px;
         gap: 16px;
     }
     
-    .game-main-layout {
+    .gameMainLayout {
         flex-direction: column;
         gap: 16px;
     }
     
-    .game-sidebar {
+    .gameSidebar {
         order: 2; /* Put players list at the bottom */
         flex: none;
         width: 100%;
     }
     
-    .game-active-area {
+    .gameActiveArea {
         order: 1; /* Put active game area at the top */
         flex: none;
         width: 100%;
     }
     
-    .game-loading-banner {
+    .gameLoadingBanner {
         padding: 24px 16px;
     }
 }

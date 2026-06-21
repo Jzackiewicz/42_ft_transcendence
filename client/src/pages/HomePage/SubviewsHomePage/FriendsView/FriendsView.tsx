@@ -11,25 +11,25 @@ function FriendsView() {
     const { activeTab, setActiveTab } = useFriendsView()
 
     return (
-        <Card className={styles['friends-view']}>
+        <Card className={styles.friendsView}>
             <SectionTitle>👥 Friends</SectionTitle>
 
             {/* ── Tabs ── */}
-            <div className={styles['friends-tabs']}>
+            <div className={styles.friendsTabs}>
                 <button
-                    className={cx(styles['friends-tab'], activeTab === 'friends' && styles.active)}
+                    className={cx(styles.friendsTab, activeTab === 'friends' && styles.active)}
                     onClick={() => setActiveTab('friends')}
                 >
                     Friends
                 </button>
                 <button
-                    className={cx(styles['friends-tab'], activeTab === 'requests' && styles.active)}
+                    className={cx(styles.friendsTab, activeTab === 'requests' && styles.active)}
                     onClick={() => setActiveTab('requests')}
                 >
                     Requests
                 </button>
                 <button
-                    className={cx(styles['friends-tab'], activeTab === 'find' && styles.active)}
+                    className={cx(styles.friendsTab, activeTab === 'find' && styles.active)}
                     onClick={() => setActiveTab('find')}
                 >
                     Find Players

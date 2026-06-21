@@ -30,9 +30,9 @@ export function PlayerTile({
         .join('');
 
     const tileClasses = cx(
-        styles['player-tile'],
+        styles.playerTile,
         isPlayerActive && styles.active,
-        isCurrentUser && styles['current-user'],
+        isCurrentUser && styles.currentUser,
         !is_alive && styles.eliminated,
         !player.is_online && styles.offline,
         isClickable && styles.clickable
@@ -40,44 +40,44 @@ export function PlayerTile({
 
     return (
         <div className={tileClasses} onClick={isClickable ? onClick : undefined}>
-            <div className={styles['player-tile-header']}>
-                <div className={styles['player-tile-user-info']}>
+            <div className={styles.playerTileHeader}>
+                <div className={styles.playerTileUserInfo}>
                     {player.avatar ? (
                         <img
                             src={player.avatar}
                             alt={`${display_name}'s avatar`}
-                            className={styles['player-tile-avatar']}
+                            className={styles.playerTileAvatar}
                         />
                     ) : (
-                        <span className={styles['player-tile-avatar-placeholder']}>👤</span>
+                        <span className={styles.playerTileAvatarPlaceholder}>👤</span>
                     )}
-                    <span className={is_alive ? styles['player-name-alive'] : styles['player-name-dead']}>
+                    <span className={is_alive ? styles.playerNameAlive : styles.playerNameDead}>
                         {display_name} {isCurrentUser && '(You)'}
                     </span>
                 </div>
-                <span className={styles['player-role-badges']}>
+                <span className={styles.playerRoleBadges}>
                     {isPlayerHost && <Badge variant="host" title="Lobby Host">Host</Badge>}
                     {isPlayerActive && <Badge variant="answering" title="Answering Turn">Answering</Badge>}
                     {isPlayerNominator && <Badge variant="nominator" title="Has Nomination Rights">Nominator</Badge>}
                 </span>
             </div>
-            <div className={styles['player-stats']}>
-                <div className={styles['player-stat-item']}>
-                    <span className={styles['stat-label']}>Lives</span>
-                    <span className={styles['stat-hearts']}>{hearts}</span>
+            <div className={styles.playerStats}>
+                <div className={styles.playerStatItem}>
+                    <span className={styles.statLabel}>Lives</span>
+                    <span className={styles.statHearts}>{hearts}</span>
                 </div>
-                <div className={styles['player-stat-item']}>
-                    <span className={styles['stat-label']}>Points</span>
-                    <span className={styles['stat-points']}>{points}</span>
+                <div className={styles.playerStatItem}>
+                    <span className={styles.statLabel}>Points</span>
+                    <span className={styles.statPoints}>{points}</span>
                 </div>
             </div>
             {!is_alive && (
-                <div className={styles['player-eliminated-label']}>
+                <div className={styles.playerEliminatedLabel}>
                     💀 ELIMINATED
                 </div>
             )}
             {player.is_online === false && is_alive && (
-                <div className={styles['player-offline-label']}>
+                <div className={styles.playerOfflineLabel}>
                     📡 DISCONNECTED
                 </div>
             )}

@@ -1,4 +1,4 @@
-.static-page-container {
+.staticPageContainer {
     min-height: 100vh;
     background-color: var(--bg);
     color: var(--text);
@@ -10,7 +10,7 @@
     padding: 60px 20px;
 }
 
-.static-page-content {
+.staticPageContent {
     position: relative;
     z-index: 2;
     max-width: 800px;
@@ -22,7 +22,7 @@
     padding: 40px;
 }
 
-.static-page-content h1 {
+.staticPageContent h1 {
     font-family: var(--fd);
     font-size: 48px;
     margin-bottom: 10px;
@@ -32,7 +32,7 @@
     background-clip: text;
 }
 
-.static-page-content h2 {
+.staticPageContent h2 {
     font-family: var(--fd);
     font-size: 24px;
     color: var(--cyan);
@@ -42,28 +42,28 @@
     padding-bottom: 5px;
 }
 
-.static-page-content p {
+.staticPageContent p {
     line-height: 1.6;
     color: rgba(238, 238, 248, 0.8);
     margin-bottom: 15px;
 }
 
-.static-page-content ul {
+.staticPageContent ul {
     margin-bottom: 20px;
 }
 
-.static-page-content li {
+.staticPageContent li {
     margin-bottom: 10px;
     color: rgba(238, 238, 248, 0.8);
 }
 
-.last-updated {
+.lastUpdated {
     font-size: var(--font-md);
     color: var(--dim);
     margin-bottom: 40px;
 }
 
-.back-button {
+.backButton {
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -80,7 +80,7 @@
     cursor: pointer;
 }
 
-.back-button:hover {
+.backButton:hover {
     background: rgba(0, 229, 255, 0.1);
     border-color: var(--cyan);
     transform: translateX(-4px);

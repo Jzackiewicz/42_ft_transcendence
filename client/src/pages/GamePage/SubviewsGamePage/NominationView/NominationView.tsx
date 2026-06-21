@@ -13,15 +13,15 @@ export function NominationView({
     nominatorName
 }: NominationViewProps) {
     return (
-        <div className={styles['nomination-view-container']}>
+        <div className={styles.nominationViewContainer}>
             {isCurrentNominator ? (
-                <div className={styles['nomination-active-prompt']}>
-                    <div className={styles['nomination-prompt-label']}>
+                <div className={styles.nominationActivePrompt}>
+                    <div className={styles.nominationPromptLabel}>
                         👉 Click on any player in the sidebar list to nominate them for the next turn!
                     </div>
                 </div>
             ) : (
-                <div className={styles['nomination-spectator-waiting']}>
+                <div className={styles.nominationSpectatorWaiting}>
                     👀 {nominatorName} is selecting the next target...
                 </div>
             )}

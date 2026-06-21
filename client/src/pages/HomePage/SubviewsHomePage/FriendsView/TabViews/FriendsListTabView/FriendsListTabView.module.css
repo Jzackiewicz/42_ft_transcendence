@@ -1,10 +1,10 @@
-.friends-grid {
+.friendsGrid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
 }
 
-.friend-item {
+.friendItem {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -14,7 +14,7 @@
     border: 1px solid var(--pb);
 }
 
-.friend-remove {
+.friendRemove {
     background: transparent;
     border: none;
     color: var(--dim);
@@ -25,4 +25,4 @@
     white-space: nowrap;
 }
 
-.friend-remove:hover { color: #f87171; }
+.friendRemove:hover { color: #f87171; }

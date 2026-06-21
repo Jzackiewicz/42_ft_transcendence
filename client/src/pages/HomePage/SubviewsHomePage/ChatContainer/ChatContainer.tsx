@@ -3,7 +3,7 @@ import styles from '../../../../components/chat/chat.module.css'
 
 function ChatContainer() {
     return (
-        <div className={styles['chat-container']}>
+        <div className={styles.chatContainer}>
             <ChatInner />
         </div>
     )

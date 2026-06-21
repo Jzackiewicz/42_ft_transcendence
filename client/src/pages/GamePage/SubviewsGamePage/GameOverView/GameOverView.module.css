@@ -1,5 +1,5 @@
 /* ── GAME OVER CONTAINER ──────────────────────────────────────── */
-.game-over-container {
+.gameOverContainer {
     color: var(--text);
     display: flex;
     flex-direction: column;
@@ -14,14 +14,14 @@
 }
 
 /* ── STANDINGS TABLE ─────────────────────────────────────────── */
-.game-over-table {
+.gameOverTable {
     width: 100%;
     border-collapse: collapse;
     margin-top: 10px;
 }
 
 /* Header */
-.game-over-thead th {
+.gameOverThead th {
     font-family: var(--fb);
     font-size: var(--font-xs);
     text-transform: uppercase;
@@ -34,23 +34,23 @@
     white-space: nowrap;
 }
 
-.game-over-thead th:nth-child(1),
-.game-over-thead th:nth-child(2) {
+.gameOverThead th:nth-child(1),
+.gameOverThead th:nth-child(2) {
     text-align: left;
 }
 
 /* Rows with much larger vertical spacing */
-.game-over-row {
+.gameOverRow {
     background: transparent;
     transition: background-color 0.2s ease;
     border-bottom: 1px solid var(--border);
 }
 
-.game-over-row:hover {
+.gameOverRow:hover {
     background-color: rgba(255, 255, 255, 0.02);
 }
 
-.game-over-row td {
+.gameOverRow td {
     padding: 28px 10px; /* Much larger vertical spacing between players */
     font-family: var(--fb);
     font-size: var(--font-md);
@@ -60,17 +60,17 @@
 }
 
 /* ── WINNER ROW HIGHLIGHT ────────────────────────────────────── */
-.game-over-row.winner-row td {
+.gameOverRow.winnerRow td {
     background: rgba(255, 196, 0, 0.02); /* very subtle gold tint */
 }
 
 /* ── ELIMINATED ROW ──────────────────────────────────────────── */
-.game-over-row.eliminated-row {
+.gameOverRow.eliminatedRow {
     opacity: 0.5;
 }
 
 /* ── RANK CELL ───────────────────────────────────────────────── */
-.game-over-rank {
+.gameOverRank {
     font-family: var(--fd);
     font-weight: 700;
     font-size: var(--font-lg);
@@ -79,23 +79,23 @@
     width: 60px;
 }
 
-.winner-row .game-over-rank {
+.winnerRow .gameOverRank {
     color: var(--gold);
     text-shadow: 0 0 8px rgba(255, 196, 0, 0.35);
 }
 
 /* ── PLAYER INFO CELL ────────────────────────────────────────── */
-.game-over-player-cell {
+.gameOverPlayerCell {
     text-align: left !important;
 }
 
-.game-over-player-info {
+.gameOverPlayerInfo {
     display: flex;
     align-items: center;
     gap: 12px;
 }
 
-.game-over-avatar {
+.gameOverAvatar {
     width: 32px;
     height: 32px;
     border-radius: 50%;
@@ -104,7 +104,7 @@
     flex-shrink: 0;
 }
 
-.game-over-avatar-placeholder {
+.gameOverAvatarPlaceholder {
     width: 32px;
     height: 32px;
     border-radius: 50%;
@@ -118,54 +118,54 @@
     flex-shrink: 0;
 }
 
-.winner-row .game-over-avatar {
+.winnerRow .gameOverAvatar {
     border-color: var(--gold);
     box-shadow: 0 0 8px rgba(255, 196, 0, 0.2);
 }
 
-.winner-row .game-over-avatar-placeholder {
+.winnerRow .gameOverAvatarPlaceholder {
     border-color: var(--gold);
     box-shadow: 0 0 8px rgba(255, 196, 0, 0.2);
 }
 
-.game-over-player-name {
+.gameOverPlayerName {
     font-family: var(--fb);
     font-weight: 600;
     color: var(--text);
     font-size: var(--font-md);
 }
 
-.winner-row .game-over-player-name {
+.winnerRow .gameOverPlayerName {
     color: var(--gold);
     font-weight: 700;
 }
 
 /* ── LIVES ───────────────────────────────────────────────────── */
-.game-over-lives {
+.gameOverLives {
     font-size: 12px;
     letter-spacing: 1px;
 }
 
 /* ── POINTS ──────────────────────────────────────────────────── */
-.game-over-points {
+.gameOverPoints {
     font-family: var(--fd);
     font-weight: 700;
     font-size: var(--font-lg);
     color: var(--theme-accent, var(--magenta));
 }
 
-.winner-row .game-over-points {
+.winnerRow .gameOverPoints {
     color: var(--gold);
 }
 
 /* ── ANSWERS ─────────────────────────────────────────────────── */
-.game-over-answers {
+.gameOverAnswers {
     color: var(--dim);
     font-size: var(--font-sm);
 }
 
 /* ── ACTIONS ─────────────────────────────────────────────────── */
-.game-over-actions {
+.gameOverActions {
     display: flex;
     justify-content: center;
     margin-top: 16px;
@@ -173,17 +173,17 @@
 
 /* ── RESPONSIVENESS ──────────────────────────────────────────── */
 @media (max-width: 768px) {
-    .game-over-container {
+    .gameOverContainer {
         gap: 16px;
     }
 
-    .game-over-row td {
+    .gameOverRow td {
         padding: 18px 8px; /* Slightly smaller but still spaced on mobile */
         font-size: var(--font-sm);
     }
 
-    .game-over-avatar,
-    .game-over-avatar-placeholder {
+    .gameOverAvatar,
+    .gameOverAvatarPlaceholder {
         width: 28px;
         height: 28px;
     }

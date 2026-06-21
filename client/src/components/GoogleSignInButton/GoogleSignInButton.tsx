@@ -14,7 +14,7 @@ function GoogleSignInButton({ label = 'Sign in with Google' }: GoogleSignInButto
         <button
             type="button"
             onClick={googleOAuthLogin}
-            className={styles['google-signin-btn']}
+            className={styles.googleSigninBtn}
         >
             <svg
                 xmlns="http://www.w3.org/2000/svg"

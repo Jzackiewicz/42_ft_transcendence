@@ -12,30 +12,30 @@ export function AuthPage() {
 	const { onRegistrationSuccess } = useRegistrationNavigation()
 
 	return (
-		<div className={styles['main-container']}>
-				<div className={styles['empty-container']}>
+		<div className={styles.mainContainer}>
+				<div className={styles.emptyContainer}>
 					<BlinkingSpaceBGDiv />
-					<div className={styles['empty-container-content']}>         {/* groups title + subtitle */}
-						<h1 className={styles['page-title']}>QUIZSENDENCE</h1>
-						<h1 className={cx(styles['page-title'], styles.gradient)}>GAME SHOW</h1>
-						<p className={styles['page-subtitle']}>Real-time multiplayer trivia. Compete live, nominate your rivals, and climb to the top of the leaderboard. Every question is a spotlight moment.</p>
+					<div className={styles.emptyContainerContent}>         {/* groups title + subtitle */}
+						<h1 className={styles.pageTitle}>QUIZSENDENCE</h1>
+						<h1 className={cx(styles.pageTitle, styles.gradient)}>GAME SHOW</h1>
+						<p className={styles.pageSubtitle}>Real-time multiplayer trivia. Compete live, nominate your rivals, and climb to the top of the leaderboard. Every question is a spotlight moment.</p>
 					</div>
 				</div>
 
-				<div className={styles['auth-container']}>
-					<div className={styles['auth-content']}>
-						<div className={styles['auth-title-container']}>
-							<div className={styles['auth-title']}>
+				<div className={styles.authContainer}>
+					<div className={styles.authContent}>
+						<div className={styles.authTitleContainer}>
+							<div className={styles.authTitle}>
 								{isLoginTabActive ? 'Welcome back' : 'Join the Show'}
 							</div>
-							<div className={styles['auth-subtitle']}>
+							<div className={styles.authSubtitle}>
 								{isLoginTabActive ? 'Sign in to your account' : 'Create your free account'}
 							</div>
 						</div>
 
-						<div className={styles['auth-tabs']}>
-							<button className={cx(styles['auth-tab'], isLoginTabActive && styles.active)} onClick={() => setIsLoginTabActive(true)}>Sign In</button>
-							<button className={cx(styles['auth-tab'], !isLoginTabActive && styles.active)} onClick={() => setIsLoginTabActive(false)}>Register</button>
+						<div className={styles.authTabs}>
+							<button className={cx(styles.authTab, isLoginTabActive && styles.active)} onClick={() => setIsLoginTabActive(true)}>Sign In</button>
+							<button className={cx(styles.authTab, !isLoginTabActive && styles.active)} onClick={() => setIsLoginTabActive(false)}>Register</button>
 						</div>
 						{isLoginTabActive ? <LoginView onSuccess={onLoginSuccess} /> : <RegistrationView onSuccess={onRegistrationSuccess} />}
 					</div>

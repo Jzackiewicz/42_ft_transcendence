@@ -1,10 +1,10 @@
-.stats-grid {
+.statsGrid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 12px;
 }
 
-.stat-box {
+.statBox {
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid var(--pb);
     border-radius: 10px;
@@ -14,21 +14,21 @@
     gap: 4px;
 }
 
-.stat-box-val {
+.statBoxVal {
     font-family: var(--fd);
     font-size: 26px;
     font-weight: 700;
     line-height: 1;
 }
 
-.stat-box-val--cyan    { color: var(--cyan); }
-.stat-box-val--magenta { color: var(--magenta); }
-.stat-box-val--gold    { color: var(--gold); }
-.stat-box-val--green   { color: var(--green); }
-.stat-box-val--red     { color: var(--red); }
-.stat-box-val--violet  { color: var(--violet); }
+.statBoxValCyan    { color: var(--cyan); }
+.statBoxValMagenta { color: var(--magenta); }
+.statBoxValGold    { color: var(--gold); }
+.statBoxValGreen   { color: var(--green); }
+.statBoxValRed     { color: var(--red); }
+.statBoxValViolet  { color: var(--violet); }
 
-.stat-box-lbl {
+.statBoxLbl {
     font-size: 11px;
     color: var(--dim);
     letter-spacing: 0.5px;

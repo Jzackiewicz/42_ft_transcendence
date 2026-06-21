@@ -8,27 +8,27 @@ function FriendsFindTabView() {
 
     return (
         <div>
-            <div className={styles['find-row']}>
+            <div className={styles.findRow}>
                 <input
-                    className={styles['find-input']}
+                    className={styles.findInput}
                     placeholder="Search by username…"
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && handleSendRequest(searchQuery)}
                 />
-                <button className={styles['find-btn']} onClick={() => handleSendRequest(searchQuery)}>
+                <button className={styles.findBtn} onClick={() => handleSendRequest(searchQuery)}>
                     Send Request
                 </button>
             </div>
             {status && (
-                <span className={cx(styles['find-status'], styles[`find-status--${status.type}`])}>
+                <span className={cx(styles.findStatus, styles[status.type === 'error' ? 'findStatusError' : 'findStatusSuccess'])}>
                     {status.message}
                 </span>
             )}
-            <div className={shared['friends-scroll']}>
-                <div className={styles['find-results']}>
+            <div className={shared.friendsScroll}>
+                <div className={styles.findResults}>
                     {friends.map(user => (
-                        <div key={user.id} className={styles['find-result-item']} onClick={() => setSearchQuery(user.username)}>
+                        <div key={user.id} className={styles.findResultItem} onClick={() => setSearchQuery(user.username)}>
                             {user.username}
                         </div>
                     ))}

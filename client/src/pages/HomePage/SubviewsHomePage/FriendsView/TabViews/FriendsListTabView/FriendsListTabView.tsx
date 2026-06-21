@@ -8,17 +8,17 @@ function FriendsListTabView() {
     const { friendsList, handleRemove, error } = useFriendsListTabView()
 
     return (
-        <div className={shared['friends-scroll']}>
+        <div className={shared.friendsScroll}>
             <InlineError message={error} />
-            <div className={styles['friends-grid']}>
+            <div className={styles.friendsGrid}>
                 {friendsList.map((f) => (
-                    <div key={f.friend.id} className={styles['friend-item']}>
-                        <div className={shared['friend-avatar']}>
+                    <div key={f.friend.id} className={styles.friendItem}>
+                        <div className={shared.friendAvatar}>
                             {(f.friend.username ?? '?')[0].toUpperCase()}
                         </div>
                         <OnlineIndicator userId={f.friend.id} />
-                        <span className={shared['friend-name']}>{f.friend.username}</span>
-                        <button className={styles['friend-remove']} onClick={() => handleRemove(f.friend.id)}>Remove</button>
+                        <span className={shared.friendName}>{f.friend.username}</span>
+                        <button className={styles.friendRemove} onClick={() => handleRemove(f.friend.id)}>Remove</button>
                     </div>
                 ))}
             </div>

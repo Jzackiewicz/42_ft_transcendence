@@ -11,30 +11,30 @@ function StatsView() {
         <Card>
             <SectionTitle>📊 Statistics</SectionTitle>
 
-            <div className={styles['stats-grid']}>
-                <div className={styles['stat-box']}>
-                    <div className={cx(styles['stat-box-val'], styles['stat-box-val--cyan'])}>{stats.gamesPlayed}</div>
-                    <div className={styles['stat-box-lbl']}>Games Played</div>
+            <div className={styles.statsGrid}>
+                <div className={styles.statBox}>
+                    <div className={cx(styles.statBoxVal, styles.statBoxValCyan)}>{stats.gamesPlayed}</div>
+                    <div className={styles.statBoxLbl}>Games Played</div>
                 </div>
-                <div className={styles['stat-box']}>
-                    <div className={cx(styles['stat-box-val'], styles['stat-box-val--magenta'])}>{stats.wins}</div>
-                    <div className={styles['stat-box-lbl']}>Wins</div>
+                <div className={styles.statBox}>
+                    <div className={cx(styles.statBoxVal, styles.statBoxValMagenta)}>{stats.wins}</div>
+                    <div className={styles.statBoxLbl}>Wins</div>
                 </div>
-                <div className={styles['stat-box']}>
-                    <div className={cx(styles['stat-box-val'], styles['stat-box-val--gold'])}>{stats.winRate}%</div>
-                    <div className={styles['stat-box-lbl']}>Win Rate</div>
+                <div className={styles.statBox}>
+                    <div className={cx(styles.statBoxVal, styles.statBoxValGold)}>{stats.winRate}%</div>
+                    <div className={styles.statBoxLbl}>Win Rate</div>
                 </div>
-                <div className={styles['stat-box']}>
-                    <div className={cx(styles['stat-box-val'], styles['stat-box-val--green'])}>{stats.avgScore}</div>
-                    <div className={styles['stat-box-lbl']}>Avg Score</div>
+                <div className={styles.statBox}>
+                    <div className={cx(styles.statBoxVal, styles.statBoxValGreen)}>{stats.avgScore}</div>
+                    <div className={styles.statBoxLbl}>Avg Score</div>
                 </div>
-                <div className={styles['stat-box']}>
-                    <div className={cx(styles['stat-box-val'], styles['stat-box-val--red'])}>{stats.correctRate}%</div>
-                    <div className={styles['stat-box-lbl']}>Correct Rate</div>
+                <div className={styles.statBox}>
+                    <div className={cx(styles.statBoxVal, styles.statBoxValRed)}>{stats.correctRate}%</div>
+                    <div className={styles.statBoxLbl}>Correct Rate</div>
                 </div>
-                <div className={styles['stat-box']}>
-                    <div className={cx(styles['stat-box-val'], styles['stat-box-val--violet'])}>{stats.bestStreak}</div>
-                    <div className={styles['stat-box-lbl']}>Best Streak</div>
+                <div className={styles.statBox}>
+                    <div className={cx(styles.statBoxVal, styles.statBoxValViolet)}>{stats.bestStreak}</div>
+                    <div className={styles.statBoxLbl}>Best Streak</div>
                 </div>
             </div>
         </Card>

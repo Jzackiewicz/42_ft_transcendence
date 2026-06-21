@@ -28,47 +28,47 @@ export function EvaluationView({
     let statusClass = '';
     let statusText = '';
     if (isCorrect) {
-        statusClass = styles['eval-correct'];
+        statusClass = styles.evalCorrect;
         statusText = '🏆 CORRECT ANSWER';
     } else if (isTimeout) {
-        statusClass = styles['eval-timeout'];
+        statusClass = styles.evalTimeout;
         statusText = "⏰ TIME'S UP";
     } else {
-        statusClass = styles['eval-wrong'];
+        statusClass = styles.evalWrong;
         statusText = '❌ WRONG ANSWER';
     }
 
     return (
-        <div className={cx(styles['evaluation-view-container'], statusClass)}>
+        <div className={cx(styles.evaluationViewContainer, statusClass)}>
             
-            <div className={styles['eval-question-info']}>
-                <div className={styles['eval-question-meta']}>
-                    <span className={styles['eval-category']}>[{category}]</span>
+            <div className={styles.evalQuestionInfo}>
+                <div className={styles.evalQuestionMeta}>
+                    <span className={styles.evalCategory}>[{category}]</span>
                     <QuestionBadges isAiGenerated={isAiGenerated} isVerified={isVerified} />
                 </div>
-                <p className={styles['eval-question-text']}>{questionText}</p>
+                <p className={styles.evalQuestionText}>{questionText}</p>
             </div>
 
-            <div className={styles['eval-verdict-title']}>{statusText}</div>
+            <div className={styles.evalVerdictTitle}>{statusText}</div>
 
-            <div className={styles['eval-answers-comparison']}>
-                <div className={styles['eval-player-answer-box']}>
-                    <div className={styles['eval-box-label']}>{playerName}'s Answer:</div>
-                    <div className={styles['eval-box-content']}>
+            <div className={styles.evalAnswersComparison}>
+                <div className={styles.evalPlayerAnswerBox}>
+                    <div className={styles.evalBoxLabel}>{playerName}'s Answer:</div>
+                    <div className={styles.evalBoxContent}>
                         {isTimeout ? (
-                            <span className={styles['eval-text-none']}>Timeout</span>
+                            <span className={styles.evalTextNone}>Timeout</span>
                         ) : (answerText === null || answerText.trim() === '') ? (
-                            <span className={styles['eval-text-none']}>None</span>
+                            <span className={styles.evalTextNone}>None</span>
                         ) : (
-                            <span className={styles['eval-text-value']}>{answerText}</span>
+                            <span className={styles.evalTextValue}>{answerText}</span>
                         )}
                     </div>
                 </div>
 
-                <div className={styles['eval-correct-answer-box']}>
-                    <div className={styles['eval-box-label']}>Correct Answer:</div>
-                    <div className={styles['eval-box-content']}>
-                        <span className={styles['eval-text-value']}>{correctAnswer}</span>
+                <div className={styles.evalCorrectAnswerBox}>
+                    <div className={styles.evalBoxLabel}>Correct Answer:</div>
+                    <div className={styles.evalBoxContent}>
+                        <span className={styles.evalTextValue}>{correctAnswer}</span>
                     </div>
                 </div>
             </div>

@@ -4,14 +4,14 @@ import styles from '../static-page.module.css';
 
 export function PrivacyPolicyPage() {
 	return (
-		<div className={styles['static-page-container']}>
+		<div className={styles.staticPageContainer}>
 			<BlinkingSpaceBGDiv />
-			<div className={styles['static-page-content']}>
-				<Link to="/" className={styles['back-button']}>
+			<div className={styles.staticPageContent}>
+				<Link to="/" className={styles.backButton}>
 					← Go Back
 				</Link>
 				<h1>Privacy Policy</h1>
-				<p className={styles['last-updated']}>Last Updated: June 2026</p>
+				<p className={styles.lastUpdated}>Last Updated: June 2026</p>
 
 				<h2>1. Information We Collect</h2>
 				<p>We collect information you provide directly to us when you create an account, such as your username, email address, and password. We also collect data related to your gameplay and social interactions on the platform.</p>

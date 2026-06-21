@@ -1,5 +1,5 @@
 /* ── NAV ────────────────────────────────────────────────────────── */
-.app-nav {
+.appNav {
     height: 54px;
     flex-shrink: 0;
     display: flex;
@@ -12,7 +12,7 @@
     z-index: 10;
 }
 
-.app-nav-logo {
+.appNavLogo {
     font-family: var(--fd);
     font-size: 20px;
     font-weight: 700;
@@ -21,14 +21,14 @@
     line-height: 1;
 }
 
-.app-nav-logo .logo-quiz {
+.appNavLogo .logoQuiz {
     background: linear-gradient(var(--gradient-deg), var(--cyan) 10%, var(--magenta) 30%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
 
-.app-session-code {
+.appSessionCode {
     font-family: var(--fb);
     font-size: var(--font-sm);
     color: var(--dim);
@@ -46,24 +46,24 @@
     user-select: none;
 }
 
-.app-session-code:hover {
+.appSessionCode:hover {
     background: rgba(0, 229, 255, 0.06);
     border-color: var(--cyan);
     box-shadow: 0 0 10px var(--cyan-shadowed);
 }
 
-.app-session-code.copied {
+.appSessionCode.copied {
     border-color: var(--green);
     background: rgba(0, 230, 118, 0.08);
     box-shadow: 0 0 12px rgba(0, 230, 118, 0.3);
 }
 
-.app-session-code .code-label {
+.appSessionCode .codeLabel {
     font-size: var(--font-xs);
     opacity: 0.8;
 }
 
-.app-session-code .code-value {
+.appSessionCode .codeValue {
     color: var(--text);
     font-family: var(--fd);
     font-size: var(--font-md);
@@ -72,57 +72,57 @@
     transition: color 0.2s;
 }
 
-.app-session-code:hover .code-value {
+.appSessionCode:hover .codeValue {
     color: var(--cyan);
 }
 
-.app-session-code.copied .code-value {
+.appSessionCode.copied .codeValue {
     color: var(--green);
 }
 
-.app-session-code .copy-icon {
+.appSessionCode .copyIcon {
     font-size: 14px;
     opacity: 0.6;
     transition: transform 0.2s, opacity 0.2s;
 }
 
-.app-session-code:hover .copy-icon {
+.appSessionCode:hover .copyIcon {
     opacity: 1;
     transform: scale(1.1);
 }
 
-.app-session-code.copied .copy-icon {
+.appSessionCode.copied .copyIcon {
     color: var(--green);
     opacity: 1;
 }
 
-.app-nav-space {
+.appNavSpace {
     flex: 1;
 }
 
 /* ── RESPONSIVENESS ─────────────────────────────────────────────── */
 @media (max-width: 600px) {
-    .app-nav {
+    .appNav {
         padding: 0 16px;
         gap: 10px;
         height: 48px;
     }
-    .app-nav-logo {
+    .appNavLogo {
         font-size: 16px;
     }
-    .app-session-code {
+    .appSessionCode {
         padding: 5px 8px;
         gap: 4px;
         font-size: 11px;
     }
-    .app-session-code .code-label {
+    .appSessionCode .codeLabel {
         display: none;
     }
-    .app-session-code .code-value {
+    .appSessionCode .codeValue {
         font-size: var(--font-sm);
         margin-left: 0;
     }
-    .nav-btn {
+    .navBtn {
         padding: 6px 12px;
         font-size: var(--font-xs);
     }

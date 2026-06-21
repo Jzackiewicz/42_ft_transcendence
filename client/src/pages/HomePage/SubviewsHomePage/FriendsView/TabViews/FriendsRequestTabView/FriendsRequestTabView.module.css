@@ -1,4 +1,4 @@
-.friends-request-list {
+.friendsRequestList {
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -8,26 +8,26 @@
     padding-right: 4px;
 }
 
-.friends-request-list::-webkit-scrollbar { width: 4px; }
-.friends-request-list::-webkit-scrollbar-thumb {
+.friendsRequestList::-webkit-scrollbar { width: 4px; }
+.friendsRequestList::-webkit-scrollbar-thumb {
     background: rgba(255, 255, 255, 0.1);
     border-radius: 2px;
 }
 
-.request-types-container {
+.requestTypesContainer {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
 }
 
-.incoming-request,
-.outgoing-request {
+.incomingRequest,
+.outgoingRequest {
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
 
-.request-item {
+.requestItem {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -37,13 +37,13 @@
     border: 1px solid var(--pb);
 }
 
-.request-actions {
+.requestActions {
     display: flex;
     gap: 6px;
     margin-left: auto;
 }
 
-.req-accept, .req-decline {
+.reqAccept, .reqDecline {
     padding: 4px 12px;
     border-radius: 6px;
     border: none;
@@ -54,12 +54,12 @@
     transition: opacity 0.15s;
 }
 
-.req-accept  { background: var(--cyan);    color: #000; }
-.req-decline { background: var(--border); color: var(--dim); }
+.reqAccept  { background: var(--cyan);    color: #000; }
+.reqDecline { background: var(--border); color: var(--dim); }
 
-.req-accept:hover, .req-decline:hover { opacity: 0.8; }
+.reqAccept:hover, .reqDecline:hover { opacity: 0.8; }
 
-.friends-empty {
+.friendsEmpty {
     color: var(--dim);
     font-size: var(--font-sm);
     text-align: center;

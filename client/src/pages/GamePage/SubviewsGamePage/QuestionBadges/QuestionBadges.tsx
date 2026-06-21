@@ -12,7 +12,7 @@ export function QuestionBadges({ isAiGenerated, isVerified }: QuestionBadgesProp
     }
 
     return (
-        <span className={styles['question-badges']}>
+        <span className={styles.questionBadges}>
             {isAiGenerated && (
                 <Badge variant="ai" title="AI generated question">
                     AI Generated

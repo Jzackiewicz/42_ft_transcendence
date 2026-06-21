@@ -1,4 +1,4 @@
-.presence-dot {
+.presenceDot {
 	display: inline-block;
 	width: 8px;
 	height: 8px;
@@ -9,10 +9,10 @@
 	transition: background-color 0.15s ease;
 }
 
-.presence-dot.online {
+.presenceDot.online {
 	background-color: #2ecc71;
 }
 
-.presence-dot.offline {
+.presenceDot.offline {
 	background-color: #888;
 }

@@ -3,7 +3,7 @@ import styles from './LobbyChat.module.css'
 
 export function LobbyChat() {
     return (
-        <div className={styles['lobby-chat']}>
+        <div className={styles.lobbyChat}>
             <ChatInner />
         </div>
     )
