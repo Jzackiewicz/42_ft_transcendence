@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { patchMe, uploadAvatar } from '../../../../api/authWrapper'
+import { getMe, patchMe, uploadAvatar } from '../../../../api/authWrapper'
 import { User } from '../../../../types/User'
 
 const AVATAR_MAX_SIZE_MB = 2
@@ -80,13 +80,14 @@ export function useAccountHeader(user: User | null | undefined, setUser: (u: Use
         }
             
         try {
-            const updated = await uploadAvatar(user.id, file)
-            setUser({
-                id:       updated.user.id       ?? user.id,
-                username: updated.user.username ?? user.username,
-                email:    updated.user.email    ?? user.email,
-                date_joined: updated.user.date_joined ?? user.date_joined,
-                avatar:   updated.avatar        ?? user.avatar,
+            await uploadAvatar(user.id, file)
+            const fresh = await getMe()
+            if (fresh) setUser({
+                id:          fresh.user.id          ?? user.id,
+                username:    fresh.user.username    ?? user.username,
+                email:       fresh.user.email       ?? user.email,
+                date_joined: fresh.user.date_joined ?? user.date_joined,
+                avatar:      fresh.avatar           ?? user.avatar,
             })
         } catch (e: any) {
             setError(e?.response?.data?.detail ?? 'Avatar upload failed.')
