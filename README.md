@@ -99,7 +99,6 @@ You might want to do this if automatic migration is not working.
 - <Fill_in_or_delete> <ITYKHONO>
 - <Fill_in_or_delete> <JZACKIEW>
 - <Fill_in_or_delete> <MAMICHAL>
-- <Fill_in_or_delete> <MBUDKEVI>
 ### AI Usage ```a description of how AI was used specifying for which tasks and which parts of the project.```
 
 **We used a wide range of AI assistence when it came to work and research. Below is listed all the uses of AI our team utilised:**
@@ -116,7 +115,7 @@ You might want to do this if automatic migration is not working.
 - **Project Owner** - **jzackiew** - Responsible for the vision of the project, set priorities for features and ensured the project met the subjects and team goals.
 - **Scrum Master** - **dbozic** - Responsible for organising the team and their productivity. Facilitated team Brain Storming and held meetings to settle on a project plan. Scheduled common Scrum meetings to keep everyone up to date and clear blockers.
 - **Tech Lead** - **mamichal** - <Fill_In> <MAMICHAL>
-- **Developer** - **mbudkevi** - <Fill_In> <MBUDKEVI>
+- **Developer** - **mbudkevi** - Responsible for implementing assigned features, writing tests, reviewing teammates' pull requests and documenting changes.
 - **Developer** - **itykhono** - <Fill_In> <ITYKHONO>
 ### 🟪 Project management
 #### Team organisation ```task distribution, meetings, project management, communication channels, and tools used for project management.```
@@ -133,7 +132,6 @@ You might want to do this if automatic migration is not working.
   - **React 19 with Typescript 6**
   - **CSS Modules**
   - <Fill_in_or_delete> <ITYKHONO>
-  - <Fill_in_or_delete> <MBUDKEVI>
 - **Backend technologies and frameworks**
   - **Django Rest Framework**
   - **Django Channels**
@@ -141,7 +139,7 @@ You might want to do this if automatic migration is not working.
   - <Fill_in_or_delete> <JZACKIEW>
   - <Fill_in_or_delete> <MAMICHAL>
 - **Database system and why it was chosen**
-  - **PostgreSQL** - Was selected due to it... - <MBUDKEVI>
+  - **PostgreSQL** - mature, free, first-class support in Django and it handles concurrent writes to game state safely.
 - **Any other significant technologies or libraries**
   - **Pydantic** - Data Validation.
   - **Google Gemini API** - LLM calls.
@@ -150,11 +148,20 @@ You might want to do this if automatic migration is not working.
 - **Justification for major techinical choices** - **Django Rest Framework** was chosen for its **ORM**, **Serializers** and **Authentication and permission system** along with other out of the box tools. **Redis** was used as a forward looking improvement over Djangos caching and channel tools. **React** was chosen for <ITYKHONO>
 
 ### 🟩 Database Schema ```visual representation or description of the database structure, tables/collections and thier relationships, Key fields and data types.```
-**Our database structure can be found in image form at:** <directory_to_database_structure_image> <MBUDKEVI>
+**Our database structure can be found in image form at:** <directory_to_database_structure_image> <JZACKIEW>
 
-**Our tables and collections and their relationships:** <Fill_In> <MBUDKEVI>
+**Our tables and collections and their relationships:** 
+On the identity and social side, the entry point is the `User` model. Each user has at most one `UserProfile` (one-to-one, kept separate so we can add profile fields later without touching the auth table). Each user can have `SocialAccount` row, which link a Django user to an external OAuth identity such as Google. 
+Friendships are stored in `Friendship`, which has two foreign keys back to `User` (`user` and `friend`); we write both directions when a request is accepted so the friendship is bidirectional in practice. Pending invites live in `FriendRequest`, also with two foreign keys back to `User` (`from_user` and `to_user`); rows are deleted once the request is accepted or declined.
+<Fill_In>  <JZACKIEW>
 
-**Key fields and data types:** <Fill_In> <MBUDKEVI>
+**Key fields and data types:** 
+- **User** — `id` (BigInt PK), `username` (unique varchar), `email` (unique email), `password` (hashed varchar), `is_active` (bool), `date_joined` (timestamp). Extends Django's `AbstractUser`; only the fields the application actually reads or writes are listed here.
+- **UserProfile** — `id` (BigInt PK), `user` (one-to-one FK to `User`), `avatar` (image, nullable).
+- **SocialAccount** — `id` (BigInt PK), `user` (FK to `User`), `provider` (varchar, e.g. `google`), `uid` (varchar - provider's stable user id), `created_at` (timestamp). Unique together on `(provider, uid)` so the same Google account cannot be linked twice.
+- **Friendship** — `id` (BigInt PK), `user` (FK to `User`), `friend` (FK to `User`), `created_at` (timestamp). Unique together on `(user, friend)`.
+- **FriendRequest** — `id` (BigInt PK), `from_user` (FK to `User`), `to_user` (FK to `User`), `created_at` (timestamp). Unique together on `(from_user, to_user)`.
+<Fill_In> <JZACKIEW>
 
 ### 🟨 Features List ```complete list of features, who worked on what feature, brief description of each feature```
 - **Online Multiplayer** Quiz Game Show.
@@ -215,7 +222,7 @@ You might want to do this if automatic migration is not working.
 
 ### Major - Allow users to interact with other users.
 
-- **People Involved: jzackiew, mbudekevi, mamichal, itykhono** 
+- **People Involved: jzackiew, mbudkevi, mamichal, itykhono** 
 - We have a /home/ page where once logged in a user can look for users, <NOT_YET_IMPLEMENTED view their profiles>, add or remove them as friends and message with them live. During live games players can chat with each other using a public text chat.
 - **Why this module?** - This module fit very well considering the aspect of the game. The idea of players interacting mid match then adding each other after the match to discuss the game or organise another one is a logical one.
 
@@ -244,14 +251,14 @@ You might want to do this if automatic migration is not working.
 ### Major - Standard user management and authentication.
 
 - **People Involved: mbudkevi**
-- Is online status, <How_the_module_was_implemented>. <MBUDKEVI>
-- **Why this module?** - <Why_this_module_was_chosen>. <MBUDKEVI>
+- Custom `User` model extending Django's `AbstractUser` with a unique email. It consist of registration, login and logout endpoints. Login accepts either email or username. Avatar uploads through a separate `UserProfile` model. Online status is tracked in-memory by counting each user's open WebSocket connections, then broadcast over the same Channels layer the chat uses.
+- **Why this module?** - Since the project is a multiplayer game, having accounts and profiles was the natural starting point. Without them there is no way to identify players between sessions and build a friends list.
 
 ### Minor - Implement remote authentication with OAuth 2.0
 
 - **People Involved: mbudkevi**
-- <How_the_module_was_implemented>. <MBUDKEVI>
-- **Why this module?** - <Why_this_module_was_chosen>. <MBUDKEVI>
+- A `SocialAccount` model links a Django user to a Google identity. The login endpoint builds Google's authorization URL; the callback exchanges the code for a token, fetches the user's email and profile and either logs in the existing user or creates a new one and links it.
+- **Why this module?** - Most users prefer one-click sign in and registration, so it adds convenience for users.
 
 ## 🔮 Gaming and user experience
 
@@ -328,5 +335,18 @@ I found the hardest part was
 -
 
 ### mbudkevi - Developer <MBUDKEVI>
-- Database
--
+- Backend developer covering authentication, the friends system, real-time presence, the chat backend and the project's initial database setup.
+- Reviewed teammates' pull requests and helped resolve a number of migration conflicts during merges.
+
+#### Specific features, modules, or components
+- Custom `User` model and `UserProfile`, initial data base setup.
+- Registration / login / logout endpoints.
+- Email-or-username login backend (case-insensitive matching, `@` disallowed in usernames).
+- WebSocket authentication on both the game and chat consumers (anonymous connections are rejected at handshake).
+- Friends system: `Friendship` and `FriendRequest` models, accept / decline / list endpoints.
+- Real-time online-presence registry: tracks each user's open WebSocket connections and broadcasts online/offline transitions over the same Channels layer the chat uses.
+- Google OAuth 2.0 backend end-to-end: `SocialAccount` model, login and callback endpoints, the PKCE-based authorization flow (`code_verifier` / `code_challenge` / `state`), and id-token verification.
+- Chat backend: consumers and the rule that only friends can DM each other.
+
+#### Challenges faced
+Google OAuth was the trickiest piece for me. I had not worked with the protocol before and there were a lot of small moving parts (state cookie, PKCE verifier, id-token verification) that all had to fit together before anything worked end to end.
