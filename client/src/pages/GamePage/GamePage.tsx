@@ -1,4 +1,5 @@
-import { useGamePage, GameStatus } from './useGamePage';
+import { useGamePage } from './useGamePage';
+import { GameStatus } from '../../types/Game';
 import { useUser } from '../../context/UserContext';
 import { FriendsProvider } from '../../context/FriendsListContext';
 import { LobbyView } from './SubviewsGamePage/LobbyView/LobbyView';

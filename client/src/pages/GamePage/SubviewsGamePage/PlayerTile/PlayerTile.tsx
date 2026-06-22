@@ -1,4 +1,4 @@
-import { Player } from '../../useGamePage';
+import { Player } from '../../../../types/Game';
 import { Badge } from '../../../../components/Badge/Badge';
 import { Avatar } from '../../../../components/Avatar/Avatar';
 import { Icon } from '../../../../components/Icon/Icon';
