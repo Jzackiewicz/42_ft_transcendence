@@ -83,4 +83,3 @@ export function GameHUD({
         </div>
     );
 }
-export default GameHUD;

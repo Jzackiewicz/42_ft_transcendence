@@ -1,12 +1,9 @@
-import { Player } from '../../useGamePage';
 import { Icon } from '../../../../components/Icon/Icon';
 import styles from './NominationView.module.css';
 
 interface NominationViewProps {
     isCurrentNominator: boolean;
     nominatorName: string;
-    eligiblePlayers: Player[];
-    onNominatePlayer: (targetPlayerId: number) => void;
 }
 
 export function NominationView({
@@ -29,5 +26,4 @@ export function NominationView({
         </div>
     );
 }
-export default NominationView;
 
