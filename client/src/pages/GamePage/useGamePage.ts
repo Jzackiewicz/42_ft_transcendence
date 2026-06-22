@@ -91,7 +91,6 @@ export function useGamePage() {
             setActiveSessionUuid(sessionUuid);
         }
     }, [sessionUuid, setActiveSessionUuid]);
-    const [isConnected, setIsConnected] = useState<boolean>(false);
     const [gameState, setGameState] = useState<GameSnapshot | null>(null);
     const [myPlayerId, setMyPlayerId] = useState<number | null>(null);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -115,7 +114,6 @@ export function useGamePage() {
         ((myPlayerId !== null && activeGameState.host_player === myPlayerId) ||
          (myPlayerId === null && sortedPlayers.length > 0 && currentPlayerObj !== undefined && sortedPlayers[0].id === currentPlayerObj.id));
     const hostPlayerId = activeGameState?.host_player ?? (sortedPlayers.length > 0 ? sortedPlayers[0].id : null);
-    const isGameOver = activeGameState !== null && activeGameState.current_status === GameStatus.GAME_OVER;
 
 
 
@@ -186,7 +184,6 @@ export function useGamePage() {
 
         ws.onopen = () => {
             reconnectAttemptRef.current = 0;
-            setIsConnected(true);
             setErrorMsg(null);
         };
 
@@ -213,8 +210,6 @@ export function useGamePage() {
         };
 
         ws.onclose = (event) => {
-            setIsConnected(false);
-
             if (manuallyClosedRef.current || event.code === 1000) {
                 return;
             }
@@ -326,12 +321,8 @@ export function useGamePage() {
 
     const connection = {
         sessionUuid,
-        setSessionUuid,
-        isConnected,
         errorMsg,
         setErrorMsg,
-        connect: connectToLobby,
-        disconnect,
         leaveGame
     };
 
@@ -348,9 +339,7 @@ export function useGamePage() {
         currentPlayerObj,
         isSpectator: activeGameState?.is_spectator ?? false,
         isHost,
-        hostPlayerId,
-        isGameOver,
-        sortedPlayers
+        hostPlayerId
     };
     return {
         connection,
@@ -358,8 +347,6 @@ export function useGamePage() {
         sessionState,
         isGeneratingAiQuestions,
         aiQuestionsGenerated,
-        totalQuestionsCount: activeGameState?.total_questions_count ?? 0,
-        aiQuestionsCount: activeGameState?.ai_questions_count ?? 0,
         onRequestAiQuestions: handleRequestAiQuestions
     };
 }

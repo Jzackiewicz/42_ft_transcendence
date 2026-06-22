@@ -47,7 +47,7 @@ function GamePageInner() {
 
     // Dynamic game states renderer
     const renderActiveView = () => {
-        const { gameState, isHost, currentPlayerObj, eligiblePlayers } = sessionState;
+        const { gameState, isHost, currentPlayerObj } = sessionState;
         if (!gameState) return null;
 
         switch (gameState.current_status) {
@@ -81,8 +81,6 @@ function GamePageInner() {
                     <NominationView
                         isCurrentNominator={gameState.last_correct_player === currentPlayerObj?.id}
                         nominatorName={gameState.players.find(p => p.id === gameState.last_correct_player)?.display_name || 'Someone'}
-                        eligiblePlayers={eligiblePlayers}
-                        onNominatePlayer={gameActions.nominatePlayer}
                     />
                 );
             }
