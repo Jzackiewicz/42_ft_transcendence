@@ -36,40 +36,33 @@ export function useGamePage() {
     const [timeLeft, setTimeLeft] = useState<number | null>(null);
     const serverTimeOffsetRef = useRef<number>(0);
 
-    // activeGameState directly uses gameState as player_type is removed
-    const activeGameState: GameSnapshot | null = gameState;
-
-
-
-    const eligiblePlayers = activeGameState?.players.filter(p => p.is_alive) || [];
+    const eligiblePlayers = gameState?.players.filter(p => p.is_alive) || [];
 
     // Helper computations
     const currentPlayerObj = myPlayerId !== null
-        ? activeGameState?.players.find(p => p.id === myPlayerId)
-        : activeGameState?.players.find(p => p.user_id !== null && p.user_id && p.user_id === user?.id);
-    const sortedPlayers = [...(activeGameState?.players || [])].sort((a, b) => a.id - b.id);
-    const isHost = activeGameState !== null &&
-        ((myPlayerId !== null && activeGameState.host_player === myPlayerId) ||
+        ? gameState?.players.find(p => p.id === myPlayerId)
+        : gameState?.players.find(p => p.user_id !== null && p.user_id && p.user_id === user?.id);
+    const sortedPlayers = [...(gameState?.players || [])].sort((a, b) => a.id - b.id);
+    const isHost = gameState !== null &&
+        ((myPlayerId !== null && gameState.host_player === myPlayerId) ||
          (myPlayerId === null && sortedPlayers.length > 0 && currentPlayerObj !== undefined && sortedPlayers[0].id === currentPlayerObj.id));
-    const hostPlayerId = activeGameState?.host_player ?? (sortedPlayers.length > 0 ? sortedPlayers[0].id : null);
-
-
+    const hostPlayerId = gameState?.host_player ?? (sortedPlayers.length > 0 ? sortedPlayers[0].id : null);
 
     // Timer effect synchronizing with server deadline
     useEffect(() => {
-        if (!activeGameState) {
+        if (!gameState) {
             setTimeLeft(null);
             return;
         }
 
         let deadlineStr: string | null | undefined = null;
 
-        if (activeGameState.current_status === GameStatus.ANSWERING) {
-            deadlineStr = activeGameState.turn_deadline_at;
-        } else if (activeGameState.current_status === GameStatus.NOMINATION) {
-            deadlineStr = activeGameState.nomination_deadline_at;
-        } else if (activeGameState.current_status === GameStatus.EVALUATION) {
-            deadlineStr = activeGameState.evaluation_deadline_at;
+        if (gameState.current_status === GameStatus.ANSWERING) {
+            deadlineStr = gameState.turn_deadline_at;
+        } else if (gameState.current_status === GameStatus.NOMINATION) {
+            deadlineStr = gameState.nomination_deadline_at;
+        } else if (gameState.current_status === GameStatus.EVALUATION) {
+            deadlineStr = gameState.evaluation_deadline_at;
         }
 
         if (!deadlineStr) {
@@ -90,7 +83,7 @@ export function useGamePage() {
         const intervalId = setInterval(updateTimer, 200);
 
         return () => clearInterval(intervalId);
-    }, [activeGameState?.current_status, activeGameState?.turn_deadline_at, activeGameState?.nomination_deadline_at, activeGameState?.evaluation_deadline_at]);
+    }, [gameState?.current_status, gameState?.turn_deadline_at, gameState?.nomination_deadline_at, gameState?.evaluation_deadline_at]);
 
     const wsRef = useRef<WebSocket | null>(null);
     const reconnectAttemptRef = useRef(0);
@@ -201,14 +194,14 @@ export function useGamePage() {
 
     useEffect(() => {
         if (initialUuid) {
-            connectToLobby(); // calling a constructor
+            connectToLobby();
         }
-        return () => disconnect(); // calling a destructor
-    }, []); // Happens only once
+        return () => disconnect();
+    }, []);
 
     const [isGeneratingAiQuestions, setIsGeneratingAiQuestions] = useState(false);
 
-    const aiQuestionsGenerated = activeGameState?.extra_questions_generated ?? false;
+    const aiQuestionsGenerated = gameState?.extra_questions_generated ?? false;
 
     const handleRequestAiQuestions = async () => {
         if (!sessionUuid || isGeneratingAiQuestions || aiQuestionsGenerated) {
@@ -270,11 +263,11 @@ export function useGamePage() {
     };
 
     const sessionState = {
-        gameState: activeGameState,
+        gameState,
         eligiblePlayers,
         timeLeft,
         currentPlayerObj,
-        isSpectator: activeGameState?.is_spectator ?? false,
+        isSpectator: gameState?.is_spectator ?? false,
         isHost,
         hostPlayerId
     };
