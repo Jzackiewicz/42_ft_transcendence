@@ -7,10 +7,12 @@ import { Navbar } from '../../components/Navbar/Navbar'
 import { Button } from '../../components/Button/Button'
 import { Modal } from '../../components/Modal/Modal'
 import { Icon } from '../../components/Icon/Icon'
+import ErrorBanner from '../../components/ErrorBanner/ErrorBanner'
+import InlineError from '../../components/InlineError/InlineError'
 
 import styles from './HomePage.module.css'
 
-import { useHomePage } from './useHomePage'
+import { useHomePage, UUID_LENGTH } from './useHomePage'
 import { FriendsProvider } from '../../context/FriendsListContext'
 
 export function HomePage() {
@@ -20,6 +22,8 @@ export function HomePage() {
         handleCreateLobby,
         handleJoinLobby,
         joinUuid, setJoinUuid,
+        joinError, setJoinError,
+        createError, setCreateError,
         showJoinModal, setShowJoinModal,
         showRulesModal, setShowRulesModal,
     } = useHomePage()
@@ -60,22 +64,26 @@ export function HomePage() {
                 onClose={() => setShowJoinModal(false)}
                 title="Join Lobby"
             >
+                <InlineError message={joinError} />
                 <input
                     className={styles.joinModalInput}
                     type="text"
-                    placeholder="Paste lobby UUID…"
+                    placeholder="e.g. 123e4567-e89b-12d3-a456-426614174000"
+                    maxLength={UUID_LENGTH}
                     value={joinUuid}
-                    onChange={e => setJoinUuid(e.target.value)}
+                    autoFocus
+                    onChange={e => { setJoinUuid(e.target.value); setJoinError(null) }}
                     onKeyDown={e => e.key === 'Enter' && handleJoinLobby()}
                 />
                 <div className={styles.joinModalActions}>
-                    <Button onClick={handleJoinLobby}>Join</Button>
+                    <Button onClick={handleJoinLobby} disabled={!joinUuid.trim()}>Join</Button>
                     <Button variant="ghost" onClick={() => setShowJoinModal(false)}>Cancel</Button>
                 </div>
             </Modal>
 
             {/* ── Main ── */}
             <main className={styles.homeContent}>
+                {createError && <ErrorBanner message={createError} onDismiss={() => setCreateError(null)} />}
                 <AccountHeader
                     username={user?.username ?? ''}
                     email={user?.email ?? ''}
