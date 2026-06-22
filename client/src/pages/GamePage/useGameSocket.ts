@@ -35,6 +35,7 @@ export function useGameSocket(sessionUuid: string) {
 
         if (wsRef.current) {
             wsRef.current.onclose = null;
+            wsRef.current.onerror = null;
             wsRef.current.close();
         }
 
@@ -108,6 +109,7 @@ export function useGameSocket(sessionUuid: string) {
         clearReconnectTimer();
         if (wsRef.current) {
             wsRef.current.onclose = null;
+            wsRef.current.onerror = null;
             wsRef.current.close();
             wsRef.current = null;
         }
