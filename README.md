@@ -5,7 +5,7 @@
 ## 🟥Description🟥 ```overview & clear name```
 **QUIZSENDENCE** is a **Game Show Webapp** that lets you and your friends take part in a gameshow based on Fifteen to One.
 
-### Key features ```key features``` <DISCUSS_TOGETHER>
+### Key features ```key features```
 - **Online Multiplayer** Game Show based Quiz.
 - **Friends system**.
 - **Text chats** between Friends and open text chat in-game.
@@ -95,6 +95,11 @@ You might want to do this if automatic migration is not working.
 - [Websockets docs and tutorial](https://channels.readthedocs.io/)
 - [Gemini integration](https://ai.google.dev/gemini-api/docs)
 - [React docs](https://pl.react.dev/)
+- [Documentation for custom-made styling minor module](https://github.com/Jzackiewicz/42_ft_transcendence/pull/165)
+-
+-
+-
+-
 ### AI Usage ```a description of how AI was used specifying for which tasks and which parts of the project.```
 
 **We used a wide range of AI assistence when it came to work and research. Below is listed all the uses of AI our team utilised:**
@@ -125,90 +130,92 @@ You might want to do this if automatic migration is not working.
 
 ### 🟦 Technical Stack ```frontend stack & framework, backend stack & framework, database system and why it was chosen, any other significant technologies or libraries, justification for major techncal choices```
 - **Frontend technologies and frameworks**
-  - **React**
+  - **React 19 with Typescript 6**
+  - **CSS Modules**
   - <Fill_in_or_delete> <ITYKHONO>
-  - <Fill_in_or_delete> <ITYKHONO>
+  - <Fill_in_or_delete> <MBUDKEVI>
 - **Backend technologies and frameworks**
   - **Django Rest Framework**
-  - <Fill_in_or_delete> <DISCUSS_TOGETHER>
-  - <Fill_in_or_delete> <DISCUSS_TOGETHER>
+  - **Django Channels**
+  - **Docker with Enginx**
+  - <Fill_in_or_delete> <JZACKIEW>
+  - <Fill_in_or_delete> <MAMICHAL>
 - **Database system and why it was chosen**
-  - <Fill_In> - Was selected due to it... - <MBUDKEVI>
+  - **PostgreSQL** - Was selected due to it... - <MBUDKEVI>
 - **Any other significant technologies or libraries**
-  - Pydantic - Data Validation.
-  - <DISCUSS_TOGETHER> <CSS???>
-- **Justification for major techinical choices** - <DISCUSS_TOGETHER> **Django Rest Framework** was chosen for its **ORM**, **Serializers** and **Authentication and permission system** along with other out of the box tools. **Redis** was used as an improvement over Djangos caching and channel tools. **React** was chosen for <ITYKHONO>
+  - **Pydantic** - Data Validation.
+  - **Google Gemini API** - LLM calls.
+  - **Redis - Caching**.
+  - **<Maybe_Playwright>** - <MAMICHAL>
+- **Justification for major techinical choices** - <DISCUSS_TOGETHER> **Django Rest Framework** was chosen for its **ORM**, **Serializers** and **Authentication and permission system** along with other out of the box tools. **Redis** was used as a forward looking improvement over Djangos caching and channel tools. **React** was chosen for <ITYKHONO>
 
 ### 🟩 Database Schema ```visual representation or description of the database structure, tables/collections and thier relationships, Key fields and data types.```
-**Our database structure can be found in image form at:** ```<Insert_DIR_to_database_structure_image> ``` <MBUDKEVI>
+**Our database structure can be found in image form at:** <directory_to_database_structure_image> <MBUDKEVI>
 
 **Our tables and collections and their relationships:** <Fill_In> <MBUDKEVI>
 
 **Key fields and data types:** <Fill_In> <MBUDKEVI>
 
-### 🟨 Features List ```complete list of features, who worked on what feature, brief description of each feature``` <DISCUSS_TOGETHER>
+### 🟨 Features List ```complete list of features, who worked on what feature, brief description of each feature```
 - **Online Multiplayer** Quiz Game Show.
+- **Account Management**.
 - **Friends system**.
 - **Text chats** between Friends and open text chat in-game.
 - <NOT_YET_IMPLEMENTED **Player Statistics**>.
-- <NOT_YET_IMPLEMENTED **Player Profiles**>.
 - **LLM** based question generator for lobbies.
-- **Mobile Support** along with **multi-browser support**.
-- **Admin Panel** with database and user control.
 
-**Complete list of implemented features:** <DISCUSS_TOGETHER>
+**Complete list of implemented features:**
 
 **Online Multiplayer Game Show based Quiz** - An online game which players can host then compete in by nominating players to answer game show questions.
-<br> Game Design and Fullstack Implementaton by **jzackiew**.
-<br> Game instructions and public chat by **mbudkevi.
+<br> Game Design, Fullstack Implementaton, and **graceful disconnections** by **jzackiew**.
+<br> Game instructions by **mbudkevi.**
 
-**Friends System** - A system where players can search for other players by username. They can add or remove friends to open a direct text chat. <DISCUSS_TOGETHER>
-<br> **Page Design** and **Code Refactor** by **mbudkevi**.
-<br> **<Fill_in>** by **<Fill_in>**.
+**Accounts and Account Management** - User account creation and profiles which display a players information along with user online presence.
+<br> **Authentication** by **mamichal and mbudkevi**.
+<br> **Google OAuth and is online status** by **mbudkevi**.
+<br> **Frontend implementation** by **itykhono**.
+
+**Friends System** - A system where players can search for other players by username. They can add or remove friends to open a direct text chat.
+<br> **Backend logic design and database relationship model** by **mbudkevi**.
+<br> **Frontend implementation** by **itykhono**.
 
 **Text Chats** - A websocket based system that allows users to directly communicate to each other by text live. You can text chat in public lobbies as well as directly with friends.
-<br> **Websocket Architecture** by: **jzackiew**.
-<br> **Homepage chat**, **Gamepage chat** and **Authentication** by **mbudkevi**.
+<br> **Websocket Architecture**, and **History Pagenation** by: **jzackiew**.
+<br> **Backend Chat Logic**, and **Authentication** by **mbudkevi**.
+<br> **Frontend implementation** by **itkyhono**
 
-**Player Statistics** - A place on the home page where users can check their game statistics. <DISCUSS_TOGETHER>
+**Player Statistics** - A place on the home page where users can check their game statistics.
 <br> **Statistic Tracking** by: **jzackiew**.
-<br> **Frontend integration** by: **<Fill_in>**.
-
-**Player Profiles** - A profile which displays a players information publicly. <DISCUSS_TOGETHER>
-<br> **Authentication** by **mbudkevi**.
+<br> **Frontend integration** by: **itykhono**.
 
 **LLM based question generator for lobbies** - A button that allows the host of a lobby to add more questions to his quiz using AI. The AI generates similar questions to those already present in the lobby. The generated questions are added to the database for admin review and integration into the games questionbase.
 <br> **LLM Integration**, **Game Session Integration**, **Database Persistence**, **Rate limitation**, and **Duplicate Protection** by **dbozic**.
 <br> Frontend integration **jzackiew**.
-
-**Mobile and Multi-Browser support** - Support for multiple browsers and mobile devices. <DISCUSS_TOGETHER>
-<br> **<Fill_in>** by **<Fill_in>**.
-
-**Admin Panel** - A place where an administrator can modify the questionbase and delete users. <DISCUSS_TOGETHER>
-<br> **<Fill_in>** by **<Fill_in>**.
-
-**<DISCUSS_TOGETHER> <More_Features>**.
 
 ### 🟧 Modules ```List all chosen modules, point calculation, justification for each choice, how each module was implented, which team members did what```
 ### Complete list of chosen modules:
 
 ## 🌐 Web
 
-### Major - Use a framework for both the frontend and backend
+### Minor - Use a frontend framework
+
+ **React** was our choice of frontend framework as it <ITYKHONO> 
+
+### Minor - Use a backend framework
 
 - **People Involved: Everyone**
 - We used **Django** as our backend framework and **React** as our frontend framework.
-- **Why this module?** - **Django** was chosen for its great out of the box capabilities like the **Django ORM** which allowed us to get an additional minor module. It allowed us to use **Redis** for caching and channels (WebSockets) with ease. **React** was our choice of frontend framework as it <ITYKHONO>
+- **Why this module?** - **Django** was chosen for its great out of the box capabilities like the **Django ORM** which allowed us to get an additional minor module. It allowed us to easily use **Redis** for caching and channels (WebSockets) with ease.
 
 ### Major - Implement real-time features using WebSockets or similar technology.
 
-- **People Involved: <People_Involved>** <DISCUSS_TOGETHER> 
+- **People Involved: jzackiew, itykhono** 
 - <How_the_module_was_implemented>. <JZACKIEW>
 - **Why this module?** - <Why_this_module_was_chosen>. <JZACKIEW>
 
 ### Major - Allow users to interact with other users.
 
-- **People Involved: <People_Involved>** <DISCUSS_TOGETHER> 
+- **People Involved: jzackiew, mbudekevi, mamichal, itykhono** 
 - We have a /home/ page where once logged in a user can look for users, <NOT_YET_IMPLEMENTED view their profiles>, add or remove them as friends and message with them live. During live games players can chat with each other using a public text chat.
 - **Why this module?** - This module fit very well considering the aspect of the game. The idea of players interacting mid match then adding each other after the match to discuss the game or organise another one is a logical one.
 
@@ -218,19 +225,25 @@ You might want to do this if automatic migration is not working.
 - This module was implemented by default thanks to it coming with Django.
 - **Why this module?** - ORMs simplify our work with the database, Django was selected partly because it came with one by default allowing us to work with our databases with ease, while gaining a free point. 
 
+### Minor - Custom made design system with reusable components, including a proper color palette, typography, and icons.
+
+- **People Involved: zjackiew, itykhono**
+- <How_the_module_was_implemented>. <JZACKIEW>
+- **Why this module?** - <Why_this_module_was_chosen>. <JZACKIEW>
+
 ## 💠 Accessibility and Internationalization
 
 ### Minor - Support for additional browsers.
 
-- **People Involved: <DISCUSS_TOGETHER>**
-- <How_the_module_was_implemented>. <WHO_SHOULD_FILL_THIS_IN_DISCUSS_TOGETHER>
-- **Why this module?** - <Why_this_module_was_chosen>. <WHO_SHOULD_FILL_THIS_IN_DISCUSS_TOGETHER>
+- **People Involved: mamichal**
+- <How_the_module_was_implemented>. <MAMICHAL>
+- **Why this module?** - <Why_this_module_was_chosen>. <MAMICHAL>.
 
 ## 👥 User Management
 
 ### Major - Standard user management and authentication.
 
-- **People Involved: mbudkevi, <People_Involved>**
+- **People Involved: mbudkevi**
 - Is online status, <How_the_module_was_implemented>. <MBUDKEVI>
 - **Why this module?** - <Why_this_module_was_chosen>. <MBUDKEVI>
 
@@ -244,21 +257,21 @@ You might want to do this if automatic migration is not working.
 
 ### Major - Implement a complete web-based game where users can play against each other.
 
-- **People Involved: <DISCUSS_TOGETHER>** 
-- <How_the_module_was_implemented>. <WHO_SHOULD_FILL_THIS_IN_DISCUSS_TOGETHER>
-- **Why this module?** - <Why_this_module_was_chosen>. <WHO_SHOULD_FILL_THIS_IN_DISCUSS_TOGETHER>
+- **People Involved: jzackiew** 
+- <How_the_module_was_implemented>. <JZACKIEW>
+- **Why this module?** - <Why_this_module_was_chosen>. <JZACKIEW>
 
 ### Major - Remote players — Enable two players on separate computers to play the same game in real-time
 
-- **People Involved: <DISCUSS_TOGETHER>**
-- <How_the_module_was_implemented>. <WHO_SHOULD_FILL_THIS_IN_DISCUSS_TOGETHER>
-- **Why this module?** - <Why_this_module_was_chosen>. <WHO_SHOULD_FILL_THIS_IN_DISCUSS_TOGETHER>
+- **People Involved: mamichal, jzackiew**
+- <How_the_module_was_implemented>. <JZACKIEW>
+- **Why this module?** - <Why_this_module_was_chosen>. <JZACKIEW>
 
 ### Major - Multiplayer game (more than two players)
 
-- **People Involved: <DISCUSS_TOGETHER>**
-- <How_the_module_was_implemented>. <WHO_SHOULD_FILL_THIS_IN_DISCUSS_TOGETHER>
-- **Why this module?** - <Why_this_module_was_chosen>. <WHO_SHOULD_FILL_THIS_IN_DISCUSS_TOGETHER>
+- **People Involved: jzackiew**
+- <How_the_module_was_implemented>. <JZACKIEW>
+- **Why this module?** - <Why_this_module_was_chosen>. <JZACKIEW>
 
 ### Minor - Implement spectator mode for games.
 
@@ -290,9 +303,9 @@ You might want to do this if automatic migration is not working.
 ### dbozic - Scrum Master
 - Backend developer for the AI Question Expander.
 - Lead researcher for AI modules and AI integration.
-- Code review and game tests.
-- Refined the original questions database.
-- Team meeting organiser.
+- Code reviewer and game tester.
+- Question base refiner.
+- Scrum master and organiser.
 - Wrote the README.md.
 
 ### itykhono - Developer <ITYKHONO>
