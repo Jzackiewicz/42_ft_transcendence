@@ -23,7 +23,7 @@ export function Navbar({ sessionUuid, actionButtonText, onActionButtonClick }: N
     return (
         <nav className={styles.appNav}>
             <div className={styles.appNavLogo}>
-                <span className={styles.logoQuiz}>QUIZ</span>SENDENCE
+                <span className={styles.logoQuiz}>QUIZ</span>SCENDENCE
             </div>
 
             <div className={styles.appNavSpace} />
