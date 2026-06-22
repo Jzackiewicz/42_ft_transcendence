@@ -147,7 +147,7 @@ You might want to do this if automatic migration is not working.
   - **Google Gemini API** - LLM calls.
   - **Redis - Caching**.
   - **<Maybe_Playwright>** - <MAMICHAL>
-- **Justification for major techinical choices** - <DISCUSS_TOGETHER> **Django Rest Framework** was chosen for its **ORM**, **Serializers** and **Authentication and permission system** along with other out of the box tools. **Redis** was used as a forward looking improvement over Djangos caching and channel tools. **React** was chosen for <ITYKHONO>
+- **Justification for major techinical choices** - **Django Rest Framework** was chosen for its **ORM**, **Serializers** and **Authentication and permission system** along with other out of the box tools. **Redis** was used as a forward looking improvement over Djangos caching and channel tools. **React** was chosen for <ITYKHONO>
 
 ### 🟩 Database Schema ```visual representation or description of the database structure, tables/collections and thier relationships, Key fields and data types.```
 **Our database structure can be found in image form at:** <directory_to_database_structure_image> <MBUDKEVI>
