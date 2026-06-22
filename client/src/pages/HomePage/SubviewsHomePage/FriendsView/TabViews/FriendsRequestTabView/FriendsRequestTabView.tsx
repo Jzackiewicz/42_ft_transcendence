@@ -1,6 +1,7 @@
 import { useFriendsRequestTabView, FriendRequest } from './useFriendsRequestTabView'
 import InlineError from '../../../../../../components/InlineError/InlineError'
 import UserAvatar from '../../../../../../components/UserAvatar'
+import { Button } from '../../../../../../components/Button/Button'
 import styles from './FriendsRequestTabView.module.css'
 import shared from '../../FriendsView.module.css'
 
@@ -25,8 +26,8 @@ function FriendsRequestTabView() {
                             <UserAvatar username={r.from_user.username} avatar={r.from_user.avatar} />
                             <span className={shared.friendName}>{r.from_user.username}</span>
                             <div className={styles.requestActions}>
-                                <button className={styles.reqAccept} onClick={() => handleAccept(r.id)}>Accept</button>
-                                <button className={styles.reqDecline} onClick={() => handleDecline(r.id)}>Decline</button>
+                                <Button variant="primary" size="sm" onClick={() => handleAccept(r.id)}>Accept</Button>
+                                <Button variant="ghost" size="sm" onClick={() => handleDecline(r.id)}>Decline</Button>
                             </div>
                         </div>
                     ))}
@@ -37,7 +38,7 @@ function FriendsRequestTabView() {
                             <UserAvatar username={r.to_user.username} avatar={r.to_user.avatar} />
                             <span className={shared.friendName}>{r.to_user.username}</span>
                             <div className={styles.requestActions}>
-                                <button className={styles.reqDecline} onClick={() => handleCancel(r.id)}>Cancel</button>
+                                <Button variant="ghost" size="sm" onClick={() => handleCancel(r.id)}>Cancel</Button>
                             </div>
                         </div>
                     ))}

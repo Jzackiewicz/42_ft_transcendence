@@ -9,7 +9,7 @@
     background-color: rgba(255, 255, 255, 0.01);
     border: 1px solid var(--theme-border, var(--border));
     border-left: 4px solid var(--theme-accent, var(--violet));
-    border-radius: 4px;
+    border-radius: var(--radius-xs);
 }
 
 .evalQuestionMeta {

@@ -1,5 +1,6 @@
 import { useRegistrationView } from './useRegistrationView'
 import InputField from '../../../../components/InputField/InputField'
+import { Button } from '../../../../components/Button/Button'
 import GoogleSignInButton from '../../../../components/GoogleSignInButton/GoogleSignInButton'
 import styles from '../../AuthPage.module.css'
 
@@ -18,7 +19,7 @@ function RegistrationView({onSuccess}: RegistrationProps) {
                 <InputField title="Password" type="password" placeholder="Create a password" value={password} onChange={(value) => setPassword(value)} error={errors.passIsEmptyErr || errors.passWeakErr} />
                 <InputField title="Confirm Password" type="password" placeholder="Confirm your password" value={confPassword} onChange={(value) => setConfPassword(value)} error={errors.confirmPassIsEmptyErr || errors.passDoesntMatchErr} />
                 {errors.generalErr && <span className={styles.formError}>{errors.generalErr}</span>}
-                <button type="submit" className={styles.authSubmit}> Register </button>
+                <Button type="submit" variant="gradient" size="lg" fullWidth> Register </Button>
                 <div className={styles.authDivider}>or</div>
                 <GoogleSignInButton label="Sign up with Google" />
             </form>

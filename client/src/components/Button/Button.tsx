@@ -2,14 +2,17 @@ import React from 'react';
 import { cx } from '../../utils/cx';
 import styles from './Button.module.css';
 
-type Variant = 'primary' | 'secondary' | 'danger' | 'success';
+type Variant = 'primary' | 'secondary' | 'danger' | 'dangerGhost' | 'success' | 'gradient' | 'ghost';
 type Size = 'sm' | 'md' | 'lg';
 
 const variantClass: Record<Variant, string> = {
     primary: styles.appBtnPrimary,
     secondary: styles.appBtnSecondary,
     danger: styles.appBtnDanger,
+    dangerGhost: styles.appBtnDangerGhost,
     success: styles.appBtnSuccess,
+    gradient: styles.appBtnGradient,
+    ghost: styles.appBtnGhost,
 };
 
 const sizeClass: Record<Size, string> = {
@@ -18,39 +21,32 @@ const sizeClass: Record<Size, string> = {
     lg: styles.appBtnLg,
 };
 
-interface ButtonProps {
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: Variant;
     size?: Size;
-    disabled?: boolean;
-    onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
-    type?: 'button' | 'submit' | 'reset';
-    children: React.ReactNode;
-    className?: string;
+    /** Stretch to fill the container width (e.g. form submit buttons). */
+    fullWidth?: boolean;
 }
 
 export function Button({
     variant = 'primary',
     size = 'md',
-    disabled = false,
-    onClick,
+    fullWidth = false,
     type = 'button',
+    className = '',
     children,
-    className = ''
+    ...rest
 }: ButtonProps) {
     const classNames = cx(
         styles.appBtn,
         variantClass[variant],
         sizeClass[size],
+        fullWidth && styles.appBtnFull,
         className
     );
 
     return (
-        <button
-            type={type}
-            disabled={disabled}
-            onClick={onClick}
-            className={classNames}
-        >
+        <button type={type} className={classNames} {...rest}>
             {children}
         </button>
     );

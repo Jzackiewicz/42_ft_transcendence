@@ -1,5 +1,6 @@
 import uuid
 from django.contrib.auth import get_user_model
+from django.test import override_settings
 from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
@@ -9,6 +10,7 @@ from game.models import GameSession, SessionPlayer, Question, SessionQuestion, A
 User = get_user_model()
 
 
+@override_settings(QUESTIONS_PER_SESSION=10)
 class TestRoomCreateApi(APITestCase):
 	def setUp(self):
 		self.user = User.objects.create_user(username="testuser", email="test@test.com", password="password")

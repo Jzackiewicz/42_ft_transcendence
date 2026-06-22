@@ -1,6 +1,7 @@
 import { useFriendsListTabView } from './useFriendsListTabView'
 import InlineError from '../../../../../../components/InlineError/InlineError'
 import UserAvatar from '../../../../../../components/UserAvatar'
+import { Button } from '../../../../../../components/Button/Button'
 import styles from './FriendsListTabView.module.css'
 import shared from '../../FriendsView.module.css'
 
@@ -15,7 +16,7 @@ function FriendsListTabView() {
                     <div key={f.friend.id} className={styles.friendItem}>
                         <UserAvatar username={f.friend.username} avatar={f.friend.avatar} userId={f.friend.id} />
                         <span className={shared.friendName}>{f.friend.username}</span>
-                        <button className={styles.friendRemove} onClick={() => handleRemove(f.friend.id)}>Remove</button>
+                        <Button variant="ghost" size="sm" onClick={() => handleRemove(f.friend.id)}>Remove</Button>
                     </div>
                 ))}
             </div>

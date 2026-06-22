@@ -28,7 +28,7 @@
 
 .aiFeedbackToast {
     margin-top: 8px;
-    font-size: 12px;
+    font-size: var(--font-sm);
     color: var(--green);
 }
 

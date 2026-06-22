@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react'
 import { User } from '../../../../types/User'
 import { useAccountHeader } from './useAccountHeader'
 import { Badge } from '../../../../components/Badge/Badge'
+import { Button } from '../../../../components/Button/Button'
+import { Icon } from '../../../../components/Icon/Icon'
 import styles from './AccountHeader.module.css'
-import homeStyles from '../../HomePage.module.css'
 
 interface AccountHeaderProps {
     user: User | null | undefined
@@ -117,16 +118,11 @@ function AccountHeader({ user, setUser, setShowJoinModal, setShowRulesModal, han
                 </div>
             </div>
 
-            <button
-                className={styles.homeNavRules}
-                onClick={() => setShowRulesModal(true)}
-                aria-label="How to play"
-                title="How to play"
-            >
+            <Button variant="ghost" onClick={() => setShowRulesModal(true)} aria-label="How to play" title="How to play">
                 How to Play ?
-            </button>
-            <button className={homeStyles.homeNavJoin} onClick={() => setShowJoinModal(true)}>Join Game</button>
-            <button className={homeStyles.homeNavPlay} onClick={handleCreateLobby}> Play Now</button>
+            </Button>
+            <Button variant="secondary" onClick={() => setShowJoinModal(true)}><Icon name="enter" size="sm" /> Join Game</Button>
+            <Button onClick={handleCreateLobby}><Icon name="play" size="sm" /> Create Game</Button>
         </div>
     )
 }

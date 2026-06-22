@@ -32,7 +32,7 @@
     align-items: center;
     gap: 10px;
     padding: 8px 10px;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     background: rgba(255, 255, 255, 0.04);
     border: 1px solid var(--pb);
 }
@@ -43,21 +43,6 @@
     margin-left: auto;
 }
 
-.reqAccept, .reqDecline {
-    padding: 4px 12px;
-    border-radius: 6px;
-    border: none;
-    font-family: var(--fb);
-    font-size: 11px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: opacity 0.15s;
-}
-
-.reqAccept  { background: var(--cyan);    color: #000; }
-.reqDecline { background: var(--border); color: var(--dim); }
-
-.reqAccept:hover, .reqDecline:hover { opacity: 0.8; }
 
 .friendsEmpty {
     color: var(--dim);

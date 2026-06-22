@@ -36,16 +36,10 @@
     background: rgba(255, 255, 255, 0.015);
     /* Optional theming via the game-page theme contract; falls back to defaults. */
     border: 1px solid var(--theme-border, var(--border));
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     flex: 1;
     min-width: 0;
     transition: all 0.4s ease;
-}
-
-.hudItem:hover {
-    background: rgba(255, 255, 255, 0.03);
-    border-color: var(--theme-accent, var(--cyan-shadowed));
-    box-shadow: 0 0 12px var(--theme-glow, rgba(0, 229, 255, 0.08));
 }
 
 .hudLabel {

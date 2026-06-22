@@ -3,7 +3,7 @@
     align-items: center;
     gap: 20px;
     padding: 22px 28px;
-    border-radius: 14px;
+    border-radius: var(--radius-lg);
     background: var(--panel);
     border: 1px solid var(--pb);
     margin-bottom: 24px;
@@ -19,28 +19,11 @@
     background: linear-gradient(90deg, transparent, var(--cyan), var(--magenta), transparent);
 }
 
-.accountAvatar {
-    width: 72px;
-    height: 72px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--cyan), #0088aa);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--fd);
-    font-size: 26px;
-    font-weight: 700;
-    color: #000;
-    border: 3px solid var(--cyan-light-shadow);
-    box-shadow: 0 0 24px rgba(0, 229, 255, 0.3);
-    flex-shrink: 0;
-}
-
 .accountInfo { flex: 1; }
 
 .accountName {
     font-family: var(--fd);
-    font-size: 26px;
+    font-size: var(--font-2xl);
     font-weight: 700;
 }
 
@@ -60,10 +43,27 @@
     margin-top: 8px;
 }
 
-
 .account-avatar-wrapper {
     position: relative;
     flex-shrink: 0;
+    width: 72px;
+    height: 72px;
+}
+
+.accountAvatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: var(--chat-accent-bg);
+    border: 2px solid var(--pb);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--fd);
+    font-size: var(--font-2xl);
+    font-weight: 700;
+    color: var(--cyan);
+    overflow: hidden;
 }
 
 .account-avatar-img {
@@ -133,26 +133,6 @@
     margin-top: 4px;
 }
 
-/* ── How to Play button ── */
-.homeNavRules {
-    padding: 7px 14px;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--pb);
-    background: transparent;
-    color: var(--dim);
-    font-family: var(--fb);
-    font-size: var(--font-sm);
-    font-weight: 600;
-    cursor: pointer;
-    transition: color 0.15s, border-color 0.15s, background 0.15s;
-}
-
-.homeNavRules:hover {
-    color: var(--cyan);
-    border-color: var(--cyan);
-    background: rgba(0, 229, 255, 0.06);
-}
-
 /* ── RESPONSIVENESS ─────────────────────────────────────────────── */
 @media (max-width: 768px) {
     .accountHeader {
@@ -166,7 +146,6 @@
         flex: 1 1 100%;
     }
 
-    .homeNavRules,
     .account-field-row {
         flex: 1 1 auto;
     }

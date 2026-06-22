@@ -2,13 +2,18 @@ import { useState } from 'react'
 import BlinkingSpaceBGDiv from '../../components/BlinkingSpaceBGDiv/BlinkingSpaceBGDiv'
 import AccountHeader from './SubviewsHomePage/AccountHeader/AccountHeader'
 import FriendsView from './SubviewsHomePage/FriendsView/FriendsView'
+import StatsView from './SubviewsHomePage/StatsView/StatsView'
 import ChatContainer from './SubviewsHomePage/ChatContainer/ChatContainer'
-import SolarSystem from './SubviewsHomePage/Solar/SolarSystem'
 import { Navbar } from '../../components/Navbar/Navbar'
 import UserProfileModal from '../../components/UserProfileModal/UserProfileModal'
 import { PublicUser } from '../../types/User'
+import { Button } from '../../components/Button/Button'
+import { Modal } from '../../components/Modal/Modal'
+import { Icon } from '../../components/Icon/Icon'
+import ErrorBanner from '../../components/ErrorBanner/ErrorBanner'
+import InlineError from '../../components/InlineError/InlineError'
 import styles from './HomePage.module.css'
-import { useHomePage } from './useHomePage'
+import { useHomePage, UUID_LENGTH } from './useHomePage'
 import { FriendsProvider } from '../../context/FriendsListContext'
 
 export function HomePage() {
@@ -19,6 +24,8 @@ export function HomePage() {
         handleCreateLobby,
         handleJoinLobby,
         joinUuid, setJoinUuid,
+        joinError, setJoinError,
+        createError, setCreateError,
         showJoinModal, setShowJoinModal,
         showRulesModal, setShowRulesModal,
     } = useHomePage()
@@ -30,66 +37,52 @@ export function HomePage() {
             <BlinkingSpaceBGDiv />
 
             {/* ── Nav ── */}
-            <Navbar 
+            <Navbar
                 actionButtonText="Logout"
                 onActionButtonClick={handleLogout}
             />
 
             {/* ── Rules modal ── */}
-            {showRulesModal && (
-                <div
-                    className={styles.rulesModalOverlay}
-                    onClick={() => setShowRulesModal(false)}
-                    role="dialog"
-                    aria-modal="true"
-                    aria-labelledby="rules-modal-title"
-                >
-                    <div className={styles.rulesModal} onClick={e => e.stopPropagation()}>
-                        <button
-                            className={styles.rulesModalClose}
-                            onClick={() => setShowRulesModal(false)}
-                            aria-label="Close rules"
-                        >
-                            ×
-                        </button>
-                        <h3 id="rules-modal-title" className={styles.rulesModalTitle}>
-                            How to Play <span className={styles.rulesModalTitleAccent}>Quizscendence</span>
-                        </h3>
-                        <ul className={styles.rulesModalList}>
-                            <li><strong>2–5 players.</strong> Everyone starts with <strong>❤️❤️❤️ lives</strong>.</li>
-                            <li>On your turn, answer the question before the timer runs out.</li>
-                            <li>Wrong answer or timeout = <strong>-1 life 💔</strong>. No lives = you're out.</li>
-                            <li>Correct answer = <strong>+10 points</strong>, and you pick who answers next.</li>
-                            <li>Pick yourself = <strong>+20 points</strong> if you're right (risky but worth it).</li>
-                            <li>Keep nominating until someone else answers correctly.</li>
-                        </ul>
-                        <p className={styles.rulesModalWin}>
-                            Be the last one alive, or earn the most points when the questions run out!
-                        </p>
-                    </div>
-                </div>
-            )}
+            <Modal
+                open={showRulesModal}
+                onClose={() => setShowRulesModal(false)}
+                title={<>How to Play <span className={styles.rulesModalTitleAccent}>Quizscendence</span></>}
+            >
+                <ul className={styles.rulesModalList}>
+                    <li><strong>2–5 players.</strong> Everyone starts with <strong className={styles.rulesLives}><Icon name="heart" size="sm" /><Icon name="heart" size="sm" /><Icon name="heart" size="sm" /> lives</strong>.</li>
+                    <li>On your turn, answer the question before the timer runs out.</li>
+                    <li>Wrong answer or timeout = <strong className={styles.rulesLives}>-1 life <Icon name="heartOutline" size="sm" /></strong>. No lives = you're out.</li>
+                    <li>Correct answer = <strong>+10 points</strong>, and you pick who answers next.</li>
+                    <li>Pick yourself = <strong>+20 points</strong> if you're right (risky but worth it).</li>
+                    <li>Keep nominating until someone else answers correctly.</li>
+                </ul>
+                <p className={styles.rulesModalWin}>
+                    Be the last one alive, or earn the most points when the questions run out!
+                </p>
+            </Modal>
 
             {/* ── Join modal ── */}
-            {showJoinModal && (
-                <div className={styles.joinModalOverlay}>
-                    <div className={styles.joinModal}>
-                        <h3 className={styles.joinModalTitle}>Join Lobby</h3>
-                        <input
-                            className={styles.joinModalInput}
-                            type="text"
-                            placeholder="Paste lobby UUID…"
-                            value={joinUuid}
-                            onChange={e => setJoinUuid(e.target.value)}
-                            onKeyDown={e => e.key === 'Enter' && handleJoinLobby()}
-                        />
-                        <div className={styles.joinModalActions}>
-                            <button className={styles.homeNavPlay} onClick={handleJoinLobby}>Join</button>
-                            <button className={styles.joinModalCancel} onClick={() => setShowJoinModal(false)}>Cancel</button>
-                        </div>
-                    </div>
+            <Modal
+                open={showJoinModal}
+                onClose={() => setShowJoinModal(false)}
+                title="Join Lobby"
+            >
+                <InlineError message={joinError} />
+                <input
+                    className={styles.joinModalInput}
+                    type="text"
+                    placeholder="e.g. 123e4567-e89b-12d3-a456-426614174000"
+                    maxLength={UUID_LENGTH}
+                    value={joinUuid}
+                    autoFocus
+                    onChange={e => { setJoinUuid(e.target.value); setJoinError(null) }}
+                    onKeyDown={e => e.key === 'Enter' && handleJoinLobby()}
+                />
+                <div className={styles.joinModalActions}>
+                    <Button onClick={handleJoinLobby} disabled={!joinUuid.trim()}>Join</Button>
+                    <Button variant="ghost" onClick={() => setShowJoinModal(false)}>Cancel</Button>
                 </div>
-            )}
+            </Modal>
 
             {/* ── User profile modal ── */}
             {selectedUser && (
@@ -98,6 +91,7 @@ export function HomePage() {
 
             {/* ── Main ── */}
             <main className={styles.homeContent}>
+                {createError && <ErrorBanner message={createError} onDismiss={() => setCreateError(null)} />}
                 <AccountHeader
                     user={user}
                     setUser={setUser}
@@ -108,7 +102,7 @@ export function HomePage() {
 
                 <div className={styles.accountGrid}>
                     <FriendsView onSelectUser={setSelectedUser} />
-                    <SolarSystem />
+                    <StatsView />
 
                     <div className={styles.accountGridChat}>
                         <ChatContainer />
