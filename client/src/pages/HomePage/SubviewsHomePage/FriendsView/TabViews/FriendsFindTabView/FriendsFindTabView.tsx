@@ -36,7 +36,7 @@ function FriendsFindTabView({ onSelectUser }: FriendsFindTabViewProps) {
                 <div className={styles.findResults}>
                     {friends.map(user => (
                         <div key={user.id} className={styles.findResultItem} onClick={() => onSelectUser(user)}>
-                            <UserAvatar username={user.username} avatar={user.avatar} />
+                            <UserAvatar username={user.username} avatar={user.avatar} userId={user.id} />
                             <span className={shared.friendName}>{user.username}</span>
                         </div>
                     ))}

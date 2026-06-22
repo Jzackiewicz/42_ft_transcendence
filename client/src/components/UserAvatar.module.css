@@ -1,3 +1,9 @@
+.wrapper {
+    position: relative;
+    display: inline-flex;
+    flex-shrink: 0;
+}
+
 .avatar {
     position: relative;
     width: 36px;
@@ -11,7 +17,6 @@
     font-size: 14px;
     font-weight: 700;
     color: #000;
-    flex-shrink: 0;
     overflow: hidden;
 }
 

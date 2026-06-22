@@ -9,11 +9,13 @@ interface UserAvatarProps {
 
 function UserAvatar({ username, avatar, userId }: UserAvatarProps) {
     return (
-        <div className={styles.avatar}>
-            {avatar
-                ? <img src={avatar} alt={username} className={styles.avatarImg} />
-                : username[0]?.toUpperCase() ?? '?'
-            }
+        <div className={styles.wrapper}>
+            <div className={styles.avatar}>
+                {avatar
+                    ? <img src={avatar} alt={username} className={styles.avatarImg} />
+                    : username[0]?.toUpperCase() ?? '?'
+                }
+            </div>
             {userId !== undefined && <OnlineIndicator userId={userId} />}
         </div>
     )
