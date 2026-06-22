@@ -9,8 +9,8 @@
 - **Online Multiplayer** Game Show based Quiz.
 - **Friends system**.
 - **Text chats** between Friends and open text chat in-game.
-- <NOT_YET_IMPLEMENTED **Player Statistics**>.
-- <NOT_YET_IMPLEMENTED **Player Profiles**>.
+- **Player Statistics**.
+- **Player Profiles**.
 - **LLM** based question generator for lobbies.
 - **Mobile Support** along with **multi-browser support**.
 - **Admin Panel** with database and user control.
@@ -129,7 +129,7 @@ You might want to do this if automatic migration is not working.
 
 ### 🟦 Technical Stack ```frontend stack & framework, backend stack & framework, database system and why it was chosen, any other significant technologies or libraries, justification for major techncal choices```
 - **Frontend technologies and frameworks**
-  - **React 19 with Typescript 6**
+  - **React**
   - **CSS Modules**
   - <Fill_in_or_delete> <ITYKHONO>
 - **Backend technologies and frameworks**
@@ -168,7 +168,7 @@ Friendships are stored in `Friendship`, which has two foreign keys back to `User
 - **Account Management**.
 - **Friends system**.
 - **Text chats** between Friends and open text chat in-game.
-- <NOT_YET_IMPLEMENTED **Player Statistics**>.
+- **Player Statistics**.
 - **LLM** based question generator for lobbies.
 
 **Complete list of implemented features:**
@@ -222,8 +222,8 @@ Friendships are stored in `Friendship`, which has two foreign keys back to `User
 
 ### Major - Allow users to interact with other users.
 
-- **People Involved: jzackiew, mbudkevi, mamichal, itykhono** 
-- We have a /home/ page where once logged in a user can look for users, <NOT_YET_IMPLEMENTED view their profiles>, add or remove them as friends and message with them live. During live games players can chat with each other using a public text chat.
+- **People Involved: jzackiew, mbudekevi, mamichal, itykhono** 
+- We have a /home/ page where once logged in a user can look for users, view their profiles, add or remove them as friends and message with them live. During live games players can chat with each other using a public text chat.
 - **Why this module?** - This module fit very well considering the aspect of the game. The idea of players interacting mid match then adding each other after the match to discuss the game or organise another one is a logical one.
 
 ### Minor - Use an ORM for the database.
@@ -309,18 +309,23 @@ Friendships are stored in `Friendship`, which has two foreign keys back to `User
 
 ### dbozic - Scrum Master
 #### Contributions
-- Backend developer for the AI Question Expander.
-- Lead researcher for AI modules and AI integration.
-- Code reviewer and game tester.
-- Question base refiner.
-- Scrum master and organiser.
+- Implemented the AI-powered Question Expander.
+- Lead researcher for potential AI modules and AI integration.
+- Assisted in Code review and organised live game tests.
+- Refined the questions data set for use in the final product.
+- Organised meetings and removed blockers.
 - Wrote the README.md.
 #### Specific features, modules, or components
-- LLM Generation
-- LLM Rate limitation
+- AI Question Expander major module.
+- LLM integration.
+- User rate limiting for AI requests.
+- Database persistence and updating live lobbies.
+- Documentation.
 
 #### Challenges faced
-I found the hardest part was 
+- My largest techincal challenge was developing and integrating the question expander. It required me to learn new  like Python, an authenticated API, a web developement framework, an ORM, REST, rate limiting specific users, using external tools for format validation along with many other things that were cut from the final version.
+<br> Looking back I am amazed I was able to start work on such a module as my first issue.
+- A small but unusual challenge I faced was reforming the base list of questions and answers originating from a Polish gameshow. I found a method to automatically filter out questions which only people familiar with Polish culture would know along with translating and sorting the rest.
 
 ### itykhono - Developer <ITYKHONO>
 - Frontend
