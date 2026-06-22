@@ -145,7 +145,7 @@ You might want to do this if automatic migration is not working.
 - **Any other significant technologies or libraries**
   - **Pydantic** - Data Validation.
   - **Google Gemini API** - LLM calls.
-  - **Redis - Caching**.
+  - **Redis** - Caching.
   - **<Maybe_Playwright>** - <MAMICHAL>
 - **Justification for major techinical choices** - **Django Rest Framework** was chosen for its **ORM**, **Serializers** and **Authentication and permission system** along with other out of the box tools. **Redis** was used as a forward looking improvement over Djangos caching and channel tools. **React** was chosen for <ITYKHONO>
 
@@ -167,30 +167,30 @@ You might want to do this if automatic migration is not working.
 **Complete list of implemented features:**
 
 **Online Multiplayer Game Show based Quiz** - An online game which players can host then compete in by nominating players to answer game show questions.
-<br> Game Design, Fullstack Implementaton, and **graceful disconnections** by **jzackiew**.
-<br> Game instructions by **mbudkevi.**
+<br> **Game Design**, **Fullstack Implementaton**, and **graceful disconnections** by: **jzackiew**.
+<br> **Game instructions** by: **mbudkevi.**
 
 **Accounts and Account Management** - User account creation and profiles which display a players information along with user online presence.
-<br> **Authentication** by **mamichal and mbudkevi**.
-<br> **Google OAuth and is online status** by **mbudkevi**.
-<br> **Frontend implementation** by **itykhono**.
+<br> **Authentication** by: **mamichal and mbudkevi**.
+<br> **Google OAuth and is online status** by: **mbudkevi**.
+<br> **Frontend implementation** by: **itykhono**.
 
 **Friends System** - A system where players can search for other players by username. They can add or remove friends to open a direct text chat.
-<br> **Backend logic design and database relationship model** by **mbudkevi**.
-<br> **Frontend implementation** by **itykhono**.
+<br> **Backend logic design and database relationship model** by: **mbudkevi**.
+<br> **Frontend implementation** by: **itykhono**.
 
 **Text Chats** - A websocket based system that allows users to directly communicate to each other by text live. You can text chat in public lobbies as well as directly with friends.
 <br> **Websocket Architecture**, and **History Pagenation** by: **jzackiew**.
-<br> **Backend Chat Logic**, and **Authentication** by **mbudkevi**.
-<br> **Frontend implementation** by **itkyhono**
+<br> **Backend Chat Logic**, and **Authentication** by: **mbudkevi**.
+<br> **Frontend implementation** by: **itkyhono**
 
 **Player Statistics** - A place on the home page where users can check their game statistics.
 <br> **Statistic Tracking** by: **jzackiew**.
 <br> **Frontend integration** by: **itykhono**.
 
 **LLM based question generator for lobbies** - A button that allows the host of a lobby to add more questions to his quiz using AI. The AI generates similar questions to those already present in the lobby. The generated questions are added to the database for admin review and integration into the games questionbase.
-<br> **LLM Integration**, **Game Session Integration**, **Database Persistence**, **Rate limitation**, and **Duplicate Protection** by **dbozic**.
-<br> Frontend integration **jzackiew**.
+<br> **LLM Integration**, **Game Session Integration**, **Database Persistence**, **Rate limitation**, and **Duplicate Protection** by: **dbozic**.
+<br> **Frontend integration** by: **jzackiew**.
 
 ### 🟧 Modules ```List all chosen modules, point calculation, justification for each choice, how each module was implented, which team members did what```
 ### Complete list of chosen modules:
