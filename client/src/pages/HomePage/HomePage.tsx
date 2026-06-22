@@ -12,7 +12,7 @@ import InlineError from '../../components/InlineError/InlineError'
 
 import styles from './HomePage.module.css'
 
-import { useHomePage } from './useHomePage'
+import { useHomePage, UUID_LENGTH } from './useHomePage'
 import { FriendsProvider } from '../../context/FriendsListContext'
 
 export function HomePage() {
@@ -68,7 +68,8 @@ export function HomePage() {
                 <input
                     className={styles.joinModalInput}
                     type="text"
-                    placeholder="Paste lobby UUID…"
+                    placeholder="e.g. 123e4567-e89b-12d3-a456-426614174000"
+                    maxLength={UUID_LENGTH}
                     value={joinUuid}
                     autoFocus
                     onChange={e => { setJoinUuid(e.target.value); setJoinError(null) }}

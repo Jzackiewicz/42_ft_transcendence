@@ -4,6 +4,9 @@ import { createLobby, joinLobby } from '../../api/gameWrapper'
 import { logout } from '../../api/authWrapper'
 import { useUser } from '../../context/UserContext'
 
+// A UUID is 36 characters (8-4-4-4-12 plus four hyphens).
+export const UUID_LENGTH = 36
+
 export function useHomePage() {
     const navigate = useNavigate()
     const { user, setUser } = useUser()
@@ -12,9 +15,6 @@ export function useHomePage() {
     const [createError, setCreateError] = useState<string | null>(null)
     const [showJoinModal, setShowJoinModal] = useState(false)
     const [showRulesModal, setShowRulesModal] = useState(false)
-
-    // A UUID is 36 characters (8-4-4-4-12 plus four hyphens).
-    const UUID_LENGTH = 36
 
     const openJoinModal = (open: boolean) => {
         setJoinError(null)
