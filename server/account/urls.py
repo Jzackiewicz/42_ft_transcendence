@@ -23,4 +23,15 @@ urlpatterns = [
         apis.UserProfileAvatarApi.as_view(),
         name="profile-avatar",
     ),
+    # Google OAuth 2.0
+    path(
+        "oauth/google/login/",
+        apis.GoogleOAuthLoginApi.as_view(),
+        name="oauth-google-login",
+    ),
+    path(
+        "oauth/google/callback/",
+        apis.GoogleOAuthCallbackApi.as_view(),
+        name="oauth-google-callback",
+    ),
 ]

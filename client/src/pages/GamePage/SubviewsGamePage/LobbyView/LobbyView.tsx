@@ -1,11 +1,14 @@
-import React from 'react';
-import './LobbyView.css';
+import { Button } from '../../../../components/Button/Button';
+import { Icon } from '../../../../components/Icon/Icon';
+import { LobbyChat } from '../LobbyChat/LobbyChat';
+import styles from './LobbyView.module.css';
 
 interface LobbyViewProps {
     isHost: boolean;
     playersCount: number;
     onStartGame: () => void;
-    isAiQuestionsRequested: boolean;
+    isGeneratingAiQuestions: boolean;
+    aiQuestionsGenerated: boolean;
     onRequestAiQuestions: () => void;
 }
 
@@ -13,55 +16,59 @@ export function LobbyView({
     isHost,
     playersCount,
     onStartGame,
-    isAiQuestionsRequested,
+    isGeneratingAiQuestions,
+    aiQuestionsGenerated,
     onRequestAiQuestions
 }: LobbyViewProps) {
     return (
-        <div className="lobby-view-container">
-            <h2>Lobby</h2>
-            
+        <div className={styles.lobbyViewContainer}>
+
             {isHost ? (
                 <div>
                     {playersCount < 2 ? (
-                        <div className="lobby-waiting-more">
+                        <div className={styles.lobbyWaitingMore}>
                             Waiting for more players to join... (Minimum 2 players required, currently {playersCount})
                         </div>
                     ) : (
-                        <div className="lobby-ready">
+                        <div className={styles.lobbyReady}>
                             Ready to start! {playersCount} players in lobby.
                         </div>
                     )}
                     
-                    <div className="lobby-actions-row">
-                        <button 
-                            onClick={onStartGame} 
-                            disabled={playersCount < 2}
-                            className="lobby-btn"
+                    <div className={styles.lobbyActionsRow}>
+                        <Button
+                            onClick={onStartGame}
+                            disabled={playersCount < 2 || isGeneratingAiQuestions}
                         >
                             Start Game
-                        </button>
+                        </Button>
 
-                        <div className="ai-questions-wrapper">
-                            <button
+                        <div className={styles.aiQuestionsWrapper}>
+                            <Button
                                 onClick={onRequestAiQuestions}
-                                className="lobby-btn"
-                                disabled={isAiQuestionsRequested}
+                                disabled={isGeneratingAiQuestions || aiQuestionsGenerated}
+                                variant="secondary"
                             >
-                                {isAiQuestionsRequested ? '✨ Generation Requested!' : 'Generate AI Questions'}
-                            </button>
-                            {isAiQuestionsRequested && (
-                                <span className="ai-feedback-toast">
-                                    ✓ AI Questions successfully queued!
+                                {isGeneratingAiQuestions
+                                    ? 'Generating AI Questions…'
+                                    : aiQuestionsGenerated
+                                        ? 'AI Questions Added'
+                                        : 'Generate AI Questions'}
+                            </Button>
+                            {aiQuestionsGenerated && (
+                                <span className={styles.aiFeedbackToast}>
+                                    <Icon name="check" size="sm" /> AI Questions added to the lobby!
                                 </span>
                             )}
                         </div>
                     </div>
                 </div>
             ) : (
-                <div className="lobby-spectator-waiting">
+                <div className={styles.lobbySpectatorWaiting}>
                     Waiting for lobby host to start the game...
                 </div>
             )}
+            <LobbyChat />
         </div>
     );
 }

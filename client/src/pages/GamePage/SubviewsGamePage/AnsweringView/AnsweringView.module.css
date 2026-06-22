@@ -1,0 +1,101 @@
+.answeringViewContainer {
+    color: var(--text);
+    width: 100%;
+}
+
+.answeringQuestionBox {
+    margin: 16px 0 24px 0;
+    padding: 18px 20px;
+    background-color: rgba(255, 255, 255, 0.01);
+    border: 1px solid var(--theme-border, var(--border));
+    border-left: 4px solid var(--theme-accent, var(--cyan));
+    border-radius: var(--radius-xs);
+    box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.005);
+}
+
+.answeringQuestionMeta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 6px;
+}
+
+.answeringCategory {
+    font-family: var(--fd);
+    font-size: var(--font-xs);
+    text-transform: uppercase;
+    color: var(--theme-accent, var(--cyan));
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.answeringQuestionText {
+    font-family: var(--fd);
+    font-size: var(--font-xl);
+    color: var(--text);
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+.answeringActivePrompt {
+    margin-top: 20px;
+}
+
+.answeringPromptLabel {
+    font-family: var(--fb);
+    font-size: var(--font-xs);
+    letter-spacing: 1px;
+    color: var(--theme-accent, var(--magenta));
+    font-weight: 700;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+}
+
+.answeringForm {
+    display: flex;
+    gap: 12px;
+}
+
+.answeringInput {
+    padding: 12px 16px;
+    font-size: var(--font-md);
+    font-family: var(--fb);
+    flex: 1;
+    min-width: 24ch;
+    background-color: rgba(0, 0, 0, 0.25);
+    color: var(--text);
+    border: 1px solid var(--theme-border, var(--border));
+    border-radius: var(--radius-sm);
+    outline: none;
+    transition: all 0.25s ease-in-out;
+}
+
+.answeringInput:focus {
+    border-color: var(--theme-accent, var(--magenta));
+    background-color: rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 10px var(--theme-glow, rgba(224, 64, 251, 0.1));
+}
+
+.answeringInput::placeholder {
+    color: var(--placeholder);
+}
+
+.answeringCharLimit {
+    margin-top: 8px;
+    font-family: var(--fb);
+    font-size: var(--font-xs);
+    letter-spacing: 0.5px;
+    font-weight: 700;
+    color: var(--theme-accent, var(--magenta));
+}
+
+.answeringSpectatorWaiting {
+    margin-top: 20px;
+    color: var(--dim);
+    font-size: var(--font-sm);
+    font-style: italic;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}

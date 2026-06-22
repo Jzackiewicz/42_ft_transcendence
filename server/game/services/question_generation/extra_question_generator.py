@@ -2,12 +2,11 @@ import json
 import random
 import time
 
-from dotenv import load_dotenv
 from django.db import transaction
 from django.db.models import Max
 from google import genai
-from pydantic import BaseModel
 from google.genai.errors import APIError
+from pydantic import BaseModel
 
 from core.settings import LLM_API_KEY, LLM_MODEL
 from game.models import GameSession, Question, SessionQuestion
@@ -15,22 +14,29 @@ from game.models import GameSession, Question, SessionQuestion
 LLM_SYSTEM_INSTRUCTION = """You must respond using the JSON format only with each section containing a 'category', 'question', and 'answer' field.
 The answer field must be an array of possible answers to the question, and the question field must be a string containing the question itself.
 Questions must give a clear indication of what the answer should be, and the answer must be a clear and concise response to the question.
-Answers must made up of only one word, short phrase or name each.
+Answers must be made up of only one word, a short phrase, or a name each. Most answers should be short and quick to type; avoid long, highly technical, or obscure answer terms.
 Questions must not include the word "and" or "type" or "while".
 Questions must give the full context of the question, and must not rely on the category field to give context to the question.
 If a question can have multiple answers, create a very extensive list of answers for that question.
 If the answer can have nicknames of itself, create a very extensive list out of answers that include the nickname and the actual name.
+Answer variants must only be common, widely recognised alternatives; do not include obscure, outdated, or highly technical synonyms.
+Always include every reasonable way a person might phrase the same answer: numbers written as both digits and words (e.g. "4" and "four"), Roman numerals and their spelled-out and digit forms (e.g. "Elizabeth II", "Elizabeth 2", "Elizabeth the Second"), names with and without titles or articles (e.g. "Newton", "Isaac Newton", "Sir Isaac Newton"; "Severn", "River Severn"), and chemical symbols alongside element names (e.g. "Iron", "Fe").
 You must generate an appropriate catagory name for each question, and the catagory name must be relevant to the question and answer.
-The catagory name must be a single word or phrase that is relevant to the question and answer, and it must not be a generic term like "general" or "miscellaneous".
+The catagory name must be a broad, common subject area such as "Science", "History", "Geography", "Sports", "Music", "Film" or "Art". Do not use narrow specialties (for example use "Science" instead of "Microbiology" or "Organic Chemistry", and "Art" instead of "Art History"), and do not use generic terms like "general" or "miscellaneous".
+Keep most questions short and quick to read; an occasional longer question is fine, but the majority must be concise. Avoid filler words such as "specific", "particular", or "fundamental".
+The question text must never contain its own answer, nor an obvious abbreviation of it; for example ask "What is the chemical symbol for gold?" rather than "What is the chemical symbol Au?".
+Questions should be of moderate difficulty: answerable by a reasonably knowledgeable person without specialist expertise, but not trivially easy facts that almost everyone knows offhand (avoid the difficulty of questions like the capital of Japan, which planet is the Red Planet, or who wrote Romeo and Juliet).
 If you are not 100% sure about an answer, don't include it."""
 RETRY_STATUS_CODES = {429, 500, 502, 503, 504}
+OVER_REQUEST_BUFFER = 3
 
 class GeneratedQuestion(BaseModel):
-	category: str
-	question: str
-	answers: list[str]
+    category: str
+    question: str
+    answers: list[str]
 
 def generate(client, model, prompt):
+    last_error = None
     for attempt in range(5):
         try:
             response = client.models.generate_content(
@@ -42,58 +48,69 @@ def generate(client, model, prompt):
                     "response_schema": list[GeneratedQuestion],
                 },
             )
-            return response.parsed
-        except LLMApiException as e:
-            if e.status_code in RETRY_STATUS_CODES:
+            return response.parsed or []
+        except APIError as e:
+            if e.code in RETRY_STATUS_CODES:
+                last_error = e
                 delay = min(2 ** attempt, 30) + random.random()
                 time.sleep(delay)
                 continue
             raise
-    raise RuntimeError("Maximum retries exceeded.")
+    raise RuntimeError(
+        f"AI question generation failed after retries: [{last_error.code}] {last_error.message}"
+    ) from last_error
 
 def load_lobby_questions(lobby_id):
-	"""Takes a lobby ID and returns a data object containing the questions, their answers, and a category for each question."""
-	lobby = GameSession.objects.filter(session_uuid=lobby_id).first()
-	if lobby is None:
-		raise RuntimeError(f"Lobby not found: {lobby_id}")
-	questions_data = [
-		{
-			"category": session_question.question.category,
-			"question": session_question.question.question_text,
-			"answers": [session_question.question.correct_answer],
-		}
-		for session_question in lobby.session_questions.select_related("question").order_by("order_index")
-	]
-	return questions_data
+    """Takes a lobby ID and returns a data object containing the questions, their answers, and a category for each question."""
+    lobby = GameSession.objects.filter(session_uuid=lobby_id).first()
+    if lobby is None:
+        raise RuntimeError(f"Lobby not found: {lobby_id}")
+    questions_data = [
+        {
+            "question": session_question.question.question_text,
+            "answers": [session_question.question.correct_answer],
+        }
+        for session_question in lobby.session_questions.select_related("question").order_by("order_index")
+    ]
+    return questions_data
 
 def build_prompt(lobby_id, n_questions_to_generate):
-	questions_data = load_lobby_questions(lobby_id)
+    questions_data = load_lobby_questions(lobby_id)
 
-	if not questions_data:
-		return (
-			f"Generate {n_questions_to_generate} general knowledge questions. "
-			"The questions must not be duplicates. "
-			"Return JSON array: question, answers, category."
-		)
+    if not questions_data:
+        return (
+            f"Generate {n_questions_to_generate} general knowledge questions across a wide variety of subjects. "
+            "The questions must not be duplicates. "
+            "Avoid questions that are trivially easy or that most people know offhand. "
+            "The question text must never contain its own answer. "
+            "Return JSON array: question, answers, category."
+        )
 
-	return (
-		f"Generate {n_questions_to_generate} questions based on: "
-		f"{json.dumps(questions_data)}. "
-		"Do not duplicate existing questions. "
-		"Return JSON array: question, answers, category."
-	)
+    return (
+        f"Generate {n_questions_to_generate} new general knowledge questions across a wide variety of subjects. "
+        "The existing questions below are provided ONLY as a reference for the general difficulty and phrasing "
+        "level expected — do NOT reuse their topics, subjects, or categories, and do not duplicate them: "
+        f"{json.dumps(questions_data)}. "
+        "Match that difficulty level and avoid questions that are trivially easy or that most people know offhand. "
+        "The question text must never contain its own answer. "
+        "Return JSON array: question, answers, category."
+    )
 @transaction.atomic
-def persist_generated_questions(session, generated):
+def persist_generated_questions(session, generated, limit=None):
+    if not generated:
+        return []
+
     session = GameSession.objects.select_for_update().get(pk=session.pk)
 
     unique_generated = []
     seen_text = set()
     for item in generated:
         q_text = item.question
-        ans = item.answers[0] if item.answers else None
         category = item.category
-        if not q_text or not ans:
+        answer_variants = list(dict.fromkeys(a.strip() for a in (item.answers or []) if a and a.strip()))
+        if not q_text or not answer_variants:
             continue
+        ans = " | ".join(answer_variants)
         if q_text not in seen_text:
             seen_text.add(q_text)
             unique_generated.append((q_text, ans, category))
@@ -149,8 +166,6 @@ def persist_generated_questions(session, generated):
     to_create = []
     created_question_ids = []
 
-    random.shuffle(unique_generated)
-
     for q_text, _, _ in unique_generated:
         q_obj = question_map.get(q_text)
         if not q_obj:
@@ -165,24 +180,41 @@ def persist_generated_questions(session, generated):
             )
             next_index += 1
             created_question_ids.append(q_obj.id)
+            if limit is not None and len(created_question_ids) >= limit:
+                break
 
     if to_create:
         SessionQuestion.objects.bulk_create(to_create)
+        reshuffle_session_question_order(session)
 
     return created_question_ids
 
-def generate_extra_questions(lobby_id, n_questions_to_generate):
-	session = GameSession.objects.filter(session_uuid=lobby_id).first()
-	if session is None:
-		raise RuntimeError(f"Lobby not found: {lobby_id}")
-		
-	client = genai.Client(api_key=LLM_API_KEY)
-	prompt = build_prompt(lobby_id, n_questions_to_generate)
-	generated = generate(
-		client,
-		LLM_MODEL,
-		prompt,
-	)
 
-	created_question_ids = persist_generated_questions(session, generated)
-	return {"created_question_ids": created_question_ids}
+def reshuffle_session_question_order(session):
+    session_questions = list(session.session_questions.all())
+    count = len(session_questions)
+    if count < 2:
+        return
+
+    for offset, sq in enumerate(session_questions):
+        sq.order_index = count + offset
+    SessionQuestion.objects.bulk_update(session_questions, ["order_index"])
+
+    random.shuffle(session_questions)
+    for index, sq in enumerate(session_questions):
+        sq.order_index = index
+    SessionQuestion.objects.bulk_update(session_questions, ["order_index"])
+
+def generate_extra_questions(lobby_id, n_questions_to_generate):
+    session = GameSession.objects.filter(session_uuid=lobby_id).first()
+    if session is None:
+        raise RuntimeError(f"Lobby not found: {lobby_id}")
+        
+    client = genai.Client(api_key=LLM_API_KEY)
+    prompt = build_prompt(lobby_id, n_questions_to_generate + OVER_REQUEST_BUFFER)
+    generated = generate(client, LLM_MODEL, prompt)
+
+    created_question_ids = persist_generated_questions(
+        session, generated, limit=n_questions_to_generate
+    )
+    return {"created_question_ids": created_question_ids}

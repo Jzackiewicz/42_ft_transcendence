@@ -1,9 +1,16 @@
-import React, { useState } from 'react';
-import './AnsweringView.css';
+import { useState, FormEvent } from 'react';
+import { Button } from '../../../../components/Button/Button';
+import { Icon } from '../../../../components/Icon/Icon';
+import { QuestionBadges } from '../QuestionBadges/QuestionBadges';
+import styles from './AnsweringView.module.css';
+
+const ANSWER_MAX_LENGTH = 30;
 
 interface AnsweringViewProps {
     questionText: string;
     category: string;
+    isAiGenerated: boolean;
+    isVerified: boolean;
     isCurrentAnswering: boolean;
     activePlayerName: string;
     onSubmitAnswer: (answer: string) => void;
@@ -12,56 +19,68 @@ interface AnsweringViewProps {
 export function AnsweringView({
     questionText,
     category,
+    isAiGenerated,
+    isVerified,
     isCurrentAnswering,
     activePlayerName,
     onSubmitAnswer
 }: AnsweringViewProps) {
     const [localAnswerText, setLocalAnswerText] = useState('');
+    const atLimit = localAnswerText.length >= ANSWER_MAX_LENGTH;
+    const isEmpty = localAnswerText.trim() === '';
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
+        if (isEmpty) return;
         onSubmitAnswer(localAnswerText);
         setLocalAnswerText('');
     };
 
     return (
-        <div className="answering-view-container">
-            <h2>Answering Phase</h2>
-            
-            <div className="answering-question-box">
-                <div className="answering-category">
-                    Category: {category || 'General'}
+        <div className={styles.answeringViewContainer}>
+
+            <div className={styles.answeringQuestionBox}>
+                <div className={styles.answeringQuestionMeta}>
+                    <div className={styles.answeringCategory}>
+                        Category: {category || 'General'}
+                    </div>
+                    <QuestionBadges isAiGenerated={isAiGenerated} isVerified={isVerified} />
                 </div>
-                <div className="answering-question-text">
+                <div className={styles.answeringQuestionText}>
                     {questionText}
                 </div>
             </div>
 
             {isCurrentAnswering ? (
-                <div className="answering-active-prompt">
-                    <div className="answering-prompt-label">
+                <div className={styles.answeringActivePrompt}>
+                    <div className={styles.answeringPromptLabel}>
                         YOUR TURN TO ANSWER:
                     </div>
-                    <form onSubmit={handleSubmit} className="answering-form">
+                    <form onSubmit={handleSubmit} className={styles.answeringForm}>
                         <input
                             type="text"
                             value={localAnswerText}
                             onChange={(e) => setLocalAnswerText(e.target.value)}
                             placeholder="Type your answer..."
+                            maxLength={ANSWER_MAX_LENGTH}
                             autoFocus
-                            className="answering-input"
+                            className={styles.answeringInput}
                         />
-                        <button type="submit" className="btn-answer-submit">
+                        <Button type="submit" disabled={isEmpty}>
                             Submit
-                        </button>
+                        </Button>
                     </form>
+                    {atLimit && (
+                        <div className={styles.answeringCharLimit}>
+                            Character limit reached ({ANSWER_MAX_LENGTH})
+                        </div>
+                    )}
                 </div>
             ) : (
-                <div className="answering-spectator-waiting">
-                    👀 {activePlayerName} is answering the question...
+                <div className={styles.answeringSpectatorWaiting}>
+                    <Icon name="eye" size="md" /> {activePlayerName} is answering the question...
                 </div>
             )}
         </div>
     );
 }
-

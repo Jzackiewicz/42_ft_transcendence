@@ -1,0 +1,15 @@
+.sectionTitle {
+    font-family: var(--fd);
+    font-size: var(--font-xl);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    /* Optional theming */
+    color: var(--theme-accent, var(--text));
+    margin: 0;
+    border-bottom: 1px solid var(--theme-border, var(--border));
+    padding-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.4s ease, border-color 0.4s ease;
+}

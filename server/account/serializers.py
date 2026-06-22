@@ -14,21 +14,23 @@ User = get_user_model()
 
 
 class UserRegisterInputSerializer(serializers.Serializer):
-    """Input for user registration — validated data is passed to user_create()."""
+    """Input for user registration - validated data is passed to user_create()"""
 
     username = serializers.CharField(max_length=150, min_length=3)
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True, min_length=8)
 
     def validate_username(self, value):
-        if User.objects.filter(username=value).exists():
+        if "@" in value:
+            raise serializers.ValidationError("Username may not contain '@'.")
+        if User.objects.filter(username__iexact=value).exists():
             raise serializers.ValidationError(
                 "A user with this username already exists."
             )
         return value
 
     def validate_email(self, value):
-        if User.objects.filter(email=value).exists():
+        if User.objects.filter(email__iexact=value).exists():
             raise serializers.ValidationError("A user with this email already exists.")
         return value
 
@@ -38,14 +40,23 @@ class UserOutputSerializer(serializers.ModelSerializer):
         model = User
         fields = ["id", "username", "email"]
 
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        request = self.context.get("request")
+        if request and request.user.is_authenticated and request.user != instance:
+            ret.pop("email", None)
+        return ret
+
 
 class UserUpdateInputSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=150, required=False)
     email = serializers.EmailField(required=False)
 
     def validate_username(self, value):
+        if "@" in value:
+            raise serializers.ValidationError("Username may not contain '@'.")
         user = self.context.get("user") or self.context.get("request").user
-        if User.objects.filter(username=value).exclude(id=user.id).exists():
+        if User.objects.filter(username__iexact=value).exclude(id=user.id).exists():
             raise serializers.ValidationError(
                 "A user with this username already exists."
             )
@@ -53,7 +64,7 @@ class UserUpdateInputSerializer(serializers.Serializer):
 
     def validate_email(self, value):
         user = self.context.get("user") or self.context.get("request").user
-        if User.objects.filter(email=value).exclude(id=user.id).exists():
+        if User.objects.filter(email__iexact=value).exclude(id=user.id).exists():
             raise serializers.ValidationError("A user with this email already exists.")
         return value
 
@@ -61,6 +72,7 @@ class UserUpdateInputSerializer(serializers.Serializer):
 # ---------------------------------------------------------------------------
 # UserProfile serializers
 # ---------------------------------------------------------------------------
+
 
 # me
 class UserProfileOutputSerializer(serializers.ModelSerializer):
@@ -87,15 +99,22 @@ class PublicUserSerializer(serializers.ModelSerializer):
 
     def get_avatar(self, user):
         return user.profile.avatar_url(self.context.get("request"))
-    
+
     def get_is_online(self, user):
         precomputed = self.context.get("online_user_ids")
         if precomputed is not None:
             return user.id in precomputed
         return PresenceRegistry.is_online(user.id)
 
+
 class UserProfileAvatarInputSerializer(serializers.Serializer):
     avatar = serializers.ImageField()
+
+    def validate_avatar(self, value):
+        max_size = 5 * 1024 * 1024  # 5MB
+        if value.size > max_size:
+            raise serializers.ValidationError("Avatar file size must be under 5MB.")
+        return value
 
 
 # ---------------------------------------------------------------------------
@@ -104,7 +123,8 @@ class UserProfileAvatarInputSerializer(serializers.Serializer):
 
 
 class UserLoginInputSerializer(serializers.Serializer):
-    username = serializers.CharField()
+    # identifier can be either an email or a username
+    identifier = serializers.CharField()
     password = serializers.CharField(write_only=True)  # never appear in output
 
 

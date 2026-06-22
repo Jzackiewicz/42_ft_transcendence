@@ -1,0 +1,160 @@
+/* ── GAME OVER CONTAINER ──────────────────────────────────────── */
+.gameOverContainer {
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    width: 100%;
+    animation: fadeInGameOver 0.5s ease-out;
+}
+
+@keyframes fadeInGameOver {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── STANDINGS TABLE ─────────────────────────────────────────── */
+.gameOverTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+/* Header */
+.gameOverThead th {
+    font-family: var(--fb);
+    font-size: var(--font-xs);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--dim);
+    font-weight: 700;
+    padding: 12px 10px 18px;
+    border-bottom: 2px solid var(--border);
+    text-align: center;
+    white-space: nowrap;
+}
+
+.gameOverThead th:nth-child(1),
+.gameOverThead th:nth-child(2) {
+    text-align: left;
+}
+
+/* Rows with much larger vertical spacing */
+.gameOverRow {
+    background: transparent;
+    transition: background-color 0.2s ease;
+    border-bottom: 1px solid var(--border);
+}
+
+.gameOverRow:hover {
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+.gameOverRow td {
+    padding: 28px 10px; /* Much larger vertical spacing between players */
+    font-family: var(--fb);
+    font-size: var(--font-md);
+    color: var(--text);
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* ── WINNER ROW HIGHLIGHT ────────────────────────────────────── */
+.gameOverRow.winnerRow td {
+    background: rgba(255, 196, 0, 0.02); /* very subtle gold tint */
+}
+
+/* ── ELIMINATED ROW ──────────────────────────────────────────── */
+.gameOverRow.eliminatedRow {
+    opacity: 0.5;
+}
+
+/* ── RANK CELL ───────────────────────────────────────────────── */
+.gameOverRank {
+    font-family: var(--fd);
+    font-weight: 700;
+    font-size: var(--font-lg);
+    color: var(--dim);
+    text-align: left !important;
+    width: 60px;
+}
+
+.winnerRow .gameOverRank {
+    color: var(--gold);
+    text-shadow: 0 0 8px rgba(255, 196, 0, 0.35);
+}
+
+/* ── PLAYER INFO CELL ────────────────────────────────────────── */
+.gameOverPlayerCell {
+    text-align: left !important;
+}
+
+.gameOverPlayerInfo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+
+.gameOverPlayerName {
+    font-family: var(--fb);
+    font-weight: 600;
+    color: var(--text);
+    font-size: var(--font-md);
+}
+
+.winnerRow .gameOverPlayerName {
+    color: var(--gold);
+    font-weight: 700;
+}
+
+/* ── LIVES ───────────────────────────────────────────────────── */
+.gameOverLives {
+    white-space: nowrap;
+}
+
+.gameOverLives .heartFull {
+    color: var(--red);
+}
+
+.gameOverLives .heartEmpty {
+    color: var(--dim);
+}
+
+/* ── POINTS ──────────────────────────────────────────────────── */
+.gameOverPoints {
+    font-family: var(--fd);
+    font-weight: 700;
+    font-size: var(--font-lg);
+    color: var(--theme-accent, var(--magenta));
+}
+
+.winnerRow .gameOverPoints {
+    color: var(--gold);
+}
+
+/* ── ANSWERS ─────────────────────────────────────────────────── */
+.gameOverAnswers {
+    color: var(--dim);
+    font-size: var(--font-sm);
+}
+
+/* ── ACTIONS ─────────────────────────────────────────────────── */
+.gameOverActions {
+    display: flex;
+    justify-content: center;
+    margin-top: 16px;
+}
+
+/* ── RESPONSIVENESS ──────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .gameOverContainer {
+        gap: 16px;
+    }
+
+    .gameOverRow td {
+        padding: 18px 8px; /* Slightly smaller but still spaced on mobile */
+        font-size: var(--font-sm);
+    }
+
+}

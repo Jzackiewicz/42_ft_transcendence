@@ -1,6 +1,9 @@
 import { useFriendsRequestTabView, FriendRequest } from './useFriendsRequestTabView'
-import InlineError from '../../../../../../components/InlineError'
-import './FriendsRequestTabView.css'
+import InlineError from '../../../../../../components/InlineError/InlineError'
+import { Button } from '../../../../../../components/Button/Button'
+import { Avatar } from '../../../../../../components/Avatar/Avatar'
+import styles from './FriendsRequestTabView.module.css'
+import shared from '../../FriendsView.module.css'
 
 function FriendsRequestTabView() {
     const { incomingRequestsList, outgoingRequestsList,
@@ -8,34 +11,34 @@ function FriendsRequestTabView() {
             handleAccept, handleDecline, handleCancel } = useFriendsRequestTabView()
 
     if (loading && incomingRequestsList.length === 0 && outgoingRequestsList.length === 0)
-        return <span className="friends-empty">Loading...</span>
+        return <span className={styles.friendsEmpty}>Loading...</span>
 
     return (
-        <div className="friends-request-list">
+        <div className={styles.friendsRequestList}>
             <InlineError message={error} />
             {incomingRequestsList.length === 0 && outgoingRequestsList.length === 0 && (
-                <span className="friends-empty">No pending requests</span>
+                <span className={styles.friendsEmpty}>No pending requests</span>
             )}
-            <div className="request-types-container">
-                <div className="incoming-request">
+            <div className={styles.requestTypesContainer}>
+                <div className={styles.incomingRequest}>
                     {incomingRequestsList.map((r: FriendRequest) => (
-                        <div key={r.id} className="request-item">
-                            <div className="friend-avatar">{r.from_user.username[0].toUpperCase()}</div>
-                            <span className="friend-name">{r.from_user.username}</span>
-                            <div className="request-actions">
-                                <button className="req-accept"  onClick={() => handleAccept(r.id)}>Accept</button>
-                                <button className="req-decline" onClick={() => handleDecline(r.id)}>Decline</button>
+                        <div key={r.id} className={styles.requestItem}>
+                            <Avatar name={r.from_user.username} size="md" />
+                            <span className={shared.friendName}>{r.from_user.username}</span>
+                            <div className={styles.requestActions}>
+                                <Button variant="primary" size="sm" onClick={() => handleAccept(r.id)}>Accept</Button>
+                                <Button variant="ghost" size="sm" onClick={() => handleDecline(r.id)}>Decline</Button>
                             </div>
                         </div>
                     ))}
                 </div>
-                <div className="outgoing-request">
+                <div className={styles.outgoingRequest}>
                     {outgoingRequestsList.map((r: FriendRequest) => (
-                        <div key={r.id} className="request-item">
-                            <div className="friend-avatar">{r.to_user.username[0].toUpperCase()}</div>
-                            <span className="friend-name">{r.to_user.username}</span>
-                            <div className="request-actions">
-                                <button className="req-decline" onClick={() => handleCancel(r.id)}>Cancel</button>
+                        <div key={r.id} className={styles.requestItem}>
+                            <Avatar name={r.to_user.username} size="md" />
+                            <span className={shared.friendName}>{r.to_user.username}</span>
+                            <div className={styles.requestActions}>
+                                <Button variant="ghost" size="sm" onClick={() => handleCancel(r.id)}>Cancel</Button>
                             </div>
                         </div>
                     ))}

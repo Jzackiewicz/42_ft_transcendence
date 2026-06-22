@@ -1,0 +1,52 @@
+.friendsRequestList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.friendsRequestList::-webkit-scrollbar { width: 4px; }
+.friendsRequestList::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+}
+
+.requestTypesContainer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.incomingRequest,
+.outgoingRequest {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.requestItem {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--pb);
+}
+
+.requestActions {
+    display: flex;
+    gap: 6px;
+    margin-left: auto;
+}
+
+
+.friendsEmpty {
+    color: var(--dim);
+    font-size: var(--font-sm);
+    text-align: center;
+    padding: 20px 0;
+}

@@ -1,0 +1,49 @@
+.errorPage {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+    color: #fff;
+    font-family: 'Inter', system-ui, sans-serif;
+    text-align: center;
+    padding: 20px;
+}
+
+.errorCode {
+    font-size: 8rem;
+    font-weight: 900;
+    margin: 0;
+    background: linear-gradient(45deg, #ff00ff, #00ffff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1;
+}
+
+.errorTitle {
+    font-size: 2rem;
+    margin: 1rem 0;
+}
+
+.errorMsg {
+    color: #888;
+    max-width: 400px;
+    margin-bottom: 2rem;
+}
+
+.homeBtn {
+    padding: 12px 24px;
+    background: #fff;
+    color: #000;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform 0.2s;
+}
+
+.homeBtn:hover {
+    transform: scale(1.05);
+}

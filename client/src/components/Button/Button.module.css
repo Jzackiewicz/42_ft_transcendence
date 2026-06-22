@@ -1,0 +1,130 @@
+.appBtn {
+    border-radius: var(--radius-sm);
+    font-family: var(--fb);
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: none;
+    outline: none;
+    user-select: none;
+}
+
+/* ── SIZES ──────────────────────────────────────────────────────── */
+.appBtnSm {
+    padding: 6px 12px;
+    font-size: var(--font-xs);
+}
+
+.appBtnMd {
+    padding: 8px 18px;
+    font-size: var(--font-sm);
+}
+
+.appBtnLg {
+    padding: 12px 24px;
+    font-size: var(--font-md);
+}
+
+/* ── VARIANTS ───────────────────────────────────────────────────── */
+
+/* Primary: Neon Cyan */
+.appBtnPrimary {
+    background: var(--cyan);
+    color: #000;
+}
+
+.appBtnPrimary:hover:not(:disabled) {
+    box-shadow: 0 0 20px rgba(0, 229, 255, 0.5);
+}
+
+/* Secondary: Outlined Cyan */
+.appBtnSecondary {
+    background: transparent;
+    border: 1px solid var(--cyan);
+    color: var(--cyan);
+}
+
+.appBtnSecondary:hover:not(:disabled) {
+    background: rgba(0, 229, 255, 0.08);
+    box-shadow: 0 0 15px var(--cyan-shadowed);
+}
+
+/* Danger: Neon Red */
+.appBtnDanger {
+    background: var(--red);
+    color: #000;
+}
+
+.appBtnDanger:hover:not(:disabled) {
+    box-shadow: 0 0 20px rgba(255, 23, 68, 0.5);
+}
+
+/* Success: Neon Green */
+.appBtnSuccess {
+    background: var(--green);
+    color: #000;
+}
+
+.appBtnSuccess:hover:not(:disabled) {
+    box-shadow: 0 0 20px rgba(0, 230, 118, 0.5);
+}
+
+.appBtnGradient {
+    background: linear-gradient(var(--gradient-deg), var(--cyan), var(--magenta));
+    color: var(--bg);
+    font-family: var(--fd);
+    font-size: var(--font-xl);
+    letter-spacing: 1.5px;
+    box-shadow: 0 0 30px var(--cyan-shadowed);
+}
+
+.appBtnGradient:hover:not(:disabled) {
+    transform: translateY(-1px);
+    filter: drop-shadow(0 0 20px var(--cyan-light-shadow));
+}
+
+/* Danger Ghost: red-accent outlined (retry, destructive secondary) */
+.appBtnDangerGhost {
+    background: transparent;
+    border: 1px solid rgba(255, 77, 77, 0.5);
+    color: #ff8a80;
+}
+
+.appBtnDangerGhost:hover:not(:disabled) {
+    background: rgba(255, 77, 77, 0.18);
+    color: #ffb4b4;
+}
+
+/* Ghost: quiet, low-emphasis action (cancel, remove, secondary nav) */
+.appBtnGhost {
+    background: transparent;
+    border: 1px solid var(--pb);
+    color: var(--dim);
+}
+
+.appBtnGhost:hover:not(:disabled) {
+    color: var(--text);
+    background: var(--panel);
+}
+
+/* ── MODIFIERS ──────────────────────────────────────────────────── */
+.appBtnFull {
+    width: 100%;
+}
+
+/* ── STATES ─────────────────────────────────────────────────────── */
+.appBtn:disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
+    box-shadow: none !important;
+}
+
+.appBtn:active:not(:disabled) {
+    transform: scale(0.97);
+}

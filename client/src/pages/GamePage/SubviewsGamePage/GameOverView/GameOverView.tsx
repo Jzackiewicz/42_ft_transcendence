@@ -1,16 +1,17 @@
-import React from 'react';
 import { Player } from '../../useGamePage';
-import './GameOverView.css';
+import { Button } from '../../../../components/Button/Button';
+import { Avatar } from '../../../../components/Avatar/Avatar';
+import { Icon } from '../../../../components/Icon/Icon';
+import { cx } from '../../../../utils/cx';
+import styles from './GameOverView.module.css';
 
 interface GameOverViewProps {
     winnerId: number | null;
-    winnerName: string;
-    endReason: string;
     players: Player[];
     onReturnToHome: () => void;
 }
 
-export function GameOverView({ winnerId, winnerName, endReason, players, onReturnToHome }: GameOverViewProps) {
+export function GameOverView({ winnerId, players, onReturnToHome }: GameOverViewProps) {
     const sortedLeaderboard = [...players].sort((a, b) => {
         // 0. The official winner always comes first
         if (winnerId !== null) {
@@ -44,60 +45,80 @@ export function GameOverView({ winnerId, winnerName, endReason, players, onRetur
         return a.seat_number - b.seat_number;
     });
 
+    // Render lives as visual hearts
+    const renderHearts = (lives: number) =>
+        Array.from({ length: 3 }).map((_, i) => (
+            <Icon
+                key={i}
+                name={i < lives ? 'heart' : 'heartOutline'}
+                size="xs"
+                className={i < lives ? styles.heartFull : styles.heartEmpty}
+            />
+        ));
+
     return (
-        <div className="game-over-container">
-            <h2 className="game-over-title">Game Over!</h2>
+        <div className={styles.gameOverContainer}>
 
-            <div className="game-over-winner-card">
-                <div className="game-over-winner-name">
-                    🏆 Winner: {winnerName || 'No winner (Draw)'}
-                </div>
-                <div className="game-over-reason">
-                    <strong>Reason:</strong> {endReason || 'Game completed.'}
-                </div>
-            </div>
-
-            <h3>Final Standings</h3>
-            <table className="game-over-table">
-                <thead>
-                    <tr className="game-over-table-header">
-                        <th className="game-over-th-left">Rank</th>
-                        <th className="game-over-th-left">Player</th>
-                        <th className="game-over-th-center">Status</th>
-                        <th className="game-over-th-center">Lives</th>
-                        <th className="game-over-th-center">Points</th>
-                        <th className="game-over-th-center">Answers</th>
+            <table className={styles.gameOverTable}>
+                <thead className={styles.gameOverThead}>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Player</th>
+                        <th>Points</th>
+                        <th>Lives</th>
+                        <th>Answers</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {sortedLeaderboard.map((player, idx) => (
-                        <tr key={player.id} className="game-over-tr">
-                            <td className="game-over-td-rank">#{idx + 1}</td>
-                            <td className="game-over-td-name">{player.display_name}</td>
-                            <td className="game-over-td-center">
-                                {player.is_alive ? '❤️ Alive' : '💀 Dead'}
-                            </td>
-                            <td className="game-over-td-center">{player.lives}</td>
-                            <td className="game-over-td-points">
-                                {player.points}
-                            </td>
-                            <td className="game-over-td-center">
-                                {player.answered_count}
-                            </td>
-                        </tr>
-                    ))}
+                    {sortedLeaderboard.map((player, idx) => {
+                        const isWinner = player.id === winnerId;
+                        const rowClasses = cx(
+                            styles.gameOverRow,
+                            isWinner && styles.winnerRow,
+                            !player.is_alive && styles.eliminatedRow
+                        );
+
+                        return (
+                            <tr key={player.id} className={rowClasses}>
+                                <td className={styles.gameOverRank}>
+                                    #{idx + 1}
+                                </td>
+                                <td className={styles.gameOverPlayerCell}>
+                                    <div className={styles.gameOverPlayerInfo}>
+                                        <Avatar
+                                            name={player.display_name}
+                                            imageUrl={player.avatar}
+                                            size="sm"
+                                            bg="neutral"
+                                            bordered
+                                        />
+                                        <span className={styles.gameOverPlayerName}>
+                                            {player.display_name}
+                                        </span>
+                                    </div>
+                                </td>
+                                <td className={styles.gameOverPoints}>
+                                    {player.points}
+                                </td>
+                                <td className={styles.gameOverLives}>
+                                    {renderHearts(player.lives)}
+                                </td>
+                                <td className={styles.gameOverAnswers}>
+                                    {player.answered_count}
+                                </td>
+                            </tr>
+                        );
+                    })}
                 </tbody>
             </table>
 
-            <div className="game-over-actions">
-                <button 
-                    onClick={onReturnToHome}
-                    className="btn-game-over-home"
-                >
+            {/* ── Actions ────────────────────────────────────────── */}
+            <div className={styles.gameOverActions}>
+                <Button onClick={onReturnToHome}>
                     Return to Home
-                </button>
+                </Button>
             </div>
+
         </div>
     );
 }
-

@@ -1,0 +1,63 @@
+.findRow {
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.findInput {
+    flex: 1;
+    padding: 8px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--pb);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text);
+    font-family: var(--fb);
+    font-size: var(--font-sm);
+    outline: none;
+    transition: border-color 0.15s;
+}
+
+.findInput::placeholder { color: var(--dim); }
+.findInput:focus { border-color: var(--cyan); }
+
+
+.findStatus {
+    display: block;
+    margin-top: 8px;
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    font-family: var(--fb);
+    font-size: var(--font-sm);
+}
+
+.findStatusSuccess {
+    background: rgba(0, 229, 100, 0.12);
+    color: var(--green);
+    border: 1px solid rgba(0, 229, 100, 0.25);
+}
+
+.findStatusError {
+    background: rgba(255, 80, 80, 0.12);
+    color: #ff5050;
+    border: 1px solid rgba(255, 80, 80, 0.25);
+}
+
+.findResults {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    border: 1px solid var(--pb);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+
+.findResultItem {
+    padding: 8px 14px;
+    color: var(--text);
+    font-family: var(--fb);
+    font-size: var(--font-sm);
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.findResultItem:hover { background: rgba(255, 255, 255, 0.07); }

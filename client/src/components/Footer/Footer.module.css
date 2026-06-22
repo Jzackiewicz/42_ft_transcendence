@@ -1,0 +1,29 @@
+.footer {
+    padding: 20px;
+    margin-top: auto;
+    text-align: center;
+    border-top: 1px solid var(--border);
+    font-size: var(--font-sm);
+}
+
+.nav {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.link {
+    color: var(--dim);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.link:hover {
+    color: var(--cyan);
+}
+
+.copyright {
+    color: var(--dim);
+    opacity: 0.6;
+    margin-top: 10px;
+}

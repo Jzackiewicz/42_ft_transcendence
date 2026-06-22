@@ -1,5 +1,7 @@
-import React from 'react';
-import './EvaluationView.css';
+import { cx } from '../../../../utils/cx';
+import { Icon, IconName } from '../../../../components/Icon/Icon';
+import { QuestionBadges } from '../QuestionBadges/QuestionBadges';
+import styles from './EvaluationView.module.css';
 
 interface EvaluationViewProps {
     answerText: string | null;
@@ -9,6 +11,8 @@ interface EvaluationViewProps {
     isTimeout: boolean;
     questionText: string;
     category: string;
+    isAiGenerated: boolean;
+    isVerified: boolean;
 }
 
 export function EvaluationView({
@@ -18,51 +22,60 @@ export function EvaluationView({
     isCorrect,
     isTimeout,
     questionText,
-    category
+    category,
+    isAiGenerated,
+    isVerified
 }: EvaluationViewProps) {
-    let statusClass = 'eval-pending';
-    let statusText = '⏳ EVALUATING... (TODO)';
-
-    if (answerText !== '...') {
-        if (isCorrect) {
-            statusClass = 'eval-correct';
-            statusText = '🏆 CORRECT ANSWER';
-        } else if (isTimeout) {
-            statusClass = 'eval-timeout';
-            statusText = "⏰ TIME'S UP";
-        } else {
-            statusClass = 'eval-wrong';
-            statusText = '❌ WRONG ANSWER';
-        }
+    let statusClass = '';
+    let statusIcon: IconName;
+    let statusText = '';
+    if (isCorrect) {
+        statusClass = styles.evalCorrect;
+        statusIcon = 'trophy';
+        statusText = 'CORRECT ANSWER';
+    } else if (isTimeout) {
+        statusClass = styles.evalTimeout;
+        statusIcon = 'clock';
+        statusText = "TIME'S UP";
+    } else {
+        statusClass = styles.evalWrong;
+        statusIcon = 'close';
+        statusText = 'WRONG ANSWER';
     }
 
     return (
-        <div className={`evaluation-view-container ${statusClass}`}>
-            <h2>Evaluation Phase</h2>
+        <div className={cx(styles.evaluationViewContainer, statusClass)}>
             
-            <div className="eval-question-info">
-                <span className="eval-category">[{category}]</span>
-                <p className="eval-question-text">{questionText}</p>
+            <div className={styles.evalQuestionInfo}>
+                <div className={styles.evalQuestionMeta}>
+                    <span className={styles.evalCategory}>[{category}]</span>
+                    <QuestionBadges isAiGenerated={isAiGenerated} isVerified={isVerified} />
+                </div>
+                <p className={styles.evalQuestionText}>{questionText}</p>
             </div>
 
-            <div className="eval-verdict-title">{statusText}</div>
+            <div className={styles.evalVerdictTitle}>
+                <Icon name={statusIcon} size="md" /> {statusText}
+            </div>
 
-            <div className="eval-answers-comparison">
-                <div className="eval-player-answer-box">
-                    <div className="eval-box-label">{playerName}'s Answer:</div>
-                    <div className="eval-box-content">
-                        {answerText === null ? (
-                            <span className="eval-text-none">None (Timeout)</span>
+            <div className={styles.evalAnswersComparison}>
+                <div className={styles.evalPlayerAnswerBox}>
+                    <div className={styles.evalBoxLabel}>{playerName}'s Answer:</div>
+                    <div className={styles.evalBoxContent}>
+                        {isTimeout ? (
+                            <span className={styles.evalTextNone}>Timeout</span>
+                        ) : (answerText === null || answerText.trim() === '') ? (
+                            <span className={styles.evalTextNone}>None</span>
                         ) : (
-                            <span className="eval-text-value">"{answerText}"</span>
+                            <span className={styles.evalTextValue}>{answerText}</span>
                         )}
                     </div>
                 </div>
 
-                <div className="eval-correct-answer-box">
-                    <div className="eval-box-label">Correct Answer:</div>
-                    <div className="eval-box-content">
-                        <span className="eval-text-value">"{correctAnswer}"</span>
+                <div className={styles.evalCorrectAnswerBox}>
+                    <div className={styles.evalBoxLabel}>Correct Answer:</div>
+                    <div className={styles.evalBoxContent}>
+                        <span className={styles.evalTextValue}>{correctAnswer}</span>
                     </div>
                 </div>
             </div>

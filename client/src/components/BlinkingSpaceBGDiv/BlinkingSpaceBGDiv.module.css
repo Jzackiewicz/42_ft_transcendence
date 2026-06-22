@@ -1,0 +1,16 @@
+.bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background: white;
+    /* `blink` is a global keyframe defined in styles/global.css */
+    animation: blink 10s ease-in-out infinite;
+}

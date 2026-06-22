@@ -239,13 +239,10 @@ CHANNEL_LAYERS = {
         },
     }
 }
-
-#Rate-limiting for extra_question_generation
-EXTRA_QUESTION_GENERATION_MAX_PER_HOUR = 5
-EXTRA_QUESTION_GENERATION_CACHE_TIMEOUT_SECONDS = 60 * 60
-
-LLM_API_KEY = os.getenv("LLM_API_KEY", "ci-dummy-key-for-testing")
-LLM_MODEL = os.getenv("LLM_MODEL", "gemini-3.1-flash-lite")
+AUTHENTICATION_BACKENDS = [
+    "account.authentication.EmailOrUsernameBackend",
+    "django.contrib.auth.backends.ModelBackend",
+]
 
 CACHES = {
     "default": {
@@ -257,8 +254,25 @@ CACHES = {
     }
 }
 
+# ---- Game Settings ----
 QUESTIONS_PER_SESSION = int(os.getenv("QUESTIONS_PER_SESSION", "10"))
 DISCONNECT_GRACE_PERIOD_S = int(os.getenv("DISCONNECT_GRACE_PERIOD_S", "30"))
 ANSWER_TIME_LIMIT_MS = int(os.getenv("ANSWER_TIME_LIMIT_MS", "20000"))
 EVALUATION_TIME_LIMIT_MS = int(os.getenv("EVALUATION_TIME_LIMIT_MS", "3000"))
 NOMINATION_TIME_LIMIT_MS = int(os.getenv("NOMINATION_TIME_LIMIT_MS", "10000"))
+ANSWER_MAX_LENGTH = int(os.getenv("ANSWER_MAX_LENGTH", "30"))
+
+# Rate-limiting for extra_question_generation
+EXTRA_QUESTION_GENERATION_MAX_PER_HOUR = 5
+EXTRA_QUESTION_GENERATION_CACHE_TIMEOUT_SECONDS = 60 * 60
+
+LLM_API_KEY = os.getenv("LLM_API_KEY", "ci-dummy-key-for-testing")
+LLM_MODEL = os.getenv("LLM_MODEL", "gemini-3.1-flash-lite")
+
+# Google OAuth
+GOOGLE_OAUTH_CLIENT_ID = os.getenv("GOOGLE_OAUTH_CLIENT_ID")
+GOOGLE_OAUTH_CLIENT_SECRET = os.getenv("GOOGLE_OAUTH_CLIENT_SECRET")
+GOOGLE_OAUTH_REDIRECT_URI = os.getenv(
+    "GOOGLE_OAUTH_REDIRECT_URI",
+    f"https://localhost:{_https_port}/api/account/oauth/google/callback/",
+)

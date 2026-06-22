@@ -15,9 +15,13 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from drf_spectacular.utils import extend_schema
-from drf_spectacular.types import OpenApiTypes
 from django.contrib.auth import authenticate, login, logout
 from .permissions import IsSelfOrReadOnly, IsAnonymous
+from django.contrib.auth import login as django_login
+from django.core.signing import TimestampSigner, BadSignature, SignatureExpired
+from django.core.exceptions import ValidationError
+from django.http import HttpResponseRedirect
+from django.conf import settings
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from .presence import PresenceRegistry
@@ -37,14 +41,30 @@ from .serializers import (
     UserLoginInputSerializer,
     UserReauthSerializer,
 )
-from .services import (
+from .services.profiles import (
     user_create,
     user_update_basic_info,
     user_soft_delete,
     profile_update_avatar,
     profile_clear_avatar,
 )
+from .services.oauth_google import (
+    build_authorize_url,
+    exchange_code_for_id_token,
+    get_link_or_create_user,
+    OAuthErrorCode,
+    OAUTH_STATE_COOKIE,
+    OAUTH_STATE_MAX_AGE_SECONDS,
+    OAUTH_COOKIE_PATH,
+)
 
+
+def _oauth_error_redirect(code: str) -> HttpResponseRedirect:
+    """All OAuth failure paths funnel through here so the SPA sees a
+    consistent shape: /login?oauth_error=<stable_code>. Never echo Google's
+    raw error string or an exception message — they're noisy and can hint
+    at server config."""
+    return HttpResponseRedirect(f"/login?oauth_error={code}")
 
 # ---------------------------------------------------------------------------
 # User endpoints
@@ -59,7 +79,7 @@ class UserListApi(APIView):
     )
     def get(self, request):
         users = user_list()
-        output_serializer = UserOutputSerializer(users, many=True)
+        output_serializer = UserOutputSerializer(users, many=True, context={"request": request})
         return Response(output_serializer.data, status=status.HTTP_200_OK)
 
 
@@ -73,7 +93,7 @@ class UserDetailApi(APIView):
     )
     def get(self, request, user_id: int):
         user = user_get_by_id(user_id=user_id)
-        output_serializer = UserOutputSerializer(user)
+        output_serializer = UserOutputSerializer(user, context={"request": request})
         return Response(output_serializer.data, status=status.HTTP_200_OK)
 
 
@@ -99,7 +119,7 @@ class UserProfileMeApi(APIView):
     @method_decorator(ensure_csrf_cookie)
     def get(self, request):
         profile = profile_get_by_user_id(user_id=request.user.id)
-        output_serializer = UserProfileOutputSerializer(profile)
+        output_serializer = UserProfileOutputSerializer(profile, context={"request": request})
         return Response(output_serializer.data)
 
     @extend_schema(
@@ -121,7 +141,7 @@ class UserProfileMeApi(APIView):
             user=request.user, **input_serializer.validated_data
         )
 
-        output_serializer = UserProfileOutputSerializer(user.profile)
+        output_serializer = UserProfileOutputSerializer(user.profile, context={"request": request})
         return Response(output_serializer.data, status=status.HTTP_200_OK)
 
     @extend_schema(
@@ -168,7 +188,7 @@ class UserProfileListApi(APIView):
     )
     def get(self, request):
         profiles = profile_list()
-        output_serializer = UserProfileOutputSerializer(profiles, many=True)
+        output_serializer = UserProfileOutputSerializer(profiles, many=True, context={"request": request})
         return Response(output_serializer.data, status=status.HTTP_200_OK)
 
 
@@ -180,7 +200,7 @@ class UserProfileDetailApi(APIView):
     )
     def get(self, request, user_id: int):
         profile = profile_get_by_user_id(user_id=user_id)
-        output_serializer = UserProfileOutputSerializer(profile)
+        output_serializer = UserProfileOutputSerializer(profile, context={"request": request})
         return Response(output_serializer.data, status=status.HTTP_200_OK)
 
 
@@ -188,7 +208,14 @@ class UserProfileAvatarApi(APIView):
     permission_classes = [IsSelfOrReadOnly]
 
     @extend_schema(
-        request=UserProfileAvatarInputSerializer,
+        request={
+            'multipart/form-data': {
+                'type': 'object',
+                'properties': {
+                    'avatar': {'type': 'string', 'format': 'binary'},
+                },
+            }
+        },
         responses={200: UserProfileOutputSerializer},
         description="Upload or replace the avatar for a user profile.",
     )
@@ -202,7 +229,7 @@ class UserProfileAvatarApi(APIView):
             profile=profile, **input_serializer.validated_data
         )
 
-        output_serializer = UserProfileOutputSerializer(profile)
+        output_serializer = UserProfileOutputSerializer(profile, context={"request": request})
         return Response(output_serializer.data, status=status.HTTP_200_OK)
 
     @extend_schema(
@@ -238,7 +265,7 @@ class UserRegisterApi(APIView):
 
         user = user_create(**input_serializer.validated_data)
 
-        output_serializer = UserOutputSerializer(user)
+        output_serializer = UserOutputSerializer(user, context={"request": request})
         return Response(output_serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -254,14 +281,13 @@ class UserLoginApi(APIView):
         description="Login",
     )
     def post(self, request):
-        # validate incoming data
+        # validate input
         input_serializer = UserLoginInputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
 
-        # verify credentials, return None if wrong
         user = authenticate(
             request,
-            username=input_serializer.validated_data["username"],
+            username=input_serializer.validated_data["identifier"],
             password=input_serializer.validated_data["password"],
         )
 
@@ -271,11 +297,8 @@ class UserLoginApi(APIView):
                 status=status.HTTP_401_UNAUTHORIZED,
             )
 
-        # mark user as logged in & remember for future requests
         login(request, user)
-
-        return Response(UserOutputSerializer(user).data, status=status.HTTP_200_OK)
-
+        return Response(UserOutputSerializer(user, context={"request": request}).data, status=status.HTTP_200_OK)
 
 class UserLogoutApi(APIView):
     permission_classes = [IsAuthenticated]
@@ -299,3 +322,72 @@ class UserLogoutApi(APIView):
             {"type": "presence.update", "user_id": user_id, "is_online": False},
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+
+class GoogleOAuthLoginApi(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        authorize_url, state, code_verifier = build_authorize_url()
+
+        signer = TimestampSigner()
+        signed = signer.sign(f"{state}:{code_verifier}")
+
+        response = HttpResponseRedirect(authorize_url)
+        response.set_cookie(
+            OAUTH_STATE_COOKIE,
+            signed,
+            max_age=OAUTH_STATE_MAX_AGE_SECONDS,
+            httponly=True,
+            secure=not settings.DEBUG,
+            samesite="Lax",
+            path=OAUTH_COOKIE_PATH,
+        )
+        return response
+
+
+class GoogleOAuthCallbackApi(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        google_error = request.GET.get("error")
+        if google_error:
+            code = (
+                OAuthErrorCode.CANCELLED
+                if google_error == "access_denied"
+                else OAuthErrorCode.SERVER_ERROR
+            )
+            return _oauth_error_redirect(code)
+
+        signed = request.COOKIES.get(OAUTH_STATE_COOKIE)
+        state = request.GET.get("state")
+        code = request.GET.get("code")
+
+        if not signed or not state or not code:
+            return _oauth_error_redirect(OAuthErrorCode.MISSING_PARAMS)
+
+        signer = TimestampSigner()
+        try:
+            unsigned = signer.unsign(signed, max_age=OAUTH_STATE_MAX_AGE_SECONDS)
+        except (BadSignature, SignatureExpired):
+            return _oauth_error_redirect(OAuthErrorCode.INVALID_STATE)
+
+        # CSRF check: state in cookie must equal state Google echoed back.
+        expected_state, code_verifier = unsigned.split(":", 1)
+        if state != expected_state:
+            return _oauth_error_redirect(OAuthErrorCode.STATE_MISMATCH)
+
+        try:
+            claims = exchange_code_for_id_token(code, code_verifier)
+            user = get_link_or_create_user(claims)
+        except ValidationError as e:
+            return _oauth_error_redirect(list(e.messages)[0])
+        except Exception:
+            return _oauth_error_redirect(OAuthErrorCode.SERVER_ERROR)
+
+        login(request, user, backend="django.contrib.auth.backends.ModelBackend")
+
+        response = HttpResponseRedirect("/home")
+        # clean up used state cookie so it can't be replayed
+        response.delete_cookie(OAUTH_STATE_COOKIE, path=OAUTH_COOKIE_PATH)
+        return response

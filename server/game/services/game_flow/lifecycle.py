@@ -3,7 +3,6 @@ from django.utils import timezone
 from django.db import transaction
 from .guards import require_status, require_enough_questions_in_db
 from .player_selection import get_new_host_player
-from django.core.exceptions import ValidationError
 from django.conf import settings
 import random
 
@@ -37,7 +36,7 @@ def assign_random_questions_to_session(session: GameSession) -> None:
 
 	require_enough_questions_in_db(limit)
 
-	all_ids = list(Question.objects.values_list('id', flat=True))
+	all_ids = list(Question.objects.filter(is_verified=True).values_list('id', flat=True))
 	sampled_ids = random.sample(all_ids, limit)
 	questions = list(Question.objects.filter(id__in=sampled_ids))
 	random.shuffle(questions)
