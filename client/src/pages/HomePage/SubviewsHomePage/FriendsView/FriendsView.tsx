@@ -4,6 +4,7 @@ import FriendsRequestTabView from './TabViews/FriendsRequestTabView/FriendsReque
 import FriendsFindTabView from './TabViews/FriendsFindTabView/FriendsFindTabView'
 import { Card } from '../../../../components/Card/Card'
 import { SectionTitle } from '../../../../components/SectionTitle/SectionTitle'
+import { Icon } from '../../../../components/Icon/Icon'
 import { cx } from '../../../../utils/cx'
 import styles from './FriendsView.module.css'
 
@@ -12,7 +13,7 @@ function FriendsView() {
 
     return (
         <Card className={styles.friendsView}>
-            <SectionTitle>👥 Friends</SectionTitle>
+            <SectionTitle><Icon name="users" size="md" /> Friends</SectionTitle>
 
             {/* ── Tabs ── */}
             <div className={styles.friendsTabs}>

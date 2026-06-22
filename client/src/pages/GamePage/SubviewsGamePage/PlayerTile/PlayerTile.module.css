@@ -110,8 +110,17 @@
 }
 
 .statHearts {
-    font-size: 11px;
-    letter-spacing: 1px;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.heartFull {
+    color: var(--red);
+}
+
+.heartEmpty {
+    color: var(--dim);
 }
 
 .statPoints {
@@ -124,7 +133,7 @@
 
 .playerEliminatedLabel {
     margin-top: 4px;
-    font-size: 10px;
+    font-size: var(--font-xs);
     color: var(--red);
     font-weight: bold;
     letter-spacing: 0.5px;
@@ -132,7 +141,7 @@
 
 .playerOfflineLabel {
     margin-top: 4px;
-    font-size: 10px;
+    font-size: var(--font-xs);
     color: var(--red);
     font-weight: bold;
     letter-spacing: 0.5px;
@@ -144,24 +153,4 @@
     gap: 10px;
 }
 
-.playerTileAvatar {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 1px solid var(--border);
-}
-
-.playerTileAvatarPlaceholder {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: rgba(255, 255, 255, 0.05);
-    font-size: 14px;
-    color: var(--dim);
-    border: 1px solid var(--border);
-}
 

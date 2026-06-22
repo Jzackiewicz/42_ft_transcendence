@@ -1,6 +1,7 @@
 import { useStatsView } from './useStatsView'
 import { Card } from '../../../../components/Card/Card'
 import { SectionTitle } from '../../../../components/SectionTitle/SectionTitle'
+import { Icon } from '../../../../components/Icon/Icon'
 import { useUser } from '../../../../context/UserContext'
 import { cx } from '../../../../utils/cx'
 import styles from './StatsView.module.css'
@@ -11,7 +12,7 @@ function StatsView() {
 
     return (
         <Card>
-            <SectionTitle>🏆 Statistics</SectionTitle>
+            <SectionTitle><Icon name="chart" size="md" /> Statistics</SectionTitle>
 
             <div className={styles.statsGrid}>
                 <div className={styles.statBox}>

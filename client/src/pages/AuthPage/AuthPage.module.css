@@ -50,7 +50,7 @@
 }
 
 .pageSubtitle {
-    font-size: 16px;
+    font-size: var(--font-lg);
     color: var(--dim);
     line-height: 1.6;
     max-width: 480px;
@@ -91,7 +91,7 @@
 .registrationView {
     flex: 1;
     min-height: 0;
-    overflow-y: auto;
+    overflow: visible;
 }
 
 .authTitle {
@@ -152,32 +152,6 @@
     text-align: center;
 }
 
-/* SUBMIT BUTTON ──────────────────────────────────────────────── */
-.authSubmit {
-    background: linear-gradient(var(--gradient-deg), var(--cyan), var(--magenta));
-    border: none;
-    border-radius: var(--radius-md);
-    padding: var(--spacing-lg);
-    font-family: var(--fd);
-    font-size: var(--font-xl);
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    color: var(--bg);
-    cursor: pointer;
-    text-transform: uppercase;
-    width: 100%;
-    transition: all 0.2s;
-    box-shadow: 0 0 30px var(--cyan-shadowed);
-}
-
-.authSubmit:hover {
-    transform: translateY(-1px);
-    filter: drop-shadow(0 0 20px var(--cyan-light-shadow));
-}
-
-.authSubmit:active {
-    transform: translateY(0);
-}
 
 .authDivider {
     display: flex;
