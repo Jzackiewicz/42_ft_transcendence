@@ -25,6 +25,14 @@ const phaseClass: Record<GameStatus, string> = {
     [GameStatus.GAME_OVER]: styles.phaseGame_over,
 };
 
+const phaseTitle: Record<GameStatus, string> = {
+    [GameStatus.LOBBY]: 'LOBBY',
+    [GameStatus.ANSWERING]: 'ANSWER TO THE QUESTION',
+    [GameStatus.NOMINATION]: 'NOMINATE NEXT PLAYER',
+    [GameStatus.EVALUATION]: 'ANSWER REVEAL',
+    [GameStatus.GAME_OVER]: 'GAME OVER',
+};
+
 export function GamePage() {
     return (
         <FriendsProvider>
@@ -181,11 +189,7 @@ function GamePageInner() {
                         {/* Active State View Component */}
                         <Card className={styles.gameActiveArea}>
                             <SectionTitle as="h3" className={styles.gameActiveTitle}>
-                                {gameState.current_status === GameStatus.LOBBY && "LOBBY"}
-                                {gameState.current_status === GameStatus.ANSWERING && "ANSWER TO THE QUESTION"}
-                                {gameState.current_status === GameStatus.NOMINATION && "NOMINATE NEXT PLAYER"}
-                                {gameState.current_status === GameStatus.EVALUATION && "ANSWER REVEAL"}
-                                {gameState.current_status === GameStatus.GAME_OVER && "GAME OVER"}
+                                {phaseTitle[gameState.current_status]}
                             </SectionTitle>
                             {/* Question & Timer HUD */}
                             {gameState.current_status !== GameStatus.GAME_OVER && (
