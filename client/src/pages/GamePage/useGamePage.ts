@@ -73,6 +73,13 @@ export interface GameSnapshot {
     server_time?: string | null;
 }
 
+// Messages the client sends to the server over the WebSocket.
+type ClientMessage =
+    | { action: 'start_game' }
+    | { action: 'leave_game' }
+    | { action: 'submit_answer'; payload: { answer: string } }
+    | { action: 'nominate_player'; payload: { target_player_id: number } };
+
 const RECONNECT_SCHEDULE_MS = [1000, 2000, 4000, 8000, 16000, 30000];
 
 export function useGamePage() {
@@ -231,25 +238,24 @@ export function useGamePage() {
         wsRef.current = ws;
     };
 
-    const sendAction = (action: string, payload: any = {}) => {
+    const sendAction = (message: ClientMessage) => {
         if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-            const message = JSON.stringify({ action, payload });
-            wsRef.current.send(message);
+            wsRef.current.send(JSON.stringify(message));
         } else {
             console.error("WebSocket is not connected");
         }
     };
 
     const startGame = () => {
-        sendAction('start_game');
+        sendAction({ action: 'start_game' });
     };
 
     const submitAnswer = (answer: string) => {
-        sendAction('submit_answer', { answer });
+        sendAction({ action: 'submit_answer', payload: { answer } });
     };
 
     const nominatePlayer = (targetPlayerId: number) => {
-        sendAction('nominate_player', { target_player_id: targetPlayerId });
+        sendAction({ action: 'nominate_player', payload: { target_player_id: targetPlayerId } });
     };
 
     const disconnect = () => {
@@ -306,7 +312,7 @@ export function useGamePage() {
             return;
         }
 
-        sendAction('leave_game');
+        sendAction({ action: 'leave_game' });
 
         const startedAt = Date.now();
         const waitForFlush = () => {
