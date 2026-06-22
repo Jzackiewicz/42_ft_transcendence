@@ -12,8 +12,9 @@ import BlinkingSpaceBGDiv from '../../components/BlinkingSpaceBGDiv/BlinkingSpac
 import { Navbar } from '../../components/Navbar/Navbar';
 import { Card } from '../../components/Card/Card';
 import { SectionTitle } from '../../components/SectionTitle/SectionTitle';
-import ErrorBanner from '../../components/ErrorBanner/ErrorBanner';
+import { Icon } from '../../components/Icon/Icon';
 import { cx } from '../../utils/cx';
+import { ErrorBanner } from '../../components/ErrorBanner/ErrorBanner';
 import styles from './GamePage.module.css';
 
 const phaseClass: Record<GameStatus, string> = {
@@ -139,12 +140,16 @@ function GamePageInner() {
                 {/* Spectator Mode Warning Banner */}
                 {isSpectator && (
                     <div className={styles.spectatorBanner}>
-                        👁️ SPECTATOR MODE — You are watching this match.
+                        <Icon name="eye" size="md" /> SPECTATOR MODE — You are watching this match.
                     </div>
                 )}
 
-                {/* Error Banner */}
-                <ErrorBanner message={errorMsg} onDismiss={() => setErrorMsg(null)} />
+                {errorMsg && (
+                    <ErrorBanner
+                        message={`Error: ${errorMsg}`}
+                        onDismiss={() => setErrorMsg(null)}
+                    />
+                )}
 
                 {gameState ? (
                     <div className={styles.gameMainLayout}>

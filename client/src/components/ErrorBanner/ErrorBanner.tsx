@@ -1,24 +1,29 @@
-import styles from './ErrorBanner.module.css'
+import styles from './ErrorBanner.module.css';
+import { cx } from '../../utils/cx';
 
 interface ErrorBannerProps {
-    message: string | null
-    onDismiss: () => void
+    message: string;
+    onDismiss?: () => void;
+    action?: React.ReactNode;
+    className?: string;
 }
 
-function ErrorBanner({ message, onDismiss }: ErrorBannerProps) {
-    if (!message) return null
+export function ErrorBanner({ message, onDismiss, action, className }: ErrorBannerProps) {
     return (
-        <div className={styles.errorBanner}>
-            <span><strong>Error:</strong> {message}</span>
-            <button
-                onClick={onDismiss}
-                className={styles.errorBannerClose}
-                aria-label="Dismiss error"
-            >
-                &times;
-            </button>
+        <div className={cx(styles.errorBanner, className)} role="alert">
+            <span>{message}</span>
+            {action}
+            {onDismiss && (
+                <button
+                    className={styles.errorBannerDismiss}
+                    onClick={onDismiss}
+                    aria-label="Dismiss error"
+                >
+                    &times;
+                </button>
+            )}
         </div>
-    )
+    );
 }
 
-export default ErrorBanner
+export default ErrorBanner;
