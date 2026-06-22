@@ -96,10 +96,10 @@ You might want to do this if automatic migration is not working.
 - [Gemini integration](https://ai.google.dev/gemini-api/docs)
 - [React docs](https://pl.react.dev/)
 - [Documentation for custom-made styling minor module](https://github.com/Jzackiewicz/42_ft_transcendence/pull/165)
--
--
--
--
+- <Fill_in_or_delete> <ITYKHONO>
+- <Fill_in_or_delete> <JZACKIEW>
+- <Fill_in_or_delete> <MAMICHAL>
+- <Fill_in_or_delete> <MBUDKEVI>
 ### AI Usage ```a description of how AI was used specifying for which tasks and which parts of the project.```
 
 **We used a wide range of AI assistence when it came to work and research. Below is listed all the uses of AI our team utilised:**
