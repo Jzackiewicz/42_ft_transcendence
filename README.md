@@ -301,12 +301,19 @@ You might want to do this if automatic migration is not working.
 ### ⬜️ Individual Contributions ```Detailed breakdown of what each team member contributed, specific features, modules, or components implemented by each person. any challenges faced and how they were overcome.```
 
 ### dbozic - Scrum Master
+#### Contributions
 - Backend developer for the AI Question Expander.
 - Lead researcher for AI modules and AI integration.
 - Code reviewer and game tester.
 - Question base refiner.
 - Scrum master and organiser.
 - Wrote the README.md.
+#### Specific features, modules, or components
+- LLM Generation
+- LLM Rate limitation
+
+#### Challenges faced
+I found the hardest part was 
 
 ### itykhono - Developer <ITYKHONO>
 - Frontend
