@@ -33,15 +33,15 @@ function AccountHeader({ user, setUser, setShowJoinModal, setShowRulesModal, han
                     onKeyDown={e => { if (e.key === 'Enter') confirmEdit(); if (e.key === 'Escape') cancelEdit() }}
                     autoFocus
                 />
-                <button className={`${styles.editBtn} ${styles.confirmBtn}`} onClick={confirmEdit}>✓</button>
-                <button className={`${styles.editBtn} ${styles.cancelBtn}`} onClick={cancelEdit}>✕</button>
+                <button className={`${styles.editBtn} ${styles.confirmBtn}`} onClick={confirmEdit} title="Confirm" aria-label="Confirm"><Icon name="check" size="xs" /></button>
+                <button className={`${styles.editBtn} ${styles.cancelBtn}`} onClick={cancelEdit} title="Cancel" aria-label="Cancel"><Icon name="close" size="xs" /></button>
             </>
         )
     } else {
         usernameField = (
             <>
                 <div className={styles.accountName}>{user?.username}</div>
-                <button className={styles.editBtn} onClick={() => startEdit('username')} title="Edit username">✎</button>
+                <button className={styles.editBtn} onClick={() => startEdit('username')} title="Edit username" aria-label="Edit username"><Icon name="edit" size="xs" /></button>
             </>
         )
     }
@@ -58,15 +58,15 @@ function AccountHeader({ user, setUser, setShowJoinModal, setShowRulesModal, han
                     onKeyDown={e => { if (e.key === 'Enter') confirmEdit(); if (e.key === 'Escape') cancelEdit() }}
                     autoFocus
                 />
-                <button className={`${styles.editBtn} ${styles.confirmBtn}`} onClick={confirmEdit}>✓</button>
-                <button className={`${styles.editBtn} ${styles.cancelBtn}`} onClick={cancelEdit}>✕</button>
+                <button className={`${styles.editBtn} ${styles.confirmBtn}`} onClick={confirmEdit} title="Confirm" aria-label="Confirm"><Icon name="check" size="xs" /></button>
+                <button className={`${styles.editBtn} ${styles.cancelBtn}`} onClick={cancelEdit} title="Cancel" aria-label="Cancel"><Icon name="close" size="xs" /></button>
             </>
         )
     } else {
         emailField = (
             <>
                 <div className={styles.accountEmail}>{user?.email}</div>
-                <button className={`${styles.editBtn} ${styles.editBtnSm}`} onClick={() => startEdit('email')} title="Edit email">✎</button>
+                <button className={`${styles.editBtn} ${styles.editBtnSm}`} onClick={() => startEdit('email')} title="Edit email" aria-label="Edit email"><Icon name="edit" size="xs" /></button>
             </>
         )
     }
@@ -80,7 +80,7 @@ function AccountHeader({ user, setUser, setShowJoinModal, setShowRulesModal, han
         <div className={styles.accountHeader}>
             <div className={styles.accountAvatarWrapper}>
                 <Avatar name={user?.username ?? ''} imageUrl={user?.avatar} size="lg" bg="accent" />
-                <button className={`${styles.editBtn} ${styles.avatarEditBtn}`} onClick={handleAvatarClick} title="Change avatar">✎</button>
+                <button className={`${styles.editBtn} ${styles.avatarEditBtn}`} onClick={handleAvatarClick} title="Change avatar" aria-label="Change avatar"><Icon name="edit" size="xs" /></button>
                 <input
                     ref={fileInputRef}
                     type="file"
