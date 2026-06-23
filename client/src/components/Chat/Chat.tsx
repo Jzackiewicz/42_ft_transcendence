@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { useChatContainer } from './useChatContainer'
+import { useChat } from './useChat'
 import { ErrorBanner } from '../ErrorBanner/ErrorBanner'
 import { Button } from '../Button/Button'
 import { cx } from '../../utils/cx'
-import styles from './chat.module.css'
+import styles from './Chat.module.css'
 import { Avatar } from '../Avatar/Avatar'
 
 const MAX_MESSAGE_LENGTH = 500
@@ -12,8 +12,8 @@ const MAX_MESSAGE_LENGTH = 500
  * Shared inner content of the chat: sidebar (friend list) + thread
  * (messages, error banner, connection hint) + input row.
  */
-export function ChatInner() {
-    const { sidebar, thread, input } = useChatContainer()
+export function Chat() {
+    const { sidebar, thread, input } = useChat()
     const [draft, setDraft] = useState('')
 
     const notConnected = input.socketStatus !== 'open'
@@ -111,4 +111,4 @@ export function ChatInner() {
     )
 }
 
-export default ChatInner
+export default Chat

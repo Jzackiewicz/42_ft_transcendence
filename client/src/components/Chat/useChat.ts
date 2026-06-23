@@ -23,7 +23,7 @@ function getRoomName(myId: number, friendId: number): string {
     return `dm_${Math.min(myId, friendId)}_${Math.max(myId, friendId)}`
 }
 
-export function useChatContainer() {
+export function useChat() {
     const { friendsList, refresh } = useFriendsContext()
     const { user, setUser } = useUser()
     const [activeId, setActiveId] = useState<number>(0)
