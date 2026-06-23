@@ -1,0 +1,91 @@
+@startuml Quizscendence_Logical
+title Quizscendence — Logical Architecture (Service-Layer Pattern)
+
+skinparam componentStyle rectangle
+skinparam shadowing false
+skinparam packageStyle rectangle
+
+package "Frontend (React SPA)" {
+  [Pages\nAuth / Home / Game] as pages
+  [Contexts\nUser / Presence / Friends] as ctx
+  [API wrappers (axios)] as axios
+  [WebSocket hooks\nuseGamePage / Presence] as wshooks
+}
+
+package "Backend (Django)" {
+
+  package "account" {
+    [apis.py] as acc_api
+    [services\noauth_google / profiles] as acc_svc
+    [EmailOrUsernameBackend] as acc_auth
+    [PresenceRegistry] as presence
+  }
+
+  package "social" {
+    [apis.py\nfriends / history] as soc_api
+    [ChatConsumer] as soc_ws
+    [services / selectors\n(friend guards)] as soc_svc
+  }
+
+  package "game" {
+    [GameConsumer] as g_ws
+    [apis.py\nlobby / stats / gen] as g_api
+    [GameActionHandler] as g_handler
+    [GameService\n(domain facade)] as g_service
+    [guards.py] as g_guards
+    [fsm.py\n(GameStateMachine)] as g_fsm
+    [lifecycle / answers /\nplayer_selection] as g_rules
+    [GameTimerManager] as g_timer
+    [question_generation\n(Gemini)] as g_ai
+  }
+
+  package "Models (ORM)" {
+    [GameSession] as m_session
+    [SessionPlayer] as m_player
+    [Question / SessionQuestion] as m_q
+    [AnswerAttempt] as m_attempt
+  }
+}
+
+database "PostgreSQL" as pg
+database "Redis\n(channel layer + cache)" as redis
+cloud "Gemini LLM" as gemini
+
+' ---- Frontend wiring ----
+pages --> ctx
+pages --> axios
+pages --> wshooks
+axios --> acc_api : REST
+axios --> g_api : REST
+axios --> soc_api : REST
+wshooks --> g_ws : WSS /ws/game
+ctx --> soc_ws : WSS /ws/chat (+presence)
+
+' ---- Game backend flow ----
+g_ws --> g_handler : validated action
+g_api --> g_ai
+g_handler --> g_service : @atomic + select_for_update
+g_service --> g_guards
+g_service --> g_fsm : transitions
+g_service --> g_rules : scoring / nomination
+g_service --> m_session
+g_handler --> g_timer : schedule next deadline
+g_timer ..> g_handler : timeout fires action
+
+' ---- Account / social ----
+acc_api --> acc_svc
+acc_api --> acc_auth
+soc_ws --> presence
+soc_ws --> soc_svc
+
+' ---- Persistence & infra ----
+m_session --> pg
+m_player --> pg
+m_q --> pg
+m_attempt --> pg
+g_ws --> redis : group_send
+soc_ws --> redis : group_send
+g_api ..> redis : AI rate-limit cache
+g_ai --> gemini
+
+@enduml

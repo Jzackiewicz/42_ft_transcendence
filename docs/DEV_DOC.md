@@ -95,7 +95,7 @@ Current architecture:
 
 *Diagrams generated with*
 ```bash
-python -m statemachine.contrib.diagram server.game.fsm.GameStateMachine docs/game_fsm.svg
+python3 -m statemachine.contrib.diagram server.game.fsm.GameStateMachine docs/game_fsm.svg
 python server/manage.py graph_models game --pydot -g -o docs/game_erd.svg   
 ```
 ### Endpoints

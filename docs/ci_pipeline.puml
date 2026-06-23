@@ -1,0 +1,33 @@
+@startuml Quizscendence_CI
+title Quizscendence — CI Pipeline (.github/workflows/ci.yml)
+
+skinparam shadowing false
+start
+:Trigger: push / PR\n(main, master, dev, develop);
+
+fork
+  partition "Job: frontend-ci\n(Node 26)" {
+    :npm ci;
+    :tsc --noEmit\n(typecheck);
+    :npm run build;
+  }
+fork again
+  partition "Job: backend-ci\n(Python 3.13 + Redis service)" {
+    :pip install -r requirements.txt;
+    :manage.py check;
+    :makemigrations --check --dry-run\n(migrations up-to-date?);
+    :manage.py test\n(SQLite + Redis);
+  }
+fork again
+  partition "Job: end-to-end\n(Playwright)" {
+    :cp .env.example .env;
+    :npm ci + playwright install;
+    :make dev-up\n(start dev stack);
+    :make client-test\n(E2E);
+    :upload playwright-report\n(artifact, 14d);
+  }
+end fork
+
+:All jobs pass -> mergeable;
+stop
+@enduml

@@ -1,0 +1,59 @@
+@startuml Quizscendence_DevOps
+title Quizscendence — Container View
+
+skinparam componentStyle rectangle
+skinparam shadowing false
+
+actor Browser as user
+
+node "Docker Compose" {
+  node "proxy\n(Nginx)" as nginx {
+    note right of nginx
+      SSL termination
+      HTTP→HTTPS redirect
+      :8080 / :8443
+    end note
+  }
+
+  node "web" as web {
+    component "React 19 SPA" as spa
+  }
+
+  node "api\n(Daphne / ASGI)" as api {
+    component "DRF\n(HTTP APIs)" as drf
+    component "Channels\n(WebSocket consumers)" as channels
+    component "In-process state\n(GameTimerManager,\nPresenceRegistry)" as inproc
+    note bottom of inproc
+      Single-process only.
+      Timers = asyncio.Tasks
+      Presence = in-mem dict
+    end note
+  }
+
+  node "db" as dbnode {
+    database "PostgreSQL 15" as pg
+  }
+
+  node "redis" as redisnode {
+    database "Redis 7" as redis
+  }
+}
+
+cloud "Google" {
+  component "OAuth 2.0" as goauth
+  component "Gemini LLM" as gemini
+}
+
+user --> nginx : HTTPS / WSS
+nginx --> web : static assets
+nginx --> api : /api/*  +  /ws/*
+
+drf --> pg : ORM
+channels --> pg : ORM
+drf ..> redis : cache (AI rate-limit)
+channels --> redis : CHANNEL_LAYERS
+
+drf --> goauth : OAuth login/callback
+drf --> gemini : question generation
+
+@enduml
