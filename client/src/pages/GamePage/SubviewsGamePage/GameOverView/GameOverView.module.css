@@ -61,7 +61,7 @@
 
 /* ── WINNER ROW HIGHLIGHT ────────────────────────────────────── */
 .gameOverRow.winnerRow td {
-    background: rgba(255, 196, 0, 0.02); /* very subtle gold tint */
+    background: rgba(255, 196, 0, 0.1);
 }
 
 /* ── ELIMINATED ROW ──────────────────────────────────────────── */
