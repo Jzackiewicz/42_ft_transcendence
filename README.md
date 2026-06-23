@@ -388,6 +388,13 @@ volume persistence for both production environment and development playground
 
 #### Challenges faced
 
+The biggest challenge for me was to make the deployment work on multiple devices
+out of the box, especially as some of the ports were blocked on the student
+workstations. To solve this issue I implemented variable port configuration
+that is changed via .env file and is translated to the container ports inside
+the docker-compose file. The deployment had to also manage all the dependencies
+on both frontend and backend for either production and development playground.
+
 ### mbudkevi - Developer <MBUDKEVI>
 - Backend developer covering authentication, the friends system, real-time presence, the chat backend and the project's initial database setup.
 - Reviewed teammates' pull requests and helped resolve a number of migration conflicts during merges.
