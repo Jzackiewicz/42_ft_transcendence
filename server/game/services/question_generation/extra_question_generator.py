@@ -28,7 +28,7 @@ The question text must never contain its own answer, nor an obvious abbreviation
 Questions should be of moderate difficulty: answerable by a reasonably knowledgeable person without specialist expertise, but not trivially easy facts that almost everyone knows offhand (avoid the difficulty of questions like the capital of Japan, which planet is the Red Planet, or who wrote Romeo and Juliet).
 If you are not 100% sure about an answer, don't include it."""
 RETRY_STATUS_CODES = {429, 500, 502, 503, 504}
-OVER_REQUEST_BUFFER = 3
+OVER_REQUEST_BUFFER = 5
 
 class GeneratedQuestion(BaseModel):
     category: str

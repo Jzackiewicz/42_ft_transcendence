@@ -1,4 +1,5 @@
-import { useGamePage, GameStatus } from './useGamePage';
+import { useGamePage } from './useGamePage';
+import { GameStatus } from '../../types/Game';
 import { useUser } from '../../context/UserContext';
 import { FriendsProvider } from '../../context/FriendsListContext';
 import { LobbyView } from './SubviewsGamePage/LobbyView/LobbyView';
@@ -12,7 +13,9 @@ import BlinkingSpaceBGDiv from '../../components/BlinkingSpaceBGDiv/BlinkingSpac
 import { Navbar } from '../../components/Navbar/Navbar';
 import { Card } from '../../components/Card/Card';
 import { SectionTitle } from '../../components/SectionTitle/SectionTitle';
+import { Icon } from '../../components/Icon/Icon';
 import { cx } from '../../utils/cx';
+import { ErrorBanner } from '../../components/ErrorBanner/ErrorBanner';
 import styles from './GamePage.module.css';
 
 const phaseClass: Record<GameStatus, string> = {
@@ -21,6 +24,14 @@ const phaseClass: Record<GameStatus, string> = {
     [GameStatus.NOMINATION]: styles.phaseNomination,
     [GameStatus.EVALUATION]: styles.phaseEvaluation,
     [GameStatus.GAME_OVER]: styles.phaseGame_over,
+};
+
+const phaseTitle: Record<GameStatus, string> = {
+    [GameStatus.LOBBY]: 'LOBBY',
+    [GameStatus.ANSWERING]: 'ANSWER TO THE QUESTION',
+    [GameStatus.NOMINATION]: 'NOMINATE NEXT PLAYER',
+    [GameStatus.EVALUATION]: 'ANSWER REVEAL',
+    [GameStatus.GAME_OVER]: 'GAME OVER',
 };
 
 export function GamePage() {
@@ -45,7 +56,7 @@ function GamePageInner() {
 
     // Dynamic game states renderer
     const renderActiveView = () => {
-        const { gameState, isHost, currentPlayerObj, eligiblePlayers } = sessionState;
+        const { gameState, isHost, currentPlayerObj } = sessionState;
         if (!gameState) return null;
 
         switch (gameState.current_status) {
@@ -79,8 +90,6 @@ function GamePageInner() {
                     <NominationView
                         isCurrentNominator={gameState.last_correct_player === currentPlayerObj?.id}
                         nominatorName={gameState.players.find(p => p.id === gameState.last_correct_player)?.display_name || 'Someone'}
-                        eligiblePlayers={eligiblePlayers}
-                        onNominatePlayer={gameActions.nominatePlayer}
                     />
                 );
             }
@@ -138,21 +147,15 @@ function GamePageInner() {
                 {/* Spectator Mode Warning Banner */}
                 {isSpectator && (
                     <div className={styles.spectatorBanner}>
-                        👁️ SPECTATOR MODE — You are watching this match.
+                        <Icon name="eye" size="md" /> SPECTATOR MODE — You are watching this match.
                     </div>
                 )}
 
-                {/* Error Banner */}
                 {errorMsg && (
-                    <div className={styles.gameErrorBanner}>
-                        <span><strong>Error:</strong> {errorMsg}</span>
-                        <button
-                            onClick={() => setErrorMsg(null)}
-                            className={styles.btnErrorClose}
-                        >
-                            &times;
-                        </button>
-                    </div>
+                    <ErrorBanner
+                        message={`Error: ${errorMsg}`}
+                        onDismiss={() => setErrorMsg(null)}
+                    />
                 )}
 
                 {gameState ? (
@@ -187,11 +190,7 @@ function GamePageInner() {
                         {/* Active State View Component */}
                         <Card className={styles.gameActiveArea}>
                             <SectionTitle as="h3" className={styles.gameActiveTitle}>
-                                {gameState.current_status === GameStatus.LOBBY && "LOBBY"}
-                                {gameState.current_status === GameStatus.ANSWERING && "ANSWER TO THE QUESTION"}
-                                {gameState.current_status === GameStatus.NOMINATION && "NOMINATE NEXT PLAYER"}
-                                {gameState.current_status === GameStatus.EVALUATION && "ANSWER REVEAL"}
-                                {gameState.current_status === GameStatus.GAME_OVER && "GAME OVER"}
+                                {phaseTitle[gameState.current_status]}
                             </SectionTitle>
                             {/* Question & Timer HUD */}
                             {gameState.current_status !== GameStatus.GAME_OVER && (

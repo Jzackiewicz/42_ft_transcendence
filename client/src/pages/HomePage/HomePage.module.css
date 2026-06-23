@@ -4,73 +4,16 @@
     display: flex;
     flex-direction: column;
     position: relative;
-}
-
-.homeNavPlay {
-    padding: 7px 18px;
-    border-radius: var(--radius-sm);
-    border: none;
-    background: var(--cyan);
-    color: #000;
-    font-family: var(--fb);
-    font-size: var(--font-sm);
-    font-weight: 700;
-    cursor: pointer;
-    transition: box-shadow 0.2s;
-}
-
-.homeNavPlay:hover {
-    box-shadow: 0 0 20px var(--cyan-light-shadow);
-}
-
-.homeNavJoin {
-    padding: 7px 18px;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--cyan);
-    background: transparent;
-    color: var(--cyan);
-    font-family: var(--fb);
-    font-size: var(--font-sm);
-    font-weight: 700;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.homeNavJoin:hover { background: rgba(0, 229, 255, 0.08); }
-
-/* ── JOIN MODAL ─────────────────────────────────────────────────── */
-.joinModalOverlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 100;
-}
-
-.joinModal {
-    background: var(--panel);
-    border: 1px solid var(--pb);
-    border-radius: 14px;
-    padding: 28px 32px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    min-width: 320px;
-}
-
-.joinModalTitle {
-    font-family: var(--fd);
-    font-size: 18px;
-    font-weight: 700;
+    background-color: var(--bg);
     color: var(--text);
-    margin: 0;
+    font-family: var(--fb);
 }
+
+/* ── JOIN MODAL (content styles) ───────────────────────────────── */
 
 .joinModalInput {
     padding: 10px 14px;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     border: 1px solid var(--pb);
     background: rgba(255, 255, 255, 0.05);
     color: var(--text);
@@ -88,78 +31,7 @@
     justify-content: flex-end;
 }
 
-.joinModalCancel {
-    padding: 7px 18px;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--pb);
-    background: transparent;
-    color: var(--dim);
-    font-family: var(--fb);
-    font-size: var(--font-sm);
-    cursor: pointer;
-    transition: color 0.15s;
-}
-
-.joinModalCancel:hover { color: var(--text); }
-
-/* ── RULES MODAL ────────────────────────────────────────────────── */
-.rulesModalOverlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.65);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 100;
-    padding: 20px;
-    animation: rules-fade-in 0.15s ease-out;
-}
-
-@keyframes rules-fade-in {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-}
-
-.rulesModal {
-    position: relative;
-    background: var(--panel);
-    border: 1px solid var(--pb);
-    border-radius: 14px;
-    padding: 28px 32px 24px;
-    max-width: 460px;
-    width: 100%;
-    box-shadow: 0 0 40px rgba(0, 229, 255, 0.15);
-}
-
-.rulesModalClose {
-    position: absolute;
-    top: 10px;
-    right: 12px;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    border: none;
-    background: transparent;
-    color: var(--dim);
-    font-size: 22px;
-    line-height: 1;
-    cursor: pointer;
-    transition: color 0.15s, background 0.15s;
-}
-
-.rulesModalClose:hover {
-    color: var(--text);
-    background: rgba(255, 255, 255, 0.06);
-}
-
-.rulesModalTitle {
-    font-family: var(--fd);
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--text);
-    margin: 0 0 16px;
-    padding-right: 28px;
-}
+/* ── RULES MODAL (content styles) ──────────────────────────────── */
 
 .rulesModalTitleAccent {
     background: linear-gradient(var(--gradient-deg), var(--cyan) 10%, var(--magenta) 30%);
@@ -169,7 +41,7 @@
 }
 
 .rulesModalList {
-    margin: 0 0 16px;
+    margin: 0;
     padding-left: 20px;
     color: var(--text);
     font-family: var(--fb);
@@ -180,10 +52,18 @@
 .rulesModalList li { margin-bottom: 6px; }
 .rulesModalList li:last-child { margin-bottom: 0; }
 
+.rulesLives {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    color: var(--red);
+    vertical-align: middle;
+}
+
 .rulesModalWin {
-    margin: 0 0 14px;
+    margin: 0;
     padding: 12px 14px;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     background: rgba(0, 229, 255, 0.06);
     border-left: 3px solid var(--cyan);
     font-family: var(--fb);
@@ -196,8 +76,13 @@
 /* ── MAIN CONTENT ───────────────────────────────────────────────── */
 .homeContent {
     flex: 1;
-    overflow-y: auto;
-    padding: 28px 40px 40px;
+    display: flex;
+    flex-direction: column;
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 32px;
+    gap: 24px;
     position: relative;
     z-index: 1;
 }
@@ -208,14 +93,30 @@
     border-radius: 3px;
 }
 
+
 /* ── ACCOUNT GRID ───────────────────────────────────────────────── */
 .accountGrid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 18px;
-    /* align-items defaults to stretch — Avatar and Stats match height */
 }
 
 .accountGridChat {
     grid-column: 1 / -1;
+}
+
+/* ── RESPONSIVENESS ─────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .homeContent {
+        padding: 16px;
+        gap: 16px;
+    }
+
+    .accountGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .accountGridChat {
+        grid-column: 1;
+    }
 }

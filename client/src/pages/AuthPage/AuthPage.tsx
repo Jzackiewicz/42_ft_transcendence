@@ -1,6 +1,7 @@
 import LoginView from './SubviewsAuthPage/LoginView/LoginView.tsx'
 import RegistrationView from './SubviewsAuthPage/RegistrationView/RegistrationView'
 import BlinkingSpaceBGDiv from '../../components/BlinkingSpaceBGDiv/BlinkingSpaceBGDiv.tsx'
+import SolarSystem from '../../components/SolarSystem/SolarSystem'
 import { cx } from '../../utils/cx'
 import styles from './AuthPage.module.css'
 
@@ -13,12 +14,15 @@ export function AuthPage() {
 
 	return (
 		<div className={styles.mainContainer}>
+				<BlinkingSpaceBGDiv />
+				<div className={styles.solarBackground} aria-hidden="true">
+					<SolarSystem scale={1.5} />
+				</div>
 				<div className={styles.emptyContainer}>
-					<BlinkingSpaceBGDiv />
 					<div className={styles.emptyContainerContent}>         {/* groups title + subtitle */}
-						<h1 className={styles.pageTitle}>QUIZSENDENCE</h1>
+						<h1 className={styles.pageTitle}>QUIZSCENDENCE</h1>
 						<h1 className={cx(styles.pageTitle, styles.gradient)}>GAME SHOW</h1>
-						<p className={styles.pageSubtitle}>Real-time multiplayer trivia. Compete live, nominate your rivals, and climb to the top of the leaderboard. Every question is a spotlight moment.</p>
+						<p className={styles.pageSubtitle}>Real-time multiplayer trivia. Compete live, nominate your rivals and claim the win. Every question is a spotlight moment.</p>
 					</div>
 				</div>
 

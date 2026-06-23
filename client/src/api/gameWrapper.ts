@@ -1,5 +1,10 @@
 import { apiClient } from './apiClient';
 
+export async function getUserStats(userId: number) {
+    const res = await apiClient.get(`/game/users/${userId}/stats/`);
+    return res.data;
+}
+
 export async function createLobby() {
     const res = await apiClient.post('/game/lobby/create/');
     return res.data;

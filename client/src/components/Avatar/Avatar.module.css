@@ -1,0 +1,64 @@
+.avatar {
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--fd);
+    font-weight: 700;
+    color: #000;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+/* ── SIZES ─────────────────────────────────────────────────────── */
+.avatarXs {
+    width: 28px;
+    height: 28px;
+    font-size: var(--font-sm);
+}
+
+.avatarSm {
+    width: 34px;
+    height: 34px;
+    font-size: var(--font-md);
+}
+
+.avatarMd {
+    width: 36px;
+    height: 36px;
+    font-size: var(--font-md);
+}
+
+.avatarLg {
+    width: 72px;
+    height: 72px;
+    font-size: var(--font-2xl);
+}
+
+/* ── BACKGROUND VARIANTS ───────────────────────────────────────── */
+.avatarGradient {
+    background: linear-gradient(135deg, var(--cyan), var(--magenta));
+}
+
+.avatarCyan {
+    background: linear-gradient(135deg, var(--cyan), #0088aa);
+    border: 3px solid var(--cyan-light-shadow);
+    box-shadow: 0 0 24px rgba(0, 229, 255, 0.3);
+}
+
+.avatarNeutral {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--dim);
+}
+
+/* ── IMAGE MODE ────────────────────────────────────────────────── */
+.avatarImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.avatarBordered {
+    border: 1px solid var(--border);
+}

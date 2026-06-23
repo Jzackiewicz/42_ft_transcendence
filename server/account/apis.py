@@ -137,9 +137,15 @@ class UserProfileMeApi(APIView):
         )
         input_serializer.is_valid(raise_exception=True)
 
-        user = user_update_basic_info(
-            user=request.user, **input_serializer.validated_data
-        )
+        try:
+            user = user_update_basic_info(
+                user=request.user, **input_serializer.validated_data
+            )
+        except ValidationError as e:
+            return Response(
+                {"detail": list(e.messages)[0]},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         output_serializer = UserProfileOutputSerializer(user.profile, context={"request": request})
         return Response(output_serializer.data, status=status.HTTP_200_OK)

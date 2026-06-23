@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef } from 'react';
 
 // ── Types ────────────────────────────────────────────────────────
 export interface Sun {
@@ -9,32 +9,30 @@ export interface OrbitalPlanet {
   cx: number; cy: number;
   orbitR: number; orbitSpeed: number; angle: number;
   r: number; color: string; glow: string;
-  shape: 'circle' | 'ring' | 'hex' | 'diamond' | 'star';
-  label: string; isSun?: false;
+  /** 'circle' is a plain sphere; 'ring' adds Saturn-style rings. */
+  shape: 'circle' | 'ring';
+  isSun?: false;
 }
 
 export type Planet = Sun | OrbitalPlanet;
 
 // ── Non-color constants ──────────────────────────────────────────
-const SUN_R             = 20;
-const SUN_GLOW_FACTOR   = 4.5;
-const SUN_PULSE_AMP     = 0.04;
-const SUN_PULSE_FREQ    = 0.02;
-const ORBIT_RING_WIDTH  = 1;
+const SUN_R              = 20;
+const SUN_GLOW_FACTOR    = 4.5;
+const SUN_PULSE_AMP      = 0.04;
+const SUN_PULSE_FREQ     = 0.02;
+const ORBIT_RING_WIDTH   = 1;
 const PLANET_GLOW_FACTOR = 4;
-const RING_TILT         = 0.5;
-const BAND_OPACITY      = '55';
-const ATMO_OPACITY      = '55';
-const SPEED_MIN         = 0.001;
-const SPEED_RANGE       = 0.012;
-const PALETTE_SIZE      = 10;
+const RING_TILT          = 0.5;
+const BAND_OPACITY       = '55';
+const ATMO_OPACITY       = '55';
 
 const INITIAL_PLANETS: Omit<OrbitalPlanet, 'cx' | 'cy' | 'color' | 'glow'>[] = [
-  { orbitR: 52,  orbitSpeed: 0.009,  angle: 0.4, r: 7,  shape: 'circle',  label: 'P1' },
-  { orbitR: 88,  orbitSpeed: 0.006,  angle: 2.1, r: 9,  shape: 'ring',    label: 'P2' },
-  { orbitR: 126, orbitSpeed: 0.004,  angle: 4.2, r: 7,  shape: 'hex',     label: 'P3' },
-  { orbitR: 164, orbitSpeed: 0.0028, angle: 1.0, r: 10, shape: 'diamond', label: 'P4' },
-  { orbitR: 202, orbitSpeed: 0.002,  angle: 3.5, r: 6,  shape: 'star',    label: 'P5' },
+  { orbitR: 52,  orbitSpeed: 0.009,  angle: 0.4, r: 7,  shape: 'circle' },
+  { orbitR: 88,  orbitSpeed: 0.006,  angle: 2.1, r: 9,  shape: 'ring'   },
+  { orbitR: 126, orbitSpeed: 0.004,  angle: 4.2, r: 7,  shape: 'circle' },
+  { orbitR: 164, orbitSpeed: 0.0028, angle: 1.0, r: 10, shape: 'circle' },
+  { orbitR: 202, orbitSpeed: 0.002,  angle: 3.5, r: 6,  shape: 'circle' },
 ];
 
 // ── CSS var reader ───────────────────────────────────────────────
@@ -57,26 +55,13 @@ function rgbDarken(hex: string, f: number): string {
   return `rgb(${(r * (1 - f)) | 0},${(g * (1 - f)) | 0},${(b * (1 - f)) | 0})`;
 }
 
-function randomizePlanets(planets: Planet[], palette: [string, string][]) {
-  const used = new Set<number>();
-  (planets.slice(1) as OrbitalPlanet[]).forEach((p) => {
-    let idx: number;
-    do { idx = Math.floor(Math.random() * palette.length); } while (used.has(idx));
-    used.add(idx);
-    [p.color, p.glow] = palette[idx];
-    p.orbitSpeed = SPEED_MIN + Math.random() * SPEED_RANGE;
-  });
-}
-
 // ── Hook ─────────────────────────────────────────────────────────
-export function useSolarSystem() {
+/**
+ * @param scale  uniform multiplier (default 1)
+ */
+export function useSolarSystem(scale: number = 1) {
   const canvasRef  = useRef<HTMLCanvasElement>(null);
   const planetsRef = useRef<Planet[]>([]);
-  const paletteRef = useRef<[string, string][]>([]);
-
-  const randomize = useCallback(() => {
-    randomizePlanets(planetsRef.current, paletteRef.current);
-  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -96,12 +81,18 @@ export function useSolarSystem() {
       const c = (name: string) => cssVar(canvas!, name);
       sunCore   = { center: c('--sun-core-center'), mid: c('--sun-core-mid'), edge: c('--sun-core-edge'), glowMid: c('--sun-glow-mid'), glowOuter: c('--sun-glow-outer') };
       orbitRing = c('--orbit-ring');
-      paletteRef.current = Array.from({ length: PALETTE_SIZE }, (_, i) => [c(`--pal-${i}-color`), c(`--pal-${i}-glow`)] as [string, string]);
 
       planets.length = 0;
-      planets.push({ cx, cy, r: SUN_R, isSun: true });
+      planets.push({ cx, cy, r: SUN_R * scale, isSun: true });
       INITIAL_PLANETS.forEach((p, i) =>
-        planets.push({ ...p, cx, cy, color: c(`--p${i + 1}-color`), glow: c(`--p${i + 1}-glow`) })
+        planets.push({
+          ...p,
+          orbitR: p.orbitR * scale,
+          r:      p.r      * scale,
+          cx, cy,
+          color: c(`--p${i + 1}-color`),
+          glow:  c(`--p${i + 1}-glow`),
+        })
       );
     }
 
@@ -204,7 +195,7 @@ export function useSolarSystem() {
       cancelAnimationFrame(raf);
       resizeObserver.disconnect();
     };
-  }, []);
+  }, [scale]);
 
-  return { canvasRef, randomize };
+  return { canvasRef };
 }

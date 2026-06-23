@@ -1,9 +1,16 @@
 import { useFriendsFindTabView } from './useFriendsFindTabView'
+import { PublicUser } from '../../../../../../types/User'
 import { cx } from '../../../../../../utils/cx'
+import UserAvatar from '../../../../../../components/UserAvatar'
+import { Button } from '../../../../../../components/Button/Button'
 import styles from './FriendsFindTabView.module.css'
 import shared from '../../FriendsView.module.css'
 
-function FriendsFindTabView() {
+interface FriendsFindTabViewProps {
+    onSelectUser: (user: PublicUser) => void
+}
+
+function FriendsFindTabView({ onSelectUser }: FriendsFindTabViewProps) {
     const { searchQuery, setSearchQuery, handleSendRequest, friends, status } = useFriendsFindTabView()
 
     return (
@@ -13,12 +20,13 @@ function FriendsFindTabView() {
                     className={styles.findInput}
                     placeholder="Search by username…"
                     value={searchQuery}
+                    maxLength={40}
                     onChange={e => setSearchQuery(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && handleSendRequest(searchQuery)}
                 />
-                <button className={styles.findBtn} onClick={() => handleSendRequest(searchQuery)}>
+                <Button onClick={() => handleSendRequest(searchQuery)}>
                     Send Request
-                </button>
+                </Button>
             </div>
             {status && (
                 <span className={cx(styles.findStatus, styles[status.type === 'error' ? 'findStatusError' : 'findStatusSuccess'])}>
@@ -28,8 +36,9 @@ function FriendsFindTabView() {
             <div className={shared.friendsScroll}>
                 <div className={styles.findResults}>
                     {friends.map(user => (
-                        <div key={user.id} className={styles.findResultItem} onClick={() => setSearchQuery(user.username)}>
-                            {user.username}
+                        <div key={user.id} className={styles.findResultItem} onClick={() => onSelectUser(user)}>
+                            <UserAvatar username={user.username} avatar={user.avatar} userId={user.id} />
+                            <span className={shared.friendName}>{user.username}</span>
                         </div>
                     ))}
                 </div>

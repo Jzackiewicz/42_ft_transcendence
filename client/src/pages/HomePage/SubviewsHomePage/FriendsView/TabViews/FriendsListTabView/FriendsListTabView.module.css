@@ -9,20 +9,8 @@
     align-items: center;
     gap: 10px;
     padding: 8px 10px;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     background: rgba(255, 255, 255, 0.04);
     border: 1px solid var(--pb);
 }
 
-.friendRemove {
-    background: transparent;
-    border: none;
-    color: var(--dim);
-    font-family: var(--fb);
-    font-size: 11px;
-    cursor: pointer;
-    transition: color 0.15s;
-    white-space: nowrap;
-}
-
-.friendRemove:hover { color: #f87171; }

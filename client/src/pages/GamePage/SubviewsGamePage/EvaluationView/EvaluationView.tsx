@@ -1,4 +1,5 @@
 import { cx } from '../../../../utils/cx';
+import { Icon, IconName } from '../../../../components/Icon/Icon';
 import { QuestionBadges } from '../QuestionBadges/QuestionBadges';
 import styles from './EvaluationView.module.css';
 
@@ -26,16 +27,20 @@ export function EvaluationView({
     isVerified
 }: EvaluationViewProps) {
     let statusClass = '';
+    let statusIcon: IconName;
     let statusText = '';
     if (isCorrect) {
         statusClass = styles.evalCorrect;
-        statusText = '🏆 CORRECT ANSWER';
+        statusIcon = 'trophy';
+        statusText = 'CORRECT ANSWER';
     } else if (isTimeout) {
         statusClass = styles.evalTimeout;
-        statusText = "⏰ TIME'S UP";
+        statusIcon = 'clock';
+        statusText = "TIME'S UP";
     } else {
         statusClass = styles.evalWrong;
-        statusText = '❌ WRONG ANSWER';
+        statusIcon = 'close';
+        statusText = 'WRONG ANSWER';
     }
 
     return (
@@ -49,7 +54,9 @@ export function EvaluationView({
                 <p className={styles.evalQuestionText}>{questionText}</p>
             </div>
 
-            <div className={styles.evalVerdictTitle}>{statusText}</div>
+            <div className={styles.evalVerdictTitle}>
+                <Icon name={statusIcon} size="md" /> {statusText}
+            </div>
 
             <div className={styles.evalAnswersComparison}>
                 <div className={styles.evalPlayerAnswerBox}>

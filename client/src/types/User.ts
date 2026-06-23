@@ -2,6 +2,8 @@ export interface User {
     id: number
     username: string
     email: string
+    date_joined: string
+    avatar: string | null
 }
 
 export interface PublicUser {
@@ -9,6 +11,7 @@ export interface PublicUser {
     username: string
     avatar: string | null
     is_online: boolean
+    date_joined: string
 }
 
 export interface Friendship {

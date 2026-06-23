@@ -11,32 +11,32 @@
 /* ── PHASE THEMES ──────────────────────────────────────────────── */
 .gamePageContainer.phaseLobby {
     --theme-accent: var(--cyan);
-    --theme-border: rgba(0, 229, 255, 0.18);
-    --theme-glow: rgba(0, 229, 255, 0.05);
+    --theme-border: rgba(0, 229, 255, 0.4);
+    --theme-glow: rgba(0, 229, 255, 0.18);
 }
 
 .gamePageContainer.phaseAnswering {
     --theme-accent: var(--magenta);
-    --theme-border: rgba(224, 64, 251, 0.18);
-    --theme-glow: rgba(224, 64, 251, 0.05);
+    --theme-border: rgba(224, 64, 251, 0.4);
+    --theme-glow: rgba(224, 64, 251, 0.18);
 }
 
 .gamePageContainer.phaseNomination {
     --theme-accent: var(--gold);
-    --theme-border: rgba(255, 196, 0, 0.18);
-    --theme-glow: rgba(255, 196, 0, 0.05);
+    --theme-border: rgba(255, 196, 0, 0.4);
+    --theme-glow: rgba(255, 196, 0, 0.18);
 }
 
 .gamePageContainer.phaseEvaluation {
     --theme-accent: var(--violet);
-    --theme-border: rgba(124, 77, 255, 0.18);
-    --theme-glow: rgba(124, 77, 255, 0.05);
+    --theme-border: rgba(124, 77, 255, 0.4);
+    --theme-glow: rgba(124, 77, 255, 0.18);
 }
 
 .gamePageContainer.phaseGame_over {
     --theme-accent: var(--magenta);
-    --theme-border: rgba(224, 64, 251, 0.18);
-    --theme-glow: rgba(224, 64, 251, 0.05);
+    --theme-border: rgba(224, 64, 251, 0.4);
+    --theme-glow: rgba(224, 64, 251, 0.18);
 }
 
 /* ── MAIN CONTENT WRAPPER ────────────────────────────────────────── */
@@ -51,34 +51,6 @@
     gap: 32px;
     position: relative;
     z-index: 1;
-}
-
-.gameErrorBanner {
-    color: var(--text);
-    background: rgba(255, 23, 68, 0.08);
-    border: 1px solid rgba(255, 23, 68, 0.2);
-    padding: 14px 20px;
-    border-radius: var(--radius-sm);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-family: var(--fb);
-    font-size: var(--font-sm);
-    box-shadow: 0 0 15px rgba(255, 23, 68, 0.1);
-}
-
-.btnErrorClose {
-    background: none;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-    color: var(--red);
-    opacity: 0.8;
-    transition: opacity 0.2s;
-}
-
-.btnErrorClose:hover {
-    opacity: 1;
 }
 
 .gameMainLayout {
@@ -118,7 +90,7 @@
 .gameLoadingBanner {
     background: var(--panel);
     border: 1px dashed var(--pb);
-    border-radius: 14px;
+    border-radius: var(--radius-lg);
     padding: 40px;
     text-align: center;
     font-family: var(--fb);
