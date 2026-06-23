@@ -1,23 +1,25 @@
+import { useState } from 'react'
 import BlinkingSpaceBGDiv from '../../components/BlinkingSpaceBGDiv/BlinkingSpaceBGDiv'
 import AccountHeader from './SubviewsHomePage/AccountHeader/AccountHeader'
 import FriendsView from './SubviewsHomePage/FriendsView/FriendsView'
 import StatsView from './SubviewsHomePage/StatsView/StatsView'
 import ChatContainer from './SubviewsHomePage/ChatContainer/ChatContainer'
 import { Navbar } from '../../components/Navbar/Navbar'
+import UserProfileModal from '../../components/UserProfileModal/UserProfileModal'
+import { PublicUser } from '../../types/User'
 import { Button } from '../../components/Button/Button'
 import { Modal } from '../../components/Modal/Modal'
 import { Icon } from '../../components/Icon/Icon'
 import ErrorBanner from '../../components/ErrorBanner/ErrorBanner'
 import InlineError from '../../components/InlineError/InlineError'
-
 import styles from './HomePage.module.css'
-
 import { useHomePage, UUID_LENGTH } from './useHomePage'
 import { FriendsProvider } from '../../context/FriendsListContext'
 
 export function HomePage() {
     const {
         user,
+        setUser,
         handleLogout,
         handleCreateLobby,
         handleJoinLobby,
@@ -27,6 +29,7 @@ export function HomePage() {
         showJoinModal, setShowJoinModal,
         showRulesModal, setShowRulesModal,
     } = useHomePage()
+    const [selectedUser, setSelectedUser] = useState<PublicUser | null>(null)
 
     return (
         <FriendsProvider>
@@ -34,7 +37,7 @@ export function HomePage() {
             <BlinkingSpaceBGDiv />
 
             {/* ── Nav ── */}
-            <Navbar 
+            <Navbar
                 actionButtonText="Logout"
                 onActionButtonClick={handleLogout}
             />
@@ -81,19 +84,24 @@ export function HomePage() {
                 </div>
             </Modal>
 
+            {/* ── User profile modal ── */}
+            {selectedUser && (
+                <UserProfileModal user={selectedUser} onClose={() => setSelectedUser(null)} />
+            )}
+
             {/* ── Main ── */}
             <main className={styles.homeContent}>
                 {createError && <ErrorBanner message={createError} onDismiss={() => setCreateError(null)} />}
                 <AccountHeader
-                    username={user?.username ?? ''}
-                    email={user?.email ?? ''}
+                    user={user}
+                    setUser={setUser}
                     setShowJoinModal={setShowJoinModal}
                     setShowRulesModal={setShowRulesModal}
                     handleCreateLobby={handleCreateLobby}
                 />
 
                 <div className={styles.accountGrid}>
-                    <FriendsView />
+                    <FriendsView onSelectUser={setSelectedUser} />
                     <StatsView />
 
                     <div className={styles.accountGridChat}>

@@ -1,7 +1,6 @@
 import {useState} from 'react'
 import {useUser} from '../../../../context/UserContext'
-import { login } from '../../../../api/authWrapper'
-// import { useNavigate } from 'react-router-dom'
+import { login, getMe} from '../../../../api/authWrapper'
 
 interface LoginErrors {
     identifierErr?: string
@@ -27,7 +26,7 @@ export function useLoginView(onSuccess: () => void) {
     const {setUser} = useUser()
     const [errors, setErrors] = useState<LoginErrors>({})
 
-
+    
     const handleLogin = async () => {
         const errs = preValidateLoginParams(identifier, password)
         if (errs.identifierErr || errs.passwordErr) {
@@ -36,10 +35,26 @@ export function useLoginView(onSuccess: () => void) {
         }
 
         setErrors({})
+
+
+
         try {
-            const result = await login(identifier.trim(), password)
-            setUser(result)
+            await login(identifier.trim(), password)
+            const data = await getMe()
+            if (!data) {
+                setErrors({ generalErr: 'Login failed. Please try again.' })
+                return
+            }
+            setUser({
+                id:          data.user.id,
+                username:    data.user.username,
+                email:       data.user.email,
+                avatar:      data.avatar ?? null,
+                date_joined: data.user.date_joined ?? '',
+            })
+
             onSuccess()
+            
         } catch (error: any) {
             const data = error?.response?.data
             const message = data?.detail ?? data?.non_field_errors?.[0] ?? error?.message ?? 'Login failed'

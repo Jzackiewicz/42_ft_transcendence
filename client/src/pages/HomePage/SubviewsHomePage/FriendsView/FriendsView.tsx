@@ -2,13 +2,18 @@ import { useFriendsView } from './useFriendsView'
 import FriendsListTabView from './TabViews/FriendsListTabView/FriendsListTabView'
 import FriendsRequestTabView from './TabViews/FriendsRequestTabView/FriendsRequestTabView'
 import FriendsFindTabView from './TabViews/FriendsFindTabView/FriendsFindTabView'
+import { PublicUser } from '../../../../types/User'
 import { Card } from '../../../../components/Card/Card'
 import { SectionTitle } from '../../../../components/SectionTitle/SectionTitle'
 import { Icon } from '../../../../components/Icon/Icon'
 import { cx } from '../../../../utils/cx'
 import styles from './FriendsView.module.css'
 
-function FriendsView() {
+interface FriendsViewProps {
+    onSelectUser: (user: PublicUser) => void
+}
+
+function FriendsView({ onSelectUser }: FriendsViewProps) {
     const { activeTab, setActiveTab } = useFriendsView()
 
     return (
@@ -40,7 +45,7 @@ function FriendsView() {
             {/* ── Content ── */}
             {activeTab === 'friends'  && <FriendsListTabView />}
             {activeTab === 'requests' && <FriendsRequestTabView />}
-            {activeTab === 'find'     && <FriendsFindTabView />}
+            {activeTab === 'find'     && <FriendsFindTabView onSelectUser={onSelectUser} />}
         </Card>
     )
 }

@@ -9,7 +9,7 @@ export const UUID_LENGTH = 36
 
 export function useHomePage() {
     const navigate = useNavigate()
-    const { user, setUser } = useUser()
+    const { user, setUser: setUserCtx } = useUser()
     const [joinUuid, setJoinUuid] = useState('')
     const [joinError, setJoinError] = useState<string | null>(null)
     const [createError, setCreateError] = useState<string | null>(null)
@@ -24,7 +24,7 @@ export function useHomePage() {
     const handleLogout = async () => {
         try {
             await logout()
-            setUser(null)
+            setUserCtx(null)
             navigate('/login')
         } catch (error: any) {
             navigate('/error', { state: {
@@ -84,6 +84,7 @@ export function useHomePage() {
 
     return {
         user,
+        setUser: setUserCtx,
         handleLogout,
         handleCreateLobby,
         handleJoinLobby,
