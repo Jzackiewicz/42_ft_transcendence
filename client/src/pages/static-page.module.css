@@ -1,12 +1,12 @@
 .staticPageContainer {
-    min-height: 100vh;
+    flex: 1;
     background-color: var(--bg);
     color: var(--text);
     font-family: var(--fb);
     position: relative;
-    overflow: hidden;
     display: flex;
     justify-content: center;
+    align-items: flex-start;
     padding: 60px 20px;
 }
 
@@ -84,4 +84,19 @@
     background: rgba(0, 229, 255, 0.1);
     border-color: var(--cyan);
     transform: translateX(-4px);
+}
+
+@media (max-width: 600px) {
+    .staticPageContainer {
+        padding: 20px 10px;
+    }
+
+    .staticPageContent {
+        padding: 20px;
+        border-radius: var(--radius-sm);
+    }
+
+    .staticPageContent h1 {
+        font-size: 32px;
+    }
 }

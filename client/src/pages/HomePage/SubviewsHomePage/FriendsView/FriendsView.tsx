@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useFriendsView } from './useFriendsView'
 import FriendsListTabView from './TabViews/FriendsListTabView/FriendsListTabView'
 import FriendsRequestTabView from './TabViews/FriendsRequestTabView/FriendsRequestTabView'
@@ -6,15 +7,13 @@ import { PublicUser } from '../../../../types/User'
 import { Card } from '../../../../components/Card/Card'
 import { SectionTitle } from '../../../../components/SectionTitle/SectionTitle'
 import { Icon } from '../../../../components/Icon/Icon'
+import UserProfileModal from '../../../../components/UserProfileModal/UserProfileModal'
 import { cx } from '../../../../utils/cx'
 import styles from './FriendsView.module.css'
 
-interface FriendsViewProps {
-    onSelectUser: (user: PublicUser) => void
-}
-
-function FriendsView({ onSelectUser }: FriendsViewProps) {
+function FriendsView() {
     const { activeTab, setActiveTab } = useFriendsView()
+    const [selectedUser, setSelectedUser] = useState<PublicUser | null>(null)
 
     return (
         <Card className={styles.friendsView}>
@@ -43,9 +42,13 @@ function FriendsView({ onSelectUser }: FriendsViewProps) {
             </div>
 
             {/* ── Content ── */}
-            {activeTab === 'friends'  && <FriendsListTabView />}
-            {activeTab === 'requests' && <FriendsRequestTabView />}
-            {activeTab === 'find'     && <FriendsFindTabView onSelectUser={onSelectUser} />}
+            {activeTab === 'friends'  && <FriendsListTabView onOpenProfile={setSelectedUser} />}
+            {activeTab === 'requests' && <FriendsRequestTabView onOpenProfile={setSelectedUser} />}
+            {activeTab === 'find'     && <FriendsFindTabView onOpenProfile={setSelectedUser} />}
+
+            {selectedUser && (
+                <UserProfileModal user={selectedUser} onClose={() => setSelectedUser(null)} />
+            )}
         </Card>
     )
 }

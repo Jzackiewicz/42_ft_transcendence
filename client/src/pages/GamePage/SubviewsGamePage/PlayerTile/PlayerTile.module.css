@@ -76,7 +76,9 @@
 
 .playerRoleBadges {
     display: flex;
-    gap: 6px;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
     font-size: var(--font-sm);
 }
 
