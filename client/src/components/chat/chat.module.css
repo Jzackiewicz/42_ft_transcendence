@@ -71,14 +71,6 @@
     color: var(--chat-accent);
 }
 
-
-.friendAvatarImg {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
-}
-
 .friendName {
     font-size: var(--font-sm);
     font-weight: 600;
@@ -94,21 +86,6 @@
     flex-direction: column;
     overflow: hidden;
     min-width: 0;
-}
-
-.chatThreadHeader {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 14px 18px;
-    border-bottom: 1px solid var(--pb);
-    flex-shrink: 0;
-}
-
-.chatThreadName {
-    font-family: var(--fd);
-    font-size: var(--font-lg);
-    font-weight: 700;
 }
 
 .chatMessages {
@@ -155,15 +132,6 @@
     color: var(--text);
     border-bottom-left-radius: 3px;
 }
-
-.chatTs {
-    font-size: var(--font-xs);
-    color: var(--dim);
-    margin-top: 3px;
-    text-align: right;
-}
-
-.chatBubbleRow.friend .chatTs { text-align: left; }
 
 /* LOAD OLDER */
 .chatLoadOlder {

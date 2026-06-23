@@ -1,13 +1,5 @@
-/* Only the outer shell — sidebar/thread/input styling is shared with
-   HomePage via components/chat/chat.module.css (the .chatSidebar / .chatThread
-   classes rendered by ChatInner). */
+/* Reuses the shared chat shell */
 .lobbyChat {
-    margin-top: 20px;
-    display: grid;
-    grid-template-columns: 180px 1fr;
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--pb);
-    background: var(--panel);
-    overflow: hidden;
-    height: 360px;
+    --chat-sidebar-w: 180px;
+    --chat-height: 360px;
 }

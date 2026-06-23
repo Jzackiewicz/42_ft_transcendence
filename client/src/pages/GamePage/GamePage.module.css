@@ -72,9 +72,15 @@
     gap: 10px;
 }
 
-.gameActiveArea {
+.gameRightColumn {
     flex: 2 1 500px;
     min-width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+.gameActiveArea {
     display: flex;
     flex-direction: column;
     gap: 24px;
