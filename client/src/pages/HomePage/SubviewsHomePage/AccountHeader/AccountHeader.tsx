@@ -49,6 +49,7 @@ function AccountHeader({ user, setUser, setShowJoinModal, setShowRulesModal, han
                 <input
                     className={styles['account-edit-input']}
                     value={editValue}
+                    maxLength={40}
                     onChange={e => setEditValue(e.target.value)}
                     onKeyDown={e => { if (e.key === 'Enter') confirmEdit(); if (e.key === 'Escape') cancelEdit() }}
                     autoFocus
@@ -73,6 +74,7 @@ function AccountHeader({ user, setUser, setShowJoinModal, setShowRulesModal, han
                 <input
                     className={`${styles['account-edit-input']} ${styles['account-edit-input--sm']}`}
                     value={editValue}
+                    maxLength={254}
                     onChange={e => setEditValue(e.target.value)}
                     onKeyDown={e => { if (e.key === 'Enter') confirmEdit(); if (e.key === 'Escape') cancelEdit() }}
                     autoFocus
