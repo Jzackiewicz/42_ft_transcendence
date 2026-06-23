@@ -40,9 +40,8 @@ from .answers import (
 )
 
 from .player_selection import (
-	get_next_alive_player, 
+	get_next_alive_player,
 	get_random_alive_player,
-	get_new_host_player
 )
 
 

@@ -15,8 +15,7 @@ from .guards import (
     check_room_is_not_over,
 )
 from game.services.game_flow.broadcast import broadcast_snapshot_sync
-from game.services.game_flow.lifecycle import handle_disconnect_in_lobby, assign_random_questions_to_session
-from game.services.game_flow.game_action_handler import GameActionHandler
+from game.services.game_flow.lifecycle import assign_random_questions_to_session
 from game.services.game_flow.game_service import GameService
 
 

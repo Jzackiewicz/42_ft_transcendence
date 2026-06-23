@@ -1,6 +1,6 @@
 import unicodedata
 import re
-from game.models import GameSession, SessionPlayer, AnswerAttempt
+from game.models import GameSession, AnswerAttempt
 from django.utils import timezone
 from .guards import (
 	require_current_attempt,

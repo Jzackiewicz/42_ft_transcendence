@@ -17,7 +17,6 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from drf_spectacular.utils import extend_schema
 from django.contrib.auth import authenticate, login, logout
 from .permissions import IsSelfOrReadOnly, IsAnonymous
-from django.contrib.auth import login as django_login
 from django.core.signing import TimestampSigner, BadSignature, SignatureExpired
 from django.core.exceptions import ValidationError
 from django.http import HttpResponseRedirect
