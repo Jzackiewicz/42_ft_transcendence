@@ -42,10 +42,10 @@ Our goal was to recreate the game show Fifteen to One in webapp form. Each perso
 ## 🟪Instructions🟪
 ### 🖥️ How to host the website ```compilation, installation, and/or execution```
 - Make sure you meet all the prequisites listed in the **📋 Prerequisites** section.
-- Download the repository using: ```git clone <repository_id>```
+- Download the repository using: ```git clone https://github.com/Jzackiewicz/42_ft_transcendence.git```
 - Locate the .env.example file. Copy it and rename the copy to .env.
-- (**IMPORTANT**) Open the newly made .env file and change all necessary fields. *For limited testing you don't have to change anything.*
-- Update all README.md <Final_URL> variables to match your configured .env.
+- (**IMPORTANT**) Open the newly made .env file and change all necessary fields. Refer to a section below called **⚙️ Setting up the .env**.
+- Optionally update all README.md <Final_URL> variables to match your configured .env.
 - Enter the project folder and run: ```make up```
 - Check whether the server is running by visiting <Final_URL>.
 
@@ -62,7 +62,7 @@ Our goal was to recreate the game show Fifteen to One in webapp form. Each perso
 - **pip** && **npm** for additional package installion.
 
 **For fast installation from zero**
-Install debian 12 (bookworm) on your computer or virtual machine
+Install debian 12 (bookworm) on your computer.
 set up the apt sources by running: `nano /etc/apt/sources.list`
 
 then replace everything inside the file with:
@@ -92,6 +92,32 @@ sudo apt install git make docker.io docker-compose python3 python3-venv python3-
 - activate the virtual environment with ```source .venv/bin/activate``` 
 - install the additional prerequisite packages with ```pip install -r server/requirements.txt```
 - continue on with your task.
+
+### ⚙️ Setting up the .env
+**For full range of functionality will need to change:**
+- **LLM_API_KEY** - to get one you will need to visit https://aistudio.google.com/api-keys and copy in a key from there - **DO NOT SHARE IT**. The free plan should be enough for testing. If you have issues and know that you have a correctly set up key, check whether you have tokens for the LLM_MODEL.
+- **OAuth** - set it up.
+
+**For LAN networks you would need to:**
+- Run `ip addr` and search for `inet` under `enp0`. This is your local address.
+- Integrate the local address as follows:
+``` 
+ALLOWED_HOSTS=\
+localhost,\
+127.0.0.1,\
+YOURLOCALADDRESS,\
+localhost:${HTTPS_EXPOSED_PORT},\
+127.0.0.1:${HTTPS_EXPOSED_PORT},\
+YOURLOCALADDRESS:${HTTPS_EXPOSED_PORT}
+CSRF_TRUSTED_ORIGINS=\
+https://localhost:${HTTPS_EXPOSED_PORT},\
+https://127.0.0.1:${HTTPS_EXPOSED_PORT},\
+https://YOURLOCALADDRESS:${HTTPS_EXPOSED_PORT},\
+http://localhost:5173,\
+http://127.0.0.1:5173,\
+http://YOURLOCALADDRESS:5173
+```
+
 ## 🟦Resources🟦 
 
 ### General References ```section listing classic references related to the topic (documentation, articles, tutorials, etc.)```
