@@ -26,7 +26,7 @@ const PresenceContext = createContext<PresenceContextType | null>(null)
 // --- Provider ---------------------------------------------------------------
 
 export function PresenceProvider({ children }: { children: React.ReactNode }) {
-	const { user, setUser } = useUser()
+	const { user, setUser, setActiveSessionUuid } = useUser()
 
 	const [onlineUserIds, setOnlineUserIds] = useState<Set<number>>(new Set())
 
@@ -109,6 +109,7 @@ export function PresenceProvider({ children }: { children: React.ReactNode }) {
 			// Reset auth so NavGuards route back to /login.
 			if (event.code === 4001) {
 				setUser(null)
+				setActiveSessionUuid(null)
 				return
 			}
 
@@ -126,7 +127,7 @@ export function PresenceProvider({ children }: { children: React.ReactNode }) {
 				connect()
 			}, delay)
 		}
-	}, [applyPresenceUpdate, setUser])
+	}, [applyPresenceUpdate, setUser, setActiveSessionUuid])
 
 	const disconnect = useCallback(() => {
 		manuallyClosedRef.current = true
