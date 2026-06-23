@@ -40,8 +40,8 @@ Having trouble joining a friend who is already hosting lobby? **Go to <Final_URL
 Our goal was to recreate the game show Fifteen to One in webapp form. Each persons personal goals varied but all of us had the common goal of passing ft_transcendence.
 
 ## 🟪Instructions🟪
-### How to host the website ```compilation, installation, and/or execution```
-- Make sure you meet all the prequisites listed in the **Prerequisites** section.
+### 🖥️ How to host the website ```compilation, installation, and/or execution```
+- Make sure you meet all the prequisites listed in the **📋 Prerequisites** section.
 - Download the repository using: ```git clone <repository_id>```
 - Locate the .env.example file. Copy it and rename the copy to .env.
 - (**IMPORTANT**) Open the newly made .env file and change all necessary fields. *For limited testing you don't have to change anything.*
@@ -52,9 +52,9 @@ Our goal was to recreate the game show Fifteen to One in webapp form. Each perso
 ### Are you already hosting the website and want to play?
 **Look in the section above for HOW TO PLAY?** 
 
-### Prerequisites ```software, tools, versions, configuration like .env setup, etc.```
+### 📋 Prerequisites ```software, tools, versions, configuration like .env setup, etc.```
 **The basics in order to run the installation** Versions aren't strict but if you encounter errors change to the newest versions available in Q1 2026.
-- **A Linux environment**
+- **A Linux environment** - Debian 12 is prefered but not specifically required.
 - **Git** for downloading the project files.
 - **make** for the Makefile.
 - **docker** && **docker compose** for containerisation.
@@ -62,26 +62,36 @@ Our goal was to recreate the game show Fifteen to One in webapp form. Each perso
 - **pip** && **npm** for additional package installion.
 
 **For fast installation from zero**
+Install debian 12 (bookworm) on your computer or virtual machine
+set up the apt sources by running: `nano /etc/apt/sources.list`
+
+then replace everything inside the file with:
+
 ```
-sudo apt install \
-make \
-docker.io \
-docker-compose-v2 \
-python3 \
-python3-venv \
-python3-pip \
-npm
+deb http://deb.debian.org/debian bookworm main contrib non-free non-free-firmware
+deb http://deb.debian.org/debian bookworm-updates main contrib non-free non-free-firmware
+deb http://security.debian.org/debian-security bookworm-security main contrib non-free non-free-firmware
 ```
+
+Save and exit the file buy pressing `ctrl + X`. After select **Save Buffer**.
+
+You are now free to run the following:
+
+```
+sudo apt update
+sudo apt install git make docker.io docker-compose python3 python3-venv python3-pip npm
+```
+
+### Once complete you can continue to the "🖥️ How to host the website" section above
 
 **The setup process is automated by the Makefile and Docker.** They deal with the rest of the requirements.
 
-**If you wish to do things manually you will need to:**
+**If you need to run the Django environment with the project requirements then:**
+- go to the root directory of this project.
 - create a virtual environment with ```python3 -m venv .venv```
 - activate the virtual environment with ```source .venv/bin/activate``` 
-- install all additional prerequisite packages with ```pip install -r server/requirements.txt```
-
-You might want to do this if automatic migration is not working.
-
+- install the additional prerequisite packages with ```pip install -r server/requirements.txt```
+- continue on with your task.
 ## 🟦Resources🟦 
 
 ### General References ```section listing classic references related to the topic (documentation, articles, tutorials, etc.)```
