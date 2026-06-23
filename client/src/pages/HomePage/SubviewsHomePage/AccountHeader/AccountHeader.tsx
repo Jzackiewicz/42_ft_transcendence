@@ -95,7 +95,7 @@ function AccountHeader({ user, setUser, setShowJoinModal, setShowRulesModal, han
                 <div className={styles['account-field-row']}>{emailField}</div>
                 {errorMessage}
                 <div className={styles.accountBadges}>
-                    <Badge variant="human">since: {user?.date_joined?.slice(0, 10)}</Badge>
+                    <Badge variant="joined">since: {user?.date_joined?.slice(0, 10)}</Badge>
                 </div>
             </div>
 
