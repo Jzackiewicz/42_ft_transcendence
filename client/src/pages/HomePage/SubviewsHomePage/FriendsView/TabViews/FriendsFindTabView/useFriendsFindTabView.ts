@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { searchFriends, sendFriendRequest } from '../../../../../../api/socialsWrapper'
 import { useFriendsContext } from '../../../../../../context/FriendsListContext'
+import { usePresence } from '../../../../../../context/PresenceContext'
 
 interface RequestStatus {
     type: 'success' | 'error'
@@ -9,6 +10,7 @@ interface RequestStatus {
 
 export function useFriendsFindTabView() {
     const { refresh } = useFriendsContext()
+    const { seed } = usePresence()
     const [searchQuery, setSearchQuery] = useState('')
     const [friends, setFriends] = useState<any[]>([])
     const [status, setStatus] = useState<RequestStatus | null>(null)
@@ -16,7 +18,10 @@ export function useFriendsFindTabView() {
 
     useEffect(() => {
         if (searchQuery.length >= 2) {
-            searchFriends(searchQuery).then(results => setFriends(results))
+            searchFriends(searchQuery).then(results => {
+                setFriends(results)
+                seed(results.map((u: any) => ({ id: u.id, is_online: u.is_online })))
+            })
         } else {
             setFriends([])
         }
