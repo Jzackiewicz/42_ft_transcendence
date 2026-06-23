@@ -31,7 +31,7 @@ package "Backend (Django)" {
     [GameConsumer] as g_ws
     [apis.py\nlobby / stats / gen] as g_api
     [GameActionHandler] as g_handler
-    [GameService\n(domain facade)] as g_service
+    [GameService] as g_service
     [guards.py] as g_guards
     [fsm.py\n(GameStateMachine)] as g_fsm
     [lifecycle / answers /\nplayer_selection] as g_rules

@@ -1,5 +1,5 @@
 @startuml Quizscendence_DevOps
-title Quizscendence — Container View
+title Container View
 
 skinparam componentStyle rectangle
 skinparam shadowing false
@@ -23,11 +23,6 @@ node "Docker Compose" {
     component "DRF\n(HTTP APIs)" as drf
     component "Channels\n(WebSocket consumers)" as channels
     component "In-process state\n(GameTimerManager,\nPresenceRegistry)" as inproc
-    note bottom of inproc
-      Single-process only.
-      Timers = asyncio.Tasks
-      Presence = in-mem dict
-    end note
   }
 
   node "db" as dbnode {
