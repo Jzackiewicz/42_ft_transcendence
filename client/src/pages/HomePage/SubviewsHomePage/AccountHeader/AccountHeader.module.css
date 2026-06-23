@@ -50,19 +50,19 @@
     height: 72px;
 }
 
-.avatar-edit-btn {
+.avatarEditBtn {
     position: absolute;
     bottom: 0;
     right: 0;
 }
 
-.account-field-row {
+.accountFieldRow {
     display: flex;
     align-items: center;
     gap: 6px;
 }
 
-.edit-btn {
+.editBtn {
     background: transparent;
     border: 1px solid var(--pb);
     color: var(--dim);
@@ -74,17 +74,17 @@
     transition: color 0.15s, border-color 0.15s;
 }
 
-.edit-btn:hover { color: var(--cyan); border-color: var(--cyan); }
+.editBtn:hover { color: var(--cyan); border-color: var(--cyan); }
 
-.edit-btn--sm { font-size: 11px; padding: 1px 5px; }
+.editBtnSm { font-size: 11px; padding: 1px 5px; }
 
-.confirm-btn { color: #00e564; border-color: #00e564; }
-.confirm-btn:hover { opacity: 0.8; }
+.confirmBtn { color: #00e564; border-color: #00e564; }
+.confirmBtn:hover { opacity: 0.8; }
 
-.cancel-btn { color: #ff5050; border-color: #ff5050; }
-.cancel-btn:hover { opacity: 0.8; }
+.cancelBtn { color: #ff5050; border-color: #ff5050; }
+.cancelBtn:hover { opacity: 0.8; }
 
-.account-edit-input {
+.accountEditInput {
     background: var(--panel);
     border: 1px solid var(--cyan);
     border-radius: 6px;
@@ -97,14 +97,14 @@
     width: 220px;
 }
 
-.account-edit-input--sm {
+.accountEditInputSm {
     font-family: inherit;
     font-size: var(--font-sm);
     font-weight: 400;
     width: 200px;
 }
 
-.account-edit-error {
+.accountEditError {
     font-size: 11px;
     color: #ff5050;
     margin-top: 4px;
@@ -123,7 +123,7 @@
         flex: 1 1 100%;
     }
 
-    .account-field-row {
+    .accountFieldRow {
         flex: 1 1 auto;
     }
 }
