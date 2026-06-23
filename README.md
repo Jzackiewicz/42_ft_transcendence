@@ -18,7 +18,7 @@
 ### How to win?
 The game show has you gain points by answering questions correctly. You must avoid answering incorrectly as you lose one of your three lives for each question you get wrong!
 
-Unlike other game shows where contestants rush to answer first, players nominate each other in a system of "hand down the hot seat" to try elimitate the other players.
+Unlike other game shows where contestants rush to answer first, players nominate each other in a system of "hand down the hot seat" to try eliminate the other players.
 
 The winner is chosen when all the questions are answered, or if all but one player have fallen.
 
@@ -98,7 +98,6 @@ You might want to do this if automatic migration is not working.
 - [Documentation for custom-made styling minor module](https://github.com/Jzackiewicz/42_ft_transcendence/pull/165)
 - <Fill_in_or_delete> <ITYKHONO>
 - <Fill_in_or_delete> <JZACKIEW>
-- <Fill_in_or_delete> <MAMICHAL>
 ### AI Usage ```a description of how AI was used specifying for which tasks and which parts of the project.```
 
 **We used a wide range of AI assistence when it came to work and research. Below is listed all the uses of AI our team utilised:**
@@ -114,7 +113,7 @@ You might want to do this if automatic migration is not working.
 **We separated our work into roles defined within the subject** ```Assigned roles, Brief description of their responsibilities```
 - **Project Owner** - **jzackiew** - Responsible for the vision of the project, set priorities for features and ensured the project met the subjects and team goals.
 - **Scrum Master** - **dbozic** - Responsible for organising the team and their productivity. Facilitated team Brain Storming and held meetings to settle on a project plan. Scheduled common Scrum meetings to keep everyone up to date and clear blockers.
-- **Tech Lead** - **mamichal** - <Fill_In> <MAMICHAL>
+- **Tech Lead** - **mamichal** - Responsible for the choice of technological stack, researched different architectural decisions and proposed solutions based on data and our unique use case.
 - **Developer** - **mbudkevi** - Responsible for implementing assigned features, writing tests, reviewing teammates' pull requests and documenting changes.
 - **Developer** - **itykhono** - <Fill_In> <ITYKHONO>
 ### 🟪 Project management
@@ -135,16 +134,18 @@ You might want to do this if automatic migration is not working.
 - **Backend technologies and frameworks**
   - **Django Rest Framework**
   - **Django Channels**
-  - **Docker with Enginx**
   - <Fill_in_or_delete> <JZACKIEW>
-  - <Fill_in_or_delete> <MAMICHAL>
+- **DevOps**
+  - **Docker**
+  - **NGINX**
+  - **GitHub Workflows**
 - **Database system and why it was chosen**
   - **PostgreSQL** - mature, free, first-class support in Django and it handles concurrent writes to game state safely.
 - **Any other significant technologies or libraries**
   - **Pydantic** - Data Validation.
   - **Google Gemini API** - LLM calls.
   - **Redis** - Caching.
-  - **<Maybe_Playwright>** - <MAMICHAL>
+  - **Playwright** - End to End testing across multiple browsers
 - **Justification for major techinical choices** - **Django Rest Framework** was chosen for its **ORM**, **Serializers** and **Authentication and permission system** along with other out of the box tools. **Redis** was used as a forward looking improvement over Djangos caching and channel tools. **React** was chosen for <ITYKHONO>
 
 ### 🟩 Database Schema ```visual representation or description of the database structure, tables/collections and thier relationships, Key fields and data types.```
@@ -211,7 +212,7 @@ Friendships are stored in `Friendship`, which has two foreign keys back to `User
 ### Minor - Use a backend framework
 
 - **People Involved: Everyone**
-- We used **Django** as our backend framework and **React** as our frontend framework.
+- We used **Django** as our backend framework.
 - **Why this module?** - **Django** was chosen for its great out of the box capabilities like the **Django ORM** which allowed us to get an additional minor module. It allowed us to easily use **Redis** for caching and channels (WebSockets) with ease.
 
 ### Major - Implement real-time features using WebSockets or similar technology.
@@ -243,14 +244,14 @@ Friendships are stored in `Friendship`, which has two foreign keys back to `User
 ### Minor - Support for additional browsers.
 
 - **People Involved: mamichal**
-- <How_the_module_was_implemented>. <MAMICHAL>
-- **Why this module?** - <Why_this_module_was_chosen>. <MAMICHAL>.
+- Manually tested the app across different browsers both `Chromium (Blink + V8)` and `Firefox (Gecko + SpiderMonkey)` based. Implemented End to End tests with `playwright` to automate functional testing of the webapp's features and ensuring their proper behaviour.
+- **Why this module?** - We wanted to make the app works flawlessly across different browsers and devices.
 
 ## 👥 User Management
 
 ### Major - Standard user management and authentication.
 
-- **People Involved: mbudkevi**
+- **People Involved: mbudkevi, mamichal**
 - Custom `User` model extending Django's `AbstractUser` with a unique email. It consist of registration, login and logout endpoints. Login accepts either email or username. Avatar uploads through a separate `UserProfile` model. Online status is tracked in-memory by counting each user's open WebSocket connections, then broadcast over the same Channels layer the chat uses.
 - **Why this module?** - Since the project is a multiplayer game, having accounts and profiles was the natural starting point. Without them there is no way to identify players between sessions and build a friends list.
 
@@ -294,16 +295,42 @@ Friendships are stored in `Friendship`, which has two foreign keys back to `User
 - It is shown as a host only button in the lobby screen. When pressed the lobby questions are sent to an LLM where additional similar questions are generated. Those questions are then added to the game session to be played, and saved persistently in the database for future use.
 - **Why this module?** - We chose this module as it is a core concept of our game: AI generated questions. It also opened up the possibility of implementing RAG (Retrieval Based Generation) which could have been an additional Major Module.
 
-- **What technical challenges it addresses** - The largest technical challenge with this module was **response validation**. LLMs are infamously bad at following exact rules. **Pydantic** was used for garuanteeing a safe answer format, and the content of the response was fine tuned through human readable instructions. Other challenges included **rate limitating**, and **integration** of answers into live lobbies and the persistent database.
+- **What technical challenges it addresses** - The largest technical challenge with this module was **response validation**. LLMs are infamously bad at following exact rules. **Pydantic** was used for guaranteeing a safe answer format, and the content of the response was fine tuned through human readable instructions. Other challenges included **rate limiting**, and **integration** of answers into live lobbies and the persistent database.
 
 - **How it adds value to your project** - Adding new, on theme but different, questions into each game prevents long time users from learning a majority of questions and their answers by heart. Generating questions adds excitement while also expanding the core question base that the quiz game relies on.  
 
 - **Why it deserves Major module status (2 points).** - This module greatly resembles the module **"Major Module: Implement a complete LLM system interface"**. Below is a list of the requirements of the original module next to the counter part.
   + **Original:** Generate text and/or images based on user input.<br> **Counterpart:** Generate Questions with their answers and catagories based on the current lobbies question pool.
-  + **Original:** Handle streaming responces properly. <br> **Counterpart:** Handle updating a game sessions question base as well as implementing persistence for future use of the generated questions.
+  + **Original:** Handle streaming responses properly. <br> **Counterpart:** Handle updating a game sessions question base as well as implementing persistence for future use of the generated questions.
   + **Original:** Implement error handling and rate limiting. <br>**Counterpart:** Implement error handling and rate limiting.
 
-**Total Points = 21**
+## Devops
+
+### Minor Module of Choice - Continuous Integration
+
+- **People Involved: mamichal, jzackiew**
+- Implement a Continuous Integration for the project providing instant developer
+  feedback after running the provided test suite using GitHub Workflows.
+- **Why this module?** - We chose this module because it helped us speed
+up the development process. It allowed us to know when a pull request broke a functionality
+and therefore fix it before any code review would be conducted. It also ensured
+that all automated tests pass after merging to main branch.
+
+- **What technical challenges it addresses** - It solves the problem of
+automated testing to make sure that all the tests pass properly before
+conducting a code review and verified that a merge conflict did not break any
+of the functionalities and helped us save on development time.
+
+- **How it adds value to your project** - It helps us make sure that everything
+works as expected and ensures that we do not introduce bugs,
+especially when merging a pull request to the main branch.  
+
+- **Why it deserves Minor module status (1 points).** It is not as extensive as
+a full CI/CD pipeline which would definitely be a Major module, however it does
+bring significant value in terms of safety, efficiency, and it provides instant
+feedback to the whole development team through the GitHub UI.
+
+**Total Points = 22**
 
 ### ⬜️ Individual Contributions ```Detailed breakdown of what each team member contributed, specific features, modules, or components implemented by each person. any challenges faced and how they were overcome.```
 
@@ -323,7 +350,7 @@ Friendships are stored in `Friendship`, which has two foreign keys back to `User
 - Documentation.
 
 #### Challenges faced
-- My largest techincal challenge was developing and integrating the question expander. It required me to learn new  like Python, an authenticated API, a web developement framework, an ORM, REST, rate limiting specific users, using external tools for format validation along with many other things that were cut from the final version.
+- My largest technical challenge was developing and integrating the question expander. It required me to learn new tools like Python, an authenticated API, a web developement framework, an ORM, REST, rate limiting specific users, using external tools for format validation along with many other things that were cut from the final version.
 <br> Looking back I am amazed I was able to start work on such a module as my first issue.
 - A small but unusual challenge I faced was reforming the base list of questions and answers originating from a Polish gameshow. I found a method to automatically filter out questions which only people familiar with Polish culture would know along with translating and sorting the rest.
 
@@ -335,9 +362,31 @@ Friendships are stored in `Friendship`, which has two foreign keys back to `User
 - 
 -
 
-### mamichal - Tech Lead <MAMICHAL>
-- Devops
--
+### mamichal - Tech Lead
+
+#### Contributions
+
+- DevOps and backend developer, focused mainly on setup of the environment and
+ensuing proper deployment across multiple systems. Also contributed to some
+frontend tasks.
+
+#### Specific features, modules, or components
+
+- DevOps - setting up a contenerized environment with proper communication and
+volume persistence for both production environment and development playground
+- Automated deployment via Makefile
+- Added other useful automations for development purposes
+- Contributed to CI setup
+- Configured NGINX as a reverse proxy for HTTPS and WSS connections
+- Setup Redis as an in memory database
+- Blocked direct client-side access to /api/
+- Ensured proper cross-browser support and implemented E2E testing
+- Ensured proper distribution of CSRF
+- Prepared database populating script for evaluation and testing purposes
+- Implemented frontend routing guards
+- Prepared legal sites
+
+#### Challenges faced
 
 ### mbudkevi - Developer <MBUDKEVI>
 - Backend developer covering authentication, the friends system, real-time presence, the chat backend and the project's initial database setup.
