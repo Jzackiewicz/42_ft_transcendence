@@ -39,6 +39,10 @@ export function useAccountHeader(user: User | null | undefined, setUser: (u: Use
                     setError('This Field must be 40 characters or fewer.')
                     return
                 }
+                if (editValue.includes('@')) {
+                    setError('Username cannot contain the "@" character.')
+                    return
+                }
             }
             if (editingField === 'email') {
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
