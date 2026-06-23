@@ -50,3 +50,9 @@
     text-align: center;
     padding: 20px 0;
 }
+
+@media (max-width: 768px) {
+    .requestTypesContainer {
+        grid-template-columns: 1fr;
+    }
+}

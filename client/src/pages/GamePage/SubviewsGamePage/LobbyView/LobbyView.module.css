@@ -36,3 +36,28 @@
     color: #aaa;
     font-style: italic;
 }
+
+@media (max-width: 560px) {
+    .lobbyActionsRow {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .lobbyActionsRow > button {
+        width: 100%;
+    }
+
+    .aiQuestionsWrapper {
+        align-items: stretch;
+        width: 100%;
+    }
+
+    .aiQuestionsWrapper > button {
+        width: 100%;
+    }
+
+    .aiFeedbackToast {
+        text-align: center;
+    }
+}

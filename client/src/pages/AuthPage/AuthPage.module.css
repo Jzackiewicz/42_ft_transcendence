@@ -5,6 +5,7 @@
 .mainContainer {
     display: flex;
     width: 100%;
+    flex: 1;
     position: relative; /* anchor for the solar background layer */
     overflow: hidden;  /* solar canvas should never cause page scroll */
 }
@@ -89,7 +90,7 @@
 .registrationView {
     flex: 1;
     min-height: 0;
-    overflow: visible;
+    overflow-y: auto;
 }
 
 .authTitle {
@@ -171,6 +172,10 @@
 
 /* ── MOBILE RESPONSIVENESS ─────────────────────────────────────── */
 @media (max-width: 768px) {
+    .solarBackground {
+        opacity: 0.3;
+    }
+
     .mainContainer {
         flex-direction: column;
     }

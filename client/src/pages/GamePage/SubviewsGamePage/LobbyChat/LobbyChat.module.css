@@ -3,3 +3,10 @@
     --chat-sidebar-w: 180px;
     --chat-height: 360px;
 }
+
+@media (max-width: 768px) {
+    .lobbyChat {
+        order: 3;
+        width: 100%;
+    }
+}

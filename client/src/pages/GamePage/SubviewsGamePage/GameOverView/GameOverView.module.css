@@ -156,5 +156,32 @@
         padding: 18px 8px; /* Slightly smaller but still spaced on mobile */
         font-size: var(--font-sm);
     }
+}
 
+@media (max-width: 560px) {
+    /* Hide the 5th column header and cells (Answers count) */
+    .gameOverThead th:nth-child(5),
+    .gameOverAnswers {
+        display: none;
+    }
+    
+    .gameOverRow td {
+        padding: 12px 6px;
+    }
+    
+    .gameOverRank {
+        width: 40px;
+    }
+    
+    .gameOverPlayerInfo {
+        gap: 6px;
+    }
+    
+    .gameOverPlayerName {
+        font-size: var(--font-xs);
+        max-width: 90px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
 }

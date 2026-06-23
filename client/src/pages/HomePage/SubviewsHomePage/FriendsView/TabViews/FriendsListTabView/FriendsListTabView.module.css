@@ -14,3 +14,8 @@
     border: 1px solid var(--pb);
 }
 
+@media (max-width: 768px) {
+    .friendsGrid {
+        grid-template-columns: 1fr; /* stack into a single column on mobile */
+    }
+}

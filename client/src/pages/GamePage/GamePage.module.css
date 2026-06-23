@@ -1,5 +1,5 @@
 .gamePageContainer {
-    min-height: 100vh;
+    flex: 1;
     display: flex;
     flex-direction: column;
     position: relative;
@@ -143,16 +143,25 @@
         gap: 16px;
     }
     
+    .gameRightColumn {
+        display: contents;
+    }
+
+    .gameActiveArea {
+        order: 1; /* active game area on top */
+        width: 100%;
+    }
+
     .gameSidebar {
-        order: 2; /* Put players list at the bottom */
+        order: 2; /* players list below it */
         flex: none;
         width: 100%;
     }
-    
-    .gameActiveArea {
-        order: 1; /* Put active game area at the top */
-        flex: none;
-        width: 100%;
+
+    .gamePlayersList {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 10px;
     }
     
     .gameLoadingBanner {
