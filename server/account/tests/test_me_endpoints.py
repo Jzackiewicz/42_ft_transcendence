@@ -124,6 +124,29 @@ class UserProfileMeTest(APITestCase):
         self.assertIn("email", response.data)
 
 
+    def test_profile_me_endpoint_patch_rejects_too_short_username(self):
+        self.client.login(username="profileuser", password="profilepassword")
+        payload = {"username": "ab"}
+        response = self.client.patch(
+            reverse("profile-me"), data=payload, content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("username", response.data)
+
+    def test_profile_me_endpoint_patch_rejects_overlong_email(self):
+        # 255 chars total (244 local + "@example.com") exceeds the 254 limit and
+        # must return a clean 400 rather than blowing up at the DB (500).
+        long_email = "a" * 244 + "@example.com"
+        self.assertGreater(len(long_email), 254)
+        self.client.login(username="profileuser", password="profilepassword")
+        response = self.client.patch(
+            reverse("profile-me"),
+            data={"email": long_email},
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("email", response.data)
+
     def test_profile_me_endpoint_patch_rejects_at_sign_in_username(self):
         self.client.login(username="profileuser", password="profilepassword")
         payload = {"username": "alice@bar.com"}
