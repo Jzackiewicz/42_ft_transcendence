@@ -4,8 +4,8 @@
 /* ── LAYOUT ─────────────────────────────────────────────────────── */
 .mainContainer {
     display: flex;
-    height: 100vh;
     width: 100%;
+    flex: 1;
     position: relative; /* anchor for the solar background layer */
     overflow: hidden;  /* solar canvas should never cause page scroll */
 }
@@ -71,7 +71,6 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    height: 100vh;
 }
 
 .authContent {
@@ -91,7 +90,7 @@
 .registrationView {
     flex: 1;
     min-height: 0;
-    overflow: visible;
+    overflow-y: auto;
 }
 
 .authTitle {
@@ -169,4 +168,46 @@
     flex: 1;
     height: 1px;
     background: var(--border);
+}
+
+/* ── MOBILE RESPONSIVENESS ─────────────────────────────────────── */
+@media (max-width: 768px) {
+    .solarBackground {
+        opacity: 0.3;
+    }
+
+    .mainContainer {
+        flex-direction: column;
+    }
+
+    .emptyContainer {
+        padding: 24px 24px 16px;
+        flex: none;
+    }
+
+    .emptyContainerContent {
+        gap: 8px;
+    }
+
+    .pageTitle {
+        font-size: 32px;
+    }
+
+    .pageSubtitle {
+        display: none;
+    }
+
+    .authContainer {
+        width: 100%;
+        height: auto;
+        border-left: none;
+        border-top: 1px solid var(--border);
+        padding: 24px;
+        flex: 1;
+    }
+
+    .authContent {
+        height: auto;
+        gap: var(--spacing-lg);
+    }
 }

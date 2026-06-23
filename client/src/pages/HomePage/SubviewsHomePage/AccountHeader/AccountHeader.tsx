@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react'
 import { User } from '../../../../types/User'
 import { useAccountHeader } from './useAccountHeader'
+import { Avatar } from '../../../../components/Avatar/Avatar'
 import { Badge } from '../../../../components/Badge/Badge'
 import { Button } from '../../../../components/Button/Button'
 import { Icon } from '../../../../components/Icon/Icon'
@@ -21,48 +21,27 @@ function AccountHeader({ user, setUser, setShowJoinModal, setShowRulesModal, han
         fileInputRef, handleAvatarClick, handleAvatarChange,
     } = useAccountHeader(user, setUser)
 
-    const initial = user?.username?.[0]?.toUpperCase() ?? '?'
-    const [avatarBroken, setAvatarBroken] = useState(false)
-
-    useEffect(() => {
-        setAvatarBroken(false)
-    }, [user?.avatar])
-
-    let avatarContent
-    if (user?.avatar && !avatarBroken) {
-        avatarContent = (
-            <img
-                src={user.avatar}
-                alt="avatar"
-                className={styles['account-avatar-img']}
-                onError={() => setAvatarBroken(true)}
-            />
-        )
-    } else {
-        avatarContent = initial
-    }
-
     let usernameField
     if (editingField === 'username') {
         usernameField = (
             <>
                 <input
-                    className={styles['account-edit-input']}
+                    className={styles.accountEditInput}
                     value={editValue}
                     maxLength={40}
                     onChange={e => setEditValue(e.target.value)}
                     onKeyDown={e => { if (e.key === 'Enter') confirmEdit(); if (e.key === 'Escape') cancelEdit() }}
                     autoFocus
                 />
-                <button className={`${styles['edit-btn']} ${styles['confirm-btn']}`} onClick={confirmEdit}>✓</button>
-                <button className={`${styles['edit-btn']} ${styles['cancel-btn']}`} onClick={cancelEdit}>✕</button>
+                <button className={`${styles.editBtn} ${styles.confirmBtn}`} onClick={confirmEdit} title="Confirm" aria-label="Confirm"><Icon name="check" size="xs" /></button>
+                <button className={`${styles.editBtn} ${styles.cancelBtn}`} onClick={cancelEdit} title="Cancel" aria-label="Cancel"><Icon name="close" size="xs" /></button>
             </>
         )
     } else {
         usernameField = (
             <>
                 <div className={styles.accountName}>{user?.username}</div>
-                <button className={styles['edit-btn']} onClick={() => startEdit('username')} title="Edit username">✎</button>
+                <button className={styles.editBtn} onClick={() => startEdit('username')} title="Edit username" aria-label="Edit username"><Icon name="edit" size="xs" /></button>
             </>
         )
     }
@@ -72,36 +51,36 @@ function AccountHeader({ user, setUser, setShowJoinModal, setShowRulesModal, han
         emailField = (
             <>
                 <input
-                    className={`${styles['account-edit-input']} ${styles['account-edit-input--sm']}`}
+                    className={`${styles.accountEditInput} ${styles.accountEditInputSm}`}
                     value={editValue}
                     maxLength={254}
                     onChange={e => setEditValue(e.target.value)}
                     onKeyDown={e => { if (e.key === 'Enter') confirmEdit(); if (e.key === 'Escape') cancelEdit() }}
                     autoFocus
                 />
-                <button className={`${styles['edit-btn']} ${styles['confirm-btn']}`} onClick={confirmEdit}>✓</button>
-                <button className={`${styles['edit-btn']} ${styles['cancel-btn']}`} onClick={cancelEdit}>✕</button>
+                <button className={`${styles.editBtn} ${styles.confirmBtn}`} onClick={confirmEdit} title="Confirm" aria-label="Confirm"><Icon name="check" size="xs" /></button>
+                <button className={`${styles.editBtn} ${styles.cancelBtn}`} onClick={cancelEdit} title="Cancel" aria-label="Cancel"><Icon name="close" size="xs" /></button>
             </>
         )
     } else {
         emailField = (
             <>
                 <div className={styles.accountEmail}>{user?.email}</div>
-                <button className={`${styles['edit-btn']} ${styles['edit-btn--sm']}`} onClick={() => startEdit('email')} title="Edit email">✎</button>
+                <button className={`${styles.editBtn} ${styles.editBtnSm}`} onClick={() => startEdit('email')} title="Edit email" aria-label="Edit email"><Icon name="edit" size="xs" /></button>
             </>
         )
     }
 
     let errorMessage
     if (error) {
-        errorMessage = <div className={styles['account-edit-error']}>{error}</div>
+        errorMessage = <div className={styles.accountEditError}>{error}</div>
     }
 
     return (
         <div className={styles.accountHeader}>
-            <div className={styles['account-avatar-wrapper']}>
-                <div className={styles.accountAvatar}>{avatarContent}</div>
-                <button className={`${styles['edit-btn']} ${styles['avatar-edit-btn']}`} onClick={handleAvatarClick} title="Change avatar">✎</button>
+            <div className={styles.accountAvatarWrapper}>
+                <Avatar name={user?.username ?? ''} imageUrl={user?.avatar} size="lg" bg="accent" />
+                <button className={`${styles.editBtn} ${styles.avatarEditBtn}`} onClick={handleAvatarClick} title="Change avatar" aria-label="Change avatar"><Icon name="edit" size="xs" /></button>
                 <input
                     ref={fileInputRef}
                     type="file"
@@ -112,11 +91,11 @@ function AccountHeader({ user, setUser, setShowJoinModal, setShowRulesModal, han
             </div>
 
             <div className={styles.accountInfo}>
-                <div className={styles['account-field-row']}>{usernameField}</div>
-                <div className={styles['account-field-row']}>{emailField}</div>
+                <div className={styles.accountFieldRow}>{usernameField}</div>
+                <div className={styles.accountFieldRow}>{emailField}</div>
                 {errorMessage}
                 <div className={styles.accountBadges}>
-                    <Badge variant="human">since: {user?.date_joined?.slice(0, 10)}</Badge>
+                    <Badge variant="joined">since: {user?.date_joined?.slice(0, 10)}</Badge>
                 </div>
             </div>
 

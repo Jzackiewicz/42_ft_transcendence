@@ -1,10 +1,11 @@
 import { useState } from 'react'
-import { useChatContainer } from './useChatContainer'
+import { useChat } from './useChat'
 import { ErrorBanner } from '../ErrorBanner/ErrorBanner'
 import { Button } from '../Button/Button'
 import { cx } from '../../utils/cx'
-import styles from './chat.module.css'
-import UserAvatar from '../UserAvatar'
+import styles from './Chat.module.css'
+import { Avatar } from '../Avatar/Avatar'
+import { Icon } from '../Icon/Icon'
 
 const MAX_MESSAGE_LENGTH = 500
 
@@ -12,9 +13,10 @@ const MAX_MESSAGE_LENGTH = 500
  * Shared inner content of the chat: sidebar (friend list) + thread
  * (messages, error banner, connection hint) + input row.
  */
-export function ChatInner() {
-    const { sidebar, thread, input } = useChatContainer()
+export function Chat() {
+    const { sidebar, thread, input } = useChat()
     const [draft, setDraft] = useState('')
+    const [showThreadMobile, setShowThreadMobile] = useState(false)
 
     const notConnected = input.socketStatus !== 'open'
     const isDisabled = sidebar.noFriends || notConnected
@@ -44,16 +46,19 @@ export function ChatInner() {
     return (
         <>
             {/* ── Sidebar ── */}
-            <div className={styles.chatSidebar}>
+            <div className={cx(styles.chatSidebar, showThreadMobile && styles.mobileHidden)}>
                 <div className={styles.chatSidebarTitle}>Messages</div>
                 <div className={styles.chatConvList}>
                     {sidebar.friendsList.map(f => (
                         <div
                             key={f.friend.id}
                             className={cx(styles.friendItem, f.friend.id === sidebar.activeId && styles.active)}
-                            onClick={() => sidebar.handleChooseTab(f.friend.id)}
+                            onClick={() => {
+                                sidebar.handleChooseTab(f.friend.id)
+                                setShowThreadMobile(true)
+                            }}
                         >
-                            <UserAvatar username={f.friend.username} avatar={f.friend.avatar} userId={f.friend.id} />
+                            <Avatar name={f.friend.username} imageUrl={f.friend.avatar} size="md" userId={f.friend.id} />
                             <span className={styles.friendName}>{f.friend.username}</span>
                         </div>
                     ))}
@@ -61,7 +66,16 @@ export function ChatInner() {
             </div>
 
             {/* ── Thread ── */}
-            <div className={styles.chatThread}>
+            <div className={cx(styles.chatThread, !showThreadMobile && styles.mobileHidden)}>
+                <div className={styles.chatMobileHeader}>
+                    <button
+                        className={styles.chatMobileBackBtn}
+                        onClick={() => setShowThreadMobile(false)}
+                    >
+                        <Icon name="arrowLeft" size="sm" /> Back to list
+                    </button>
+                </div>
+
                 <div
                     className={styles.chatMessages}
                     ref={thread.messagesRef}
@@ -111,4 +125,4 @@ export function ChatInner() {
     )
 }
 
-export default ChatInner
+export default Chat

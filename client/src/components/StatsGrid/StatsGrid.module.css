@@ -3,8 +3,20 @@
     min-height: 0;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: 1fr 1fr;
+    grid-template-rows: auto;
     gap: 12px;
+}
+
+@media (max-width: 560px) {
+    .statsGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 360px) {
+    .statsGrid {
+        grid-template-columns: 1fr;
+    }
 }
 
 .statBox {

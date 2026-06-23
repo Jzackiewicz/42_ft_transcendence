@@ -7,6 +7,7 @@ import { AnsweringView } from './SubviewsGamePage/AnsweringView/AnsweringView';
 import { NominationView } from './SubviewsGamePage/NominationView/NominationView';
 import { EvaluationView } from './SubviewsGamePage/EvaluationView/EvaluationView';
 import { GameOverView } from './SubviewsGamePage/GameOverView/GameOverView';
+import { LobbyChat } from './SubviewsGamePage/LobbyChat/LobbyChat';
 import { PlayerTile } from './SubviewsGamePage/PlayerTile/PlayerTile';
 import { GameHUD } from './SubviewsGamePage/GameHUD/GameHUD';
 import BlinkingSpaceBGDiv from '../../components/BlinkingSpaceBGDiv/BlinkingSpaceBGDiv';
@@ -187,6 +188,9 @@ function GamePageInner() {
                             </div>
                         </Card>
 
+                        {/* Right column: active game card + lobby chat */}
+                        <div className={styles.gameRightColumn}>
+
                         {/* Active State View Component */}
                         <Card className={styles.gameActiveArea}>
                             <SectionTitle as="h3" className={styles.gameActiveTitle}>
@@ -210,6 +214,10 @@ function GamePageInner() {
                             {renderActiveView()}
                         </Card>
 
+                        {/* Lobby chat — separate box, lobby phase only */}
+                        {gameState.current_status === GameStatus.LOBBY && <LobbyChat />}
+
+                        </div>
                     </div>
                 ) : (
                     <div className={styles.gameLoadingBanner}>

@@ -1,12 +1,9 @@
-import { useState } from 'react'
 import BlinkingSpaceBGDiv from '../../components/BlinkingSpaceBGDiv/BlinkingSpaceBGDiv'
 import AccountHeader from './SubviewsHomePage/AccountHeader/AccountHeader'
 import FriendsView from './SubviewsHomePage/FriendsView/FriendsView'
 import StatsView from './SubviewsHomePage/StatsView/StatsView'
 import ChatContainer from './SubviewsHomePage/ChatContainer/ChatContainer'
 import { Navbar } from '../../components/Navbar/Navbar'
-import UserProfileModal from '../../components/UserProfileModal/UserProfileModal'
-import { PublicUser } from '../../types/User'
 import { Button } from '../../components/Button/Button'
 import { Modal } from '../../components/Modal/Modal'
 import { Icon } from '../../components/Icon/Icon'
@@ -29,7 +26,6 @@ export function HomePage() {
         showJoinModal, setShowJoinModal,
         showRulesModal, setShowRulesModal,
     } = useHomePage()
-    const [selectedUser, setSelectedUser] = useState<PublicUser | null>(null)
 
     return (
         <FriendsProvider>
@@ -84,11 +80,6 @@ export function HomePage() {
                 </div>
             </Modal>
 
-            {/* ── User profile modal ── */}
-            {selectedUser && (
-                <UserProfileModal user={selectedUser} onClose={() => setSelectedUser(null)} />
-            )}
-
             {/* ── Main ── */}
             <main className={styles.homeContent}>
                 {createError && <ErrorBanner message={createError} onDismiss={() => setCreateError(null)} />}
@@ -101,7 +92,7 @@ export function HomePage() {
                 />
 
                 <div className={styles.accountGrid}>
-                    <FriendsView onSelectUser={setSelectedUser} />
+                    <FriendsView />
                     <StatsView />
 
                     <div className={styles.accountGridChat}>
