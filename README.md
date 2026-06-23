@@ -191,7 +191,7 @@ Friendships are stored in `Friendship`, which has two foreign keys back to `User
 - **Online Multiplayer** Quiz Game Show.
 - **Account Management**.
 - **Friends system**.
-- **Text chats** between Friends and open text chat in-game.
+- **Text chats** between Friends.
 - **Player Statistics**.
 - **LLM** based question generator for lobbies.
 
@@ -210,8 +210,8 @@ Friendships are stored in `Friendship`, which has two foreign keys back to `User
 <br> **Backend logic design and database relationship model** by: **mbudkevi**.
 <br> **Frontend implementation** by: **itykhono**.
 
-**Text Chats** - A websocket based system that allows users to directly communicate to each other by text live. You can text chat in public lobbies as well as directly with friends.
-<br> **Websocket Architecture**, and **History Pagenation** by: **jzackiew**.
+**Text Chats** - A websocket based system that allows users to directly communicate to each other by text chat live. You can text chat with friends while in public lobbies as well as in the home page.
+<br> **Websocket Architecture**, and **History Pagination** by: **jzackiew**.
 <br> **Backend Chat Logic**, and **Authentication** by: **mbudkevi**.
 <br> **Frontend implementation** by: **itkyhono**
 
@@ -247,8 +247,8 @@ Friendships are stored in `Friendship`, which has two foreign keys back to `User
 ### Major - Allow users to interact with other users.
 
 - **People Involved: jzackiew, mbudekevi, mamichal, itykhono** 
-- We have a /home/ page where once logged in a user can look for users, view their profiles, add or remove them as friends and message with them live. During live games players can chat with each other using a public text chat.
-- **Why this module?** - This module fit very well considering the aspect of the game. The idea of players interacting mid match then adding each other after the match to discuss the game or organise another one is a logical one.
+- We have a /home/ page where once logged in a user can look for users, view their profiles, add or remove them as friends and message with them using a live text chat.
+- **Why this module?** - This module fit very well considering that an aspect of the game is making friends and talking about past or current matches. The idea of players interacting mid match or after a game to play again is a great addition.
 
 ### Minor - Use an ORM for the database.
 
