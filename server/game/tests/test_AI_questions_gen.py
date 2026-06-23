@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, patch
 from django.contrib.auth import get_user_model
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
-from django.test import SimpleTestCase, TestCase
+from django.test import SimpleTestCase, TestCase, override_settings
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -175,6 +175,7 @@ class GenerateExtraQuestionsApiTest(APITestCase):
                 correct_answer="A",
                 category="general",
                 is_ai_generated=(i >= real),
+                is_verified=(i < real),
             )
             SessionQuestion.objects.create(
                 session=session,
@@ -414,6 +415,7 @@ class GenerateExtraQuestionsApiTest(APITestCase):
         mock_generate.assert_called_once_with(self.session.session_uuid, 5)
 
 
+@override_settings(QUESTIONS_PER_SESSION=10)
 class GenerateExtraQuestionsIntegrationTest(TestCase):
     """End-to-end: real service + persistence, only the LLM call mocked."""
 
@@ -486,6 +488,7 @@ class GenerateExtraQuestionsIntegrationTest(TestCase):
         self.assertEqual(len(attached_ai_questions), 3)
 
 
+@override_settings(QUESTIONS_PER_SESSION=10)
 class NewSessionUsesOnlyVerifiedQuestionsTest(TestCase):
     """A new room is seeded only with verified questions, which MAY be
     AI-generated. Unverified questions are never assigned."""

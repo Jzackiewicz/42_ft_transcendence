@@ -8,5 +8,3 @@ export function LobbyChat() {
         </div>
     )
 }
-
-export default LobbyChat

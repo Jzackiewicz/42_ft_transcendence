@@ -117,11 +117,11 @@ def generate_extra_questions_for_room(*, session_uuid: str, user):
 
     check_can_generate_extra_questions(session=session, user=user)
 
-    # Generate 50% of the room's real (non-AI) question count
-    real_questions_count = session.session_questions.filter(
-        question__is_ai_generated=False
+    # Generate 50% of the room's verified question count
+    verified_questions_count = session.session_questions.filter(
+        question__is_verified=True
     ).count()
-    n_questions_to_generate = (real_questions_count + 1) // 2
+    n_questions_to_generate = (verified_questions_count + 1) // 2
 
     if n_questions_to_generate == 0:
         return {"created_question_ids": []}
