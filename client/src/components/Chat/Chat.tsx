@@ -5,6 +5,7 @@ import { Button } from '../Button/Button'
 import { cx } from '../../utils/cx'
 import styles from './Chat.module.css'
 import { Avatar } from '../Avatar/Avatar'
+import { Icon } from '../Icon/Icon'
 
 const MAX_MESSAGE_LENGTH = 500
 
@@ -15,6 +16,7 @@ const MAX_MESSAGE_LENGTH = 500
 export function Chat() {
     const { sidebar, thread, input } = useChat()
     const [draft, setDraft] = useState('')
+    const [showThreadMobile, setShowThreadMobile] = useState(false)
 
     const notConnected = input.socketStatus !== 'open'
     const isDisabled = sidebar.noFriends || notConnected
@@ -44,14 +46,17 @@ export function Chat() {
     return (
         <>
             {/* ── Sidebar ── */}
-            <div className={styles.chatSidebar}>
+            <div className={cx(styles.chatSidebar, showThreadMobile && styles.mobileHidden)}>
                 <div className={styles.chatSidebarTitle}>Messages</div>
                 <div className={styles.chatConvList}>
                     {sidebar.friendsList.map(f => (
                         <div
                             key={f.friend.id}
                             className={cx(styles.friendItem, f.friend.id === sidebar.activeId && styles.active)}
-                            onClick={() => sidebar.handleChooseTab(f.friend.id)}
+                            onClick={() => {
+                                sidebar.handleChooseTab(f.friend.id)
+                                setShowThreadMobile(true)
+                            }}
                         >
                             <Avatar name={f.friend.username} imageUrl={f.friend.avatar} size="md" userId={f.friend.id} />
                             <span className={styles.friendName}>{f.friend.username}</span>
@@ -61,7 +66,16 @@ export function Chat() {
             </div>
 
             {/* ── Thread ── */}
-            <div className={styles.chatThread}>
+            <div className={cx(styles.chatThread, !showThreadMobile && styles.mobileHidden)}>
+                <div className={styles.chatMobileHeader}>
+                    <button
+                        className={styles.chatMobileBackBtn}
+                        onClick={() => setShowThreadMobile(false)}
+                    >
+                        <Icon name="arrowLeft" size="sm" /> Back to list
+                    </button>
+                </div>
+
                 <div
                     className={styles.chatMessages}
                     ref={thread.messagesRef}
