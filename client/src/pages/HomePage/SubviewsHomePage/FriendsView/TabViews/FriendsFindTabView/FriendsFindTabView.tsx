@@ -7,10 +7,10 @@ import styles from './FriendsFindTabView.module.css'
 import shared from '../../FriendsView.module.css'
 
 interface FriendsFindTabViewProps {
-    onSelectUser: (user: PublicUser) => void
+    onOpenProfile: (user: PublicUser) => void
 }
 
-function FriendsFindTabView({ onSelectUser }: FriendsFindTabViewProps) {
+function FriendsFindTabView({ onOpenProfile }: FriendsFindTabViewProps) {
     const { searchQuery, setSearchQuery, handleSendRequest, friends, status } = useFriendsFindTabView()
 
     return (
@@ -36,8 +36,14 @@ function FriendsFindTabView({ onSelectUser }: FriendsFindTabViewProps) {
             <div className={shared.friendsScroll}>
                 <div className={styles.findResults}>
                     {friends.map(user => (
-                        <div key={user.id} className={styles.findResultItem} onClick={() => onSelectUser(user)}>
-                            <Avatar name={user.username} imageUrl={user.avatar} size="md" userId={user.id} />
+                        <div key={user.id} className={styles.findResultItem} onClick={() => setSearchQuery(user.username)}>
+                            <Avatar
+                                name={user.username}
+                                imageUrl={user.avatar}
+                                size="md"
+                                userId={user.id}
+                                onClick={e => { e.stopPropagation(); onOpenProfile(user) }}
+                            />
                             <span className={shared.friendName}>{user.username}</span>
                         </div>
                     ))}

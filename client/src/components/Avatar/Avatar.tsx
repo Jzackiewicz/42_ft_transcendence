@@ -28,6 +28,7 @@ interface AvatarProps {
     bordered?: boolean;
     userId?: number;
     className?: string;
+    onClick?: (e: React.MouseEvent) => void;
 }
 
 export function Avatar({
@@ -38,6 +39,7 @@ export function Avatar({
     bordered = false,
     userId,
     className,
+    onClick,
 }: AvatarProps) {
     const initial = (name || '?')[0].toUpperCase();
     const [imgFailed, setImgFailed] = useState(false);
@@ -51,7 +53,10 @@ export function Avatar({
     const bgVariant = bg === 'accent' ? styles.avatarAccent : !showImage && bgClass[bg];
 
     const circle = (
-        <div className={cx(styles.avatar, sizeClass[size], bgVariant, bordered && styles.avatarBordered, className)}>
+        <div
+            className={cx(styles.avatar, sizeClass[size], bgVariant, bordered && styles.avatarBordered, onClick && styles.avatarClickable, className)}
+            onClick={onClick}
+        >
             {showImage ? (
                 <img
                     src={imageUrl!}

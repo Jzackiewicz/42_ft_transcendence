@@ -69,6 +69,16 @@
     border: 1px solid var(--border);
 }
 
+.avatarClickable {
+    cursor: pointer;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.avatarClickable:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 12px rgba(0, 229, 255, 0.4);
+}
+
 /* ── PRESENCE WRAPPER ──────────────────────────────────────────── */
 .avatarPresence {
     position: relative;
