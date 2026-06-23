@@ -4,7 +4,7 @@ import { ErrorBanner } from '../ErrorBanner/ErrorBanner'
 import { Button } from '../Button/Button'
 import { cx } from '../../utils/cx'
 import styles from './chat.module.css'
-import UserAvatar from '../UserAvatar'
+import { Avatar } from '../Avatar/Avatar'
 
 const MAX_MESSAGE_LENGTH = 500
 
@@ -53,7 +53,7 @@ export function ChatInner() {
                             className={cx(styles.friendItem, f.friend.id === sidebar.activeId && styles.active)}
                             onClick={() => sidebar.handleChooseTab(f.friend.id)}
                         >
-                            <UserAvatar username={f.friend.username} avatar={f.friend.avatar} userId={f.friend.id} />
+                            <Avatar name={f.friend.username} imageUrl={f.friend.avatar} size="md" userId={f.friend.id} />
                             <span className={styles.friendName}>{f.friend.username}</span>
                         </div>
                     ))}

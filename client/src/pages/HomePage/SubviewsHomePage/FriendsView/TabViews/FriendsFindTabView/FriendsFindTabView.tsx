@@ -1,7 +1,7 @@
 import { useFriendsFindTabView } from './useFriendsFindTabView'
 import { PublicUser } from '../../../../../../types/User'
 import { cx } from '../../../../../../utils/cx'
-import UserAvatar from '../../../../../../components/UserAvatar'
+import { Avatar } from '../../../../../../components/Avatar/Avatar'
 import { Button } from '../../../../../../components/Button/Button'
 import styles from './FriendsFindTabView.module.css'
 import shared from '../../FriendsView.module.css'
@@ -37,7 +37,7 @@ function FriendsFindTabView({ onSelectUser }: FriendsFindTabViewProps) {
                 <div className={styles.findResults}>
                     {friends.map(user => (
                         <div key={user.id} className={styles.findResultItem} onClick={() => onSelectUser(user)}>
-                            <UserAvatar username={user.username} avatar={user.avatar} userId={user.id} />
+                            <Avatar name={user.username} imageUrl={user.avatar} size="md" userId={user.id} />
                             <span className={shared.friendName}>{user.username}</span>
                         </div>
                     ))}

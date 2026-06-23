@@ -51,6 +51,12 @@
     color: var(--dim);
 }
 
+.avatarAccent {
+    background: var(--chat-accent-bg);
+    border: 2px solid var(--pb);
+    color: var(--cyan);
+}
+
 /* ── IMAGE MODE ────────────────────────────────────────────────── */
 .avatarImg {
     width: 100%;
@@ -61,4 +67,11 @@
 
 .avatarBordered {
     border: 1px solid var(--border);
+}
+
+/* ── PRESENCE WRAPPER ──────────────────────────────────────────── */
+.avatarPresence {
+    position: relative;
+    display: inline-flex;
+    flex-shrink: 0;
 }

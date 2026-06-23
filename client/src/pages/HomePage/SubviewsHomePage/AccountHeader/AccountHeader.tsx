@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react'
 import { User } from '../../../../types/User'
 import { useAccountHeader } from './useAccountHeader'
+import { Avatar } from '../../../../components/Avatar/Avatar'
 import { Badge } from '../../../../components/Badge/Badge'
 import { Button } from '../../../../components/Button/Button'
 import { Icon } from '../../../../components/Icon/Icon'
@@ -20,27 +20,6 @@ function AccountHeader({ user, setUser, setShowJoinModal, setShowRulesModal, han
         startEdit, cancelEdit, confirmEdit,
         fileInputRef, handleAvatarClick, handleAvatarChange,
     } = useAccountHeader(user, setUser)
-
-    const initial = user?.username?.[0]?.toUpperCase() ?? '?'
-    const [avatarBroken, setAvatarBroken] = useState(false)
-
-    useEffect(() => {
-        setAvatarBroken(false)
-    }, [user?.avatar])
-
-    let avatarContent
-    if (user?.avatar && !avatarBroken) {
-        avatarContent = (
-            <img
-                src={user.avatar}
-                alt="avatar"
-                className={styles['account-avatar-img']}
-                onError={() => setAvatarBroken(true)}
-            />
-        )
-    } else {
-        avatarContent = initial
-    }
 
     let usernameField
     if (editingField === 'username') {
@@ -99,8 +78,8 @@ function AccountHeader({ user, setUser, setShowJoinModal, setShowRulesModal, han
 
     return (
         <div className={styles.accountHeader}>
-            <div className={styles['account-avatar-wrapper']}>
-                <div className={styles.accountAvatar}>{avatarContent}</div>
+            <div className={styles.accountAvatarWrapper}>
+                <Avatar name={user?.username ?? ''} imageUrl={user?.avatar} size="lg" bg="accent" />
                 <button className={`${styles['edit-btn']} ${styles['avatar-edit-btn']}`} onClick={handleAvatarClick} title="Change avatar">✎</button>
                 <input
                     ref={fileInputRef}
