@@ -19,19 +19,23 @@
     background: linear-gradient(90deg, transparent, var(--cyan), var(--magenta), transparent);
 }
 
-.accountInfo { flex: 1; }
+.accountInfo { flex: 1; min-width: 0; }
 
 .accountName {
     font-family: var(--fd);
     font-size: var(--font-2xl);
     font-weight: 700;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .accountEmail {
     font-size: var(--font-sm);
     color: var(--dim);
     margin-top: 3px;
-    max-width: 200px;
+    min-width: 0;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -60,6 +64,7 @@
     display: flex;
     align-items: center;
     gap: 6px;
+    min-width: 0;
 }
 
 .editBtn {
@@ -71,6 +76,7 @@
     font-size: 13px;
     cursor: pointer;
     line-height: 1;
+    flex-shrink: 0;
     transition: color 0.15s, border-color 0.15s;
 }
 
