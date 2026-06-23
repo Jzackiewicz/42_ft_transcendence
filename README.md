@@ -102,20 +102,8 @@ sudo apt install git make docker.io docker-compose python3 python3-venv python3-
 - Run `ip addr` and search for `inet` under `enp0`. This is your local address.
 - Integrate the local address as follows:
 ``` 
-ALLOWED_HOSTS=\
-localhost,\
-127.0.0.1,\
-YOURLOCALADDRESS,\
-localhost:${HTTPS_EXPOSED_PORT},\
-127.0.0.1:${HTTPS_EXPOSED_PORT},\
-YOURLOCALADDRESS:${HTTPS_EXPOSED_PORT}
-CSRF_TRUSTED_ORIGINS=\
-https://localhost:${HTTPS_EXPOSED_PORT},\
-https://127.0.0.1:${HTTPS_EXPOSED_PORT},\
-https://YOURLOCALADDRESS:${HTTPS_EXPOSED_PORT},\
-http://localhost:5173,\
-http://127.0.0.1:5173,\
-http://YOURLOCALADDRESS:5173
+ALLOWED_HOSTS=localhost,127.0.0.1,YOURLOCALADDRESS,localhost:${HTTPS_EXPOSED_PORT},127.0.0.1:${HTTPS_EXPOSED_PORT},YOURLOCALADDRESS:${HTTPS_EXPOSED_PORT
+CSRF_TRUSTED_ORIGINS=https://localhost:${HTTPS_EXPOSED_PORT},https://127.0.0.1:${HTTPS_EXPOSED_PORT},https://YOURLOCALADDRESS:${HTTPS_EXPOSED_PORT},http://localhost:5173,http://127.0.0.1:5173,http://YOURLOCALADDRESS:517
 ```
 
 ## 🟦Resources🟦 
