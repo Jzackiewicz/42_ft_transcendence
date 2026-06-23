@@ -55,9 +55,9 @@ def generate(client, model, prompt):
                 delay = min(2 ** attempt, 30) + random.random()
                 time.sleep(delay)
                 continue
-            raise
+            raise RuntimeError("LLM currently unavailable") from e
     raise RuntimeError(
-        f"AI question generation failed after retries: [{last_error.code}] {last_error.message}"
+        f"AI question generation failed after multiple attempts: [{last_error.code}] {last_error.message}"
     ) from last_error
 
 def load_lobby_questions(lobby_id):
