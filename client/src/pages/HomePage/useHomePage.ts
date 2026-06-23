@@ -4,12 +4,22 @@ import { createLobby, joinLobby } from '../../api/gameWrapper'
 import { logout } from '../../api/authWrapper'
 import { useUser } from '../../context/UserContext'
 
+// A UUID is 36 characters (8-4-4-4-12 plus four hyphens).
+export const UUID_LENGTH = 36
+
 export function useHomePage() {
     const navigate = useNavigate()
     const { user, setUser } = useUser()
     const [joinUuid, setJoinUuid] = useState('')
+    const [joinError, setJoinError] = useState<string | null>(null)
+    const [createError, setCreateError] = useState<string | null>(null)
     const [showJoinModal, setShowJoinModal] = useState(false)
     const [showRulesModal, setShowRulesModal] = useState(false)
+
+    const openJoinModal = (open: boolean) => {
+        setJoinError(null)
+        setShowJoinModal(open)
+    }
 
     const handleLogout = async () => {
         try {
@@ -24,32 +34,51 @@ export function useHomePage() {
         }
     }
 
+    const extractError = (error: any, fallback: string) => {
+        const detail = error?.response?.data?.error
+        return (Array.isArray(detail) ? detail.join(' ') : detail)
+            ?? error?.response?.data?.detail
+            ?? fallback
+    }
+
     const handleCreateLobby = async () => {
+        setCreateError(null)
         try {
             const data = await createLobby()
             navigate('/lobby', { state: { sessionUuid: data.session_uuid } })
         } catch (error: any) {
-            navigate('/error', { state: {
-                code: error?.response?.status ?? 500,
-                message: 'Failed to create a lobby. Please try again.',
-            }})
+            const status = error?.response?.status ?? 500
+            const message = extractError(error, 'Failed to create a game. Please try again.')
+            // 5xx is a genuine server failure → full error page; 4xx is shown inline.
+            if (status >= 500) {
+                navigate('/error', { state: { code: status, message } })
+            } else {
+                setCreateError(message)
+            }
         }
     }
 
     const handleJoinLobby = async () => {
-        if (!joinUuid) return
+        const uuid = joinUuid.trim()
+        if (!uuid) return
+        if (uuid.length !== UUID_LENGTH) {
+            setJoinError('Invalid lobby UUID.')
+            return
+        }
+        setJoinError(null)
         try {
-            await joinLobby(joinUuid)
+            await joinLobby(uuid)
             setShowJoinModal(false)
-            navigate('/lobby', { state: { sessionUuid: joinUuid } })
+            navigate('/lobby', { state: { sessionUuid: uuid } })
         } catch (error: any) {
-            const message = error?.response?.data?.error?.[0]
-                ?? error?.response?.data?.detail
-                ?? 'Failed to join lobby. Check the UUID and try again.'
-            navigate('/error', { state: {
-                code: error?.response?.status ?? 500,
-                message,
-            }})
+            const status = error?.response?.status ?? 500
+            const message = extractError(error, 'Failed to join lobby. Check the UUID and try again.')
+            // 5xx is a genuine server failure → full error page; 4xx is shown inline.
+            if (status >= 500) {
+                navigate('/error', { state: { code: status, message } })
+            } else {
+                setJoinError(message)
+            }
         }
     }
 
@@ -59,7 +88,9 @@ export function useHomePage() {
         handleCreateLobby,
         handleJoinLobby,
         joinUuid, setJoinUuid,
-        showJoinModal, setShowJoinModal,
+        joinError, setJoinError,
+        createError, setCreateError,
+        showJoinModal, setShowJoinModal: openJoinModal,
         showRulesModal, setShowRulesModal,
     }
 }

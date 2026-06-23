@@ -82,7 +82,6 @@ def reserve_extra_question_generation_quota(*, user) -> None:
 			detail=(
 				f"You can generate extra questions at most {EXTRA_QUESTION_GENERATION_MAX_PER_HOUR} times per hour."
 			),
-			wait=EXTRA_QUESTION_GENERATION_CACHE_TIMEOUT_SECONDS,
 		)
 
 

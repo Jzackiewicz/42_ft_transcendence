@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useLoginView } from './useLoginView'
 import InputField from '../../../../components/InputField/InputField'
 import InlineError from '../../../../components/InlineError/InlineError'
+import { Button } from '../../../../components/Button/Button'
 import GoogleSignInButton from '../../../../components/GoogleSignInButton/GoogleSignInButton'
 import styles from '../../AuthPage.module.css'
 
@@ -53,7 +54,7 @@ function LoginView({ onSuccess }: LoginViewProps) {
                 <InputField title="Email or username" type="text" placeholder="Enter your email or username" value={identifier} onChange={(v) => { dismissOauthError(); setIdentifier(v) }} error={errors.identifierErr} />
                 <InputField title="Password" type="password" placeholder="Enter your password" value={password} onChange={(v) => { dismissOauthError(); setPassword(v) }} error={errors.passwordErr}/>
                 <InlineError message={oauthError ?? errors.generalErr ?? null} />
-                <button type="submit" className={styles.authSubmit}>Sign In ⟶</button>
+                <Button type="submit" variant="gradient" size="lg" fullWidth>Sign In ⟶</Button>
                 <div className={styles.authDivider}>or</div>
                 <div onClick={dismissOauthError}>
                     <GoogleSignInButton label="Sign in with Google" />

@@ -37,7 +37,6 @@
 
     /* Misc */
     --gradient-deg: 135deg;
-    --auth-container-height: 600px;
 
     /* Spacing scale */
     --spacing-sm: 6px;
@@ -47,6 +46,8 @@
     --spacing-3xl: 40px;
 
     /* Radii */
+    --radius-xs: 4px;
     --radius-sm: 8px;
     --radius-md: 10px;
+    --radius-lg: 14px;
 }

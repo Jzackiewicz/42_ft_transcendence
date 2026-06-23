@@ -16,7 +16,7 @@
 .chatContainer {
     display: grid;
     grid-template-columns: var(--chat-sidebar-w) 1fr;
-    border-radius: 14px;
+    border-radius: var(--radius-lg);
     border: 1px solid var(--pb);
     background: var(--panel);
     overflow: hidden;
@@ -33,7 +33,7 @@
 
 .chatSidebarTitle {
     font-family: var(--fd);
-    font-size: 13px;
+    font-size: var(--font-sm);
     font-weight: 700;
     letter-spacing: 1.5px;
     text-transform: uppercase;
@@ -71,24 +71,9 @@
     color: var(--chat-accent);
 }
 
-.friendAvatar {
-    position: relative;
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--fd);
-    font-size: 14px;
-    font-weight: 700;
-    color: #000;
-    flex-shrink: 0;
-    background: var(--chat-accent);
-}
 
 .friendName {
-    font-size: 13px;
+    font-size: var(--font-sm);
     font-weight: 600;
     color: var(--text);
     white-space: nowrap;
@@ -115,7 +100,7 @@
 
 .chatThreadName {
     font-family: var(--fd);
-    font-size: 16px;
+    font-size: var(--font-lg);
     font-weight: 700;
 }
 
@@ -142,8 +127,8 @@
 .chatBubble {
     max-width: 50%;
     padding: 8px 13px;
-    border-radius: 12px;
-    font-size: 13px;
+    border-radius: var(--radius-md);
+    font-size: var(--font-sm);
     line-height: 1.45;
     overflow-wrap: break-word;
     word-break: break-word;
@@ -165,7 +150,7 @@
 }
 
 .chatTs {
-    font-size: 10px;
+    font-size: var(--font-xs);
     color: var(--dim);
     margin-top: 3px;
     text-align: right;
@@ -176,7 +161,7 @@
 /* LOAD OLDER */
 .chatLoadOlder {
     text-align: center;
-    font-size: 11px;
+    font-size: var(--font-xs);
     color: var(--dim);
     padding: 6px 0 2px;
     flex-shrink: 0;
@@ -195,41 +180,6 @@
     text-align: center;
 }
 
-/* ERROR BANNER */
-.chatError {
-    margin: 0 0 8px;
-    padding: 8px 12px;
-    border-radius: 6px;
-    background: rgba(255, 77, 77, 0.08);
-    border: 1px solid rgba(255, 77, 77, 0.35);
-    color: #ff8a80;
-    font-family: var(--fb);
-    font-size: 12px;
-    line-height: 1.4;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-}
-
-.chatErrorRetry {
-    flex-shrink: 0;
-    background: transparent;
-    border: 1px solid rgba(255, 77, 77, 0.5);
-    color: #ff8a80;
-    padding: 3px 10px;
-    border-radius: 4px;
-    font-family: var(--fb);
-    font-size: 11px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.15s, color 0.15s;
-}
-
-.chatErrorRetry:hover {
-    background: rgba(255, 77, 77, 0.18);
-    color: #ffb4b4;
-}
 
 /* CONNECTION HINT */
 .chatConnHint {
@@ -237,7 +187,7 @@
     border-top: 1px solid var(--pb);
     color: var(--dim);
     font-family: var(--fb);
-    font-size: 11px;
+    font-size: var(--font-xs);
     letter-spacing: 0.5px;
     text-align: center;
     background: rgba(255, 255, 255, 0.02);
@@ -261,7 +211,7 @@
     padding: 9px 13px;
     color: var(--text);
     font-family: var(--fb);
-    font-size: 13px;
+    font-size: var(--font-sm);
     outline: none;
     transition: border-color 0.2s;
 }
@@ -278,7 +228,7 @@
     background: var(--chat-accent);
     color: #000;
     font-family: var(--fd);
-    font-size: 14px;
+    font-size: var(--font-md);
     font-weight: 700;
     cursor: pointer;
     transition: box-shadow 0.2s;
@@ -289,9 +239,9 @@
     background: rgba(255, 77, 77, 0.15);
     color: #ff4d4d;
     cursor: not-allowed;
-    font-size: 11px;
+    font-size: var(--font-xs);
 }
 
-.chatSendBtn:hover {
+.chatSendBtn:hover:not(:disabled) {
     box-shadow: 0 0 16px var(--chat-accent-border);
 }

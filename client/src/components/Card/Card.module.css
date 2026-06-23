@@ -2,7 +2,7 @@
     background: var(--panel);
     /* Optional theming via an ancestor-published contract; falls back to defaults. */
     border: 1px solid var(--theme-border, var(--pb));
-    border-radius: 14px;
+    border-radius: var(--radius-lg);
     padding: 24px 26px;
     display: flex;
     flex-direction: column;

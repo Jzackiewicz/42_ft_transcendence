@@ -1,5 +1,6 @@
 import { useState, FormEvent } from 'react';
 import { Button } from '../../../../components/Button/Button';
+import { Icon } from '../../../../components/Icon/Icon';
 import { QuestionBadges } from '../QuestionBadges/QuestionBadges';
 import styles from './AnsweringView.module.css';
 
@@ -77,7 +78,7 @@ export function AnsweringView({
                 </div>
             ) : (
                 <div className={styles.answeringSpectatorWaiting}>
-                    👀 {activePlayerName} is answering the question...
+                    <Icon name="eye" size="md" /> {activePlayerName} is answering the question...
                 </div>
             )}
         </div>

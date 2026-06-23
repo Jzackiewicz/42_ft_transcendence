@@ -5,10 +5,18 @@
 .mainContainer {
     display: flex;
     width: 100%;
-    flex: 1;
+    position: relative; /* anchor for the solar background layer */
+    overflow: hidden;  /* solar canvas should never cause page scroll */
 }
 
-/* ── Empty Container (left side titles) ────────────────────────────────────── */
+/* Full-page decorative solar system behind text and form. */
+.solarBackground {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+}
+
 .emptyContainer {
     flex: 1;
     display: flex;
@@ -41,7 +49,7 @@
 }
 
 .pageSubtitle {
-    font-size: 16px;
+    font-size: var(--font-lg);
     color: var(--dim);
     line-height: 1.6;
     max-width: 480px;
@@ -53,7 +61,9 @@
 .authContainer {
     position: relative;
     z-index: 1;
-    background: var(--bg);
+    background: color-mix(in srgb, var(--bg) 70%, transparent);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     width: 420px;
     border-left: 1px solid var(--border);
     padding: var(--spacing-3xl);
@@ -66,6 +76,8 @@
     display: flex;
     flex-direction: column;
     gap: var(--spacing-2xl);
+    min-height: 0;
+    max-height: 100%;
 }
 
 .authTitleContainer,
@@ -76,6 +88,8 @@
 .loginView,
 .registrationView {
     flex: 1;
+    min-height: 0;
+    overflow: visible;
 }
 
 .authTitle {
@@ -136,32 +150,6 @@
     text-align: center;
 }
 
-/* SUBMIT BUTTON ──────────────────────────────────────────────── */
-.authSubmit {
-    background: linear-gradient(var(--gradient-deg), var(--cyan), var(--magenta));
-    border: none;
-    border-radius: var(--radius-md);
-    padding: var(--spacing-lg);
-    font-family: var(--fd);
-    font-size: var(--font-xl);
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    color: var(--bg);
-    cursor: pointer;
-    text-transform: uppercase;
-    width: 100%;
-    transition: all 0.2s;
-    box-shadow: 0 0 30px var(--cyan-shadowed);
-}
-
-.authSubmit:hover {
-    transform: translateY(-1px);
-    filter: drop-shadow(0 0 20px var(--cyan-light-shadow));
-}
-
-.authSubmit:active {
-    transform: translateY(0);
-}
 
 .authDivider {
     display: flex;

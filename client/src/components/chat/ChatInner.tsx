@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import { useChatContainer } from './useChatContainer'
 import { OnlineIndicator } from '../OnlineIndicator/OnlineIndicator'
+import { Avatar } from '../Avatar/Avatar'
+import { ErrorBanner } from '../ErrorBanner/ErrorBanner'
+import { Button } from '../Button/Button'
 import { cx } from '../../utils/cx'
 import styles from './chat.module.css'
 
@@ -51,10 +54,8 @@ export function ChatInner() {
                             className={cx(styles.friendItem, f.friend.id === sidebar.activeId && styles.active)}
                             onClick={() => sidebar.handleChooseTab(f.friend.id)}
                         >
-                            <div className={styles.friendAvatar}>
-                                {(f.friend.username ?? '?')[0].toUpperCase()}
-                                <OnlineIndicator userId={f.friend.id} />
-                            </div>
+                            <Avatar name={f.friend.username ?? '?'} size="sm" bg="cyan" />
+                            <OnlineIndicator userId={f.friend.id} />
                             <span className={styles.friendName}>{f.friend.username}</span>
                         </div>
                     ))}
@@ -69,12 +70,14 @@ export function ChatInner() {
                     onScroll={thread.handleScroll}
                 >
                     {thread.historyError && (
-                        <div className={styles.chatError} role="alert">
-                            <span>{thread.historyError}</span>
-                            <button className={styles.chatErrorRetry} onClick={thread.retryHistory}>
-                                Retry
-                            </button>
-                        </div>
+                        <ErrorBanner
+                            message={thread.historyError}
+                            action={
+                                <Button variant="dangerGhost" size="sm" onClick={thread.retryHistory}>
+                                    Retry
+                                </Button>
+                            }
+                        />
                     )}
                     {thread.hasMore && thread.loadingOlder && (
                         <div className={styles.chatLoadOlder}>Loading…</div>
