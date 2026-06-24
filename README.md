@@ -364,9 +364,22 @@ the whole development team with automated feedback through the GitHub UI.
 <br> Looking back I am amazed I was able to start work on such a module as my first issue.
 - A small but unusual challenge I faced was reforming the base list of questions and answers originating from a Polish gameshow. I found a method to automatically filter out questions which only people familiar with Polish culture would know along with translating and sorting the rest.
 
-### itykhono - Developer `<ITYKHONO>`
+### itykhono - Frontend Developer
 
-- **Frontend developer responsible for the full client-side implementation, including component architecture, routing, API integration, WebSocket-based real-time communication, and frontend project structure.**
+Frontend developer responsible for the full client-side implementation, including component architecture, routing, API integration, WebSocket-based real-time communication, and overall frontend project structure.
+
+#### Features & Contributions
+
+- Designed the frontend architecture and file system structure
+- Implemented core UI components and page routing
+- Integrated the backend REST API into the frontend
+- Built user search and friends management - both business logic and UI
+- Implemented user profile viewing
+- Designed and implemented the real-time chat feature
+
+#### Challenges
+
+My guiding principle was KISS (Keep It Simple, Stupid), but limited React experience led to a series of unexpected problems - prop drilling and keeping data in sync across different parts of the same page. These issues ultimately forced some compromises in the original architecture.
 
 ### jzackiew - Product Owner
 #### Contributions
