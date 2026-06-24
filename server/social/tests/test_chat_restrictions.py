@@ -1,4 +1,4 @@
-from django.test import TestCase, TransactionTestCase
+from django.test import TransactionTestCase
 from django.contrib.auth import (
     get_user_model,
     SESSION_KEY,

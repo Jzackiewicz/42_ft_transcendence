@@ -1,10 +1,10 @@
-import { ChatInner } from '../../../../components/chat/ChatInner'
-import styles from '../../../../components/chat/chat.module.css'
+import { Chat } from '../../../../components/Chat/Chat'
+import styles from '../../../../components/Chat/Chat.module.css'
 
 function ChatContainer() {
     return (
         <div className={styles.chatContainer}>
-            <ChatInner />
+            <Chat />
         </div>
     )
 }

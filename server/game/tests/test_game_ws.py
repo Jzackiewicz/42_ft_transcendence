@@ -1220,7 +1220,7 @@ class GameConsumerTests(TransactionTestCase):
 		user3 = await database_sync_to_async(User.objects.create_user)(
 			username="testuser3", password="password", email="testuser3@test.com"
 		)
-		player3 = await database_sync_to_async(SessionPlayer.objects.create)(
+		await database_sync_to_async(SessionPlayer.objects.create)(
 			session=self.session, user=user3, display_name="Player 3", seat_number=3
 		)
 

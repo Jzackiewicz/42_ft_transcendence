@@ -8,9 +8,10 @@ interface ModalProps {
     title?: React.ReactNode;
     children: React.ReactNode;
     className?: string;
+    contained?: boolean;
 }
 
-export function Modal({ open, onClose, title, children, className }: ModalProps) {
+export function Modal({ open, onClose, title, children, className, contained = false }: ModalProps) {
     useEffect(() => {
         if (!open) return;
         const handler = (e: KeyboardEvent) => {
@@ -24,12 +25,12 @@ export function Modal({ open, onClose, title, children, className }: ModalProps)
 
     return (
         <div
-            className={styles.modalOverlay}
+            className={cx(styles.modalOverlay, contained && styles.modalOverlayContained)}
             onClick={onClose}
             role="dialog"
             aria-modal="true"
         >
-            <div className={cx(styles.modalPanel, className)} onClick={e => e.stopPropagation()}>
+            <div className={cx(styles.modalPanel, contained && styles.modalPanelContained, className)} onClick={e => e.stopPropagation()}>
                 <button
                     className={styles.modalClose}
                     onClick={onClose}

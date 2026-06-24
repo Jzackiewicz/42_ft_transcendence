@@ -1,5 +1,5 @@
 import asyncio
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from channels.db import database_sync_to_async
 from django.core.exceptions import ValidationError

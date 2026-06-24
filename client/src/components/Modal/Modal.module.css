@@ -1,7 +1,7 @@
 .modalOverlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.65);
+    background: rgba(0, 0, 0, 0.85);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -27,6 +27,22 @@
     flex-direction: column;
     gap: 16px;
     box-shadow: 0 0 40px rgba(0, 229, 255, 0.15);
+}
+
+/* ── CONTAINED: confined to nearest positioned ancestor, fills it ── */
+.modalOverlayContained {
+    position: absolute;
+    padding: 0;
+}
+
+.modalPanelContained {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    overflow-y: auto;
 }
 
 .modalClose {
