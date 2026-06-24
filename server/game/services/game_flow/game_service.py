@@ -196,14 +196,8 @@ class GameService:
 
 	def	disconnect_player(self, actor: SessionPlayer | None) -> None:
 		require_action_actor(actor, "disconnect")
-		
 		if self.session.current_status == GameSession.Status.GAME_OVER:
 			return
-		
-		if actor.seat_number is None:
-			actor.delete()
-			return
-
 		with transaction.atomic():
 			player = SessionPlayer.objects.select_for_update().get(id=actor.id)
 			if player.active_connections > 0:
