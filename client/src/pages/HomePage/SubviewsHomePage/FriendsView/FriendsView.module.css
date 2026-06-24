@@ -2,6 +2,7 @@
 .friendsView {
     height: 300px;
     overflow: hidden;
+    position: relative;
 }
 
 .friendsView > *:last-child {

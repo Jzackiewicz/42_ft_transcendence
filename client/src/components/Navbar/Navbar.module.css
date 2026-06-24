@@ -72,6 +72,14 @@
     transition: color 0.2s;
 }
 
+.codeValueFull {
+    display: inline;
+}
+
+.codeValueAbbrev {
+    display: none;
+}
+
 .appSessionCode:hover .codeValue {
     color: var(--cyan);
 }
@@ -121,6 +129,12 @@
     .appSessionCode .codeValue {
         font-size: var(--font-sm);
         margin-left: 0;
+    }
+    .codeValueFull {
+        display: none;
+    }
+    .codeValueAbbrev {
+        display: inline;
     }
     .navBtn {
         padding: 6px 12px;

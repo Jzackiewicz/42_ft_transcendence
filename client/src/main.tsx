@@ -24,7 +24,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 			<PresenceProvider>
 				<BrowserRouter>
 					<div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-						<main style={{ flex: 1 }}>
+						<main style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
 							<Routes>
 								<Route path="/" element={<RootRedirect />} />
 								<Route path="/login" element={

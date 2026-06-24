@@ -30,6 +30,12 @@ const icons = {
             <path d="M4 4l8 8M12 4l-8 8" {...stroke} />
         </svg>
     ),
+    edit: (s: number) => (
+        <svg width={s} height={s} viewBox="0 0 16 16">
+            <path d="M11.3 2.2a1.9 1.9 0 0 1 2.5 2.5L5 13.7 1.5 14.5 2.3 11z" {...stroke} />
+            <path d="M10.5 3l2.5 2.5" {...stroke} />
+        </svg>
+    ),
     copy: (s: number) => (
         <svg width={s} height={s} viewBox="0 0 16 16">
             <rect x="5" y="5" width="9" height="9" rx="1.5" {...stroke} />
