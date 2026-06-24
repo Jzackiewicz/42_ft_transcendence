@@ -1,4 +1,3 @@
-from .models import ChatMessage
 from django.contrib.auth import get_user_model
 from django.db.models import QuerySet
 from .models import ChatMessage, Friendship, FriendRequest

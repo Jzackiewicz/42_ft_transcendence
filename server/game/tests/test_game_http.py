@@ -173,7 +173,7 @@ class TestRoomCreateApi(APITestCase):
 		stale_session2.save()
 		
 		# Now add our user to stale_session2
-		stale_player2 = SessionPlayer.objects.create(
+		SessionPlayer.objects.create(
 			session=stale_session2,
 			user=self.user,
 			display_name="testuser",
@@ -520,7 +520,7 @@ class TestUserGameStatsApis(APITestCase):
 			points=30,
 			lives=3
 		)
-		sp_opp1 = SessionPlayer.objects.create(
+		SessionPlayer.objects.create(
 			session=session1,
 			user=self.opponent,
 			display_name="Opponent",

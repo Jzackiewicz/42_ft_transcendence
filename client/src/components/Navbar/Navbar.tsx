@@ -35,7 +35,8 @@ export function Navbar({ sessionUuid, actionButtonText, onActionButtonClick }: N
                     title="Click to copy session code"
                 >
                     <span className={styles.codeLabel}>SESSION CODE:</span>
-                    <span className={styles.codeValue}>{sessionUuid}</span>
+                    <span className={cx(styles.codeValue, styles.codeValueFull)}>{sessionUuid}</span>
+                    <span className={cx(styles.codeValue, styles.codeValueAbbrev)}>{sessionUuid.slice(0, 8)}…</span>
                     <span className={styles.copyIcon}>
                         <Icon name={copied ? 'check' : 'copy'} size="sm" />
                     </span>

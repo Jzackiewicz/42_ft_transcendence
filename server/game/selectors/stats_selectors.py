@@ -47,10 +47,6 @@ def _get_games_played(player_stats: dict) -> int:
     return player_stats['games_played'] or 0
 
 
-def _get_wins(wins_count: int) -> int:
-    return wins_count
-
-
 def _get_win_rate(*, wins: int, games_played: int) -> float:
     if games_played == 0:
         return 0.0

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { GameSnapshot } from '../../types/Game';
+import { connectGameSocket } from '../../api/gameWrapper';
 
 // Messages the client sends to the server over the WebSocket.
 export type ClientMessage =
@@ -43,9 +44,7 @@ export function useGameSocket(sessionUuid: string) {
         manuallyClosedRef.current = false;
 
         // Connect through Vite proxy
-        const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        const wsUrl = `${wsProtocol}//${window.location.host}/ws/game/${sessionUuid}/`;
-        const ws = new WebSocket(wsUrl);
+        const ws = connectGameSocket(sessionUuid);
 
         ws.onopen = () => {
             reconnectAttemptRef.current = 0;

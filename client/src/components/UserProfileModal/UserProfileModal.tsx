@@ -1,5 +1,8 @@
 import { PublicUser } from '../../types/User'
 import { useUserProfileModal } from './useUserProfileModal'
+import { Modal } from '../Modal/Modal'
+import { Avatar } from '../Avatar/Avatar'
+import { StatsGrid, StatTile } from '../StatsGrid/StatsGrid'
 import styles from './UserProfileModal.module.css'
 
 interface UserProfileModalProps {
@@ -14,43 +17,24 @@ function UserProfileModal({ user, onClose }: UserProfileModalProps) {
         stats === null ? '…' : `${val ?? 0}${suffix}`
 
     return (
-        <div className={styles.overlay} onClick={onClose} role="dialog" aria-modal="true">
-            <div className={styles.modal} onClick={e => e.stopPropagation()}>
-                <button className={styles.closeBtn} onClick={onClose} aria-label="Close">×</button>
-
-                <div className={styles.header}>
-                    <div className={styles.avatar}>
-                        {user.avatar
-                            ? <img src={user.avatar} alt={user.username} className={styles.avatarImg} />
-                            : user.username[0]?.toUpperCase()
-                        }
-                    </div>
-                    <div className={styles.info}>
-                        <div className={styles.username}>{user.username}</div>
-                        <div className={styles.joined}>since {user.date_joined?.slice(0, 10)}</div>
-                    </div>
-                </div>
-
-                <div className={styles.stats}>
-                    <div className={styles.statCard}>
-                        <span className={styles.statLabel}>Games Played</span>
-                        <span className={styles.statValue}>{fmt(stats?.games_played)}</span>
-                    </div>
-                    <div className={styles.statCard}>
-                        <span className={styles.statLabel}>Wins</span>
-                        <span className={styles.statValue}>{fmt(stats?.wins)}</span>
-                    </div>
-                    <div className={styles.statCard}>
-                        <span className={styles.statLabel}>Best Score</span>
-                        <span className={styles.statValue}>{fmt(stats?.highest_score)}</span>
-                    </div>
-                    <div className={styles.statCard}>
-                        <span className={styles.statLabel}>Win Rate</span>
-                        <span className={styles.statValue}>{fmt(stats?.win_rate, '%')}</span>
-                    </div>
+        <Modal open onClose={onClose}>
+            <div className={styles.header}>
+                <Avatar name={user.username} imageUrl={user.avatar} size="lg" className={styles.profileAvatar} />
+                <div className={styles.info}>
+                    <div className={styles.username}>{user.username}</div>
+                    <div className={styles.joined}>since {user.date_joined?.slice(0, 10)}</div>
                 </div>
             </div>
-        </div>
+
+            <StatsGrid>
+                <StatTile value={fmt(stats?.games_played)} label="Games Played" color="cyan" />
+                <StatTile value={fmt(stats?.wins)} label="Wins" color="magenta" />
+                <StatTile value={fmt(stats?.win_rate, '%')} label="Win Rate" color="gold" />
+                <StatTile value={fmt(stats?.avg_score)} label="Avg Score" color="green" />
+                <StatTile value={fmt(stats?.correct_rate, '%')} label="Correct Rate" color="red" />
+                <StatTile value={fmt(stats?.highest_score)} label="Best Score" color="violet" />
+            </StatsGrid>
+        </Modal>
     )
 }
 

@@ -363,7 +363,7 @@ def main():
                     try:
                         avatar_file = load_source_avatar(source_fn, target_fn)
                         profile.avatar.save(target_fn, avatar_file, save=True)
-                        print(f"    → avatar assigned")
+                        print("    → avatar assigned")
                     except Exception as e:
                         print(f"    → avatar failed: {e}")
 
@@ -374,7 +374,7 @@ def main():
                     defaults={"user": user},
                 )
                 if sa_created:
-                    print(f"    → Google account linked")
+                    print("    → Google account linked")
 
             users[name] = user
 

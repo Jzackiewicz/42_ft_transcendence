@@ -31,8 +31,3 @@ export function connectGameSocket(sessionUuid: string): WebSocket {
     const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     return new WebSocket(`${wsProtocol}//${window.location.host}/ws/game/${sessionUuid}/`);
 }
-
-export function connectChatSocket(roomName: string): WebSocket {
-    const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    return new WebSocket(`${wsProtocol}//${window.location.host}/ws/chat/${roomName}/`);
-}
