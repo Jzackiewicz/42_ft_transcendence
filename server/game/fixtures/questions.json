@@ -92,7 +92,7 @@
     "pk": 9,
     "fields": {
       "question_text": "How many countries are member states of the United Nations?",
-      "correct_answer": "193",
+      "correct_answer": "193 | one hundred ninety-three | one hundred and ninety-three",
       "category": "general",
       "is_ai_generated": false,
       "is_verified": true
@@ -281,6 +281,2349 @@
       "question_text": "Which continent or geographic region is represented by the green ring on the Olympic flag?",
       "correct_answer": "Australia | Oceania | Australia and Oceania",
       "category": "sports",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 27,
+    "fields": {
+      "question_text": "Which planet is known as the Red Planet?",
+      "correct_answer": "Mars",
+      "category": "Astronomy",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 28,
+    "fields": {
+      "question_text": "What is the largest living land animal on Earth?",
+      "correct_answer": "African Elephant | Elephant | Loxodonta africana",
+      "category": "Biology",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 29,
+    "fields": {
+      "question_text": "How many sides does a heptagon possess?",
+      "correct_answer": "7 | seven",
+      "category": "Mathematics",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 30,
+    "fields": {
+      "question_text": "What is the chemical symbol for the element Gold?",
+      "correct_answer": "Au | Gold",
+      "category": "Chemistry",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 31,
+    "fields": {
+      "question_text": "What is the name of the largest moon orbiting Saturn?",
+      "correct_answer": "Titan | Saturn VI",
+      "category": "Astronomy",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 32,
+    "fields": {
+      "question_text": "What is the atomic number of the chemical element Gold?",
+      "correct_answer": "79 | seventy-nine",
+      "category": "Chemistry",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 33,
+    "fields": {
+      "question_text": "Which monarch reigned over England during the Spanish Armada defeat?",
+      "correct_answer": "Elizabeth I | Elizabeth the First | Queen Elizabeth I | Elizabeth 1",
+      "category": "History",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 34,
+    "fields": {
+      "question_text": "What is the tallest mountain peak situated above sea level?",
+      "correct_answer": "Everest | Mount Everest | Everest Mountain | Mount Everest Peak",
+      "category": "Geography",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 35,
+    "fields": {
+      "question_text": "What is the name of the closest planet to the Sun?",
+      "correct_answer": "Mercury",
+      "category": "Astronomy",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 36,
+    "fields": {
+      "question_text": "Who wrote the play Romeo Juliet?",
+      "correct_answer": "William Shakespeare | Shakespeare | Bard of Avon",
+      "category": "Literature",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 37,
+    "fields": {
+      "question_text": "What is the largest mammal living on Earth?",
+      "correct_answer": "Blue whale | Balaenoptera musculus | Blue Whales",
+      "category": "Biology",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 38,
+    "fields": {
+      "question_text": "Which city serves as the capital of Japan?",
+      "correct_answer": "Tokyo",
+      "category": "Geography",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 39,
+    "fields": {
+      "question_text": "Which specific style of medieval architecture is characterized by pointed arches, ribbed vaults, and flying buttresses?",
+      "correct_answer": "Gothic | Gothic architecture | Gothic style",
+      "category": "Architectural History",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 40,
+    "fields": {
+      "question_text": "Which subatomic particle carries the color charge within the strong nuclear interaction?",
+      "correct_answer": "Gluon | Gluons",
+      "category": "Particle Physics",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 41,
+    "fields": {
+      "question_text": "Which influential early twentieth-century movement utilized geometric shapes to represent subjects from multiple perspectives simultaneously?",
+      "correct_answer": "Cubism | Analytical Cubism | Synthetic Cubism",
+      "category": "Art Movements",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 42,
+    "fields": {
+      "question_text": "Which ancient writing system discovered on the Phaistos Disc remains undeciphered by modern scholars?",
+      "correct_answer": "Linear A | The Phaistos Disc script",
+      "category": "Linguistic History",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 43,
+    "fields": {
+      "question_text": "Which specific lunar crater holds the distinction of being the deepest within the Solar System?",
+      "correct_answer": "South Pole-Aitken basin | South Pole Aitken | SPA basin",
+      "category": "Astronomy",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 44,
+    "fields": {
+      "question_text": "Which specific bacterium serves as the primary causative agent behind the development of stomach ulcers?",
+      "correct_answer": "Helicobacter pylori | H. pylori | Campylobacter pylori",
+      "category": "Microbiology",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 45,
+    "fields": {
+      "question_text": "Which constructed language created by Mark Okrand serves as the official tongue for a fictional warrior species in science fiction?",
+      "correct_answer": "Klingon | Klingon language | tlhIngan Hol",
+      "category": "Linguistics",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 46,
+    "fields": {
+      "question_text": "Which particular painting movement did Georges Seurat pioneer through the application of small distinct dots of color?",
+      "correct_answer": "Pointillism | Divisionism | Chromoluminarism",
+      "category": "Art History",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 47,
+    "fields": {
+      "question_text": "Which chemical compound acts as the fundamental precursor for the production of synthetic nylon?",
+      "correct_answer": "Hexamethylenediamine | 1 6-diaminohexane | 1,6-diaminohexane",
+      "category": "Organic Chemistry",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 48,
+    "fields": {
+      "question_text": "Which 19th-century gothic novel features a scientist who brings a creature to life using salvaged body parts?",
+      "correct_answer": "Frankenstein | Frankenstein: or, The Modern Prometheus",
+      "category": "Literature",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 49,
+    "fields": {
+      "question_text": "What is the name of the mathematical constant approximately equal to 2.718 that serves as the base of natural logarithms?",
+      "correct_answer": "e | Euler's number | Eulers number | Euler number",
+      "category": "Mathematics",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 50,
+    "fields": {
+      "question_text": "Which iconic dome structure located in Florence was engineered by Filippo Brunelleschi?",
+      "correct_answer": "Florence Cathedral dome | Brunelleschi's dome | Il Duomo di Firenze | Santa Maria del Fiore dome",
+      "category": "Architecture",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 51,
+    "fields": {
+      "question_text": "Which fictional detective resides at 221B Baker Street?",
+      "correct_answer": "Sherlock Holmes | Holmes | Sherlock",
+      "category": "Literature",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 52,
+    "fields": {
+      "question_text": "What standard protocol governs data transmission across the global internet?",
+      "correct_answer": "TCP/IP | TCP IP | Transmission Control Protocol Internet Protocol",
+      "category": "Technology",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 53,
+    "fields": {
+      "question_text": "Which mountain range separates the continents of Europe from Asia?",
+      "correct_answer": "Ural Mountains | Urals | The Urals | Ural",
+      "category": "Geography",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 54,
+    "fields": {
+      "question_text": "Which conflict ended with the signing of the Treaty of Versailles?",
+      "correct_answer": "World War I | First World War | The Great War | WWI | World War 1",
+      "category": "History",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 55,
+    "fields": {
+      "question_text": "Which process allows plants to convert light energy into chemical energy?",
+      "correct_answer": "Photosynthesis",
+      "category": "Science",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 56,
+    "fields": {
+      "question_text": "Which 19th-century author created the detective Sherlock Holmes?",
+      "correct_answer": "Arthur Conan Doyle | Sir Arthur Conan Doyle | Conan Doyle",
+      "category": "Literature",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 57,
+    "fields": {
+      "question_text": "Which landmark skyscraper in New York City was the tallest building on Earth from 1931 until 1970?",
+      "correct_answer": "Empire State Building | The Empire State Building",
+      "category": "Architecture",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 58,
+    "fields": {
+      "question_text": "What is the primary protein found in the silk produced by spiders?",
+      "correct_answer": "Fibroin | Spider silk fibroin",
+      "category": "Biology",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 59,
+    "fields": {
+      "question_text": "What common communication protocol is used to transfer web pages across the internet?",
+      "correct_answer": "HTTP | Hypertext Transfer Protocol",
+      "category": "Technology",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 60,
+    "fields": {
+      "question_text": "Which moon of Saturn is the only one in the Solar System known to possess a dense atmosphere?",
+      "correct_answer": "Titan",
+      "category": "Astronomy",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 61,
+    "fields": {
+      "question_text": "Which celestial body did the Voyager 1 probe reach first in 1979?",
+      "correct_answer": "Jupiter | Jove",
+      "category": "Science",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 62,
+    "fields": {
+      "question_text": "What is the name of the legislative assembly established in 1919 by the Weimar Republic?",
+      "correct_answer": "Reichstag | The Reichstag",
+      "category": "History",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 63,
+    "fields": {
+      "question_text": "Which author created the character Hercule Poirot?",
+      "correct_answer": "Agatha Christie | Dame Agatha Christie",
+      "category": "Literature",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 64,
+    "fields": {
+      "question_text": "Which large mountain range spans the border between France Spain?",
+      "correct_answer": "Pyrenees | The Pyrenees | Pyrenees Mountains",
+      "category": "Geography",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 65,
+    "fields": {
+      "question_text": "Which instrument uses a row of metal keys hit by hammers inside a wooden frame?",
+      "correct_answer": "Piano | Pianoforte",
+      "category": "Music",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 66,
+    "fields": {
+      "question_text": "Which painter is famous for the series of paintings depicting Water Lilies?",
+      "correct_answer": "Claude Monet | Monet",
+      "category": "Art",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 67,
+    "fields": {
+      "question_text": "What is the term for the starting position in chess where pieces occupy their home ranks?",
+      "correct_answer": "Setup | Initial position | Starting position",
+      "category": "Sports",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 68,
+    "fields": {
+      "question_text": "Which astronomical event describes the alignment of three celestial bodies in a straight line?",
+      "correct_answer": "Syzygy",
+      "category": "Science",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 69,
+    "fields": {
+      "question_text": "Which empire was ruled by the dynasty of the Romanovs until nineteen seventeen?",
+      "correct_answer": "Russia | Russian Empire",
+      "category": "History",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 70,
+    "fields": {
+      "question_text": "Which prestigious cycling race concludes with a finish on the Champs-Elysees?",
+      "correct_answer": "Tour de France",
+      "category": "Sports",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 71,
+    "fields": {
+      "question_text": "Which dystopian novel introduces the concept of Big Brother?",
+      "correct_answer": "1984 | Nineteen Eighty-Four | Nineteen Eighty Four",
+      "category": "Literature",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 72,
+    "fields": {
+      "question_text": "Which narrow sea passage separates the southern tip of Spain from the African continent?",
+      "correct_answer": "Strait of Gibraltar | The Strait of Gibraltar",
+      "category": "Geography",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 73,
+    "fields": {
+      "question_text": "Which baroque composer created the Brandenburg Concertos?",
+      "correct_answer": "Johann Sebastian Bach | Bach | J.S. Bach",
+      "category": "Music",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 74,
+    "fields": {
+      "question_text": "Which movement focused on depicting dreamlike scenes from the unconscious mind?",
+      "correct_answer": "Surrealism | Surrealist",
+      "category": "Art",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 75,
+    "fields": {
+      "question_text": "Which early computing pioneer designed the Difference Engine?",
+      "correct_answer": "Charles Babbage | Babbage",
+      "category": "Technology",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 76,
+    "fields": {
+      "question_text": "Which tragic hero appears in the play written by Christopher Marlowe about a scholar who sells his soul to Lucifer?",
+      "correct_answer": "Faustus | Doctor Faustus | Dr. Faustus | Johann Faust | John Faustus",
+      "category": "Literature",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 77,
+    "fields": {
+      "question_text": "What is the name for the meteorological phenomenon characterized by a sudden drop in pressure preceding a thunderstorm?",
+      "correct_answer": "Squall | Squall line | Microburst",
+      "category": "Science",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 78,
+    "fields": {
+      "question_text": "Which conflict ended with the signing of the Treaty of Ghent?",
+      "correct_answer": "War of 1812 | The War of 1812",
+      "category": "History",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 79,
+    "fields": {
+      "question_text": "What nickname refers to the group of nineteenth-century Russian composers who sought to create a distinct national style?",
+      "correct_answer": "The Five | The Mighty Handful | The Mighty Five",
+      "category": "Music",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 80,
+    "fields": {
+      "question_text": "Which professional tennis tournament is held on the red clay courts of Roland Garros?",
+      "correct_answer": "French Open | Roland Garros",
+      "category": "Sports",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 81,
+    "fields": {
+      "question_text": "Which Dutch post-impressionist painter famously cut off part of his own ear?",
+      "correct_answer": "Vincent van Gogh | Van Gogh | Vincent Gogh",
+      "category": "Art",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 82,
+    "fields": {
+      "question_text": "Which planet in our solar system has the most moons?",
+      "correct_answer": "Saturn",
+      "category": "Science",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 83,
+    "fields": {
+      "question_text": "Which treaty ended the Thirty Years War in 1648?",
+      "correct_answer": "Westphalia | Peace of Westphalia | Treaty of Westphalia",
+      "category": "History",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 84,
+    "fields": {
+      "question_text": "Who authored the dystopian novel titled Brave New World?",
+      "correct_answer": "Aldous Huxley | Huxley",
+      "category": "Literature",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 85,
+    "fields": {
+      "question_text": "Which landlocked country is located between Switzerland and Austria?",
+      "correct_answer": "Liechtenstein",
+      "category": "Geography",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 86,
+    "fields": {
+      "question_text": "Which composer wrote the opera The Barber of Seville?",
+      "correct_answer": "Gioachino Rossini | Rossini",
+      "category": "Music",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 87,
+    "fields": {
+      "question_text": "Which artistic movement is associated with the painter Salvador Dali?",
+      "correct_answer": "Surrealism | Surrealist",
+      "category": "Art",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 88,
+    "fields": {
+      "question_text": "In which city were the first modern Olympic Games held?",
+      "correct_answer": "Athens | Athena",
+      "category": "Sports",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 89,
+    "fields": {
+      "question_text": "Which taxonomic rank exists directly below family in biological classification?",
+      "correct_answer": "Genus | Genera",
+      "category": "Science",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 90,
+    "fields": {
+      "question_text": "What is the official currency used in Switzerland?",
+      "correct_answer": "Swiss Franc | Franc | CHF",
+      "category": "Geography",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 91,
+    "fields": {
+      "question_text": "Which ancient civilization constructed the cliff dwellings at Mesa Verde?",
+      "correct_answer": "Ancestral Puebloans | Anasazi",
+      "category": "History",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 92,
+    "fields": {
+      "question_text": "Which musical instrument requires the performer to use a bow on four strings?",
+      "correct_answer": "Violin | Viola | Cello | Double Bass | Contrabass",
+      "category": "Music",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 93,
+    "fields": {
+      "question_text": "Which Dutch painter created The Night Watch during the Baroque period?",
+      "correct_answer": "Rembrandt | Rembrandt van Rijn",
+      "category": "Art",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 94,
+    "fields": {
+      "question_text": "What is the name for the penalty area surrounding the goal in ice hockey?",
+      "correct_answer": "Crease | Goal Crease",
+      "category": "Sports",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 95,
+    "fields": {
+      "question_text": "Which civilization built the city of Machu Picchu?",
+      "correct_answer": "Inca | Incas | Incan Empire",
+      "category": "History",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 96,
+    "fields": {
+      "question_text": "What is the professional cycling race held annually in France?",
+      "correct_answer": "Tour de France | The Tour",
+      "category": "Sports",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 97,
+    "fields": {
+      "question_text": "Which desert covers much of northern China and southern Mongolia?",
+      "correct_answer": "Gobi | Gobi Desert",
+      "category": "Geography",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 98,
+    "fields": {
+      "question_text": "Which classical composer wrote The Four Seasons?",
+      "correct_answer": "Antonio Vivaldi | Vivaldi",
+      "category": "Music",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 99,
+    "fields": {
+      "question_text": "Which artist painted the ceiling of the Sistine Chapel?",
+      "correct_answer": "Michelangelo | Michelangelo Buonarroti",
+      "category": "Art",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 100,
+    "fields": {
+      "question_text": "Which director helmed the science fiction epic 2001: A Space Odyssey?",
+      "correct_answer": "Stanley Kubrick | Kubrick",
+      "category": "Film",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 101,
+    "fields": {
+      "question_text": "What is the chemical symbol for the element Potassium?",
+      "correct_answer": "K",
+      "category": "Science",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 102,
+    "fields": {
+      "question_text": "What is the hardest natural substance known on Earth?",
+      "correct_answer": "Diamond",
+      "category": "Science",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 103,
+    "fields": {
+      "question_text": "Which empire was ruled by Suleiman the Magnificent?",
+      "correct_answer": "Ottoman Empire | The Ottoman Empire",
+      "category": "History",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 104,
+    "fields": {
+      "question_text": "Which desert is the largest hot desert in the world?",
+      "correct_answer": "Sahara | Sahara Desert | The Sahara",
+      "category": "Geography",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 105,
+    "fields": {
+      "question_text": "Who painted the mural The Last Supper?",
+      "correct_answer": "Leonardo da Vinci | Da Vinci | Leonardo",
+      "category": "Art",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 106,
+    "fields": {
+      "question_text": "Which musical instrument has eighty-eight keys?",
+      "correct_answer": "Piano | Pianoforte",
+      "category": "Music",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 107,
+    "fields": {
+      "question_text": "How many players are on a standard soccer team on the field?",
+      "correct_answer": "11 | eleven",
+      "category": "Sports",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 108,
+    "fields": {
+      "question_text": "Which fictional kingdom serves as the setting for the film Black Panther?",
+      "correct_answer": "Wakanda",
+      "category": "Film",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 109,
+    "fields": {
+      "question_text": "What gas do plants absorb from the atmosphere for photosynthesis?",
+      "correct_answer": "Carbon dioxide | CO2",
+      "category": "Science",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 110,
+    "fields": {
+      "question_text": "Which chemical element possesses the atomic number 79?",
+      "correct_answer": "Gold | Au",
+      "category": "Science",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 111,
+    "fields": {
+      "question_text": "What title did the ruler of the Ottoman Empire hold?",
+      "correct_answer": "Sultan | The Sultan",
+      "category": "History",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 112,
+    "fields": {
+      "question_text": "Which prestigious cycling race is known as La Grande Boucle?",
+      "correct_answer": "Tour de France | The Tour de France",
+      "category": "Sports",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 113,
+    "fields": {
+      "question_text": "Which artist is credited with pioneering the Cubist movement alongside Georges Braque?",
+      "correct_answer": "Pablo Picasso | Picasso",
+      "category": "Art",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 114,
+    "fields": {
+      "question_text": "What is the primary string instrument featured in a traditional string quartet?",
+      "correct_answer": "Violin | The Violin",
+      "category": "Music",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 115,
+    "fields": {
+      "question_text": "Which Russian author wrote the expansive novel War and Peace?",
+      "correct_answer": "Leo Tolstoy | Tolstoy | Lev Tolstoy",
+      "category": "Literature",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 116,
+    "fields": {
+      "question_text": "What networking protocol serves as the standard for sending email across the internet?",
+      "correct_answer": "SMTP | Simple Mail Transfer Protocol",
+      "category": "Technology",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 117,
+    "fields": {
+      "question_text": "Which taxonomic rank is found directly below order in the biological classification system?",
+      "correct_answer": "Family",
+      "category": "Biology",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 118,
+    "fields": {
+      "question_text": "What process involves the conversion of liquid into gas below the boiling point?",
+      "correct_answer": "Evaporation",
+      "category": "Science",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 119,
+    "fields": {
+      "question_text": "Which conflict ended with the 1648 Peace of Westphalia?",
+      "correct_answer": "Thirty Years War | The Thirty Years War",
+      "category": "History",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 120,
+    "fields": {
+      "question_text": "What is the capital city of Kazakhstan?",
+      "correct_answer": "Astana",
+      "category": "Geography",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 121,
+    "fields": {
+      "question_text": "Which sport uses a ball called a shuttlecock?",
+      "correct_answer": "Badminton",
+      "category": "Sports",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 122,
+    "fields": {
+      "question_text": "Which instrument family does the oboe belong to?",
+      "correct_answer": "Woodwind | Woodwind instrument | Woodwinds",
+      "category": "Music",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 123,
+    "fields": {
+      "question_text": "Which artistic movement originated in Zurich around 1916 as a reaction to World War I?",
+      "correct_answer": "Dada | Dadaism",
+      "category": "Art",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 124,
+    "fields": {
+      "question_text": "What name describes a polygon with exactly eight sides?",
+      "correct_answer": "Octagon",
+      "category": "Mathematics",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 125,
+    "fields": {
+      "question_text": "Which famous building in India was commissioned by Shah Jahan?",
+      "correct_answer": "Taj Mahal | The Taj Mahal",
+      "category": "Architecture",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 126,
+    "fields": {
+      "question_text": "Who reigned as the last monarch of the Russian Empire?",
+      "correct_answer": "Nicholas II | Nicholas 2 | Tsar Nicholas II | Nicholas the Second | Czar Nicholas II | Emperor Nicholas II",
+      "category": "History",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 127,
+    "fields": {
+      "question_text": "What desert covers much of northern Chile?",
+      "correct_answer": "Atacama | Atacama Desert",
+      "category": "Geography",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 128,
+    "fields": {
+      "question_text": "What string instrument features a prominent role in the Concerto for Clarinet by Aaron Copland?",
+      "correct_answer": "Piano | Harp",
+      "category": "Music",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 129,
+    "fields": {
+      "question_text": "Which painter created the famous post-impressionist work The Starry Night?",
+      "correct_answer": "Vincent van Gogh | Van Gogh | Vincent",
+      "category": "Art",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 130,
+    "fields": {
+      "question_text": "What is the primary objective in the traditional Japanese martial art Kyudo?",
+      "correct_answer": "Archery | Shooting arrows",
+      "category": "Sports",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 131,
+    "fields": {
+      "question_text": "What 1941 cinematic masterpiece directed by Orson Welles revolutionized camera angles?",
+      "correct_answer": "Citizen Kane",
+      "category": "Film",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 132,
+    "fields": {
+      "question_text": "What is the primary gas found in the atmosphere of Venus?",
+      "correct_answer": "Carbon dioxide | CO2",
+      "category": "Science",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 133,
+    "fields": {
+      "question_text": "Which conflict ended with the Treaty of Paris in 1783?",
+      "correct_answer": "American Revolutionary War | American Revolution | The Revolutionary War | Revolutionary War | American War of Independence",
+      "category": "History",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 134,
+    "fields": {
+      "question_text": "What sport utilizes a ball consisting of eighteen leather panels stitched together?",
+      "correct_answer": "Soccer | Football | Association football",
+      "category": "Sports",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 135,
+    "fields": {
+      "question_text": "Which specific instrument does a virtuoso play when performing a concerto by Niccolo Paganini?",
+      "correct_answer": "Violin | The violin",
+      "category": "Music",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 136,
+    "fields": {
+      "question_text": "Which Byzantine emperor commissioned the construction of the Hagia Sophia in Constantinople?",
+      "correct_answer": "Justinian I | Justinian the Great | Justinian 1 | Justinian | Justinian the First",
+      "category": "History",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 137,
+    "fields": {
+      "question_text": "What is the name of the fictional detective appearing in novels written by Raymond Chandler?",
+      "correct_answer": "Philip Marlowe | Marlowe | Phil Marlowe",
+      "category": "Literature",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 138,
+    "fields": {
+      "question_text": "Which programming language was developed by Guido van Rossum during the late nineteen eighties?",
+      "correct_answer": "Python",
+      "category": "Technology",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 139,
+    "fields": {
+      "question_text": "Which biological structure acts as the primary site for protein synthesis within a cell?",
+      "correct_answer": "Ribosome | Ribosomes",
+      "category": "Biology",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 140,
+    "fields": {
+      "question_text": "Which SI unit measures the intensity of light falling on a surface?",
+      "correct_answer": "Lux | lx",
+      "category": "Physics",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 141,
+    "fields": {
+      "question_text": "What is the atomic number of the noble gas element xenon?",
+      "correct_answer": "54 | fifty-four",
+      "category": "Science",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 142,
+    "fields": {
+      "question_text": "Which large desert covers much of northern Botswana and parts of Namibia?",
+      "correct_answer": "Kalahari | Kalahari Desert | The Kalahari",
+      "category": "Geography",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 143,
+    "fields": {
+      "question_text": "Which instrument uses a slide to change its pitch by lengthening the tube?",
+      "correct_answer": "Trombone | Slide trombone",
+      "category": "Music",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 144,
+    "fields": {
+      "question_text": "What is the official term for a score of three under par on a single hole in golf?",
+      "correct_answer": "Albatross | Double eagle",
+      "category": "Sports",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 145,
+    "fields": {
+      "question_text": "Which Spanish artist is famous for his surrealist painting The Persistence of Memory?",
+      "correct_answer": "Salvador Dali | Dali",
+      "category": "Art",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 146,
+    "fields": {
+      "question_text": "What is the name of the fictional organization led by Ernst Stavro Blofeld in the James Bond series?",
+      "correct_answer": "Spectre | Special Executive for Counter-intelligence Terrorism Revenge and Extortion",
+      "category": "Film",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 147,
+    "fields": {
+      "question_text": "Which human organ produces insulin to regulate blood sugar levels?",
+      "correct_answer": "Pancreas",
+      "category": "Biology",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 148,
+    "fields": {
+      "question_text": "What is the numerical value of the mathematical constant phi?",
+      "correct_answer": "1.618 | one point six one eight | golden ratio",
+      "category": "Mathematics",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 149,
+    "fields": {
+      "question_text": "What is the central holy book in the Sikh faith?",
+      "correct_answer": "Guru Granth Sahib | Granth Sahib",
+      "category": "Religion",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 150,
+    "fields": {
+      "question_text": "Which bright star serves as the North Star in the constellation Ursa Minor?",
+      "correct_answer": "Polaris",
+      "category": "Astronomy",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 151,
+    "fields": {
+      "question_text": "Which international court is situated in The Hague and settles disputes between states?",
+      "correct_answer": "International Court of Justice | ICJ | World Court",
+      "category": "Politics",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 152,
+    "fields": {
+      "question_text": "What is the chemical formula for the compound known as ozone?",
+      "correct_answer": "O3 | O 3",
+      "category": "Chemistry",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 153,
+    "fields": {
+      "question_text": "Which term describes a market structure dominated by a small number of large sellers?",
+      "correct_answer": "Oligopoly",
+      "category": "Economics",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 154,
+    "fields": {
+      "question_text": "Which gas comprises approximately seventy-eight percent of the atmosphere on Earth?",
+      "correct_answer": "Nitrogen | N | N2",
+      "category": "Science",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 155,
+    "fields": {
+      "question_text": "Which treaty ended the Seven Years War between Great Britain and France in 1763?",
+      "correct_answer": "Treaty of Paris | Paris Treaty | The Treaty of Paris",
+      "category": "History",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 156,
+    "fields": {
+      "question_text": "What is the term for the signature of a piece indicating the number of beats per measure?",
+      "correct_answer": "Time signature | Meter",
+      "category": "Music",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 157,
+    "fields": {
+      "question_text": "Which subatomic particle carries a negative electric charge?",
+      "correct_answer": "Electron | Electrons",
+      "category": "Science",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 158,
+    "fields": {
+      "question_text": "Which large desert covers much of northern Africa?",
+      "correct_answer": "Sahara | Sahara Desert | The Sahara",
+      "category": "Geography",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 159,
+    "fields": {
+      "question_text": "Which sculptor created the famous statue David displayed in Florence?",
+      "correct_answer": "Michelangelo | Michelangelo Buonarroti",
+      "category": "Art",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 160,
+    "fields": {
+      "question_text": "Which Russian dynasty ruled from 1613 until the revolution in 1917?",
+      "correct_answer": "Romanov | Romanov dynasty | House of Romanov",
+      "category": "History",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 161,
+    "fields": {
+      "question_text": "Which city serves as the administrative capital of South Africa?",
+      "correct_answer": "Pretoria",
+      "category": "Geography",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 162,
+    "fields": {
+      "question_text": "What pigment is obtained from the lapis lazuli stone?",
+      "correct_answer": "Ultramarine | Ultramarine blue",
+      "category": "Art",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 163,
+    "fields": {
+      "question_text": "Which phenomenon occurs when light changes direction passing through different mediums?",
+      "correct_answer": "Refraction",
+      "category": "Science",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 164,
+    "fields": {
+      "question_text": "Who led the expedition that first successfully crossed the Pacific Ocean?",
+      "correct_answer": "Ferdinand Magellan | Magellan",
+      "category": "History",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 165,
+    "fields": {
+      "question_text": "Which gas is responsible for the characteristic smell of rotten eggs?",
+      "correct_answer": "Hydrogen sulfide | H2S | Hydrogen sulphide",
+      "category": "Science",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 166,
+    "fields": {
+      "question_text": "How many players are on each side of a professional volleyball court during a match?",
+      "correct_answer": "6 | six",
+      "category": "Sports",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 167,
+    "fields": {
+      "question_text": "Which historical figure was known as the Maid of Orleans?",
+      "correct_answer": "Joan of Arc | Saint Joan of Arc | Jeanne d'Arc | Jeanne dArc | St. Joan of Arc",
+      "category": "History",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 168,
+    "fields": {
+      "question_text": "How many squares are on a standard tournament chess board?",
+      "correct_answer": "64 | sixty-four",
+      "category": "Sports",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 169,
+    "fields": {
+      "question_text": "Which African lake is the largest tropical lake in the world?",
+      "correct_answer": "Lake Victoria | Victoria | Lake Victoria Nyanza",
+      "category": "Geography",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 170,
+    "fields": {
+      "question_text": "Which epic poem by Homer recounts the ten-year journey of Odysseus returning home from the Trojan War?",
+      "correct_answer": "Odyssey | The Odyssey",
+      "category": "Literature",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 171,
+    "fields": {
+      "question_text": "Which cinematic franchise features the recurring villain Emperor Palpatine?",
+      "correct_answer": "Star Wars",
+      "category": "Film",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 172,
+    "fields": {
+      "question_text": "Which noble gas is commonly used to produce a bright orange-red light in neon signs?",
+      "correct_answer": "Neon | Ne",
+      "category": "Science",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 173,
+    "fields": {
+      "question_text": "What is the collective term for the group of chemical elements including neon, argon, and helium?",
+      "correct_answer": "Noble gases | Inert gases",
+      "category": "Science",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 174,
+    "fields": {
+      "question_text": "Which ancient civilization constructed the complex of temples known as Angkor Wat?",
+      "correct_answer": "Khmer Empire | Khmer",
+      "category": "History",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 175,
+    "fields": {
+      "question_text": "What is the name of the narrow strait connecting the Persian Gulf with the Gulf of Oman?",
+      "correct_answer": "Strait of Hormuz | Hormuz",
+      "category": "Geography",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 176,
+    "fields": {
+      "question_text": "Which musical term denotes a gradual increase in the volume of a composition?",
+      "correct_answer": "Crescendo",
+      "category": "Music",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 177,
+    "fields": {
+      "question_text": "Which director is renowned for his signature use of the 'Techniscope' process in his spaghetti westerns?",
+      "correct_answer": "Sergio Leone | Leone",
+      "category": "Film",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 178,
+    "fields": {
+      "question_text": "What is the common name for the atmospheric phenomenon technically known as aurora borealis?",
+      "correct_answer": "Northern lights | Northern Lights",
+      "category": "Science",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 179,
+    "fields": {
+      "question_text": "Who served as the first female Prime Minister of Israel?",
+      "correct_answer": "Golda Meir | Meir",
+      "category": "History",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 180,
+    "fields": {
+      "question_text": "What is the traditional Japanese art of folding paper into decorative shapes?",
+      "correct_answer": "Origami",
+      "category": "Art",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 181,
+    "fields": {
+      "question_text": "Which orchestral instrument is often referred to as the 'king of instruments'?",
+      "correct_answer": "Pipe organ | Organ",
+      "category": "Music",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 182,
+    "fields": {
+      "question_text": "Which science fiction film features the pioneering motion-control photography of Douglas Trumbull?",
+      "correct_answer": "2001: A Space Odyssey | 2001",
+      "category": "Film",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 183,
+    "fields": {
+      "question_text": "What is the unit of measure for electrical resistance?",
+      "correct_answer": "Ohm | Ohms",
+      "category": "Science",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 184,
+    "fields": {
+      "question_text": "Which document was signed by King John at Runnymede in 1215?",
+      "correct_answer": "Magna Carta | The Magna Carta",
+      "category": "History",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 185,
+    "fields": {
+      "question_text": "What is the name of the technique where paint is applied to wet plaster?",
+      "correct_answer": "Fresco | Frescos | Frescoes",
+      "category": "Art",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 186,
+    "fields": {
+      "question_text": "Which classic film is set in the fictional town of Pottersville?",
+      "correct_answer": "It's a Wonderful Life | Its a Wonderful Life",
+      "category": "Film",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 187,
+    "fields": {
+      "question_text": "What was the official name of the German state between 1933 and 1945?",
+      "correct_answer": "Third Reich | Nazi Germany",
+      "category": "History",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 188,
+    "fields": {
+      "question_text": "Which instrument family includes the oboe, bassoon, and clarinet?",
+      "correct_answer": "Woodwind | Woodwinds",
+      "category": "Music",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 189,
+    "fields": {
+      "question_text": "Which strait separates the continents of Europe and Africa?",
+      "correct_answer": "Strait of Gibraltar | Gibraltar",
+      "category": "Geography",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 190,
+    "fields": {
+      "question_text": "What name is given to the annual award presented by the British Academy of Film and Television Arts?",
+      "correct_answer": "BAFTA | BAFTAs",
+      "category": "Film",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 191,
+    "fields": {
+      "question_text": "What process describes the movement of water molecules through a semipermeable membrane?",
+      "correct_answer": "Osmosis",
+      "category": "Science",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 192,
+    "fields": {
+      "question_text": "Which architect designed the Guggenheim Museum in Bilbao, Spain?",
+      "correct_answer": "Frank Gehry | Gehry | Frank O. Gehry",
+      "category": "Art",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 193,
+    "fields": {
+      "question_text": "What term describes the speed at which a musical piece is played?",
+      "correct_answer": "Tempo",
+      "category": "Music",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 194,
+    "fields": {
+      "question_text": "Which European capital city sits on the banks of the Danube River?",
+      "correct_answer": "Budapest | Vienna | Bratislava | Belgrade",
+      "category": "Geography",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 195,
+    "fields": {
+      "question_text": "Which opera composed by Georges Bizet is set in Seville, Spain?",
+      "correct_answer": "Carmen",
+      "category": "Music",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 196,
+    "fields": {
+      "question_text": "Who was the leader of the Soviet Union during the Cuban Missile Crisis?",
+      "correct_answer": "Nikita Khrushchev | Khrushchev",
+      "category": "History",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 197,
+    "fields": {
+      "question_text": "Which sea lies between the Korean Peninsula and Japan?",
+      "correct_answer": "Sea of Japan | East Sea",
+      "category": "Geography",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 198,
+    "fields": {
+      "question_text": "What is the chemical symbol for the element Tungsten?",
+      "correct_answer": "W",
+      "category": "Science",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 199,
+    "fields": {
+      "question_text": "What technique uses small dots of color to form an image, pioneered by Georges Seurat?",
+      "correct_answer": "Pointillism | Pointillist",
+      "category": "Art",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 200,
+    "fields": {
+      "question_text": "What type of string instrument is a cello?",
+      "correct_answer": "Violin family | Chordophone | Violin",
+      "category": "Music",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 201,
+    "fields": {
+      "question_text": "Which French queen was executed by guillotine during the French Revolution?",
+      "correct_answer": "Marie Antoinette",
+      "category": "History",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 202,
+    "fields": {
+      "question_text": "Which sport uses the term 'love' to indicate a score of zero?",
+      "correct_answer": "Tennis",
+      "category": "Sports",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 203,
+    "fields": {
+      "question_text": "Which directed the 1960 horror film Psycho?",
+      "correct_answer": "Alfred Hitchcock | Hitchcock",
+      "category": "Film",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 204,
+    "fields": {
+      "question_text": "Which treaty ended the First World War in 1919?",
+      "correct_answer": "Treaty of Versailles | Versailles Treaty",
+      "category": "History",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 205,
+    "fields": {
+      "question_text": "Which tournament serves as the oldest golf championship?",
+      "correct_answer": "The Open Championship | The Open | British Open",
+      "category": "Sports",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 206,
+    "fields": {
+      "question_text": "Which art movement features distorted shapes in vibrant colors?",
+      "correct_answer": "Fauvism | Fauvist",
+      "category": "Art",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 207,
+    "fields": {
+      "question_text": "Which dynasty ruled China before the founding of the Republic?",
+      "correct_answer": "Qing | Qing Dynasty | Manchu Dynasty",
+      "category": "History",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 208,
+    "fields": {
+      "question_text": "Which chess opening begins with the move e4?",
+      "correct_answer": "King's Pawn Opening | Kings Pawn Opening | Kings Pawn",
+      "category": "Sports",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 209,
+    "fields": {
+      "question_text": "Which band released the album The Dark Side of the Moon?",
+      "correct_answer": "Pink Floyd",
+      "category": "Music",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 210,
+    "fields": {
+      "question_text": "Which film won the Academy Award for Best Picture for 1993?",
+      "correct_answer": "Schindler's List | Schindlers List",
+      "category": "Film",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 211,
+    "fields": {
+      "question_text": "Which empire did Cyrus the Great found?",
+      "correct_answer": "Achaemenid Empire | Persian Empire",
+      "category": "History",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 212,
+    "fields": {
+      "question_text": "Which South American lake resides highest above sea level?",
+      "correct_answer": "Lake Titicaca | Titicaca",
+      "category": "Geography",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 213,
+    "fields": {
+      "question_text": "Which position in a football team usually wears the number ten jersey?",
+      "correct_answer": "Playmaker | Attacking Midfielder",
+      "category": "Sports",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 214,
+    "fields": {
+      "question_text": "Which opera composed by Georges Bizet premiered in 1875?",
+      "correct_answer": "Carmen",
+      "category": "Music",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 215,
+    "fields": {
+      "question_text": "Which sculptor created the bronze statue The Thinker?",
+      "correct_answer": "Auguste Rodin | Rodin",
+      "category": "Art",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 216,
+    "fields": {
+      "question_text": "Which archipelago is located at the point where the equator crosses the prime meridian?",
+      "correct_answer": "Null Island",
+      "category": "Geography",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 217,
+    "fields": {
+      "question_text": "Which musical instrument is considered a member of the brass family but lacks valves?",
+      "correct_answer": "Trombone | Slide trombone",
+      "category": "Music",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 218,
+    "fields": {
+      "question_text": "Who was the primary author of the American Declaration of Independence?",
+      "correct_answer": "Thomas Jefferson | Jefferson",
+      "category": "History",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 219,
+    "fields": {
+      "question_text": "Which opera composer created The Ring Cycle?",
+      "correct_answer": "Richard Wagner | Wagner",
+      "category": "Music",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 220,
+    "fields": {
+      "question_text": "Which actor played the role of Vito Corleone in The Godfather?",
+      "correct_answer": "Marlon Brando | Brando",
+      "category": "Film",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 221,
+    "fields": {
+      "question_text": "What field of biology focuses on the study of fungi?",
+      "correct_answer": "Mycology",
+      "category": "Science",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 222,
+    "fields": {
+      "question_text": "Which artist is known as the King of Pop?",
+      "correct_answer": "Michael Jackson | Jackson",
+      "category": "Music",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 223,
+    "fields": {
+      "question_text": "Which botanical organelle serves as the site for photosynthesis?",
+      "correct_answer": "Chloroplast | Chloroplasts",
+      "category": "Science",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 224,
+    "fields": {
+      "question_text": "What is the duration of a standard professional football match excluding extra time?",
+      "correct_answer": "90 minutes | ninety minutes | 90 min",
+      "category": "Sports",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 225,
+    "fields": {
+      "question_text": "Which island nation is located entirely within the Southern Hemisphere?",
+      "correct_answer": "New Zealand | Australia",
+      "category": "Geography",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 226,
+    "fields": {
+      "question_text": "Which French leader was exiled to the island of Saint Helena after his final defeat?",
+      "correct_answer": "Napoleon Bonaparte | Napoleon | Napoleon I",
+      "category": "History",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 227,
+    "fields": {
+      "question_text": "Which film won the Academy Award for Best Picture in the year 1994?",
+      "correct_answer": "Forrest Gump",
+      "category": "Film",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 228,
+    "fields": {
+      "question_text": "Who authored the collection of short stories titled Dubliners?",
+      "correct_answer": "James Joyce | Joyce",
+      "category": "Literature",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 229,
+    "fields": {
+      "question_text": "Which epic poem narrates the fall of man written by John Milton?",
+      "correct_answer": "Paradise Lost",
+      "category": "Literature",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 230,
+    "fields": {
+      "question_text": "What is the name of the taxonomic family that includes cats?",
+      "correct_answer": "Felidae | Feline | Felines",
+      "category": "Science",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 231,
+    "fields": {
+      "question_text": "Which dynasty ruled China before the rise of the Ming dynasty?",
+      "correct_answer": "Yuan | Yuan Dynasty | Mongol Dynasty",
+      "category": "History",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 232,
+    "fields": {
+      "question_text": "What is the formal name of the four-stringed instrument associated with Hawaii?",
+      "correct_answer": "Ukulele | Ukelele",
+      "category": "Music",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 233,
+    "fields": {
+      "question_text": "Which athletic event consists of ten different track field disciplines?",
+      "correct_answer": "Decathlon",
+      "category": "Sports",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 234,
+    "fields": {
+      "question_text": "Which organelle serves as the powerhouse of the cell?",
+      "correct_answer": "Mitochondria | Mitochondrion",
+      "category": "Science",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 235,
+    "fields": {
+      "question_text": "Which landlocked country sits in the middle of the Pyrenees mountains between France plus Spain?",
+      "correct_answer": "Andorra | Principality of Andorra",
+      "category": "Geography",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 236,
+    "fields": {
+      "question_text": "What title was held by the monarchs of ancient Egypt?",
+      "correct_answer": "Pharaoh | Pharaohs",
+      "category": "History",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 237,
+    "fields": {
+      "question_text": "What musical term describes a gradual decrease in volume?",
+      "correct_answer": "Diminuendo | Decrescendo",
+      "category": "Music",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 238,
+    "fields": {
+      "question_text": "What is the softest mineral on the Mohs scale?",
+      "correct_answer": "Talc",
+      "category": "Science",
+      "is_ai_generated": true,
+      "is_verified": true
+    }
+  },
+  {
+    "model": "game.question",
+    "pk": 239,
+    "fields": {
+      "question_text": "Which body of water separates Italy from the Balkan Peninsula?",
+      "correct_answer": "Adriatic Sea | Adriatic",
+      "category": "Geography",
       "is_ai_generated": true,
       "is_verified": true
     }
