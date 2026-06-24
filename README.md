@@ -37,9 +37,9 @@ Had enough of losing to them? **Unfriend them and see them disappear!**
 
 ### How to play?
 
-Want to host a game? **Simply go to <Final_URL>, Register or Log in, Create a lobby, and send your friends the lobby ID.**
+Want to host a game? **Simply go to https://c3r8s1.42warsaw.pl:8443, Register or Log in, Create a lobby, and send your friends the lobby ID.**
 
-Having trouble joining a friend who is already hosting lobby? **Go to <Final_URL>, Register or Log in then press JOIN ROOM and ask your friend for the room code.**
+Having trouble joining a friend who is already hosting lobby? **Go to https://c3r8s1.42warsaw.pl:8443, Register or Log in then press JOIN ROOM and ask your friend for the room code.**
 
 ### Why quizsendence? ``goal``
 
@@ -53,9 +53,9 @@ Our goal was to recreate the game show Fifteen to One in webapp form. Each perso
 - Download the repository using: ``git clone https://github.com/Jzackiewicz/42_ft_transcendence.git``
 - Locate the .env.example file. Copy it and rename the copy to .env.
 - (**IMPORTANT**) Open the newly made .env file and change all necessary fields. Refer to a section below called **⚙️ Setting up the .env**.
-- Optionally update all README.md <Final_URL> variables to match your configured .env.
+- Optionally update all README.md https://c3r8s1.42warsaw.pl:8443 urls to match what you configured in your .env.
 - Enter the project folder and run: ``make up``
-- Check whether the server is running by visiting <Final_URL>.
+- Check whether the server is running by visiting https://c3r8s1.42warsaw.pl:8443.
 
 ### Are you already hosting the website and want to play?
 
