@@ -2,7 +2,7 @@
    Single source of truth for the design system */
 :root {
     /* Typography */
-    --fd: 'Rajdhani', sans-serif;
+    --fd: 'Orbitron', sans-serif;
     --fb: 'Space Grotesk', sans-serif;
     --font-xs: 11px;
     --font-sm: 13px;
