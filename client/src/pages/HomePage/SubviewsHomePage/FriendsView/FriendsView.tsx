@@ -16,6 +16,7 @@ function FriendsView() {
     const [selectedUser, setSelectedUser] = useState<PublicUser | null>(null)
 
     return (
+        <>
         <Card className={styles.friendsView}>
             <SectionTitle><Icon name="users" size="md" /> Friends</SectionTitle>
 
@@ -45,11 +46,12 @@ function FriendsView() {
             {activeTab === 'friends'  && <FriendsListTabView onOpenProfile={setSelectedUser} />}
             {activeTab === 'requests' && <FriendsRequestTabView onOpenProfile={setSelectedUser} />}
             {activeTab === 'find'     && <FriendsFindTabView onOpenProfile={setSelectedUser} />}
-
-            {selectedUser && (
-                <UserProfileModal user={selectedUser} onClose={() => setSelectedUser(null)} />
-            )}
         </Card>
+
+        {selectedUser && (
+            <UserProfileModal user={selectedUser} onClose={() => setSelectedUser(null)} />
+        )}
+        </>
     )
 }
 

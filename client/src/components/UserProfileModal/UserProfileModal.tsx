@@ -17,7 +17,7 @@ function UserProfileModal({ user, onClose }: UserProfileModalProps) {
         stats === null ? '…' : `${val ?? 0}${suffix}`
 
     return (
-        <Modal open onClose={onClose} contained>
+        <Modal open onClose={onClose}>
             <div className={styles.header}>
                 <Avatar name={user.username} imageUrl={user.avatar} size="lg" className={styles.profileAvatar} />
                 <div className={styles.info}>
