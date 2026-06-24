@@ -66,7 +66,6 @@ export function useRegistrationView(onSuccess: () => void) {
             return
         }
 
-        console.log("Registration attempt with:", { username, email })
         try {
             await register(username, email, password)
             const result = await login(username, password)
