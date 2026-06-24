@@ -5,7 +5,7 @@
 ## 🟥Description🟥
 **QUIZSENDENCE** is a **Game Show Webapp** that lets you and your friends take part in a gameshow based on Polish TV format "1 z 10".
 
-### Key features
+### 🧩 Key features
 
 - **Online Multiplayer** Game Show based Quiz.
 - **Friends system**.
@@ -14,31 +14,29 @@
 - **Player Profiles** with avatars.
 - **AI** based question generator for lobbies.
 
-### How to win?
+### 👑 How to win?
 
-The game show has you gain points by answering questions correctly. You must avoid answering incorrectly as you lose one of your three lives for each question you get wrong!
-
-Unlike other game shows where contestants rush to answer first, players nominate each other in a system of "hand down the hot seat" to try eliminate the other players.
-
-The winner is chosen when all the questions are answered, or if all but one player have fallen.
+- The game show has you **gain points by answering questions** correctly. You must avoid answering incorrectly as you **lose one of your three lives** for each question you get wrong!
+- Unlike other game shows where contestants rush to answer first, **players nominate each other** in a system of "hand down the hot seat" to try eliminate the other players.
+- The winner is chosen when all the questions are answered, or if all but one player have fallen.
 
 **Do you have what it takes to win?**
 
-### Make a profile, add friends and chat
+### 🪪 Make a profile, add friends and chat
 
-We provide a player profile along with friends system to allow players to chat between games!
+We provide a **player profile** along with **friends system** to allow players to **chat** between games!
 
-Found a worthy opponent and want a rematch? **Add them to friends and send them a room key!**
+Found a worthy opponent and want a rematch? **Add them to friends** and send them a room key!
 
-Had enough of losing to them? **Unfriend them and see them disappear!**
+Had enough of losing to them? **Unfriend them** and see them disappear!
 
-### How to play?
+### 🎮 How to play?
 
 Want to host a game? **Simply go to the page, Register or Log in, Create a lobby, and send your friends the lobby ID.**
 
 Having trouble joining a friend who is already hosting lobby? **Go to the page, Register or Log in then press JOIN ROOM and ask your friend for the room code.**
 
-### Why Quizsendence?
+### 🏆 Why Quizsendence?
 Our goal was to recreate the game show Polish TV gameshow format "1 z 10" in a webapp form. Each person's personal goal was to get hands-on experience with web development technologies that were new to us.
 
 ## 🟪Instructions🟪
@@ -74,7 +72,7 @@ GOOGLE_OAUTH_REDIRECT_URI=
 
 **To host LAN:**
 
-Integrate your local address as shown below.
+Integrate your local address. Example provided below.
 
 ```
 # --- Django Configuration ---
