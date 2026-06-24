@@ -108,4 +108,4 @@ class GenerateExtraQuestionsApi(APIView):
 		except LookupError:
 			return Response({"error": "Room not found"}, status=status.HTTP_404_NOT_FOUND)
 		except (APIError, RuntimeError) as e:
-			return Response({"error": f"AI service error: {e}"}, status=status.HTTP_502_BAD_GATEWAY)
+			return Response({"error": f"{e}"}, status=status.HTTP_502_BAD_GATEWAY)

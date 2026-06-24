@@ -32,6 +32,7 @@ export function FriendsProvider({ children }: { children: React.ReactNode }) {
                 seed(list.map((f: Friendship) => ({
                     id: f.friend.id,
                     is_online: f.friend.is_online,
+                    avatar: f.friend.avatar
                 })))
             })
             .finally(() => setLoading(false))

@@ -116,3 +116,38 @@ class IsSelfOrReadOnlyTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.user_a.profile.refresh_from_db()
         self.assertTrue(self.user_a.profile.avatar)
+
+    def test_replacing_avatar_deletes_old_file(self):
+        url = reverse("profile-avatar", kwargs={"user_id": self.user_a.id})
+
+        first = SimpleUploadedFile("first.png", _png_bytes(), content_type="image/png")
+        self.client.post(url, {"avatar": first}, format="multipart")
+        self.user_a.profile.refresh_from_db()
+        old_storage = self.user_a.profile.avatar.storage
+        old_name = self.user_a.profile.avatar.name
+        self.assertTrue(old_storage.exists(old_name))
+
+        second = SimpleUploadedFile("second.png", _png_bytes(), content_type="image/png")
+        self.client.post(url, {"avatar": second}, format="multipart")
+        self.user_a.profile.refresh_from_db()
+        new_name = self.user_a.profile.avatar.name
+
+        self.assertNotEqual(new_name, old_name)
+        self.assertFalse(old_storage.exists(old_name))  # no orphan left behind
+        self.assertTrue(old_storage.exists(new_name))
+
+    def test_clearing_avatar_deletes_file(self):
+        url = reverse("profile-avatar", kwargs={"user_id": self.user_a.id})
+
+        avatar = SimpleUploadedFile("clear.png", _png_bytes(), content_type="image/png")
+        self.client.post(url, {"avatar": avatar}, format="multipart")
+        self.user_a.profile.refresh_from_db()
+        storage = self.user_a.profile.avatar.storage
+        name = self.user_a.profile.avatar.name
+        self.assertTrue(storage.exists(name))
+
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.user_a.profile.refresh_from_db()
+        self.assertFalse(self.user_a.profile.avatar)
+        self.assertFalse(storage.exists(name))

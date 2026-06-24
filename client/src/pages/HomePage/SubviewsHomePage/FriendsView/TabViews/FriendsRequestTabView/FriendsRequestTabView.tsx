@@ -1,7 +1,7 @@
 import { useFriendsRequestTabView, FriendRequest } from './useFriendsRequestTabView'
 import InlineError from '../../../../../../components/InlineError/InlineError'
+import UserAvatar from '../../../../../../components/UserAvatar'
 import { Button } from '../../../../../../components/Button/Button'
-import { Avatar } from '../../../../../../components/Avatar/Avatar'
 import styles from './FriendsRequestTabView.module.css'
 import shared from '../../FriendsView.module.css'
 
@@ -23,7 +23,7 @@ function FriendsRequestTabView() {
                 <div className={styles.incomingRequest}>
                     {incomingRequestsList.map((r: FriendRequest) => (
                         <div key={r.id} className={styles.requestItem}>
-                            <Avatar name={r.from_user.username} size="md" />
+                            <UserAvatar username={r.from_user.username} avatar={r.from_user.avatar} />
                             <span className={shared.friendName}>{r.from_user.username}</span>
                             <div className={styles.requestActions}>
                                 <Button variant="primary" size="sm" onClick={() => handleAccept(r.id)}>Accept</Button>
@@ -35,7 +35,7 @@ function FriendsRequestTabView() {
                 <div className={styles.outgoingRequest}>
                     {outgoingRequestsList.map((r: FriendRequest) => (
                         <div key={r.id} className={styles.requestItem}>
-                            <Avatar name={r.to_user.username} size="md" />
+                            <UserAvatar username={r.to_user.username} avatar={r.to_user.avatar} />
                             <span className={shared.friendName}>{r.to_user.username}</span>
                             <div className={styles.requestActions}>
                                 <Button variant="ghost" size="sm" onClick={() => handleCancel(r.id)}>Cancel</Button>
