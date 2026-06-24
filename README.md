@@ -150,6 +150,13 @@ in Chrome/Firefox browser.
 - **python-statemachine** — the game logic would be too convoluted with use of plain if-else statements. That's why it was natural to use a finate state machine for managing the game phases transitions. This particular library is well-established for Python.
 - **PostgreSQL** — well supported in Django (ORM), relational and is considered an industry standard.
 
+### 🟦 Architecture
+**Logical architecture** — how the application's components fit together:
+![Logical architecture](docs/Diagram_LogicalArchitecture.svg)
+
+**Container view** — how the system is deployed across Docker services:
+![Container view](docs/Diagram_ContainerView.svg)
+
 ### 🟩 Database Schema
 ![ERD](docs/EntityRelationshipDiagram.svg)
 
@@ -310,6 +317,8 @@ in Chrome/Firefox browser.
 up the development process. It allowed us to know when a pull request broke a functionality
 and therefore fix it before any code review would be conducted. It also ensured
 that all automated tests pass after merging to main branch.
+
+![CI pipeline](docs/Diagram_CIPipeline.svg)
 
 - **What technical challenges it addresses** - It solves the problem of
 automated testing to make sure that all the tests pass properly before
