@@ -19,10 +19,6 @@ def user_get_by_username(*, username: str) -> User:
     return get_object_or_404(User, username=username)
 
 
-def user_list() -> QuerySet:
-    return User.objects.all()
-
-
 # ---------------------------------------------------------------------------
 # UserProfile selectors
 # ---------------------------------------------------------------------------
@@ -37,7 +33,3 @@ def profile_get_by_user_id(*, user_id: int) -> UserProfile:
 
 def profile_get_by_username(*, username: str) -> UserProfile:
     return get_object_or_404(UserProfile, user__username=username)
-
-
-def profile_list() -> QuerySet:
-    return UserProfile.objects.all()

@@ -12,7 +12,7 @@ class AuthenticationTests(APITestCase):
         )
 
     def test_unauthenticated_request_is_blocked(self):
-        response = self.client.get('/api/account/users/')
+        response = self.client.get('/api/account/profiles/me/')
 
         self.assertEqual(response.status_code, 401)
         self.assertEqual(response.data['detail'], "Authentication credentials were not provided.")
@@ -98,11 +98,10 @@ class AuthenticationTests(APITestCase):
     def test_access_protected_route_with_session(self):
         self.client.login(username='testuser', password='testpassword')
 
-        response = self.client.get('/api/account/users/')
+        response = self.client.get('/api/account/profiles/me/')
 
         self.assertEqual(response.status_code, 200)
-        self.assertIsInstance(response.data, list)
-        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data['user']['username'], 'testuser')
 
 
     def test_logout_destroys_session(self):
@@ -111,7 +110,7 @@ class AuthenticationTests(APITestCase):
         logout_response = self.client.post('/api/account/users/logout/')
         self.assertEqual(logout_response.status_code, 204)
 
-        protected_response = self.client.get('/api/account/users/')
+        protected_response = self.client.get('/api/account/profiles/me/')
         self.assertEqual(protected_response.status_code, 401)
 
 

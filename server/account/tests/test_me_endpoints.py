@@ -164,24 +164,7 @@ class UserProfileMeTest(APITestCase):
         )
         self.client.login(username="profileuser", password="profilepassword")
 
-        # 1. Test profile list endpoint
-        response = self.client.get(reverse("profile-list"))
-        self.assertEqual(response.status_code, 200)
-        other_profile_data = next(
-            (item for item in response.data if item["user"]["username"] == "otheruser"),
-            None
-        )
-        self.assertIsNotNone(other_profile_data)
-        self.assertNotIn("email", other_profile_data["user"])
-
-        own_profile_data = next(
-            (item for item in response.data if item["user"]["username"] == "profileuser"),
-            None
-        )
-        self.assertIsNotNone(own_profile_data)
-        self.assertEqual(own_profile_data["user"]["email"], "profile@example.com")
-
-        # 2. Test profile detail endpoint (other user)
+        # Test profile detail endpoint (other user)
         response = self.client.get(reverse("profile-detail", kwargs={"user_id": other_user.id}))
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("email", response.data["user"])
@@ -191,24 +174,7 @@ class UserProfileMeTest(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["user"]["email"], "profile@example.com")
 
-        # 3. Test user list endpoint
-        response = self.client.get(reverse("user-list"))
-        self.assertEqual(response.status_code, 200)
-        other_user_data = next(
-            (item for item in response.data if item["username"] == "otheruser"),
-            None
-        )
-        self.assertIsNotNone(other_user_data)
-        self.assertNotIn("email", other_user_data)
-
-        own_user_data = next(
-            (item for item in response.data if item["username"] == "profileuser"),
-            None
-        )
-        self.assertIsNotNone(own_user_data)
-        self.assertEqual(own_user_data["email"], "profile@example.com")
-
-        # 4. Test user detail endpoint (other user)
+        # Test user detail endpoint (other user)
         response = self.client.get(reverse("user-detail", kwargs={"user_id": other_user.id}))
         self.assertEqual(response.status_code, 200)
         self.assertNotIn("email", response.data)
