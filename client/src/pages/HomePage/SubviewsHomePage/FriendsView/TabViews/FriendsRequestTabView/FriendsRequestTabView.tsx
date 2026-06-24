@@ -29,7 +29,7 @@ function FriendsRequestTabView({ onOpenProfile }: FriendsRequestTabViewProps) {
                     {incomingRequestsList.map((r: FriendRequest) => (
                         <div key={r.id} className={styles.requestItem}>
                             <Avatar name={r.from_user.username} imageUrl={r.from_user.avatar} size="md" onClick={() => onOpenProfile(r.from_user)} />
-                            <span className={shared.friendName}>{r.from_user.username}</span>
+                            <span className={shared.friendName} title={r.from_user.username}>{r.from_user.username}</span>
                             <div className={styles.requestActions}>
                                 <Button variant="primary" size="sm" onClick={() => handleAccept(r.id)}>Accept</Button>
                                 <Button variant="ghost" size="sm" onClick={() => handleDecline(r.id)}>Decline</Button>
@@ -41,7 +41,7 @@ function FriendsRequestTabView({ onOpenProfile }: FriendsRequestTabViewProps) {
                     {outgoingRequestsList.map((r: FriendRequest) => (
                         <div key={r.id} className={styles.requestItem}>
                             <Avatar name={r.to_user.username} imageUrl={r.to_user.avatar} size="md" onClick={() => onOpenProfile(r.to_user)} />
-                            <span className={shared.friendName}>{r.to_user.username}</span>
+                            <span className={shared.friendName} title={r.to_user.username}>{r.to_user.username}</span>
                             <div className={styles.requestActions}>
                                 <Button variant="ghost" size="sm" onClick={() => handleCancel(r.id)}>Cancel</Button>
                             </div>
