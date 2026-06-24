@@ -41,7 +41,7 @@ Our goal was to recreate the game show Fifteen to One in webapp form. Each perso
 
 ## 🟪Instructions🟪
 ### How to host the website ```compilation, installation, and/or execution```
-- Make sure you meet all the prequisites listed in the **Prerequisites** section.
+- Make sure you meet all the perquisites listed in the **Prerequisites** section.
 - Download the repository using: ```git clone <repository_id>```
 - Locate the .env.example file. Copy it and rename the copy to .env.
 - (**IMPORTANT**) Open the newly made .env file and change all necessary fields. *For limited testing you don't have to change anything.*
@@ -59,7 +59,7 @@ Our goal was to recreate the game show Fifteen to One in webapp form. Each perso
 - **make** for the Makefile.
 - **docker** && **docker compose** for containerisation.
 - **python3** && **python3 virtual environment**.
-- **pip** && **npm** for additional package installion.
+- **pip** && **npm** for additional package installation.
 
 **For fast installation from zero**
 ```
@@ -100,8 +100,8 @@ You might want to do this if automatic migration is not working.
 - <Fill_in_or_delete> <JZACKIEW>
 ### AI Usage ```a description of how AI was used specifying for which tasks and which parts of the project.```
 
-**We used a wide range of AI assistence when it came to work and research. Below is listed all the uses of AI our team utilised:**
-- **Research** on how to use new techologies.
+**We used a wide range of AI assistance when it came to work and research. Below is listed all the uses of AI our team utilised:**
+- **Research** on how to use new technologies.
 - Assistance with **design choice research**.
 - **Code summarisation** for individual understanding foreign sections of the codebase.
 - **Writing tedious and repetitive code that was already understood.**
@@ -120,11 +120,11 @@ You might want to do this if automatic migration is not working.
 #### Team organisation ```task distribution, meetings, project management, communication channels, and tools used for project management.```
 **Meetings** - We held many meetings throughout our time working together. We first held organisational meetings, followed by meetings to find the project idea we would work on as well as our Project Owner. When work started on the project we began with our **weekly meetings** later transitioning into **bi-weekly meetings**, then **daily meetings** once we entered our crunch.
 
-**Project Management** & **Task distribution** - Utilising **Github Projects** jzackiew set up the initial issues list to conform with his business requirements. The whole team **would take the highest priority issues and work on them** on seperate branches. Once an issue was finished we would have other members of the team review it and give feedback before it was either rejected or merged with main.
+**Project Management** & **Task distribution** - Utilising **Github Projects** jzackiew set up the initial issues list to conform with his business requirements. The whole team **would take the highest priority issues and work on them** on separate branches. Once an issue was finished we would have other members of the team review it and give feedback before it was either rejected or merged with main.
 
-**In general we split our work into areas**. **dbozic** focused on AI and auxillery tasks, **itykhono** focused on frontend, **jzackiew** focused on game logic, **mamichal** focused on devops and **mbudkevi** focused on backend. This was a general guideline for who would take what.
+**In general we split our work into areas**. **dbozic** focused on AI and auxillary tasks, **itykhono** focused on frontend, **jzackiew** focused on game logic, **mamichal** focused on devops and **mbudkevi** focused on backend. This was a general guideline for who would take what.
 
-**Communication Channels** - We used **Slack** for messaging, **Google Meet** for anyone who couldn't make it to our meetings in person, and **Github projects** to communicate large issues and code reviews. **A lot of our communcation came from sitting together on campus**.
+**Communication Channels** - We used **Slack** for messaging, **Google Meet** for anyone who couldn't make it to our meetings in person, and **Github projects** to communicate large issues and code reviews. **A lot of our communication came from sitting together on campus**.
 
 ### 🟦 Technical Stack ```frontend stack & framework, backend stack & framework, database system and why it was chosen, any other significant technologies or libraries, justification for major techncal choices```
 - **Frontend technologies and frameworks**
@@ -146,7 +146,7 @@ You might want to do this if automatic migration is not working.
   - **Google Gemini API** - LLM calls.
   - **Redis** - Caching.
   - **Playwright** - End to End testing across multiple browsers
-- **Justification for major techinical choices** - **Django Rest Framework** was chosen for its **ORM**, **Serializers** and **Authentication and permission system** along with other out of the box tools. **Redis** was used as a forward looking improvement over Djangos caching and channel tools. **React** was chosen for <ITYKHONO>
+- **Justification for major technical choices** - **Django Rest Framework** was chosen for its **ORM**, **Serializers** and **Authentication and permission system** along with other out of the box tools. **Redis** was used as a forward looking improvement over Djangos caching and channel tools. **React** was chosen for <ITYKHONO>
 
 ### 🟩 Database Schema ```visual representation or description of the database structure, tables/collections and thier relationships, Key fields and data types.```
 **Our database structure can be found in image form at:** <directory_to_database_structure_image> <JZACKIEW>
@@ -188,7 +188,7 @@ Friendships are stored in `Friendship`, which has two foreign keys back to `User
 <br> **Frontend implementation** by: **itykhono**.
 
 **Text Chats** - A websocket based system that allows users to directly communicate to each other by text live. You can text chat in public lobbies as well as directly with friends.
-<br> **Websocket Architecture**, and **History Pagenation** by: **jzackiew**.
+<br> **Websocket Architecture**, and **History Pagination** by: **jzackiew**.
 <br> **Backend Chat Logic**, and **Authentication** by: **mbudkevi**.
 <br> **Frontend implementation** by: **itkyhono**
 
@@ -300,7 +300,7 @@ Friendships are stored in `Friendship`, which has two foreign keys back to `User
 - **How it adds value to your project** - Adding new, on theme but different, questions into each game prevents long time users from learning a majority of questions and their answers by heart. Generating questions adds excitement while also expanding the core question base that the quiz game relies on.  
 
 - **Why it deserves Major module status (2 points).** - This module greatly resembles the module **"Major Module: Implement a complete LLM system interface"**. Below is a list of the requirements of the original module next to the counter part.
-  + **Original:** Generate text and/or images based on user input.<br> **Counterpart:** Generate Questions with their answers and catagories based on the current lobbies question pool.
+  + **Original:** Generate text and/or images based on user input.<br> **Counterpart:** Generate Questions with their answers and categories based on the current lobbies question pool.
   + **Original:** Handle streaming responses properly. <br> **Counterpart:** Handle updating a game sessions question base as well as implementing persistence for future use of the generated questions.
   + **Original:** Implement error handling and rate limiting. <br>**Counterpart:** Implement error handling and rate limiting.
 
@@ -325,10 +325,10 @@ of the functionalities and helped us save on development time.
 works as expected and ensures that we do not introduce bugs,
 especially when merging a pull request to the main branch.  
 
-- **Why it deserves Minor module status (1 points).** It is not as extensive as
-a full CI/CD pipeline which would definitely be a Major module, however it does
-bring significant value in terms of safety, efficiency, and it provides instant
-feedback to the whole development team through the GitHub UI.
+- **Why it deserves Minor module status (1 points).** While not as extensive as
+a full CI/CD pipeline (that could be seen as a Custom Major Module) it still
+brings significant value in terms of safety and efficiency, as well as providing
+the whole development team with automated feedback through the GitHub UI.
 
 **Total Points = 22**
 
@@ -350,7 +350,7 @@ feedback to the whole development team through the GitHub UI.
 - Documentation.
 
 #### Challenges faced
-- My largest technical challenge was developing and integrating the question expander. It required me to learn new tools like Python, an authenticated API, a web developement framework, an ORM, REST, rate limiting specific users, using external tools for format validation along with many other things that were cut from the final version.
+- My largest technical challenge was developing and integrating the question expander. It required me to learn new tools like Python, an authenticated API, a web development framework, an ORM, REST, rate limiting specific users, using external tools for format validation along with many other things that were cut from the final version.
 <br> Looking back I am amazed I was able to start work on such a module as my first issue.
 - A small but unusual challenge I faced was reforming the base list of questions and answers originating from a Polish gameshow. I found a method to automatically filter out questions which only people familiar with Polish culture would know along with translating and sorting the rest.
 
@@ -372,8 +372,8 @@ frontend tasks.
 
 #### Specific features, modules, or components
 
-- DevOps - setting up a contenerized environment with proper communication and
-volume persistence for both production environment and development playground
+- DevOps - setting up a containerized environment with proper communication and
+volume persistence for both the production environment and development playground
 - Automated deployment via Makefile
 - Added other useful automations for development purposes
 - Contributed to CI setup
@@ -384,7 +384,7 @@ volume persistence for both production environment and development playground
 - Ensured proper distribution of CSRF
 - Prepared database populating script for evaluation and testing purposes
 - Implemented frontend routing guards
-- Prepared legal sites
+- Prepared legal pages for the site
 
 #### Challenges faced
 
