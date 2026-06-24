@@ -37,9 +37,9 @@ Had enough of losing to them? **Unfriend them and see them disappear!**
 
 ### How to play?
 
-Want to host a game? **Simply go to https://c3r8s1.42warsaw.pl:8443, Register or Log in, Create a lobby, and send your friends the lobby ID.**
+Want to host a game? **Simply go to the page, Register or Log in, Create a lobby, and send your friends the lobby ID.**
 
-Having trouble joining a friend who is already hosting lobby? **Go to https://c3r8s1.42warsaw.pl:8443, Register or Log in then press JOIN ROOM and ask your friend for the room code.**
+Having trouble joining a friend who is already hosting lobby? **Go to the page, Register or Log in then press JOIN ROOM and ask your friend for the room code.**
 
 ### Why quizsendence? ``goal``
 
@@ -47,80 +47,50 @@ Our goal was to recreate the game show Fifteen to One in webapp form. Each perso
 
 ## 🟪Instructions🟪
 
-### 🖥️ How to host the website ``compilation, installation, and/or execution``
+### 🖥️ Installation ``compilation, installation, and/or execution``
 
-- Make sure you meet all the prerequisites listed in the **📋 Prerequisites** section.
-- Download the repository using: ``git clone https://github.com/Jzackiewicz/42_ft_transcendence.git``
-- Locate the .env.example file. Copy it and rename the copy to .env.
-- (**IMPORTANT**) Open the newly made .env file and change all necessary fields. Refer to a section below called **⚙️ Setting up the .env**.
-- Optionally update all README.md https://c3r8s1.42warsaw.pl:8443 urls to match what you configured in your .env.
-- Enter the project folder and run: ``make up``
-- Check whether the server is running by visiting https://c3r8s1.42warsaw.pl:8443.
+- Make sure you meet all **📋 Prerequisites**.
+- clone the repository.
+- Make a .env by copying the .env_example. More info in **⚙️ Setting up the .env**.
+- Run the project with: ``make up``. More info at **🇲 Makefile Usage**
 
-### Are you already hosting the website and want to play?
+### 📋 Prerequisites
+- **Linux**
+- **Git** - Newest
+- **make** - Newest
+- **docker** && **docker-compose** - Newest
 
-**Look in the section above for HOW TO PLAY?**
-
-### 📋 Prerequisites ``software, tools, versions, configuration like .env setup, etc.``
-
-**The basics in order to run the installation** Versions aren't strict but if you encounter errors change to the newest versions available in Q1 2026.
-
-- **A Linux environment** - Debian 12 is prefered but not specifically required.
-- **Git** for downloading the project files.
-- **make** for the Makefile.
-- **docker** && **docker compose** for containerisation.
-- **python3** && **python3 virtual environment**.
-- **pip** && **npm** for additional package installation.
-
-**For fast installation from zero**
-Install debian 12 (bookworm) on your computer.
-set up the apt sources by running: `nano /etc/apt/sources.list`
-
-then replace everything inside the file with:
-
-```
-deb http://deb.debian.org/debian bookworm main contrib non-free non-free-firmware
-deb http://deb.debian.org/debian bookworm-updates main contrib non-free non-free-firmware
-deb http://security.debian.org/debian-security bookworm-security main contrib non-free non-free-firmware
-```
-
-Save and exit the file buy pressing `ctrl + X`. After select **Save Buffer**.
-
-You are now free to run the following:
-
-```
-sudo apt update
-sudo apt install git make docker.io docker-compose python3 python3-venv python3-pip npm
-```
-
-### Once complete you can continue to the "🖥️ How to host the website" section above
-
-**The setup process is automated by the Makefile and Docker.** They deal with the rest of the requirements.
-
-**If you need to run the Django environment with the project requirements then:**
-
-- go to the root directory of this project.
-- create a virtual environment with ``python3 -m venv .venv``
-- activate the virtual environment with ``source .venv/bin/activate``
-- install the additional prerequisite packages with ``pip install -r server/requirements.txt``
-- continue on with your task.
+Other requirements are handled by the Makefile and Docker.
 
 ### ⚙️ Setting up the .env
 
-**For full range of functionality will need to change:**
-
-- **LLM_API_KEY** - to get one you will need to visit <https://aistudio.google.com/api-keys> and copy in a key from there - **DO NOT SHARE IT**. The free plan should be enough for testing. If you have issues and know that you have a correctly set up key, check whether you have tokens for the LLM_MODEL.
-- **OAuth** - set it up.
-
-**For LAN networks you would need to:**
-
-- Run `ip addr` and search for `inet` under `enp0`. This is your local address.
-- Integrate the local address as follows:
+**For full functionality change:**
 
 ```
+# --- AI Configuration ---
+LLM_API_KEY=
+
+# --- Google OAuth ---
+GOOGLE_OAUTH_CLIENT_ID=
+GOOGLE_OAUTH_CLIENT_SECRET=
+GOOGLE_OAUTH_REDIRECT_URI=
+```
+
+**To host LAN:**
+
+Integrate your local address as shown below.
+
+```
+# --- Django Configuration ---
 ALLOWED_HOSTS=localhost,127.0.0.1,YOURLOCALADDRESS,localhost:${HTTPS_EXPOSED_PORT},127.0.0.1:${HTTPS_EXPOSED_PORT},YOURLOCALADDRESS:${HTTPS_EXPOSED_PORT
 CSRF_TRUSTED_ORIGINS=https://localhost:${HTTPS_EXPOSED_PORT},https://127.0.0.1:${HTTPS_EXPOSED_PORT},https://YOURLOCALADDRESS:${HTTPS_EXPOSED_PORT},http://localhost:5173,http://127.0.0.1:5173,http://YOURLOCALADDRESS:517
 ```
+
+### 🇲 Makefile Usage
+- **Make up** - launch the website.
+- **Make down** - shutdown the website.
+- **Make clean**  - wipe data.
+- **Make fclean** - wipe docker and data.
 
 ## 🟦Resources🟦
 
