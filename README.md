@@ -20,8 +20,6 @@
 - Unlike other game shows where contestants rush to answer first, **players nominate each other** in a system of "hand down the hot seat" to try eliminate the other players.
 - The winner is chosen when all the questions are answered, or if all but one player have fallen.
 
-**Do you have what it takes to win?**
-
 ### 🪪 Make a profile, add friends and chat
 
 We provide a **player profile** along with **friends system** to allow players to **chat** between games!
