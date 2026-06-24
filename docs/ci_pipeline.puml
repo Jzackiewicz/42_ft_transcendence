@@ -2,24 +2,37 @@
 title Quizscendence — CI Pipeline (.github/workflows/ci.yml)
 
 skinparam shadowing false
+skinparam defaultTextAlignment center
+
+' ---- Shared palette (matches logical_view) ----
+skinparam activity {
+  BackgroundColor #FFFFFF
+  BorderColor #7F8C8D
+  DiamondBackgroundColor #FFE9A8
+  DiamondBorderColor #B8860B
+  StartColor #1E7D43
+  EndColor #C0392B
+  BarColor #7F8C8D
+}
+
 start
 :Trigger: push / PR\n(main, master, dev, develop);
 
 fork
-  partition "Job: frontend-ci\n(Node 26)" {
+  partition "Job: frontend-ci\n(Node 26)" #EAF4FF {
     :npm ci;
     :tsc --noEmit\n(typecheck);
     :npm run build;
   }
 fork again
-  partition "Job: backend-ci\n(Python 3.13 + Redis service)" {
+  partition "Job: backend-ci\n(Python 3.13 + Redis service)" #E5D9F2 {
     :pip install -r requirements.txt;
     :manage.py check;
     :makemigrations --check --dry-run\n(migrations up-to-date?);
     :manage.py test\n(SQLite + Redis);
   }
 fork again
-  partition "Job: end-to-end\n(Playwright)" {
+  partition "Job: end-to-end\n(Playwright)" #D7F0DC {
     :cp .env.example .env;
     :npm ci + playwright install;
     :make dev-up\n(start dev stack);

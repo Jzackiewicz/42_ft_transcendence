@@ -1,13 +1,27 @@
 @startuml Quizscendence_DevOps
-title Container View
+title Quizscendence — Container View
 
 skinparam componentStyle rectangle
 skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam nodesep 12
+skinparam ranksep 45
+skinparam defaultTextAlignment center
+
+' ---- Shared palette (matches logical_view) ----
+skinparam database {
+  BackgroundColor #FADBD8
+  BorderColor #C0392B
+}
+skinparam cloud {
+  BackgroundColor #FADBD8
+  BorderColor #C0392B
+}
 
 actor Browser as user
 
-node "Docker Compose" {
-  node "proxy\n(Nginx)" as nginx {
+node "Docker Compose" #E4E7EC {
+  node "proxy\n(Nginx)" as nginx #FCE4D6 {
     note right of nginx
       SSL termination
       HTTP→HTTPS redirect
@@ -15,21 +29,21 @@ node "Docker Compose" {
     end note
   }
 
-  node "web" as web {
+  node "web" as web #EAF4FF {
     component "React 19 SPA" as spa
   }
 
-  node "api\n(Daphne / ASGI)" as api {
+  node "api\n(Daphne / ASGI)" as api #E5D9F2 {
     component "DRF\n(HTTP APIs)" as drf
     component "Channels\n(WebSocket consumers)" as channels
     component "In-process state\n(GameTimerManager,\nPresenceRegistry)" as inproc
   }
 
-  node "db" as dbnode {
+  node "db" as dbnode #FADBD8 {
     database "PostgreSQL 15" as pg
   }
 
-  node "redis" as redisnode {
+  node "redis" as redisnode #FADBD8 {
     database "Redis 7" as redis
   }
 }
