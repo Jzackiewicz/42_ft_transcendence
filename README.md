@@ -361,13 +361,15 @@ the whole development team with automated feedback through the GitHub UI.
 
 - My largest technical challenge was developing and integrating the question expander. It required me to learn new tools like Python, an authenticated API, a web development framework, an ORM, REST, rate limiting specific users, using external tools for format validation along with many other things that were cut from the final version.
 <br> Looking back I am amazed I was able to start work on such a module as my first issue.
-- A small but unusual challenge I faced was reforming the base list of questions and answers originating from a Polish gameshow. I found a method to automatically filter out questions which only people familiar with Polish culture would know along with translating and sorting the rest.
+- A small but unusual challenge I faced was reforming the base list of questions and answers originating from a Polish game show. I found a method to automatically filter out questions which only people familiar with Polish culture would know along with translating and sorting the rest.
 
 ### itykhono - Frontend Developer
 
-Frontend developer responsible for the full client-side implementation, including component architecture, routing, API integration, WebSocket-based real-time communication, and overall frontend project structure.
+#### Contributions
 
-#### Features & Contributions
+- Frontend developer responsible for the full client-side implementation, including component architecture, routing, API integration, WebSocket-based real-time communication, and overall frontend project structure.
+
+#### Specific features, modules, or components
 
 - Designed the frontend architecture and file system structure
 - Implemented core UI components and page routing
@@ -376,15 +378,15 @@ Frontend developer responsible for the full client-side implementation, includin
 - Implemented user profile viewing
 - Designed and implemented the real-time chat feature
 
-#### Challenges
+#### Challenges faced
 
 My guiding principle was KISS (Keep It Simple, Stupid), but limited React experience led to a series of unexpected problems - prop drilling and keeping data in sync across different parts of the same page. These issues ultimately forced some compromises in the original architecture.
 
 ### jzackiew - Product Owner
 #### Contributions
-- Owned the product vision: defined the business requirements and set up and prioritised the GitHub Projects issue list the whole team worked from.
+- Owned the product vision: defined the business requirements and set up and prioritized the GitHub Projects issue list the whole team worked from.
 - Set up the initial backend Django framework.
-- Designed and built the game end to end with the rules, the server-side state machine and the real-time WebSocket layer behind both the game and the chat.
+- Designed and built the game end-to-end with the rules, the server-side state machine and the real-time WebSocket layer behind both the game and the chat.
 - Built the custom design system and led the move from global CSS to scoped CSS Modules.
 - Integrated the AI question generator into the game.
 
@@ -395,33 +397,30 @@ My guiding principle was KISS (Keep It Simple, Stupid), but limited React experi
 - Player statistics tracking and the AI question generator integration.
 
 #### Challenges faced
-The biggest challenge I've faced was non-coding related - for the first time I led a project with this many people and it showed me how important communication is and how difficult specifying concrete tasks might be.
-When it comes to coding - I've never had anything to do with state machines before and it was tricky for me to grasp the idea behind it.
-Getting to know the TypeScript with React took me the longest. I didn't plan to deal with the frontend initially but now I'm happy I got to learn a lot of new concepts related to the UI.
+- The biggest challenge I faced was non-coding related, namely leading a project with this many people for the first time. It showed me how important communication is and how difficult specifying concrete tasks can be.
+- On the technical side, I had never worked with state machines before, and it was tricky to grasp the concepts behind them initially.
+- Getting to know TypeScript and React took the longest. I did not plan to work on the frontend initially, but I am glad I got to learn new concepts related to the UI.
 
 ### mamichal - Tech Lead
 
 #### Contributions
 
-- DevOps and backend developer, focused mainly on setup of the environment and
-ensuring proper deployment across multiple systems. Also contributed to some
-frontend tasks.
+- DevOps and backend developer, focused mainly on setup of the environment and ensuring proper deployment across multiple systems. Also contributed to some frontend tasks.
 
 #### Specific features, modules, or components
 
-- DevOps - setting up a containerized environment with proper communication and
-volume persistence for both the production environment and development playground
-- Automated deployment via Makefile
-- Added other useful automations for development purposes
-- Contributed to CI setup
-- Configured NGINX as a reverse proxy for HTTPS and WSS connections
-- Setup Redis as an in memory database
-- Blocked direct client-side access to /api/
-- Ensured proper cross-browser support and implemented E2E testing
-- Ensured proper distribution of CSRF
-- Prepared database populating script for evaluation and testing purposes
-- Implemented frontend routing guards
-- Prepared legal pages for the site
+- DevOps - setting up a containerized environment with proper communication and volume persistence for both the production environment and development playground.
+- Automated deployment via Makefile.
+- Added other useful automations for development purposes.
+- Contributed to CI setup.
+- Configured NGINX as a reverse proxy for HTTPS and WSS connections.
+- Set up Redis as an in-memory database.
+- Blocked direct client-side access to `/api/`.
+- Ensured proper cross-browser support and implemented E2E testing.
+- Ensured proper distribution of CSRF tokens.
+- Prepared database populating script for evaluation and testing purposes.
+- Implemented frontend routing guards.
+- Prepared legal pages for the site.
 
 #### Challenges faced
 
@@ -434,12 +433,14 @@ on both frontend and backend for either production and development playground.
 
 ### mbudkevi - Developer
 
-- Backend developer covering authentication, the friends system, real-time presence, the chat backend and the project's initial database setup.
+#### Contributions
+
+- Backend developer covering authentication, the friends system, real-time presence, the chat backend, and the project's initial database setup.
 - Reviewed teammates' pull requests and helped resolve a number of migration conflicts during merges.
 
 #### Specific features, modules, or components
 
-- Custom `User` model and `UserProfile`, initial data base setup.
+- Custom `User` model and `UserProfile`, initial database setup.
 - Registration / login / logout endpoints.
 - Email-or-username login backend (case-insensitive matching, `@` disallowed in usernames).
 - WebSocket authentication on both the game and chat consumers (anonymous connections are rejected at handshake).
