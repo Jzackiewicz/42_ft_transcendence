@@ -346,7 +346,7 @@ the whole development team with automated feedback through the GitHub UI.
 #### Contributions
 
 - Implemented the AI-powered Question Expander.
-- Lead researcher for potential AI modules and AI integration.
+- Led research for potential AI modules and AI integration.
 - Assisted in Code review and organised live game tests.
 - Refined the questions data set for use in the final product.
 - Organised meetings and removed blockers.
