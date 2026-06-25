@@ -1210,3 +1210,16 @@ class SpectatorTests(TestCase):
 		self.session.refresh_from_db()
 		self.assertEqual(self.session.current_status, GameSession.Status.ANSWERING)
 
+	def test_spectator_disconnect_preserves_record_for_reconnect(self):
+		self.session.current_status = GameSession.Status.ANSWERING
+		self.session.save()
+		self.spec.active_connections = 1
+		self.spec.save(update_fields=['active_connections'])
+
+		GameService(self.session).disconnect_player(actor=self.spec)
+
+		self.spec.refresh_from_db()
+		self.assertEqual(self.spec.active_connections, 0)
+		self.assertIsNotNone(self.spec.disconnected_at)
+		self.assertTrue(SessionPlayer.objects.filter(id=self.spec.id).exists())
+

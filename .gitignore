@@ -77,5 +77,4 @@ playwright-report/
 blob-report/
 playwright/.cache/
 
-subject.pdf
-PR_desc.md
+*.puml
