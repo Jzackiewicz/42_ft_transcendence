@@ -27,9 +27,7 @@ from .presence import PresenceRegistry
 
 from .selectors import (
     user_get_by_id,
-    user_list,
     profile_get_by_user_id,
-    profile_list,
 )
 from .serializers import (
     UserRegisterInputSerializer,
@@ -68,18 +66,6 @@ def _oauth_error_redirect(code: str) -> HttpResponseRedirect:
 # ---------------------------------------------------------------------------
 # User endpoints
 # ---------------------------------------------------------------------------
-
-
-class UserListApi(APIView):
-    @extend_schema(
-        request=None,
-        responses={200: UserOutputSerializer(many=True)},
-        description="List all users.",
-    )
-    def get(self, request):
-        users = user_list()
-        output_serializer = UserOutputSerializer(users, many=True, context={"request": request})
-        return Response(output_serializer.data, status=status.HTTP_200_OK)
 
 
 class UserDetailApi(APIView):
@@ -183,18 +169,6 @@ class UserProfileMeApi(APIView):
         logout(request)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class UserProfileListApi(APIView):
-    @extend_schema(
-        request=None,
-        responses={200: UserProfileOutputSerializer(many=True)},
-        description="List all user profiles.",
-    )
-    def get(self, request):
-        profiles = profile_list()
-        output_serializer = UserProfileOutputSerializer(profiles, many=True, context={"request": request})
-        return Response(output_serializer.data, status=status.HTTP_200_OK)
 
 
 class UserProfileDetailApi(APIView):
