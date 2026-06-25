@@ -8,7 +8,8 @@ from game.models import GameSession, SessionPlayer, AnswerAttempt
 def _query_player_stats(user) -> dict:
     completed_sessions = SessionPlayer.objects.filter(
         user=user,
-        session__current_status=GameSession.Status.GAME_OVER
+        session__current_status=GameSession.Status.GAME_OVER,
+        seat_number__isnull=False
     )
     return completed_sessions.aggregate(
         games_played=Count('id'),

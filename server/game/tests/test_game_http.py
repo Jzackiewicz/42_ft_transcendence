@@ -652,6 +652,37 @@ class TestUserGameStatsApis(APITestCase):
 		self.assertNotIn('games_hosted', data)
 		self.assertNotIn('top_categories', data)
 
+	def test_spectator_participation_excluded_from_stats(self):
+		session = GameSession.objects.create(
+			current_status=GameSession.Status.GAME_OVER,
+		)
+		host = SessionPlayer.objects.create(
+			session=session,
+			user=self.opponent,
+			display_name="Opponent",
+			seat_number=1,
+			points=20,
+			lives=3
+		)
+		SessionPlayer.objects.create(
+			session=session,
+			user=self.user,
+			display_name="Spectator",
+			seat_number=None,
+			points=0,
+			lives=0
+		)
+		session.host_player = host
+		session.winner = host
+		session.save()
+
+		self.client.force_authenticate(user=self.user)
+		url = reverse('user-game-stats', kwargs={'user_id': self.user.id})
+		response = self.client.get(url)
+
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(response.data['games_played'], 0)
+
 	def test_get_other_user_stats(self):
 		self.client.force_authenticate(user=self.opponent)
 		url = reverse('user-game-stats', kwargs={'user_id': self.user.id})
