@@ -171,6 +171,9 @@ CSRF_TRUSTED_ORIGINS=https://localhost:${HTTPS_EXPOSED_PORT},https://127.0.0.1:$
 **Container view** — how the system is deployed across Docker services:
 ![Container view](docs/Diagram_ContainerView.svg)
 
+**Game State Machine** — how the game flows and transitions between different phases:
+![Game State Machine](docs/game_fsm.svg)
+
 ### 🟩 Database Schema
 ![ERD](docs/EntityRelationshipDiagram.svg)
 
