@@ -3,7 +3,7 @@
 # 42_ft_transcendence
 
 ## 🟥Description🟥
-**QUIZSENDENCE** is a **Game Show Webapp** that lets you and your friends take part in a gameshow based on Polish TV format "1 z 10".
+**QUIZSCENDENCE** is a **Game Show Webapp** that lets you and your friends take part in a gameshow based on the Polish TV format "1 z 10".
 
 ### 🧩 Key features
 
@@ -17,12 +17,12 @@
 ### 👑 How to win?
 
 - The game show has you **gain points by answering questions** correctly. You must avoid answering incorrectly as you **lose one of your three lives** for each question you get wrong!
-- Unlike other game shows where contestants rush to answer first, **players nominate each other** in a system of "hand down the hot seat" to try eliminate the other players.
+- Unlike other game shows where contestants rush to answer first, **players nominate each other** in a system of "hand down the hot seat" to try to eliminate the other players.
 - The winner is chosen when all the questions are answered, or if all but one player have fallen.
 
 ### 🪪 Make a profile, add friends and chat
 
-We provide a **player profile** along with **friends system** to allow players to **chat** between games!
+We provide a **player profile** along with **a friends system** to allow players to **chat** between games!
 
 Found a worthy opponent and want a rematch? **Add them to friends** and send them a room key!
 
@@ -32,10 +32,10 @@ Had enough of losing to them? **Unfriend them** and see them disappear!
 
 Want to host a game? **Simply go to the page, Register or Log in, Create a lobby, and send your friends the lobby ID.**
 
-Having trouble joining a friend who is already hosting lobby? **Go to the page, Register or Log in then press JOIN ROOM and ask your friend for the room code.**
+Having trouble joining a friend who is already hosting a lobby? **Go to the page, Register or Log in then press JOIN ROOM and ask your friend for the room code.**
 
-### 🏆 Why Quizsendence?
-Our goal was to recreate the game show Polish TV gameshow format "1 z 10" in a webapp form. Each person's personal goal was to get hands-on experience with web development technologies that were new to us.
+### 🏆 Why Quizscendence?
+Our goal was to recreate the game show Polish TV format "1 z 10" in a webapp form. Each person's goal was to get hands-on experience with web development technologies that were new to us.
 
 ## 🟪Instructions🟪
 
@@ -100,8 +100,8 @@ CSRF_TRUSTED_ORIGINS=https://localhost:${HTTPS_EXPOSED_PORT},https://127.0.0.1:$
 
 ### AI Usage
 
-**We used a wide range of AI assistence when it came to work and research. Below is listed all the uses of AI our team utilised:**
-- **Research** on how to use new techologies.
+**We used a wide range of AI assistance when it came to work and research. Below is listed all the uses of AI our team utilised:**
+- **Research** on how to use new technologies.
 - Assistance with **design choice research** along with **CSS styling** help.
 - **Code summarisation** for individual understanding foreign sections of the codebase.
 - **Writing tedious and repetitive code that was already understood.**
@@ -156,7 +156,7 @@ CSRF_TRUSTED_ORIGINS=https://localhost:${HTTPS_EXPOSED_PORT},https://127.0.0.1:$
 ### 🟦 Justification for major technical choices
 - **Django + DRF** — it is very robust, comes with an ORM, auth and serializers out of the box, so we didn't have to build that ourselves.
 - **Channels + Redis** — the game and chat both happen in real time, so we needed WebSockets. Channels handles that and is the standard when it comes to Django-based backends dealing with WebSockets. Redis handles caching and broadcasting messages (pub/sub) and is easily accessible in Django.
-- **python-statemachine** — the game logic would be too convoluted with use of plain if-else statements. That's why it was natural to use a finate state machine for managing the game phases transitions. This particular library is well-established for Python.
+- **python-statemachine** — the game logic would be too convoluted with use of plain if-else statements. That's why it was natural to use a finite state machine for managing the game phases transitions. This particular library is well-established for Python.
 - **PostgreSQL** — well supported in Django (ORM), relational and is considered an industry standard.
 
 ### 🟦 Architecture
@@ -172,7 +172,7 @@ CSRF_TRUSTED_ORIGINS=https://localhost:${HTTPS_EXPOSED_PORT},https://127.0.0.1:$
 ### 🟨 Features List
 
 **Online Multiplayer Game Show based Quiz** - An online game which players can host then compete in by nominating players to answer game show questions.
-<br> **Game Design**, **Fullstack Implementaton** by: **jzackiew**.
+<br> **Game Design**, **Fullstack Implementation** by: **jzackiew**.
 <br> **Game instructions** by: **mbudkevi.**
 
 **Accounts and Account Management** - User account creation and profiles which display a players information along with user online presence.
@@ -187,7 +187,7 @@ CSRF_TRUSTED_ORIGINS=https://localhost:${HTTPS_EXPOSED_PORT},https://127.0.0.1:$
 **Text Chats** - A websocket based system that allows users to directly communicate to each other by text chat live. You can text chat with friends while in public lobbies as well as in the home page.
 <br> **Websocket Architecture**, and **History Pagination** by: **jzackiew**.
 <br> **Backend Chat Logic**, and **Authentication** by: **mbudkevi**.
-<br> **Frontend implementation** by: **itkyhono**
+<br> **Frontend implementation** by: **itykhono**
 
 **Player Statistics** - A place on the home page where users can check their game statistics.
 <br> **Statistic Tracking** by: **jzackiew**.
@@ -227,7 +227,7 @@ CSRF_TRUSTED_ORIGINS=https://localhost:${HTTPS_EXPOSED_PORT},https://127.0.0.1:$
 
 ### Major - Allow users to interact with other users
 
-- **People Involved: jzackiew, mbudekevi, mamichal, itykhono**
+- **People Involved: jzackiew, mbudkevi, mamichal, itykhono**
 - We have a /home/ page where once logged in a user can look for users, view their profiles, add or remove them as friends and message with them using a live text chat.
 - **Why this module?** - This module fit very well considering that an aspect of the game is making friends and talking about past or current matches. The idea of players interacting mid match or after a game to play again is a great addition.
 
@@ -239,7 +239,7 @@ CSRF_TRUSTED_ORIGINS=https://localhost:${HTTPS_EXPOSED_PORT},https://127.0.0.1:$
 ### Minor - Custom made design system with reusable components, including a proper color palette, typography, and icons
 
 - **People Involved: jzackiew, itykhono**
-- There is a defined global colour palette, typography and fonts in one place. There are also a set of the following reusable components included: Button, Badge, Card, ErrorBanner, InputField, InlineError, Modal, SectionTitle, Avatar, OnlineIndicator, Icon, StatsGrid
+- There is a defined global colour palette, typography and fonts in one place. There is also a set of the following reusable components included: Button, Badge, Card, ErrorBanner, InputField, InlineError, Modal, SectionTitle, Avatar, OnlineIndicator, Icon, StatsGrid
 - **Why this module?** - Shared set of tokens and design classes makes the whole app look consistent and easy to adjust on the global scale.
 
 ## 💠 Accessibility and Internationalization
@@ -255,7 +255,7 @@ CSRF_TRUSTED_ORIGINS=https://localhost:${HTTPS_EXPOSED_PORT},https://127.0.0.1:$
 ### Major - Standard user management and authentication
 
 - **People Involved: mbudkevi, mamichal**
-- Custom `User` model extending Django's `AbstractUser` with a unique email. It consist of registration, login and logout endpoints. Login accepts either email or username. Avatar uploads through a separate `UserProfile` model. Online status is tracked in-memory by counting each user's open WebSocket connections, then broadcast over the same Channels layer the chat uses.
+- Custom `User` model extending Django's `AbstractUser` with a unique email. It consists of registration, login and logout endpoints. Login accepts either email or username. Avatar uploads through a separate `UserProfile` model. Online status is tracked in-memory by counting each user's open WebSocket connections, then broadcast over the same Channels layer the chat uses.
 - **Why this module?** - Since the project is a multiplayer game, having accounts and profiles was the natural starting point. Without them there is no way to identify players between sessions and build a friends list.
 
 ### Minor - Implement remote authentication with OAuth 2.0
@@ -296,7 +296,7 @@ CSRF_TRUSTED_ORIGINS=https://localhost:${HTTPS_EXPOSED_PORT},https://127.0.0.1:$
 
 - **People Involved: dbozic, jzackiew**
 - It is shown as a host only button in the lobby screen. When pressed the lobby questions are sent to an LLM where additional similar questions are generated. Those questions are then added to the game session to be played, and saved persistently in the database for future use.
-- **Why this module?** - We chose this module as it is a core concept of our game: AI generated questions. It also opened up the possibility of implementing RAG (Retrieval Based Generation) which could have been an additional Major Module.
+- **Why this module?** - We chose this module as it is a core concept of our game: AI generated questions. It also opened up the possibility of implementing RAG (Retrieval-Augmented Generation) which could have been an additional Major Module.
 
 - **What technical challenges it addresses** - The largest technical challenge with this module was **response validation**. LLMs are infamously bad at following exact rules. **Pydantic** was used for guaranteeing a safe answer format, and the content of the response was fine tuned through human readable instructions. Other challenges included **rate limiting**, and **integration** of answers into live lobbies and the persistent database.
 
@@ -337,7 +337,7 @@ the whole development team with automated feedback through the GitHub UI.
 
 **Total Points = 22**
 
-### ⬜️ Individual Contributions ``Detailed breakdown of what each team member contributed, specific features, modules, or components implemented by each person. any challenges faced and how they were overcome.``
+### ⬜️ Individual Contributions
 
 ### dbozic - Scrum Master
 
@@ -405,7 +405,7 @@ Getting to know the TypeScript with React took me the longest. I didn't plan to 
 #### Contributions
 
 - DevOps and backend developer, focused mainly on setup of the environment and
-ensuing proper deployment across multiple systems. Also contributed to some
+ensuring proper deployment across multiple systems. Also contributed to some
 frontend tasks.
 
 #### Specific features, modules, or components
