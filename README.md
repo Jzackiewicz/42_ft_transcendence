@@ -208,13 +208,9 @@ CSRF_TRUSTED_ORIGINS=https://localhost:${HTTPS_EXPOSED_PORT},https://127.0.0.1:$
 
 ### Minor - Use a frontend framework
 
-**React** was our choice of frontend as it is the most popular framework ever.
-
-**Axios** simplifies REST API calls by handling JSON parsing and error responses automatically.
-
-**CSS Modules** scoped class names per component
-
-**Vite** tprovides instant dev server startup and hot module replacement (HMR), so you see changes in the browser immediately without a full page reload
+- **People Involved:** **itykhono, jzackiew**
+- We implemented a single-page application using **React** as the frontend library and **Vite** as the build tool/development server, utilizing **Axios** for REST API communication and **CSS Modules** for scoped component styling.
+- **Why this module?** - React provides a component-based architecture and declarative state management, which were essential for managing the dynamic UI of a real-time game show. Vite was selected for its fast dev server and Hot Module Replacement (HMR) capabilities.
 
 ### Minor - Use a backend framework
 
