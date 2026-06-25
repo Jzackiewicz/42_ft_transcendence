@@ -96,10 +96,8 @@ CSRF_TRUSTED_ORIGINS=https://localhost:${HTTPS_EXPOSED_PORT},https://127.0.0.1:$
 ### General References
 
 - [Django Rest Framework](https://www.django-rest-framework.org/)
-- [Django ORM](https://docs.djangoproject.com/en/6.0/topics/db/models/)
-- [Django Authentication](https://docs.djangoproject.com/en/6.0/topics/auth/)
-- [Django Migrations](https://docs.djangoproject.com/en/6.0/topics/migrations/)
-- [Redis](https://channels.readthedocs.io/en/stable/topics/channel_layers.html)
+- [Django documentation](https://docs.djangoproject.com/en/6.0/)
+- [Django Channels (Channel Layers)](https://channels.readthedocs.io/en/stable/topics/channel_layers.html)
 - [Service layer pattern](https://github.com/HackSoftware/Django-Styleguide)
 - [Websockets docs and tutorial](https://channels.readthedocs.io/)
 - [Gemini integration](https://ai.google.dev/gemini-api/docs)
@@ -205,8 +203,6 @@ CSRF_TRUSTED_ORIGINS=https://localhost:${HTTPS_EXPOSED_PORT},https://127.0.0.1:$
 <br> **Frontend integration** by: **jzackiew**.
 
 ### 🟧 Modules
-
-### Complete list of chosen modules
 
 ## 🌐 Web
 
