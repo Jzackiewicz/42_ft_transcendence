@@ -20,11 +20,13 @@
 
 .emptyContainer {
     flex: 1;
+    min-width: 0;
     display: flex;
     align-items: center;
     padding: 48px 56px;
     position: relative;
     z-index: 1;
+    overflow: hidden;
 }
 
 .emptyContainerContent {
@@ -35,7 +37,7 @@
 
 .pageTitle {
     font-family: var(--fd);
-    font-size: 72px;
+    font-size: clamp(40px, 7vw, 72px); /* scale down on narrow desktop widths so it doesn't get clipped */
     font-weight: 700;
     line-height: 0.9;
     letter-spacing: -1px;
@@ -66,6 +68,7 @@
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     width: 420px;
+    flex-shrink: 0;
     border-left: 1px solid var(--border);
     padding: var(--spacing-3xl);
     display: flex;

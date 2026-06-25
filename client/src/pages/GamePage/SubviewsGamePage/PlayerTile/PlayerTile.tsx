@@ -56,7 +56,10 @@ export function PlayerTile({
                         bg="neutral"
                         bordered
                     />
-                    <span className={is_alive ? styles.playerNameAlive : styles.playerNameDead}>
+                    <span
+                        className={is_alive ? styles.playerNameAlive : styles.playerNameDead}
+                        title={display_name}
+                    >
                         {display_name} {isCurrentUser && '(You)'}
                     </span>
                 </div>
