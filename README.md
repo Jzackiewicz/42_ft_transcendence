@@ -73,14 +73,17 @@ GOOGLE_OAUTH_CLIENT_SECRET=
 GOOGLE_OAUTH_REDIRECT_URI=
 ```
 
-**To host LAN:**
+**To host LAN on cluster workstation:**
 
 Integrate your local address. Example provided below.
 
+**(Set LOCAL_ADDRESS as `c3r8s1.42warsaw.pl` for Google OAuth support).**
+
 ```
 # --- Django Configuration ---
-ALLOWED_HOSTS=localhost,127.0.0.1,YOURLOCALADDRESS,localhost:${HTTPS_EXPOSED_PORT},127.0.0.1:${HTTPS_EXPOSED_PORT},YOURLOCALADDRESS:${HTTPS_EXPOSED_PORT}
-CSRF_TRUSTED_ORIGINS=https://localhost:${HTTPS_EXPOSED_PORT},https://127.0.0.1:${HTTPS_EXPOSED_PORT},https://YOURLOCALADDRESS:${HTTPS_EXPOSED_PORT},http://localhost:5173,http://127.0.0.1:5173,http://YOURLOCALADDRESS:5173
+
+ALLOWED_HOSTS=localhost,127.0.0.1,localhost:${HTTPS_EXPOSED_PORT},127.0.0.1:${HTTPS_EXPOSED_PORT},{LOCAL_ADDRESS}
+CSRF_TRUSTED_ORIGINS=https://localhost:${HTTPS_EXPOSED_PORT},https://127.0.0.1:${HTTPS_EXPOSED_PORT},https://{LOCAL_ADDRESS}:${HTTPS_EXPOSED_PORT},http://localhost:5173,http://127.0.0.1:5173
 ```
 
 ### 🇲 Makefile Usage
