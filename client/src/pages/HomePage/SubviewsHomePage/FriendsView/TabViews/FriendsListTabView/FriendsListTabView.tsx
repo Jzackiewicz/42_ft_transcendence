@@ -20,7 +20,7 @@ function FriendsListTabView({ onOpenProfile }: FriendsListTabViewProps) {
                 {friendsList.map((f) => (
                     <div key={f.friend.id} className={styles.friendItem}>
                         <Avatar name={f.friend.username} imageUrl={f.friend.avatar} size="md" userId={f.friend.id} onClick={() => onOpenProfile(f.friend)} />
-                        <span className={shared.friendName}>{f.friend.username}</span>
+                        <span className={shared.friendName} title={f.friend.username}>{f.friend.username}</span>
                         <Button variant="ghost" size="sm" onClick={() => handleRemove(f.friend.id)}>Remove</Button>
                     </div>
                 ))}

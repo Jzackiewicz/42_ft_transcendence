@@ -49,9 +49,13 @@
 
 .friendName {
     flex: 1;
+    min-width: 0;
     font-family: var(--fb);
     font-size: var(--font-sm);
     color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .friendsScroll {

@@ -62,6 +62,11 @@
     font-family: var(--fb);
     font-weight: 600;
     color: var(--text);
+    min-width: 0;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .playerTile.currentUser .playerNameAlive {
@@ -72,6 +77,11 @@
     font-family: var(--fb);
     text-decoration: line-through;
     color: var(--dim);
+    min-width: 0;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .playerRoleBadges {
@@ -80,6 +90,7 @@
     align-items: flex-end;
     gap: 4px;
     font-size: var(--font-sm);
+    flex-shrink: 0;
 }
 
 .playerStats {
@@ -148,6 +159,8 @@
     display: flex;
     align-items: center;
     gap: 10px;
+    min-width: 0;
+    flex: 1;
 }
 
 

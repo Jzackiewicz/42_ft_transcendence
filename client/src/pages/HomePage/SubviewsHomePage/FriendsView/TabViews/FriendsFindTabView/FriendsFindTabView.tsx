@@ -44,7 +44,7 @@ function FriendsFindTabView({ onOpenProfile }: FriendsFindTabViewProps) {
                                 userId={user.id}
                                 onClick={e => { e.stopPropagation(); onOpenProfile(user) }}
                             />
-                            <span className={shared.friendName}>{user.username}</span>
+                            <span className={shared.friendName} title={user.username}>{user.username}</span>
                         </div>
                     ))}
                 </div>
