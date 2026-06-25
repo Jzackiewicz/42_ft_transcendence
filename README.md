@@ -3,7 +3,7 @@
 # 42_ft_transcendence
 
 ## 🟥Description🟥
-**QUIZSENDENCE** is a **Game Show Webapp** that lets you and your friends take part in a gameshow based on Polish TV format "1 z 10".
+**QUIZSCENDENCE** is a **Game Show Webapp** that lets you and your friends take part in a gameshow based on the Polish TV format "1 z 10".
 
 ### 🧩 Key features
 
@@ -17,12 +17,12 @@
 ### 👑 How to win?
 
 - The game show has you **gain points by answering questions** correctly. You must avoid answering incorrectly as you **lose one of your three lives** for each question you get wrong!
-- Unlike other game shows where contestants rush to answer first, **players nominate each other** in a system of "hand down the hot seat" to try eliminate the other players.
+- Unlike other game shows where contestants rush to answer first, **players nominate each other** in a system of "hand down the hot seat" to try to eliminate the other players.
 - The winner is chosen when all the questions are answered, or if all but one player have fallen.
 
 ### 🪪 Make a profile, add friends and chat
 
-We provide a **player profile** along with **friends system** to allow players to **chat** between games!
+We provide a **player profile** along with **a friends system** to allow players to **chat** between games!
 
 Found a worthy opponent and want a rematch? **Add them to friends** and send them a room key!
 
@@ -32,25 +32,30 @@ Had enough of losing to them? **Unfriend them** and see them disappear!
 
 Want to host a game? **Simply go to the page, Register or Log in, Create a lobby, and send your friends the lobby ID.**
 
-Having trouble joining a friend who is already hosting lobby? **Go to the page, Register or Log in then press JOIN ROOM and ask your friend for the room code.**
+Having trouble joining a friend who is already hosting a lobby? **Go to the page, Register or Log in then press JOIN ROOM and ask your friend for the room code.**
 
-### 🏆 Why Quizsendence?
-Our goal was to recreate the game show Polish TV gameshow format "1 z 10" in a webapp form. Each person's personal goal was to get hands-on experience with web development technologies that were new to us.
+### 🏆 Why Quizscendence?
+Our goal was to recreate the game show Polish TV format "1 z 10" in a webapp form. Each person's goal was to get hands-on experience with web development technologies that were new to us.
 
 ## 🟪Instructions🟪
 
 ### 🖥️ Installation
 
 - Make sure you meet all **📋 Prerequisites**.
-- clone the repository.
-- Make a .env by copying the .env_example. More info in **⚙️ Setting up the .env**.
-- Run the project with: ``make up``. More info at **🇲 Makefile Usage**
+- Clone the repository, set up your environment, and run the project:
+  ```bash
+  git clone https://github.com/Jzackiewicz/42_ft_transcendence.git
+  cd 42_ft_transcendence
+  cp .env.example .env
+  make up
+  ```
+  More information can be found in **⚙️ Setting up the .env** and **🇲 Makefile Usage**.
 
 ### 📋 Prerequisites
 - **Linux**
-- **Git** - Newest
-- **make** - Newest
-- **docker** && **docker-compose** - Newest
+- **Git** (version 2.43.0 or compatible)
+- **make** (GNU Make version 4.3 or compatible)
+- **docker** (version 29.3.1 or compatible) && **docker-compose** (v5.1.1 or compatible)
 
 Other requirements are handled by the Makefile and Docker.
 
@@ -74,25 +79,25 @@ Integrate your local address. Example provided below.
 
 ```
 # --- Django Configuration ---
-ALLOWED_HOSTS=localhost,127.0.0.1,YOURLOCALADDRESS,localhost:${HTTPS_EXPOSED_PORT},127.0.0.1:${HTTPS_EXPOSED_PORT},YOURLOCALADDRESS:${HTTPS_EXPOSED_PORT
-CSRF_TRUSTED_ORIGINS=https://localhost:${HTTPS_EXPOSED_PORT},https://127.0.0.1:${HTTPS_EXPOSED_PORT},https://YOURLOCALADDRESS:${HTTPS_EXPOSED_PORT},http://localhost:5173,http://127.0.0.1:5173,http://YOURLOCALADDRESS:517
+ALLOWED_HOSTS=localhost,127.0.0.1,YOURLOCALADDRESS,localhost:${HTTPS_EXPOSED_PORT},127.0.0.1:${HTTPS_EXPOSED_PORT},YOURLOCALADDRESS:${HTTPS_EXPOSED_PORT}
+CSRF_TRUSTED_ORIGINS=https://localhost:${HTTPS_EXPOSED_PORT},https://127.0.0.1:${HTTPS_EXPOSED_PORT},https://YOURLOCALADDRESS:${HTTPS_EXPOSED_PORT},http://localhost:5173,http://127.0.0.1:5173,http://YOURLOCALADDRESS:5173
 ```
 
 ### 🇲 Makefile Usage
-- **Make up** - launch the website.
-- **Make down** - shutdown the website.
-- **Make clean**  - wipe data.
-- **Make fclean** - wipe docker and data.
+- **`make up`** - Build and launch the website.
+- **`make down`** - Shut down and stop the containers.
+- **`make clean`** - Stop the containers and delete database volumes.
+- **`make fclean`** - Stop the containers and prune unused Docker objects system-wide.
+- **`make logs`** - Show and follow container logs.
+- **`make ps`** - Show container status.
 
 ## 🟦Resources🟦
 
 ### General References
 
 - [Django Rest Framework](https://www.django-rest-framework.org/)
-- [Django ORM](https://docs.djangoproject.com/en/6.0/topics/db/models/)
-- [Django Authentication](https://docs.djangoproject.com/en/6.0/topics/auth/)
-- [Django Migrations](https://docs.djangoproject.com/en/6.0/topics/migrations/)
-- [Redis](https://channels.readthedocs.io/en/stable/topics/channel_layers.html)
+- [Django documentation](https://docs.djangoproject.com/en/6.0/)
+- [Django Channels (Channel Layers)](https://channels.readthedocs.io/en/stable/topics/channel_layers.html)
 - [Service layer pattern](https://github.com/HackSoftware/Django-Styleguide)
 - [Websockets docs and tutorial](https://channels.readthedocs.io/)
 - [Gemini integration](https://ai.google.dev/gemini-api/docs)
@@ -100,8 +105,8 @@ CSRF_TRUSTED_ORIGINS=https://localhost:${HTTPS_EXPOSED_PORT},https://127.0.0.1:$
 
 ### AI Usage
 
-**We used a wide range of AI assistence when it came to work and research. Below is listed all the uses of AI our team utilised:**
-- **Research** on how to use new techologies.
+**We used a wide range of AI assistance when it came to work and research. Below is listed all the uses of AI our team utilised:**
+- **Research** on how to use new technologies.
 - Assistance with **design choice research** along with **CSS styling** help.
 - **Code summarisation** for individual understanding foreign sections of the codebase.
 - **Writing tedious and repetitive code that was already understood.**
@@ -156,7 +161,7 @@ CSRF_TRUSTED_ORIGINS=https://localhost:${HTTPS_EXPOSED_PORT},https://127.0.0.1:$
 ### 🟦 Justification for major technical choices
 - **Django + DRF** — it is very robust, comes with an ORM, auth and serializers out of the box, so we didn't have to build that ourselves.
 - **Channels + Redis** — the game and chat both happen in real time, so we needed WebSockets. Channels handles that and is the standard when it comes to Django-based backends dealing with WebSockets. Redis handles caching and broadcasting messages (pub/sub) and is easily accessible in Django.
-- **python-statemachine** — the game logic would be too convoluted with use of plain if-else statements. That's why it was natural to use a finate state machine for managing the game phases transitions. This particular library is well-established for Python.
+- **python-statemachine** — the game logic would be too convoluted with use of plain if-else statements. That's why it was natural to use a finite state machine for managing the game phases transitions. This particular library is well-established for Python.
 - **PostgreSQL** — well supported in Django (ORM), relational and is considered an industry standard.
 
 ### 🟦 Architecture
@@ -166,13 +171,16 @@ CSRF_TRUSTED_ORIGINS=https://localhost:${HTTPS_EXPOSED_PORT},https://127.0.0.1:$
 **Container view** — how the system is deployed across Docker services:
 ![Container view](docs/Diagram_ContainerView.svg)
 
+**Game State Machine** — how the game flows and transitions between different phases:
+![Game State Machine](docs/game_fsm.svg)
+
 ### 🟩 Database Schema
 ![ERD](docs/EntityRelationshipDiagram.svg)
 
 ### 🟨 Features List
 
 **Online Multiplayer Game Show based Quiz** - An online game which players can host then compete in by nominating players to answer game show questions.
-<br> **Game Design**, **Fullstack Implementaton** by: **jzackiew**.
+<br> **Game Design**, **Fullstack Implementation** by: **jzackiew**.
 <br> **Game instructions** by: **mbudkevi.**
 
 **Accounts and Account Management** - User account creation and profiles which display a players information along with user online presence.
@@ -187,7 +195,7 @@ CSRF_TRUSTED_ORIGINS=https://localhost:${HTTPS_EXPOSED_PORT},https://127.0.0.1:$
 **Text Chats** - A websocket based system that allows users to directly communicate to each other by text chat live. You can text chat with friends while in public lobbies as well as in the home page.
 <br> **Websocket Architecture**, and **History Pagination** by: **jzackiew**.
 <br> **Backend Chat Logic**, and **Authentication** by: **mbudkevi**.
-<br> **Frontend implementation** by: **itkyhono**
+<br> **Frontend implementation** by: **itykhono**
 
 **Player Statistics** - A place on the home page where users can check their game statistics.
 <br> **Statistic Tracking** by: **jzackiew**.
@@ -199,19 +207,13 @@ CSRF_TRUSTED_ORIGINS=https://localhost:${HTTPS_EXPOSED_PORT},https://127.0.0.1:$
 
 ### 🟧 Modules
 
-### Complete list of chosen modules
-
 ## 🌐 Web
 
 ### Minor - Use a frontend framework
 
-**React** was our choice of frontend as it is the most popular framework ever.
-
-**Axios** simplifies REST API calls by handling JSON parsing and error responses automatically.
-
-**CSS Modules** scoped class names per component
-
-**Vite** tprovides instant dev server startup and hot module replacement (HMR), so you see changes in the browser immediately without a full page reload
+- **People Involved:** **itykhono, jzackiew**
+- We implemented a single-page application using **React** as the frontend library and **Vite** as the build tool/development server, utilizing **Axios** for REST API communication and **CSS Modules** for scoped component styling.
+- **Why this module?** - React provides a component-based architecture and declarative state management, which were essential for managing the dynamic UI of a real-time game show. Vite was selected for its fast dev server and Hot Module Replacement (HMR) capabilities.
 
 ### Minor - Use a backend framework
 
@@ -227,7 +229,7 @@ CSRF_TRUSTED_ORIGINS=https://localhost:${HTTPS_EXPOSED_PORT},https://127.0.0.1:$
 
 ### Major - Allow users to interact with other users
 
-- **People Involved: jzackiew, mbudekevi, mamichal, itykhono**
+- **People Involved: jzackiew, mbudkevi, mamichal, itykhono**
 - We have a /home/ page where once logged in a user can look for users, view their profiles, add or remove them as friends and message with them using a live text chat.
 - **Why this module?** - This module fit very well considering that an aspect of the game is making friends and talking about past or current matches. The idea of players interacting mid match or after a game to play again is a great addition.
 
@@ -239,7 +241,7 @@ CSRF_TRUSTED_ORIGINS=https://localhost:${HTTPS_EXPOSED_PORT},https://127.0.0.1:$
 ### Minor - Custom made design system with reusable components, including a proper color palette, typography, and icons
 
 - **People Involved: jzackiew, itykhono**
-- There is a defined global colour palette, typography and fonts in one place. There are also a set of the following reusable components included: Button, Badge, Card, ErrorBanner, InputField, InlineError, Modal, SectionTitle, Avatar, OnlineIndicator, Icon, StatsGrid
+- There is a defined global colour palette, typography and fonts in one place. There is also a set of the following reusable components included: Button, Badge, Card, ErrorBanner, InputField, InlineError, Modal, SectionTitle, Avatar, OnlineIndicator, Icon, StatsGrid
 - **Why this module?** - Shared set of tokens and design classes makes the whole app look consistent and easy to adjust on the global scale.
 
 ## 💠 Accessibility and Internationalization
@@ -255,7 +257,7 @@ CSRF_TRUSTED_ORIGINS=https://localhost:${HTTPS_EXPOSED_PORT},https://127.0.0.1:$
 ### Major - Standard user management and authentication
 
 - **People Involved: mbudkevi, mamichal**
-- Custom `User` model extending Django's `AbstractUser` with a unique email. It consist of registration, login and logout endpoints. Login accepts either email or username. Avatar uploads through a separate `UserProfile` model. Online status is tracked in-memory by counting each user's open WebSocket connections, then broadcast over the same Channels layer the chat uses.
+- Custom `User` model extending Django's `AbstractUser` with a unique email. It consists of registration, login and logout endpoints. Login accepts either email or username. Avatar uploads through a separate `UserProfile` model. Online status is tracked in-memory by counting each user's open WebSocket connections, then broadcast over the same Channels layer the chat uses.
 - **Why this module?** - Since the project is a multiplayer game, having accounts and profiles was the natural starting point. Without them there is no way to identify players between sessions and build a friends list.
 
 ### Minor - Implement remote authentication with OAuth 2.0
@@ -296,7 +298,7 @@ CSRF_TRUSTED_ORIGINS=https://localhost:${HTTPS_EXPOSED_PORT},https://127.0.0.1:$
 
 - **People Involved: dbozic, jzackiew**
 - It is shown as a host only button in the lobby screen. When pressed the lobby questions are sent to an LLM where additional similar questions are generated. Those questions are then added to the game session to be played, and saved persistently in the database for future use.
-- **Why this module?** - We chose this module as it is a core concept of our game: AI generated questions. It also opened up the possibility of implementing RAG (Retrieval Based Generation) which could have been an additional Major Module.
+- **Why this module?** - We chose this module as it is a core concept of our game: AI generated questions. It also opened up the possibility of implementing RAG (Retrieval-Augmented Generation) which could have been an additional Major Module.
 
 - **What technical challenges it addresses** - The largest technical challenge with this module was **response validation**. LLMs are infamously bad at following exact rules. **Pydantic** was used for guaranteeing a safe answer format, and the content of the response was fine tuned through human readable instructions. Other challenges included **rate limiting**, and **integration** of answers into live lobbies and the persistent database.
 
@@ -337,7 +339,7 @@ the whole development team with automated feedback through the GitHub UI.
 
 **Total Points = 22**
 
-### ⬜️ Individual Contributions ``Detailed breakdown of what each team member contributed, specific features, modules, or components implemented by each person. any challenges faced and how they were overcome.``
+### ⬜️ Individual Contributions
 
 ### dbozic - Scrum Master
 
@@ -362,13 +364,15 @@ the whole development team with automated feedback through the GitHub UI.
 
 - My largest technical challenge was developing and integrating the question expander. It required me to learn new tools like Python, an authenticated API, a web development framework, an ORM, REST, rate limiting specific users, using external tools for format validation along with many other things that were cut from the final version.
 <br> Looking back I am amazed I was able to start work on such a module as my first issue.
-- A small but unusual challenge I faced was reforming the base list of questions and answers originating from a Polish gameshow. I found a method to automatically filter out questions which only people familiar with Polish culture would know along with translating and sorting the rest.
+- A small but unusual challenge I faced was reforming the base list of questions and answers originating from a Polish game show. I found a method to automatically filter out questions which only people familiar with Polish culture would know along with translating and sorting the rest.
 
 ### itykhono - Frontend Developer
 
-Frontend developer responsible for the full client-side implementation, including component architecture, routing, API integration, WebSocket-based real-time communication, and overall frontend project structure.
+#### Contributions
 
-#### Features & Contributions
+- Frontend developer responsible for the full client-side implementation, including component architecture, routing, API integration, WebSocket-based real-time communication, and overall frontend project structure.
+
+#### Specific features, modules, or components
 
 - Designed the frontend architecture and file system structure
 - Implemented core UI components and page routing
@@ -377,15 +381,15 @@ Frontend developer responsible for the full client-side implementation, includin
 - Implemented user profile viewing
 - Designed and implemented the real-time chat feature
 
-#### Challenges
+#### Challenges faced
 
 My guiding principle was KISS (Keep It Simple, Stupid), but limited React experience led to a series of unexpected problems - prop drilling and keeping data in sync across different parts of the same page. These issues ultimately forced some compromises in the original architecture.
 
 ### jzackiew - Product Owner
 #### Contributions
-- Owned the product vision: defined the business requirements and set up and prioritised the GitHub Projects issue list the whole team worked from.
+- Owned the product vision: defined the business requirements and set up and prioritized the GitHub Projects issue list the whole team worked from.
 - Set up the initial backend Django framework.
-- Designed and built the game end to end with the rules, the server-side state machine and the real-time WebSocket layer behind both the game and the chat.
+- Designed and built the game end-to-end with the rules, the server-side state machine and the real-time WebSocket layer behind both the game and the chat.
 - Built the custom design system and led the move from global CSS to scoped CSS Modules.
 - Integrated the AI question generator into the game.
 
@@ -396,33 +400,30 @@ My guiding principle was KISS (Keep It Simple, Stupid), but limited React experi
 - Player statistics tracking and the AI question generator integration.
 
 #### Challenges faced
-The biggest challenge I've faced was non-coding related - for the first time I led a project with this many people and it showed me how important communication is and how difficult specifying concrete tasks might be.
-When it comes to coding - I've never had anything to do with state machines before and it was tricky for me to grasp the idea behind it.
-Getting to know the TypeScript with React took me the longest. I didn't plan to deal with the frontend initially but now I'm happy I got to learn a lot of new concepts related to the UI.
+- The biggest challenge I faced was non-coding related, namely leading a project with this many people for the first time. It showed me how important communication is and how difficult specifying concrete tasks can be.
+- On the technical side, I had never worked with state machines before, and it was tricky to grasp the concepts behind them initially.
+- Getting to know TypeScript and React took the longest. I did not plan to work on the frontend initially, but I am glad I got to learn new concepts related to the UI.
 
 ### mamichal - Tech Lead
 
 #### Contributions
 
-- DevOps and backend developer, focused mainly on setup of the environment and
-ensuing proper deployment across multiple systems. Also contributed to some
-frontend tasks.
+- DevOps and backend developer, focused mainly on setup of the environment and ensuring proper deployment across multiple systems. Also contributed to some frontend tasks.
 
 #### Specific features, modules, or components
 
-- DevOps - setting up a containerized environment with proper communication and
-volume persistence for both the production environment and development playground
-- Automated deployment via Makefile
-- Added other useful automations for development purposes
-- Contributed to CI setup
-- Configured NGINX as a reverse proxy for HTTPS and WSS connections
-- Setup Redis as an in memory database
-- Blocked direct client-side access to /api/
-- Ensured proper cross-browser support and implemented E2E testing
-- Ensured proper distribution of CSRF
-- Prepared database populating script for evaluation and testing purposes
-- Implemented frontend routing guards
-- Prepared legal pages for the site
+- DevOps - setting up a containerized environment with proper communication and volume persistence for both the production environment and development playground.
+- Automated deployment via Makefile.
+- Added other useful automations for development purposes.
+- Contributed to CI setup.
+- Configured NGINX as a reverse proxy for HTTPS and WSS connections.
+- Set up Redis as an in-memory database.
+- Blocked direct client-side access to `/api/`.
+- Ensured proper cross-browser support and implemented E2E testing.
+- Ensured proper distribution of CSRF tokens.
+- Prepared database populating script for evaluation and testing purposes.
+- Implemented frontend routing guards.
+- Prepared legal pages for the site.
 
 #### Challenges faced
 
@@ -435,12 +436,14 @@ on both frontend and backend for either production and development playground.
 
 ### mbudkevi - Developer
 
-- Backend developer covering authentication, the friends system, real-time presence, the chat backend and the project's initial database setup.
+#### Contributions
+
+- Backend developer covering authentication, the friends system, real-time presence, the chat backend, and the project's initial database setup.
 - Reviewed teammates' pull requests and helped resolve a number of migration conflicts during merges.
 
 #### Specific features, modules, or components
 
-- Custom `User` model and `UserProfile`, initial data base setup.
+- Custom `User` model and `UserProfile`, initial database setup.
 - Registration / login / logout endpoints.
 - Email-or-username login backend (case-insensitive matching, `@` disallowed in usernames).
 - WebSocket authentication on both the game and chat consumers (anonymous connections are rejected at handshake).
