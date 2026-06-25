@@ -42,15 +42,20 @@ Our goal was to recreate the game show Polish TV format "1 z 10" in a webapp for
 ### 🖥️ Installation
 
 - Make sure you meet all **📋 Prerequisites**.
-- clone the repository.
-- Make a .env by copying the .env_example. More info in **⚙️ Setting up the .env**.
-- Run the project with: ``make up``. More info at **🇲 Makefile Usage**
+- Clone the repository, set up your environment, and run the project:
+  ```bash
+  git clone https://github.com/Jzackiewicz/42_ft_transcendence.git
+  cd 42_ft_transcendence
+  cp .env.example .env
+  make up
+  ```
+  More information can be found in **⚙️ Setting up the .env** and **🇲 Makefile Usage**.
 
 ### 📋 Prerequisites
 - **Linux**
-- **Git** - Newest
-- **make** - Newest
-- **docker** && **docker-compose** - Newest
+- **Git** (version 2.43.0 or compatible)
+- **make** (GNU Make version 4.3 or compatible)
+- **docker** (version 29.3.1 or compatible) && **docker-compose** (v5.1.1 or compatible)
 
 Other requirements are handled by the Makefile and Docker.
 
@@ -74,15 +79,17 @@ Integrate your local address. Example provided below.
 
 ```
 # --- Django Configuration ---
-ALLOWED_HOSTS=localhost,127.0.0.1,YOURLOCALADDRESS,localhost:${HTTPS_EXPOSED_PORT},127.0.0.1:${HTTPS_EXPOSED_PORT},YOURLOCALADDRESS:${HTTPS_EXPOSED_PORT
-CSRF_TRUSTED_ORIGINS=https://localhost:${HTTPS_EXPOSED_PORT},https://127.0.0.1:${HTTPS_EXPOSED_PORT},https://YOURLOCALADDRESS:${HTTPS_EXPOSED_PORT},http://localhost:5173,http://127.0.0.1:5173,http://YOURLOCALADDRESS:517
+ALLOWED_HOSTS=localhost,127.0.0.1,YOURLOCALADDRESS,localhost:${HTTPS_EXPOSED_PORT},127.0.0.1:${HTTPS_EXPOSED_PORT},YOURLOCALADDRESS:${HTTPS_EXPOSED_PORT}
+CSRF_TRUSTED_ORIGINS=https://localhost:${HTTPS_EXPOSED_PORT},https://127.0.0.1:${HTTPS_EXPOSED_PORT},https://YOURLOCALADDRESS:${HTTPS_EXPOSED_PORT},http://localhost:5173,http://127.0.0.1:5173,http://YOURLOCALADDRESS:5173
 ```
 
 ### 🇲 Makefile Usage
-- **Make up** - launch the website.
-- **Make down** - shutdown the website.
-- **Make clean**  - wipe data.
-- **Make fclean** - wipe docker and data.
+- **`make up`** - Build and launch the website.
+- **`make down`** - Shut down and stop the containers.
+- **`make clean`** - Stop the containers and delete database volumes.
+- **`make fclean`** - Stop the containers and prune unused Docker objects system-wide.
+- **`make logs`** - Show and follow container logs.
+- **`make ps`** - Show container status.
 
 ## 🟦Resources🟦
 
